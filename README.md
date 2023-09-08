@@ -9,6 +9,7 @@ Features 🌟
 
 Barcode Scanning 🛒  
 Instant Nutritional Info: Just scan the barcode of any food product to get detailed nutritional information.
+
 Track Your Intake: Easily keep track of your daily caloric and nutritional intake.  
 
 Generative Fitness Regiments 🏃‍♀️

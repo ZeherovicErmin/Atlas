@@ -13,7 +13,7 @@ Instant Nutritional Info: Just scan the barcode of any food product to get detai
 
 Track Your Intake: Easily keep track of your daily caloric and nutritional intake.  
 
-Generative Fitness Regiments 🏃‍♀️
+Generative Fitness Regiments 🏃‍♀️  
 
 Personalized Workouts: Get workout plans tailored to your fitness level and goals.  
 

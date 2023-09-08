@@ -23,7 +23,14 @@ Connect with Others: Join a community of fitness junkies. Share your progress, m
  
 
 Recipe Browser 🍲  
-Healthy Recipes: Browse through a vast collection of healthy and delicious recipes.  
+Healthy Recipes: Browse through a vast collection of healthy and delicious recipes.
+
+<div align="center">Our Team 📛  </div>
+Team Lead : Ali Chowdhury
+Ermin Zeherovic : Backend Developer Lead
+Matthew McGowan : Database Lead
+Hussein Daher : Documentation Lead / Front End
+Ayesha Helal : Front End Lead
 
 Dietary Preferences: Filter recipes based on dietary needs such as vegan, gluten-free, and more.
 

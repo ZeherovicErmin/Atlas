@@ -4,7 +4,7 @@
 
 Atlas is a comprehensive mobile fitness application designed to guide you on your fitness journey. Experience a seamless and totally free fitness experience right at your fingertips!
 
-Features 🌟  
+<div align="center">Features 🌟  </div>
 
 Barcode Scanning 🛒
 

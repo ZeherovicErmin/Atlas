@@ -9,7 +9,6 @@ Features 🌟
 
 Barcode Scanning 🛒  
 Instant Nutritional Info: Just scan the barcode of any food product to get detailed nutritional information.
-
 Track Your Intake: Easily keep track of your daily caloric and nutritional intake.  
 
 Generative Fitness Regiments 🏃‍♀️
@@ -17,8 +16,8 @@ Personalized Workouts: Get workout plans tailored to your fitness level and goal
 Progress Tracking: Monitor your fitness progress with visual charts and milestones.  
 
 Social Interaction 🤝  
-Connect with Fitness Enthusiasts: Join a community of fitness junkies. Share your progress, motivate others, and get inspired.  
-Challenges & Leaderboards: Participate in fitness challenges and climb the leaderboards.  
+Connect with Others: Join a community of fitness junkies. Share your progress, motivate others, and get inspired.  
+ 
 
 Recipe Browser 🍲  
 Healthy Recipes: Browse through a vast collection of healthy and delicious recipes.  

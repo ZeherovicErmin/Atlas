@@ -1,5 +1,7 @@
-Atlas: Conqueor Your World, One Rep at a Time. 🏋️‍♂️🍎
-Atlas Banner
+<div align="center">
+    <h1>Atlas: Conqueor Your World, One Rep at a Time. 🏋️‍♂️🍎</h1>
+    <img src="https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/<WORKFLOW_FILE>/badge.svg" alt="Workflow status badge">
+</div>
 
 Atlas is a comprehensive mobile fitness application designed to guide you on your fitness journey. Experience a seamless and totally free fitness experience right at your fingertips!
 

@@ -7,13 +7,16 @@ Atlas is a comprehensive mobile fitness application designed to guide you on you
 
 Features 🌟  
 
-Barcode Scanning 🛒  
+Barcode Scanning 🛒
+
 Instant Nutritional Info: Just scan the barcode of any food product to get detailed nutritional information.
 
 Track Your Intake: Easily keep track of your daily caloric and nutritional intake.  
 
 Generative Fitness Regiments 🏃‍♀️
+
 Personalized Workouts: Get workout plans tailored to your fitness level and goals.  
+
 Progress Tracking: Monitor your fitness progress with visual charts and milestones.  
 
 Social Interaction 🤝  
@@ -22,6 +25,7 @@ Connect with Others: Join a community of fitness junkies. Share your progress, m
 
 Recipe Browser 🍲  
 Healthy Recipes: Browse through a vast collection of healthy and delicious recipes.  
+
 Dietary Preferences: Filter recipes based on dietary needs such as vegan, gluten-free, and more.
 
 

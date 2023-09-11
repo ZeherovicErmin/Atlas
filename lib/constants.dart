@@ -24,7 +24,7 @@ var myAppBar = AppBar(
           ]);
         
 
-// Widget Container
+/* Widget Container
 var myWidgCont = Container(
                   margin: EdgeInsets.all(8.0),
                   width: 150,
@@ -34,6 +34,26 @@ var myWidgCont = Container(
                       color: const Color.fromARGB(255, 224, 224, 224)),
 
                   );
+*/
+
+              
+// Function to Create containers
+Container myWidgCont(double width, double height, Color color){
+  return Container(
+    margin: EdgeInsets.all(8),
+    width: width,
+    height: height,
+    color: color,
+    decoration: BoxDecoration(
+
+      borderRadius : BorderRadius.circular(10),
+      color: color,
+    ),
+
+
+
+  );
+}
                 
 
 

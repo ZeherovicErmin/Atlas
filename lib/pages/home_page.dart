@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                myWidgCont,
+                myWidgCont(150,175,Color.fromARGB(255,224,224,224)),
                 Container(
                     margin: EdgeInsets.all(8.0),
                     width: 150,

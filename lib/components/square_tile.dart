@@ -5,8 +5,7 @@ class SquareTile extends StatelessWidget {
   const SquareTile({
     super.key,
     required this.imagePath,
-    }
-  );
+  });
 
   //Square background for the apple and google logo on the signin page
   @override
@@ -18,10 +17,7 @@ class SquareTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         color: Colors.grey[200],
       ),
-      child: Image.asset(
-        imagePath,
-        height: 40
-      ),
+      child: Image.asset(imagePath, height: 40),
     );
   }
 }

@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         body: SafeArea(
             child: Center(
           child: SingleChildScrollView(
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 'Atlas',
                 style: TextStyle(
-                  color: Colors.blue[700],
+                  color: Colors.black,
                   fontSize: 32,
                 ),
               ),

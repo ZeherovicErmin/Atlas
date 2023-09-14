@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         appBar: myAppBar,
+        drawer: myDrawer,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -20,15 +21,25 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+<<<<<<< Updated upstream
                 myWidgCont(150,175,Color.fromARGB(255,224,224,224)),
                 myWidgCont(150,175,Color.fromARGB(255, 193, 167, 226)),
+=======
+                myWidgCont(150, 175, Color.fromARGB(255, 224, 224, 224)),
+                myWidgCont(150, 175, Color.fromARGB(255, 193, 167, 226)),
+>>>>>>> Stashed changes
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+<<<<<<< Updated upstream
                 myWidgCont(150,175,Color.fromARGB(255, 193, 167, 226)),
                 myWidgCont(150,175,Color.fromARGB(255,224,224,224)),
+=======
+                myWidgCont(150, 175, Color.fromARGB(255, 193, 167, 226)),
+                myWidgCont(150, 175, Color.fromARGB(255, 224, 224, 224)),
+>>>>>>> Stashed changes
               ],
             )
           ],

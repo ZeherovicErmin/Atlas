@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>Atlas: Conqueor Your World, One Rep at a Time.</h1>
+    <h1>Atlas: Conquer Your World, One Rep at a Time.</h1>
 </div>
 
 Atlas is a comprehensive mobile fitness application designed to guide you on your fitness journey. Experience a seamless and totally free fitness experience right at your fingertips!

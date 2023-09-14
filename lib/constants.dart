@@ -22,24 +22,16 @@ var myAppBar = AppBar(
       )
     ]);
 
-<<<<<<< Updated upstream
               
-=======
->>>>>>> Stashed changes
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color) {
   return Container(
     margin: EdgeInsets.all(8),
     width: width,
     height: height,
-<<<<<<< Updated upstream
 
     decoration: BoxDecoration(
       borderRadius : BorderRadius.circular(10),
-=======
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
->>>>>>> Stashed changes
       color: color,
     ),
   );

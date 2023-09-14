@@ -43,3 +43,12 @@ var myDrawer = Drawer(
         DrawerHeader(child: Icon(Icons.fitness_center)),
       ],
     ));
+
+// Creating a navigation bar
+var myNavBar = BottomNavigationBar(items: const [
+  BottomNavigationBarItem(
+    icon: Icon(Icons.home),
+    label: 'Home',
+  ),
+  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+]);

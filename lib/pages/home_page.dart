@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         appBar: myAppBar,
         drawer: myDrawer,
+        bottomNavigationBar: myNavBar,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -22,7 +23,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onDoubleTap: () {
                     Navigator.pushNamed(context, '/fitpage');
                   },
                   child:

@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/pages/fitness_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,11 +23,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: AuthPage(),
-        theme: ThemeData(
-            textTheme: TextTheme(
-          bodyMedium: AppTheme.DefaultTextStyle,
-        )));
+      debugShowCheckedModeBanner: false,
+      home: AuthPage(),
+      theme: ThemeData(
+          textTheme: TextTheme(
+        bodyMedium: AppTheme.DefaultTextStyle,
+      )),
+      routes: {
+        '/fitpage': (context) => FitPage(),
+      },
+    );
   }
 }

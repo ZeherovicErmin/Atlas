@@ -22,16 +22,14 @@ var myAppBar = AppBar(
       )
     ]);
 
-              
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color) {
   return Container(
     margin: EdgeInsets.all(8),
     width: width,
     height: height,
-
     decoration: BoxDecoration(
-      borderRadius : BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
       color: color,
     ),
   );

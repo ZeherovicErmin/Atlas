@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.15.1
   firebase_auth: ^4.9.0
+  auto_size_text: ^3.0.0
+  openfoodfacts: ^2.10.1
+  simple_barcode_scanner: ^0.0.8
 
 dev_dependencies:
   flutter_test:

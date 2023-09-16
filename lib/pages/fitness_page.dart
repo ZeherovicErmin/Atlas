@@ -2,9 +2,14 @@ import 'package:atlas/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class FitPage extends StatelessWidget {
+class FitPage extends StatefulWidget {
   FitPage({super.key});
 
+  @override
+  _FitPageState createState() => _FitPageState();
+}
+
+class _FitPageState extends State<FitPage> {
   final user = FirebaseAuth.instance.currentUser!;
 
   @override

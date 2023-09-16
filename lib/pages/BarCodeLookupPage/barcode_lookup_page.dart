@@ -42,6 +42,15 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     }
   }
 
+  //Function for changing the filters
+  void _onFilterChanged(String? newValue) {
+    //? = null check
+    setState(() {
+      //! = null check
+      selectedFilter = newValue!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +59,7 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         backgroundColor: Color(0xFF83B0FA),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -59,33 +68,34 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         child: Center(
           //will contain widgets
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            //FilterDropdown widget here
+            FilterDropdown(
+                filterOptions: filterOptions,
+                selectedFilter: selectedFilter,
+                onChanged: _onFilterChanged),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _scanBarcode,
               child: const Text('Open Scanner'),
             ),
-
             const SizedBox(height: 20),
+
             //if (barcodeData != null) Text('Barcode Data: $barcodeData')
             GridView.count(
               crossAxisCount: 2, //makes 2 columns
               //content wrapper
               shrinkWrap: true,
 
+              //reads off the results of the callback
+              //9/16/2023: Adding selected Filter into the mix
               children: [
-                if (result.isNotEmpty)
+                if (result.isNotEmpty && selectedFilter == 'Barcode Result')
                   ProductCard(title: 'Barcode Result:', data: result),
-
-                if (productName.isNotEmpty)
+                if (productName.isNotEmpty && selectedFilter == 'Product Name')
                   ProductCard(title: 'Product Name:', data: productName),
-
-                if (productCalories != 0.0)
+                if (productCalories != 0.0 && selectedFilter == 'Calories')
                   ProductCard(
                       title: "Calories", data: productCalories.toString())
-
-                //Text('Product Name: $productName'),
-                //const SizedBox(height: 10),
-                //Text('Product Calories: $productCalories')
               ],
             ),
           ]),
@@ -94,3 +104,5 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     );
   }
 }
+
+//AliChowdhury: 9/16/2023: added barcode and filter dropdown

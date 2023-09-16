@@ -24,7 +24,7 @@ class _FitPageState extends State<FitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-      appBar: AppBar(title: Text("Fitness")),
+      appBar: myAppBar,
       drawer: myDrawer,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,

@@ -9,7 +9,7 @@ void signUserOut() async {
 }
 
 // App Bar
-var myAppBar = AppBar(
+AppBar myAppBar = AppBar(
     backgroundColor: const Color.fromARGB(255, 38, 97, 185),
     title: const Text(
       "Home",

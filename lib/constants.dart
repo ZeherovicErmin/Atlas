@@ -25,7 +25,7 @@ var myAppBar = AppBar(
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color) {
   return Container(
-    margin: EdgeInsets.all(8),
+    margin: const EdgeInsets.all(8),
     width: width,
     height: height,
     decoration: BoxDecoration(
@@ -36,19 +36,10 @@ Container myWidgCont(double width, double height, Color color) {
 }
 
 // Creating A Drawer
-var myDrawer = Drawer(
+var myDrawer = const Drawer(
     backgroundColor: Color.fromARGB(255, 169, 183, 255),
     child: Column(
-      children: const [
+      children: [
         DrawerHeader(child: Icon(Icons.fitness_center)),
       ],
     ));
-
-// Creating a navigation bar
-var myNavBar = BottomNavigationBar(items: const [
-  BottomNavigationBarItem(
-    icon: Icon(Icons.home),
-    label: 'Home',
-  ),
-  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-]);

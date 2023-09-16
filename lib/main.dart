@@ -1,5 +1,6 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/fitness_page.dart';
+import 'package:atlas/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       )),
       routes: {
         '/fitpage': (context) => FitPage(),
+        '/home': (context) => HomePage(),
       },
     );
   }

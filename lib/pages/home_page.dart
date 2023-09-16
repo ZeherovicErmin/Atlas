@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -17,8 +17,8 @@ class _HomePageState extends State<HomePage> {
 
   // Creating tabs to navigate to other pages with navbar
   final tabs = [
-    HomePage(),
-    FitPage(),
+    const HomePage(),
+    const FitPage(),
   ];
 
   //Home page for when a user logs in
@@ -39,16 +39,16 @@ class _HomePageState extends State<HomePage> {
                 onDoubleTap: () {
                   Navigator.pushNamed(context, '/fitpage');
                 },
-                child: myWidgCont(150, 175, Color.fromARGB(255, 224, 224, 224)),
+                child: myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
               ),
-              myWidgCont(150, 175, Color.fromARGB(255, 193, 167, 226)),
+              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              myWidgCont(150, 175, Color.fromARGB(255, 193, 167, 226)),
-              myWidgCont(150, 175, Color.fromARGB(255, 224, 224, 224)),
+              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
+              myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
             ],
           )
         ],

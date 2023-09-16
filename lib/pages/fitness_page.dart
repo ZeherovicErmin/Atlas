@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FitPage extends StatefulWidget {
-  FitPage({super.key});
+  const FitPage({super.key});
 
   @override
   _FitPageState createState() => _FitPageState();
@@ -12,8 +12,8 @@ class FitPage extends StatefulWidget {
 
 // Creating tabs to navigate to other pages with navbar
 final tabs = [
-  HomePage(),
-  FitPage(),
+  const HomePage(),
+  const FitPage(),
 ];
 
 class _FitPageState extends State<FitPage> {

@@ -6,14 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthPage extends StatelessWidget {
+  const AuthPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      return HomePage();
+      return const HomePage();
     } else {
-      return LoginPage();
+      return const LoginPage();
     }
   }
 }
@@ -104,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 5),
 
               //Atlas title
-              Text(
+              const Text(
                 'Atlas',
                 style: TextStyle(
                   color: Colors.black,

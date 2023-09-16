@@ -26,24 +26,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    HomePage(),
-    FitPage(),
+    const HomePage(),
+    const FitPage(),
   ];
 
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthPage(),
+      home: const AuthPage(),
       theme: ThemeData(
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
         bodyMedium: AppTheme.DefaultTextStyle,
       )),
       routes: {
-        '/fitpage': (context) => FitPage(),
-        '/home': (context) => HomePage(),
+        '/fitpage': (context) => const FitPage(),
+        '/home': (context) => const HomePage(),
       },
     );
   }

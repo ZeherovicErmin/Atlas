@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
               _currentIndex = index;
             });
             // Using Navigator to put a selected page onto the stack
-            Navigator.of(context).pushReplacement(
+            Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => tabs[index]),
             );
           }),

@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 // A file for frequently used widgets to clean up code
 
 //Sign user out method
-void signUserOut() {
-  FirebaseAuth.instance.signOut();
+void signUserOut() async {
+  await FirebaseAuth.instance.signOut();
 }
 
 // App Bar

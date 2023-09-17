@@ -17,9 +17,12 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
   String productName = '';
   String result = '';
   double productCalories = 0.0;
-  String selectedFilter = 'Barcode Result';
+  // List of selectedFilters the user wants to see
+  List<String> selectedFilters = [];
+  // List of filter options the user can select
   List<String> filterOptions = ['Barcode Result', 'Product Name', 'Calories'];
 
+  //Code opens the barcode scanner portion
   Future<void> _scanBarcode() async {
     var scannedBarcode = await Navigator.push(
       context,
@@ -44,12 +47,36 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
   }
 
   //Function for changing the filters
-  void _onFilterChanged(String? newValue) {
+  void _onFilterChanged(String newFilter) {
     //? = null check
     setState(() {
-      //! = null check
-      selectedFilter = newValue!;
+      //This chunk lets you filter out which portions you want in the code
+      if (selectedFilters.contains(newFilter)) {
+        selectedFilters.remove(newFilter);
+      } else {
+        selectedFilters.add(newFilter);
+      }
     });
+  }
+
+// Function to generate a sample card based on the selected filter
+  Widget generateTileCard(String filter) {
+    // Switch case based on the filter you select. Will be researching
+    // how to make this more formless
+    switch (filter) {
+      case 'Barcode Result':
+        return ProductCard(title: 'Barcode Result:', data: '$result');
+      case 'Product Name':
+        return ProductCard(
+          title: 'Product Name:',
+          data: '$productName',
+        );
+      case 'Calories':
+        return ProductCard(title: 'Calories:', data: '$productCalories');
+      default:
+        return SizedBox
+            .shrink(); // Return an empty container if no filter matches
+    }
   }
 
   @override
@@ -68,42 +95,49 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         )),
         child: Center(
           //will contain widgets
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            //FilterDropdown widget here
-            FilterDropdown(
-                filterOptions: filterOptions,
-                selectedFilter: selectedFilter,
-                onChanged: _onFilterChanged),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _scanBarcode,
-              child: const Text('Open Scanner'),
-            ),
-            const SizedBox(height: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //FilterDropdown widget here
+              Wrap(
+                children: filterOptions.map((filter) {
+                  return FilterChip(
+                    label: Text(filter),
+                    selected: selectedFilters.contains(filter),
+                    onSelected: (isSelected) {
+                      _onFilterChanged(filter);
+                    },
+                  );
+                }).toList(),
+              ),
 
-            //if (barcodeData != null) Text('Barcode Data: $barcodeData')
-            GridView.count(
-              crossAxisCount: 2, //makes 2 columns
-              //content wrapper
-              shrinkWrap: true,
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _scanBarcode,
+                child: const Text('Open Scanner'),
+              ),
+              const SizedBox(height: 20),
 
-              //reads off the results of the callback
-              //9/16/2023: Adding selected Filter into the mix
-              children: [
-                if (result.isNotEmpty && selectedFilter == 'Barcode Result')
-                  ProductCard(title: 'Barcode Result:', data: result),
-                if (productName.isNotEmpty && selectedFilter == 'Product Name')
-                  ProductCard(title: 'Product Name:', data: productName),
-                if (productCalories != 0.0 && selectedFilter == 'Calories')
-                  ProductCard(
-                      title: "Calories", data: productCalories.toString())
-              ],
-            ),
-          ]),
+              //if (barcodeData != null) Text('Barcode Data: $barcodeData')
+              GridView.count(
+                crossAxisCount: 2, //makes 2 columns
+                //content wrapper
+                shrinkWrap: true,
+
+                //reads off the results of the callback
+                //9/16/2023: Adding selected Filter into the mix
+                children: [
+                  if (selectedFilters.isNotEmpty)
+                    ...selectedFilters.map((filter) {
+                      return generateTileCard(filter);
+                    }),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
 //AliChowdhury: 9/16/2023: added barcode and filter dropdown

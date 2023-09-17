@@ -4,6 +4,7 @@ import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '/../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import '../../components/dropdown.dart';
+import '../../components/popupmenu.dart';
 
 class BarcodeLookupPage extends StatefulWidget {
   @override

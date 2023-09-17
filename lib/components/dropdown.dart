@@ -6,6 +6,7 @@ class FilterDropdown extends StatelessWidget {
   final String selectedFilter;
   final void Function(String?)? onChanged;
 
+  //Required parameters for FilterDropdown
   FilterDropdown({
     required this.filterOptions,
     required this.selectedFilter,
@@ -21,6 +22,7 @@ class FilterDropdown extends StatelessWidget {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
+          //Boolean to make the toggleable portions visible
         );
       }).toList(),
     );

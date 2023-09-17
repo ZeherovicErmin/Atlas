@@ -1,6 +1,7 @@
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/constants.dart';
 import 'package:atlas/pages/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -32,57 +33,81 @@ class _FitPageState extends State<FitPage> {
         title: const Text("Profile Page"),
         backgroundColor: const Color.fromARGB(255, 38, 97, 185),
       ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 50),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //get user data
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
 
-          //profile pic
-          const Icon(
-            Icons.fitness_center,
-            size: 72,
-          ),
+            return ListView(
+              children: [
+                const SizedBox(height: 50),
 
-          const SizedBox(
-            height: 10,
-          ),
+                //profile pic
+                const Icon(
+                  Icons.fitness_center,
+                  size: 72,
+                ),
 
-          //user email
-          Text(currentUser.email!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Color.fromARGB(255, 38, 97, 185))),
+                const SizedBox(height: 10),
 
-          const SizedBox(height: 50),
+                //user email
+                Text(currentUser.email!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 97, 185))),
 
-          //user details
-          const Padding(
-            padding: EdgeInsets.only(left: 25.0),
-            child: Text('My Details',
-                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-          ),
+                const SizedBox(height: 50),
 
-          //username
-          MyTextBox(
-            text: 'Hussein',
-            sectionName: 'Username',
-            onPressed: () => editField('Username'),
-          ),
+                //user details
+                const Padding(
+                  padding: EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Details',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                  ),
+                ),
 
-          //bio
-          MyTextBox(
-            text: 'Empty Bio',
-            sectionName: 'Bio',
-            onPressed: () => editField('Bio'),
-          ),
+                //username
+                MyTextBox(
+                  text: userData['Username'],
+                  sectionName: 'Username',
+                  onPressed: () => editField('Username'),
+                ),
 
-          const SizedBox(height: 50),
+                //bio
+                MyTextBox(
+                  text: userData['Bio'],
+                  sectionName: 'Bio',
+                  onPressed: () => editField('Bio'),
+                ),
 
-          //user posts
-          const Padding(
-            padding: EdgeInsets.only(left: 25.0),
-            child: Text('My Posts',
-                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-          ),
-        ],
+                const SizedBox(height: 50),
+
+                //user posts
+                const Padding(
+                  padding: EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Posts',
+                    style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error${snapshot.error}'),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
       drawer: myDrawer,
       bottomNavigationBar: BottomNavigationBar(

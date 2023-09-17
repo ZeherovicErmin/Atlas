@@ -261,7 +261,7 @@ class _LoginPageState extends State<LoginPage> {
           email: emailController.text, password: passwordController.text);
       //Gets rid of the loading circle
       Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       //Gets rid of the loading circle
       Navigator.pop(context);
       //Show error message if email or password is wrong

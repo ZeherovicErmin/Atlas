@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
 
 class FilterDropdown extends StatelessWidget {
-  //const FilterDropdown({super.key});
   final List<String> filterOptions;
-  final String selectedFilter;
-  final void Function(String?)? onChanged;
+  final List<String> selectedFilters;
+  final void Function(List<String>)? onChanged;
 
-  //Required parameters for FilterDropdown
   FilterDropdown({
     required this.filterOptions,
-    required this.selectedFilter,
+    required this.selectedFilters,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    String? selectedValue;
+
+    if (selectedFilters.isNotEmpty) {
+      selectedValue = selectedFilters.first;
+    }
+
     return DropdownButton<String>(
-      value: selectedFilter,
-      onChanged: onChanged,
+      value: selectedValue,
+      //newValue =
+      onChanged: (newValue) {
+        if (newValue != null) {
+          onChanged?.call([newValue]);
+        }
+      },
       items: filterOptions.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
-          //Boolean to make the toggleable portions visible
         );
       }).toList(),
     );

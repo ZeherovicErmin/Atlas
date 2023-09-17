@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
-
+  final String text;
   final Function()? onTap;
 
-  const MyButton({super.key, required this.onTap});
+  const MyButton({Key? key, required this.onTap, required this.text})
+      : super(key: key);
 
   //Adds button functionality
   @override
@@ -22,9 +23,9 @@ class MyButton extends StatelessWidget {
           child: Text(
             "Sign in",
             style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
         ),

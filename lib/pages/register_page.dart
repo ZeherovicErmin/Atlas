@@ -222,6 +222,7 @@ import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -255,10 +256,23 @@ class _RegisterPage extends State<RegisterPage> {
 
     //Atempts to create a new user
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      //creating the user
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      //after creating the user, create a doc in the cloud firebase
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userCredential.user!.email)
+          .set({
+        'username': emailController.text.split('@')[0], // initial username
+        'bio': 'Empty Bio...' //initally empty bio
+        //add additional fields as needed
+      });
+
       //Gets rid of the loading circle
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {

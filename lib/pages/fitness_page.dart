@@ -1,3 +1,4 @@
+import 'package:atlas/components/text_box.dart';
 import 'package:atlas/constants.dart';
 import 'package:atlas/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +8,7 @@ class FitPage extends StatefulWidget {
   const FitPage({super.key});
 
   @override
-  _FitPageState createState() => _FitPageState();
+  State<FitPage> createState() => _FitPageState();
 }
 
 // Creating tabs to navigate to other pages with navbar
@@ -17,14 +18,72 @@ final tabs = [
 ];
 
 class _FitPageState extends State<FitPage> {
-  final user = FirebaseAuth.instance.currentUser!;
+  final currentUser = FirebaseAuth.instance.currentUser!;
   int _currentIndex = 0;
+
+//edit field
+  Future<void> editField(String field) async {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-      appBar: myAppBar,
+      appBar: AppBar(
+        title: const Text("Profile Page"),
+        backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+      ),
+      body: ListView(
+        children: [
+          const SizedBox(height: 50),
+
+          //profile pic
+          const Icon(
+            Icons.fitness_center,
+            size: 72,
+          ),
+
+          const SizedBox(
+            height: 10,
+          ),
+
+          //user email
+          Text(currentUser.email!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Color.fromARGB(255, 38, 97, 185))),
+
+          const SizedBox(height: 50),
+
+          //user details
+          const Padding(
+            padding: EdgeInsets.only(left: 25.0),
+            child: Text('My Details',
+                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+          ),
+
+          //username
+          MyTextBox(
+            text: 'Hussein',
+            sectionName: 'Username',
+            onPressed: () => editField('Username'),
+          ),
+
+          //bio
+          MyTextBox(
+            text: 'Empty Bio',
+            sectionName: 'Bio',
+            onPressed: () => editField('Bio'),
+          ),
+
+          const SizedBox(height: 50),
+
+          //user posts
+          const Padding(
+            padding: EdgeInsets.only(left: 25.0),
+            child: Text('My Posts',
+                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+          ),
+        ],
+      ),
       drawer: myDrawer,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,

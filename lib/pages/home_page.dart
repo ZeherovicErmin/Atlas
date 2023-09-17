@@ -39,7 +39,8 @@ class _HomePageState extends State<HomePage> {
                 onDoubleTap: () {
                   Navigator.pushNamed(context, '/fitpage');
                 },
-                child: myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                child: myWidgCont(
+                    150, 175, const Color.fromARGB(255, 224, 224, 224)),
               ),
               myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
             ],
@@ -60,9 +61,9 @@ class _HomePageState extends State<HomePage> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Home',
+              label: 'HOME',
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'PROFILE'),
           ],
           onTap: (index) {
             setState(() {

@@ -70,6 +70,15 @@ Widget gradient() {
                 // alignLabelWithHint: filled:border: )
               ),
               button(),
+              SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                      itemCount: recipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = recipes[index];
+                        final mealName = recipe['strMeal'];
+                        return ListTile(title: Text(mealName));
+                      }))
             ]),
           ),
 

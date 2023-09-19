@@ -43,7 +43,15 @@ class _resultsState extends State<Recipes> {
                           color: Color.fromARGB(255, 88, 34, 194)
                               .withOpacity(0.11))
                     ],
-                  ))
+                  )
+                  ),
+                  Column(children: [
+              TextField(
+                decoration:
+                    InputDecoration(filled: true, fillColor: Colors.white),
+                // alignLabelWithHint: filled:border: )
+              )
+            ])
             ])));
   }
 

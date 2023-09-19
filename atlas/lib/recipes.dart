@@ -14,8 +14,19 @@ class _resultsState extends State<Recipes> {
 
   @override
   Widget build(BuildContext conext) {
-    return Scaffold(appBar: appBar());
+    return Scaffold(appBar: appBar(),body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250)
+            ],
+          ),
+        )););
   }
+
 
   AppBar appBar() {
     String userName = 'John Smith';

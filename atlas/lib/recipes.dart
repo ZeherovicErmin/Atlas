@@ -86,6 +86,8 @@ Widget gradient() {
  void onSubmit() async {
     if (_formKey.currentState!.validate()) {
       //print('Onsubmit called');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Searching for Recipes')));
       String value = searchController.text;
       var url = 'http://www.themealdb.com/api/json/v1/1/search.php?s=$value';
       final uri = Uri.parse(url);

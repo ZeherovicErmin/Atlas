@@ -32,6 +32,8 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     'testMacros',
     'testMaxServings'
   ];
+  //hold selectedData from the User
+  Map<String, dynamic> selectedData = {};
 
   //Code opens the barcode scanner portion
   Future<void> _scanBarcode() async {
@@ -62,6 +64,10 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         } else {
           productName = 'Please try again';
         }
+        // store selectedData
+        selectedData = {
+          'Barcode': result,
+        };
       });
     }
   }
@@ -82,8 +88,14 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
   // Function to send data to Firebase/FireStore
   Future<void> sendDataToFirestore(Map<String, dynamic> data) async {
     try {
-      await FirebaseFirestore.instance.collection('Barcode_Lookup').add(data);
-      print("Data to FireStore sent!!!");
+      if (selectedData.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .add(selectedData);
+        print("Data to FireStore sent!!!");
+      } else {
+        print("No data selected");
+      }
     } catch (e) {
       print('Error sending data: Error: $e');
     }

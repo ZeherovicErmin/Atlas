@@ -50,9 +50,18 @@ class _resultsState extends State<Recipes> {
                 decoration:
                     InputDecoration(filled: true, fillColor: Colors.white),
                 // alignLabelWithHint: filled:border: )
-              )
+              ),
+                  FloatingActionButton(
+                  onPressed: onSubmit,
+                  child: Text('Submit'),
+        )
             ])
             ])));
+  }
+
+void onSubmit()  {
+    print("submit called");
+    }
   }
 
   AppBar appBar() {

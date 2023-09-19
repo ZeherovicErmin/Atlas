@@ -13,7 +13,8 @@ class Recipes extends StatefulWidget {
 class _resultsState extends State<Recipes> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController searchController = TextEditingController();
-  
+  List<dynamic> recipes = [];
+
   @override
   Widget build(BuildContext conext) {
     return Scaffold(
@@ -81,10 +82,22 @@ Widget gradient() {
       child: Text('Submit'),
     );
   }
-void onSubmit()  {
-    print("Searchbar value: " + searchController.text);
+
+ void onSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      //print('Onsubmit called');
+      String value = searchController.text;
+      var url = 'http://www.themealdb.com/api/json/v1/1/search.php?s=$value';
+      final uri = Uri.parse(url);
+      final response = await http.get(uri);
+      final data = jsonDecode(response.body);
+      setState(() {
+        recipes = data['meals'];
+      });
+      //print("fetch completed");
     }
   }
+}
 
   AppBar appBar() {
     String userName = 'John Smith';

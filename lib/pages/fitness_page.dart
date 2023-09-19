@@ -40,7 +40,7 @@ class _FitPageState extends State<FitPage> {
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           //get user data
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.data() != null) {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
 
             return ListView(

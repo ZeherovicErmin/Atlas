@@ -1,30 +1,41 @@
+import 'package:atlas/main.dart';
 import 'package:atlas/pages/login_or_register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/home_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+class AuthPage extends ConsumerWidget {
+  const AuthPage({Key? key});
 
   //Checks if a user is not signed in or not when the app is ran
   //If a user is not signed in, then they go to the login Page
   //If a user is signed in, they go to the home page
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          //User is logged in
-          if (snapshot.hasData) {
+      body: user.when(
+        data: (user) {
+          // User is logged in
+          if (user != null) {
             return HomePage();
           }
-          //User is not logged in
+          // User isn't logged in
           else {
             return const LoginOrRegisterPage();
           }
-        }
+        },
+        loading: () {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (error, stackTrace) {
+          return Text('Error: $error');
+        },
       ),
     );
   }

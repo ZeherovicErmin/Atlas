@@ -4,8 +4,7 @@ class MyButton extends StatelessWidget {
   final String text;
   final Function()? onTap;
 
-  const MyButton({Key? key, required this.onTap, required this.text})
-      : super(key: key);
+  const MyButton({super.key, required this.onTap, required this.text});
 
   //Adds button functionality
   @override
@@ -19,13 +18,13 @@ class MyButton extends StatelessWidget {
           color: Colors.black,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
-            "Sign in",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+            text,
+            style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
             ),
           ),
         ),

@@ -15,50 +15,59 @@ class _resultsState extends State<Recipes> {
   Widget build(BuildContext conext) {
     return Scaffold(
         appBar: appBar(),
-        body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromARGB(255, 90, 117, 255),
-                  Color.fromARGB(255, 161, 195, 250)
-                ],
-              ),
-            ),
-            child: Column(children: [
-              const Padding(
-                padding: EdgeInsets.all(15), //apply padding to all four sides
-                child: Text('Recipes',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-              ),
-              Container(
-                  margin: EdgeInsets.only(top: 40, left: 20, right: 20),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: Color.fromARGB(255, 88, 34, 194)
-                              .withOpacity(0.11))
-                    ],
-                  )
-                  ),
-                  Column(children: [
+        body: gradient());
+  }
+
+Widget gradient() {
+    return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250)
+            ],
+          ),
+        ),
+        child: searchBar());
+  }
+
+  Widget searchBar() {
+    return Column(children: [
+      const Padding(
+        padding: EdgeInsets.all(15), //apply padding to all four sides
+        child: Text('Recipes',
+            style: TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255),
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
+      ),
+      Container(
+          margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
+            ],
+          ),
+          child: Column(children: [
               TextField(
                 decoration:
                     InputDecoration(filled: true, fillColor: Colors.white),
-                // alignLabelWithHint: filled:border: )
               ),
-                  FloatingActionButton(
-                  onPressed: onSubmit,
-                  child: Text('Submit'),
-        )
-            ])
-            ])));
+              button(),
+            ]),
+
+    )]);
   }
 
+  FloatingActionButton button() {
+    return FloatingActionButton(
+      onPressed: onSubmit,
+      child: Text('Submit'),
+    );
+  }
 void onSubmit()  {
     print("submit called");
     }
@@ -83,4 +92,4 @@ void onSubmit()  {
               borderRadius: BorderRadius.circular(10))),
     );
   }
-}
+

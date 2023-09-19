@@ -11,14 +11,12 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
 
-    final isLoggedIn = user.data?.value != null;
-
     return Scaffold(
         //Home page for when a user logs in
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         appBar: myAppBar,
         drawer: myDrawer,
-        body: isLoggedIn
+        body: user != null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

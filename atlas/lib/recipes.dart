@@ -11,6 +11,9 @@ class Recipes extends StatefulWidget {
 }
 
 class _resultsState extends State<Recipes> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController searchController = TextEditingController();
+  
   @override
   Widget build(BuildContext conext) {
     return Scaffold(
@@ -51,13 +54,23 @@ Widget gradient() {
                   color: Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
             ],
           ),
-          child: Column(children: [
-              TextField(
+          child: Form(
+            key: _formKey,
+            child: Column(children: [
+              TextFormField(
+                controller: searchController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Input A Value into Searchbar';
+                  }
+                },
                 decoration:
                     InputDecoration(filled: true, fillColor: Colors.white),
+                // alignLabelWithHint: filled:border: )
               ),
               button(),
             ]),
+          ),
 
     )]);
   }
@@ -69,7 +82,7 @@ Widget gradient() {
     );
   }
 void onSubmit()  {
-    print("submit called");
+    print("Searchbar value: " + searchController.text);
     }
   }
 

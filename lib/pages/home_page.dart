@@ -1,32 +1,46 @@
-import 'package:firebase_auth/firebase_auth.dart';
+//Atlas Fitness App CSC 4996
+import 'package:atlas/main.dart';
+import 'package:atlas/pages/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends ConsumerWidget {
+  const HomePage({Key? key}) : super(key: key);
 
-  final user = FirebaseAuth.instance.currentUser!;
-
-  //Sign user out method
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-  }
-
-  //Home page for when a user logs in
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
     return Scaffold(
-      appBar: AppBar(actions: [
-        IconButton(onPressed: signUserOut,
-        icon: const Icon(Icons.logout),
-            )
-          ],
-        ),
-      body: Center(
-        child: Text(
-          "Logged in as ${user.email!}!",
-          style: const TextStyle(fontSize: 20)
+      //Home page for when a user logs in
+      backgroundColor: const Color.fromARGB(255, 169, 183, 255),
+      appBar: myAppBar,
+      drawer: myDrawer,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onDoubleTap: () {
+                  Navigator.pushNamed(context, '/fitpage');
+                },
+                child: myWidgCont(
+                    150, 175, const Color.fromARGB(255, 224, 224, 224)),
+              ),
+              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
+              myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
+            ],
           )
-        ),
+        ],
+      ),
     );
   }
 }

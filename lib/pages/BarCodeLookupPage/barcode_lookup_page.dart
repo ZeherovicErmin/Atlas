@@ -67,6 +67,11 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         // store selectedData
         selectedData = {
           'Barcode': result,
+          'productName': productName,
+          'productCalories': productCalories,
+          'carbsPerServing': carbsPserving,
+          'proteinPerServing': proteinPserving,
+          'fatsPerServing': fatsPserving,
         };
       });
     }

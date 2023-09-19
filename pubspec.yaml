@@ -40,6 +40,7 @@ dependencies:
   openfoodfacts: ^2.10.1
   simple_barcode_scanner: ^0.0.8
   cloud_firestore: ^4.5.0
+  flutter_riverpod: ^2.4.0
 
 dev_dependencies:
   flutter_test:

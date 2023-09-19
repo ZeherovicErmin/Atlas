@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../util/generate_tile_card.dart';
 import '/../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import '../../components/dropdown.dart';
@@ -52,10 +54,10 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                   ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
               0.0;
           proteinPserving = productData.nutriments
-                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
               0.0;
           fatsPserving = productData.nutriments
-                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
               0.0;
         } else {
           productName = 'Please try again';
@@ -77,30 +79,16 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     });
   }
 
-// Function to generate a sample card based on the selected filter
-  Widget generateTileCard(String filter) {
-    // Switch case based on the filter you select. Will be researching
-    // how to make this more formless
-    switch (filter) {
-      case 'Barcode Result':
-        return ProductCard(title: 'Barcode Result:', data: result);
-      case 'Product Name':
-        return ProductCard(
-          title: 'Product Name:',
-          data: productName,
-        );
-      case 'Calories':
-        return ProductCard(title: 'Calories:', data: '$productCalories');
-      case 'testMacros':
-        return ProductCard(
-            title: "Macros",
-            data:
-                'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving');
-      default:
-        return SizedBox
-            .shrink(); // Return an empty container if no filter matches
+  // Function to send data to Firebase/FireStore
+  Future<void> sendDataToFirestore(Map<String, dynamic> data) async {
+    try {
+      await FirebaseFirestore.instance.collection('Barcode_Lookup').add(data);
+      print("Data to FireStore sent!!!");
+    } catch (e) {
+      print('Error sending data: Error: $e');
     }
   }
+// Function to generate a sample card based on the selected filter
 
   @override
   Widget build(BuildContext context) {
@@ -134,14 +122,16 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                     );
                   }).toList(),
                 ),
-
+                // Button that opens the barcode scanner portion
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _scanBarcode,
                   child: const Text('Open Scanner'),
                 ),
                 const SizedBox(height: 20),
-
+                ElevatedButton(
+                    onPressed: () => sendDataToFirestore({}),
+                    child: const Text("Send Data to Firestore")),
                 //if (barcodeData != null) Text('Barcode Data: $barcodeData')
                 GridView.count(
                   crossAxisCount: 2, //makes 2 columns
@@ -153,7 +143,15 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                   children: [
                     if (selectedFilters.isNotEmpty)
                       ...selectedFilters.map((filter) {
-                        return generateTileCard(filter);
+                        print('here');
+                        return generateTileCard(
+                            result: result,
+                            productName: productName,
+                            productCalories: productCalories,
+                            carbsPserving: carbsPserving,
+                            proteinPserving: proteinPserving,
+                            fatsPserving: fatsPserving,
+                            filter: filter);
                       }),
                   ],
                 ),
@@ -163,6 +161,54 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         ),
       ),
     );
+  }
+}
+//AliChowdhury: 9/16/2023: added barcode and filter dropdown
+//AliChowdhury: 9/19/2023: Added Generate Tile card and creating firebase collection
+
+class generateTileCard extends StatelessWidget {
+  const generateTileCard({
+    super.key,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+    required this.filter,
+  });
+
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+  final String filter;
+
+  @override
+  Widget build(BuildContext context) {
+    // Switch case based on the filter you select. Will be researching
+    // how to make this more formless
+    switch (filter) {
+      case 'Barcode Result':
+        return ProductCard(title: 'Barcode Result:', data: result);
+      case 'Product Name':
+        return ProductCard(
+          title: 'Product Name:',
+          data: productName,
+        );
+      case 'Calories':
+        return ProductCard(title: 'Calories:', data: '$productCalories');
+      case 'testMacros':
+        return ProductCard(
+            title: "Macros",
+            data:
+                'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving');
+      default:
+        return SizedBox
+            .shrink(); // Return an empty container if no filter matches
+    }
   }
 }
 //AliChowdhury: 9/16/2023: added barcode and filter dropdown

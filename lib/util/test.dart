@@ -16,6 +16,7 @@ Future<Product?> getProduct(String barcode) async {
   if (apiResponse.status == ProductResultV3.statusSuccess) {
     return apiResponse.product;
   } else {
+    print("test I have failed");
     throw Exception('Product not found, please insert data for $barcode');
   }
 }

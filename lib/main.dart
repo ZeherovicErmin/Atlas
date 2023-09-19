@@ -25,22 +25,29 @@ void main() async {
 
   runApp(
     ProviderScope(
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
-
+class MyApp extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const AuthPage(),
-      routes: {
-        '/home': (context) => HomePage(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Storing our user with provider
+    final user = ref.watch(userProvider);
+
+    return user.when(
+      data: (user) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: const AuthPage(),
+          routes: {
+            '/home': (context) => HomePage(),
+          },
+        );
       },
+      error: (e, s) => Text('error'),
+      loading: () => Text('loading'),
     );
   }
 }

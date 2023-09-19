@@ -1,5 +1,4 @@
 //Atlas Fitness App CSC 4996
-import 'package:atlas/pages/fit_page.dart';
 import 'package:atlas/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

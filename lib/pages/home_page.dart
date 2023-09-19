@@ -10,37 +10,41 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
+
+    final isLoggedIn = user.data?.value != null;
+
     return Scaffold(
-      //Home page for when a user logs in
-      backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-      appBar: myAppBar,
-      drawer: myDrawer,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onDoubleTap: () {
-                  Navigator.pushNamed(context, '/fitpage');
-                },
-                child: myWidgCont(
-                    150, 175, const Color.fromARGB(255, 224, 224, 224)),
-              ),
-              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              myWidgCont(150, 175, const Color.fromARGB(255, 193, 167, 226)),
-              myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
-            ],
-          )
-        ],
-      ),
-    );
+        //Home page for when a user logs in
+        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
+        appBar: myAppBar,
+        drawer: myDrawer,
+        body: isLoggedIn
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      myWidgCont(
+                          150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                      myWidgCont(
+                          150, 175, const Color.fromARGB(255, 193, 167, 226)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      myWidgCont(
+                          150, 175, const Color.fromARGB(255, 193, 167, 226)),
+                      myWidgCont(
+                          150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                    ],
+                  ),
+                ],
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ));
   }
 }

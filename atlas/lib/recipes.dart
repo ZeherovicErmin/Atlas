@@ -11,22 +11,41 @@ class Recipes extends StatefulWidget {
 }
 
 class _resultsState extends State<Recipes> {
-
   @override
   Widget build(BuildContext conext) {
-    return Scaffold(appBar: appBar(),body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250)
-            ],
-          ),
-        )););
+    return Scaffold(
+        appBar: appBar(),
+        body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 90, 117, 255),
+                  Color.fromARGB(255, 161, 195, 250)
+                ],
+              ),
+            ),
+            child: Column(children: [
+              const Padding(
+                padding: EdgeInsets.all(15), //apply padding to all four sides
+                child: Text('Recipes',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+              ),
+              Container(
+                  margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          color: Color.fromARGB(255, 88, 34, 194)
+                              .withOpacity(0.11))
+                    ],
+                  ))
+            ])));
   }
-
 
   AppBar appBar() {
     String userName = 'John Smith';

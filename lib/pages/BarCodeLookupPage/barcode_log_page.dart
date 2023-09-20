@@ -23,15 +23,28 @@ class _BarcodeLogPageState extends State<BarcodeLogPage> {
             return CircularProgressIndicator();
           }
           final logs = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: logs?.length,
-            itemBuilder: (context, index) {
-              final log = logs[index].data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text('Barcode: $log["Barcode"]'),
-                subtitle: Text('product Name: '),
+
+          if (logs.isEmpty) {
+            return Center(
+              child: Text('No barcode logs available.'),
+            );
+          }
+
+          final firstLogData = logs.first.data() as Map<String, dynamic>;
+          final columns = firstLogData.keys.toList();
+
+          return DataTable(
+            columns: columns
+                .map((column) => DataColumn(label: Text(column)))
+                .toList(),
+            rows: logs.map((log) {
+              final data = log.data() as Map<String, dynamic>;
+              return DataRow(
+                cells: columns.map((column) {
+                  return DataCell(Text('${data[column]}'));
+                }).toList(),
               );
-            },
+            }).toList(),
           );
         },
       ),

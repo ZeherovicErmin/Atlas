@@ -33,18 +33,21 @@ class _BarcodeLogPageState extends State<BarcodeLogPage> {
           final firstLogData = logs.first.data() as Map<String, dynamic>;
           final columns = firstLogData.keys.toList();
 
-          return DataTable(
-            columns: columns
-                .map((column) => DataColumn(label: Text(column)))
-                .toList(),
-            rows: logs.map((log) {
-              final data = log.data() as Map<String, dynamic>;
-              return DataRow(
-                cells: columns.map((column) {
-                  return DataCell(Text('${data[column]}'));
-                }).toList(),
-              );
-            }).toList(),
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columns: columns
+                  .map((column) => DataColumn(label: Text(column)))
+                  .toList(),
+              rows: logs.map((log) {
+                final data = log.data() as Map<String, dynamic>;
+                return DataRow(
+                  cells: columns.map((column) {
+                    return DataCell(Text('${data[column]}'));
+                  }).toList(),
+                );
+              }).toList(),
+            ),
           );
         },
       ),

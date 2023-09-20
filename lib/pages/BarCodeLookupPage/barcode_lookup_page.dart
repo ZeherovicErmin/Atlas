@@ -7,6 +7,7 @@ import '/../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import '../../components/dropdown.dart';
 import '../../components/popupmenu.dart';
+import 'barcode_log_page.dart';
 
 class BarcodeLookupPage extends StatefulWidget {
   @override
@@ -73,6 +74,8 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
           'proteinPerServing': proteinPserving,
           'fatsPerServing': fatsPserving,
         };
+        //send data to FireBase
+        sendDataToFirestore({});
       });
     }
   }
@@ -146,9 +149,17 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                   child: const Text('Open Scanner'),
                 ),
                 const SizedBox(height: 20),
+                //Button to send user to a log of barcodes page
                 ElevatedButton(
-                    onPressed: () => sendDataToFirestore({}),
-                    child: const Text("Send Data to Firestore")),
+                    //Navigator to create the log page
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BarcodeLogPage()),
+                      );
+                    },
+                    child: const Text("Barcode logs")),
                 //if (barcodeData != null) Text('Barcode Data: $barcodeData')
                 GridView.count(
                   crossAxisCount: 2, //makes 2 columns

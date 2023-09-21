@@ -17,6 +17,18 @@ final userProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
 
+// Text box providers
+final emailControllerProvider = Provider<TextEditingController>((ref){
+  return TextEditingController();
+});
+
+final passwordControllerProvider = Provider<TextEditingController>((ref){
+  return TextEditingController();
+});
+
+// Provider for loginorregister page functionality
+final loginOrRegisterProvider = StateProvider<bool>((ref) => true);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

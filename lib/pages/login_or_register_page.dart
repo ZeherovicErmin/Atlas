@@ -1,8 +1,9 @@
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginOrRegisterPage extends StatefulWidget {
+class LoginOrRegisterPage extends ConsumerWidget {
   const LoginOrRegisterPage({super.key});
 
   @override

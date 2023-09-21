@@ -41,7 +41,7 @@ class HomePage extends ConsumerWidget {
                   ),
                 ],
               )
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(),
               ));
   }

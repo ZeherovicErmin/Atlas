@@ -1,67 +1,24 @@
 import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/main.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginPage extends StatefulWidget {
-  final Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
 
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
+// Converting loginPage to use Providers created in main.dart
+class LoginPage extends ConsumerWidget {
+  @override 
+  
+  Widget build(BuildContext context, WidgetRef ref) {
 
-class _LoginPageState extends State<LoginPage> {
-  //Text Editing Controllers
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  //Sign user in method
-  void signUserIn() async {
-    //Displays a loading circle
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(child: CircularProgressIndicator());
-        });
-
-    //Atempts to sign the user in
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-      //Gets rid of the loading circle
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      //Gets rid of the loading circle
-      Navigator.pop(context);
-      //Show error message if email or password is wrong
-      showErrorMessage('Email or password is incorrect');
-    }
-  }
-
-  //Error Message Popup
-  void showErrorMessage(String message) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: Colors.red,
-            title: Center(
-              child: Text(
-                message,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-          );
-        });
-  }
-
-  //Login Page setup
-  @override
-  Widget build(BuildContext context) {
+    // watching the provider in main.dart for user changes
+    final user = ref.watch(userProvider);
+    final emailController = ref.watch(emailControllerProvider);
+    final passwordController = ref.watch(passwordControllerProvider);
+    
     return Scaffold(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(

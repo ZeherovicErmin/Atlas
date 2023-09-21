@@ -1,26 +1,31 @@
+import 'package:atlas/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'auth_page.dart';
 
 // A file for frequently used widgets to clean up code
 
-//Sign user out method
-void signUserOut() async {
-  await FirebaseAuth.instance.signOut();
-}
-
 // App Bar
-AppBar myAppBar = AppBar(
-    backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-    title: const Text(
-      "Home",
-      style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-    ),
-    actions: const [
-      IconButton(
-        onPressed: signUserOut,
-        icon: Icon(Icons.logout),
-      )
-    ]);
+AppBar myAppBar(BuildContext context, WidgetRef ref) {
+  return AppBar(
+      backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+      title: const Text(
+        "Home",
+        style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () async {
+            await ref.read(signOutProvider);
+
+            // After succesful logout redirect to logout page
+            Navigator.of(context).pushReplacementNamed('/login');
+          },
+          icon: Icon(Icons.logout),
+        )
+      ]);
+}
 
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color) {

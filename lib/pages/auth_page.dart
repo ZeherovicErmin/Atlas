@@ -1,5 +1,5 @@
 import 'package:atlas/main.dart';
-import 'package:atlas/pages/login_or_register_page.dart';
+import 'package:atlas/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/pages/home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +23,7 @@ class AuthPage extends ConsumerWidget {
           }
           // User isn't logged in
           else {
-            return const LoginOrRegisterPage();
+            return LoginPage();
           }
         },
         loading: () {

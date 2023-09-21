@@ -2,21 +2,37 @@ import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 // Converting loginPage to use Providers created in main.dart
 class LoginPage extends ConsumerWidget {
-  @override 
-  
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     // watching the provider in main.dart for user changes
     final user = ref.watch(userProvider);
     final emailController = ref.watch(emailControllerProvider);
     final passwordController = ref.watch(passwordControllerProvider);
-    
+
+    // Function to handle signing in to firebase
+    Future<void> signIn(BuildContextcontext) async {
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        // Successful login
+        Navigator.of(context).pushReplacementNamed('/home');
+      } catch (e) {
+        print("Sign-in failed: $e");
+      }
+    }
+
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         body: SafeArea(
@@ -85,7 +101,7 @@ class LoginPage extends ConsumerWidget {
                     //Sign-in button
                     MyButton(
                       text: 'Sign In',
-                      onTap: signUserIn,
+                      onTap: () => signIn(context),
                     ),
 
                     const SizedBox(height: 10),
@@ -150,7 +166,9 @@ class LoginPage extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         GestureDetector(
-                          onTap: widget.onTap,
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/registration');
+                          },
                           child: const Text(
                             'Register now',
                             style: TextStyle(

@@ -37,6 +37,13 @@ class HomePage extends ConsumerWidget {
                 myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                myWidgCont(150, 175, const Color.fromARGB(255, 100, 167, 226)),
+              ],
+            ),
           ],
         ));
   }

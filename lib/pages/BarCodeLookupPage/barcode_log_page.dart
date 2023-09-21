@@ -15,6 +15,8 @@ class _BarcodeLogPageState extends State<BarcodeLogPage> {
       appBar: AppBar(
         title: Text('Barcode logs'),
       ),
+
+      // Listens to changes in Firestore
       body: StreamBuilder(
         stream:
             FirebaseFirestore.instance.collection('Barcode_Lookup').snapshots(),
@@ -38,6 +40,7 @@ class _BarcodeLogPageState extends State<BarcodeLogPage> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
+                // Takes data from firebase to create the initial columns
                 columns: columns
                     .map((column) => DataColumn(label: Text(column)))
                     .toList(),
@@ -45,7 +48,8 @@ class _BarcodeLogPageState extends State<BarcodeLogPage> {
                   final data = log.data() as Map<String, dynamic>;
                   return DataRow(
                     cells: columns.map((column) {
-                      return DataCell(Text('${data[column]}'));
+                      return DataCell(Text(
+                          '${data[column]}')); //creates rows for each of the datatype
                     }).toList(),
                   );
                 }).toList(),

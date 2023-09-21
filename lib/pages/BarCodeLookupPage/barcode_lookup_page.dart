@@ -44,43 +44,30 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
         builder: (context) => const SimpleBarcodeScannerPage(),
       ),
     );
-    if (scannedBarcode is String) {
-      final productData = await testAPI.getProduct(scannedBarcode);
-      setState(() {
-        result = scannedBarcode;
-        if (productData != null) {
-          productName = productData.productName!;
-          productCalories = productData.nutriments
-                  ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
-              0.0;
-          carbsPserving = productData.nutriments
-                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-              0.0;
-          proteinPserving = productData.nutriments
-                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
-              0.0;
-          fatsPserving = productData.nutriments
-                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
-              0.0;
-        } else {
-          productName = 'Please try again';
-        }
-        // store selectedData
-        selectedData = {
-          'Barcode': result,
-          'productName': productName,
-          'productCalories': productCalories,
-          'carbsPerServing': carbsPserving,
-          'proteinPerServing': proteinPserving,
-          'fatsPerServing': fatsPserving,
-        };
-        //send data to FireBase
-        sendDataToFirestore({});
-      });
-    }
+
+    //Functionality to determine if Scanned code is UPC or barcode
+    if (scannedBarcode is String) {}
   }
 
-  //Function for changing the filters
+  // isValidBarcode Function
+  bool isValidBarcode(String barcode) {
+    //RegExp for valid barcode
+    //12 digit barcode
+    // RegExp assigns 12 digit string to barcodePattern
+    final RegExp barcodePattern = RegExp(r'^\d{13}$');
+    // Does barcodePattern match the barcode?
+    return barcodePattern.hasMatch(barcode);
+  }
+
+  // Function to check for UPC code
+  bool isValidUPC(String barcode) {
+    //Define the regExp pattern
+    final RegExp barcodePattern = RegExp(r'^\d{12}$');
+    // UPC code to match the pattern
+    return barcodePattern.hasMatch(barcode);
+  }
+
+  // Function for changing the filters
   void _onFilterChanged(String newFilter) {
     //? = null check
     setState(() {
@@ -130,10 +117,11 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                //FilterDropdown widget here
+                //FilterChip widget here
                 Wrap(
                   children: filterOptions.map((filter) {
                     return FilterChip(
+                      // This filter allows the user to select the nutritional information they want to see
                       label: Text(filter),
                       selected: selectedFilters.contains(filter),
                       onSelected: (isSelected) {
@@ -196,6 +184,7 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
 
 class generateTileCard extends StatelessWidget {
   const generateTileCard({
+    //variables for each of the components
     super.key,
     required this.result,
     required this.productName,

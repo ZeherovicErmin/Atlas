@@ -46,11 +46,54 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     );
 
     //Functionality to determine if Scanned code is UPC or barcode
-    if (scannedBarcode is String) {}
+    if (scannedBarcode is String) {
+      isValidUPC(scannedBarcode);
+      if (isValidBarcode(scannedBarcode)) {
+        final productData = await testAPI.getProduct(scannedBarcode);
+        setState(() {
+          //inform program of these changes
+          result = scannedBarcode;
+          if (productData != null) {
+            productName = productData.productName!;
+            productCalories = productData.nutriments
+                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                0.0;
+            carbsPserving = productData.nutriments?.getValue(
+                    Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                0.0;
+            proteinPserving = productData.nutriments
+                    ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+                0.0;
+            fatsPserving = productData.nutriments
+                    ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+                0.0;
+          } else {
+            productName = 'Please try again';
+          }
+          //store data
+          selectedData = {
+            'Barcode': result,
+            'productName': productName,
+            'productCalories': productCalories,
+            'carbsPerServing': carbsPserving,
+            'proteinPerServing': proteinPserving,
+            'fatsPerServing': fatsPserving,
+          };
+          sendDataToFirestore({});
+        });
+      } else {
+        //Handle invalid barcode or UPC code
+        setState(() {
+          result = 'Invalid Barcode/UPC Code';
+          productName = 'Please try again';
+        });
+      }
+    }
   }
 
   // isValidBarcode Function
   bool isValidBarcode(String barcode) {
+    print("barcode: $barcode");
     //RegExp for valid barcode
     //12 digit barcode
     // RegExp assigns 12 digit string to barcodePattern
@@ -59,12 +102,21 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     return barcodePattern.hasMatch(barcode);
   }
 
-  // Function to check for UPC code
-  bool isValidUPC(String barcode) {
-    //Define the regExp pattern
-    final RegExp barcodePattern = RegExp(r'^\d{12}$');
-    // UPC code to match the pattern
-    return barcodePattern.hasMatch(barcode);
+// Function to check for UPC code
+  String isValidUPC(String barcode) {
+    print("UPC: $barcode");
+    // Define the regExp pattern
+    final RegExp barcodePattern =
+        RegExp(r'^\d{11}$'); // Updated pattern to match 11 digits
+    // Check if the UPC code matches the pattern
+    if (barcodePattern.hasMatch(barcode)) {
+      // Add "0" in the beginning and check again
+      final modifiedBarcode = '0$barcode';
+      return modifiedBarcode;
+    }
+    //returns barcodePattern.hasMatch(modifiedBarcode);
+
+    return barcode;
   }
 
   // Function for changing the filters

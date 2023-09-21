@@ -1,5 +1,6 @@
 import 'package:atlas/main.dart';
-import 'package:atlas/pages/auth_page.dart';
+import 'package:atlas/pages/home_page.dart';
+import 'package:atlas/pages/home_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,3 +48,40 @@ var myDrawer = const Drawer(
         DrawerHeader(child: Icon(Icons.fitness_center)),
       ],
     ));
+
+/* Creating a bottom navigation bar
+class myBottomNavigationBar extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = ref.watch(selectedIndexProvider);
+
+    // Creating the pages we will redirect to
+    final List<Widget> pages = [
+      HomePage(),
+      HomePage2(),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Atlas'),
+      ),
+      body: pages[selectedIndex.state],
+      bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+          currentIndex: selectedIndex.state,
+          selectedItemColor: Colors.blue,
+          onTap: (index) {
+            selectedIndex.state = index;
+          }),
+    );
+  }
+} */

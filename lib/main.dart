@@ -54,6 +54,9 @@ final signOutProvider = FutureProvider<void>((ref) async {
 // Creating a registration provider
 final registrationProvider = Provider((ref) => RegistrationState());
 
+// Creating a provider for keeping track of the selected index of the navigation bar
+final selectedIndexProvider = StateProvider<int>((ref) => 0);
+
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {

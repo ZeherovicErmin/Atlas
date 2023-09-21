@@ -1,8 +1,7 @@
 import 'package:atlas/main.dart';
+import 'package:atlas/pages/auth_page.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'auth_page.dart';
 
 // A file for frequently used widgets to clean up code
 
@@ -19,7 +18,6 @@ AppBar myAppBar(BuildContext context, WidgetRef ref) {
         IconButton(
           onPressed: () async {
             await ref.read(signOutProvider);
-
             // After succesful logout redirect to logout page
             Navigator.of(context).pushReplacementNamed('/login');
           },

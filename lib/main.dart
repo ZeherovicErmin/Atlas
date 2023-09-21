@@ -42,14 +42,12 @@ final passwordControllerProvider = Provider<TextEditingController>((ref) {
   return TextEditingController();
 });
 
-// Provider for loginorregister page functionality
-final loginOrRegisterProvider = StateProvider<bool>((ref) => true);
-
 // Provider for signing out
 final signOutProvider = FutureProvider<void>((ref) async {
   final user = ref.watch(userProvider);
   if (user != null) {
     await FirebaseAuth.instance.signOut();
+    ref.read(registrationProvider).clearTextControllers();
   }
 });
 
@@ -64,19 +62,24 @@ class MyApp extends ConsumerWidget {
 
     return user.when(
       data: (user) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: const AuthPage(),
-          routes: {
-            '/home': (context) => HomePage(),
-            'home2': (context) => HomePage2(),
-            '/login': (context) => LoginPage(),
-            '/register': (context) => RegisterPage(),
-          },
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: const AuthPage(),
+            routes: {
+              '/home': (context) => HomePage(),
+              'home2': (context) => HomePage2(),
+              '/login': (context) => LoginPage(),
+              '/register': (context) => RegisterPage(),
+            },
+          ),
         );
       },
       error: (e, s) => Text('error'),
-      loading: () => Text('loading'),
+      loading: () {
+        return CircularProgressIndicator();
+      },
     );
   }
 }

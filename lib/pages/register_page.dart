@@ -18,6 +18,13 @@ class RegistrationState {
     passwordController.dispose();
     confirmPasswordController.dispose();
   }
+
+  // Function to clear the text boxes
+  void clearTextControllers() {
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+  }
 }
 
 // Class to attempt to register a user

@@ -14,6 +14,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref) {
         "Home",
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
       ),
+      centerTitle: true,
       actions: [
         IconButton(
           onPressed: () async {

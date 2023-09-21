@@ -167,7 +167,7 @@ class LoginPage extends ConsumerWidget {
                         const SizedBox(width: 4),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/registration');
+                            Navigator.of(context).pushNamed('/register');
                           },
                           child: const Text(
                             'Register now',

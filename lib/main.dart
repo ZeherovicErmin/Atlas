@@ -2,6 +2,7 @@
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/home_page2.dart';
 import 'package:atlas/pages/login_page.dart';
+import 'package:atlas/pages/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'pages/auth_page.dart';
@@ -52,6 +53,9 @@ final signOutProvider = FutureProvider<void>((ref) async {
   }
 });
 
+// Creating a registration provider
+final registrationProvider = Provider((ref) => RegistrationState());
+
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,6 +71,7 @@ class MyApp extends ConsumerWidget {
             '/home': (context) => HomePage(),
             'home2': (context) => HomePage2(),
             '/login': (context) => LoginPage(),
+            '/register': (context) => RegisterPage(),
           },
         );
       },

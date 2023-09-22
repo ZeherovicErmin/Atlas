@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../util/generate_tile_card.dart';
 import '/../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
-import '../../components/dropdown.dart';
-import '../../components/popupmenu.dart';
 import 'barcode_log_page.dart';
 
 class BarcodeLookupPage extends StatefulWidget {
@@ -47,7 +44,11 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
 
     //Functionality to determine if Scanned code is UPC or barcode
     if (scannedBarcode is String) {
-      isValidUPC(scannedBarcode);
+      //debugging UPC
+      //
+      print("UPC before: " + scannedBarcode);
+      scannedBarcode = isValidUPC(scannedBarcode);
+      print("UPC after: " + scannedBarcode);
       if (isValidBarcode(scannedBarcode)) {
         final productData = await testAPI.getProduct(scannedBarcode);
         setState(() {
@@ -107,15 +108,16 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     print("UPC: $barcode");
     // Define the regExp pattern
     final RegExp barcodePattern =
-        RegExp(r'^\d{11}$'); // Updated pattern to match 11 digits
+        RegExp(r'^\d{12}$'); // Updated pattern to match 11 digits
     // Check if the UPC code matches the pattern
     if (barcodePattern.hasMatch(barcode)) {
       // Add "0" in the beginning and check again
       final modifiedBarcode = '0$barcode';
+      print("UPC modified: " + modifiedBarcode);
       return modifiedBarcode;
     }
     //returns barcodePattern.hasMatch(modifiedBarcode);
-
+    print("UPC barcode(not transitioned): $barcode");
     return barcode;
   }
 
@@ -211,7 +213,7 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                   children: [
                     if (selectedFilters.isNotEmpty)
                       ...selectedFilters.map((filter) {
-                        print('here');
+                        //print('here');
                         return generateTileCard(
                             result: result,
                             productName: productName,

@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class BarcodeLogPage extends StatefulWidget {
+class BarcodeLogPage extends ConsumerWidget {
   const BarcodeLogPage({super.key});
 
-  @override
-  State<BarcodeLogPage> createState() => _BarcodeLogPageState();
-}
+  //dont need this code since it is a stateful and not consumer
+  //@override
+  //State<BarcodeLogPage> createState() => _BarcodeLogPageState();
 
-class _BarcodeLogPageState extends State<BarcodeLogPage> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Barcode logs'),

@@ -1,40 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/../util/test.dart' as testAPI;
+import '../../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import 'barcode_log_page.dart';
 
-class BarcodeLookupPage extends StatefulWidget {
-  @override
-  State<BarcodeLookupPage> createState() => _BarcodeLookupPageState();
-}
+final barcodeProvider = StateProvider<String?>((ref) => null);
+final productNameProvider = StateProvider<String>((ref) => '');
+final resultProvider = StateProvider<String>((ref) => '');
+final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
+final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
+final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
+final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
+final selectedDataProvider = StateProvider<Map<String, dynamic>>((ref) => {});
 
-class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
-  // Variables for barcode lookup
-  String? barcodeData;
-
-  String productName = '';
-  String result = '';
-  double productCalories = 0.0;
-  double fatsPserving = 0.0;
-  double carbsPserving = 0.0;
-  double proteinPserving = 0.0;
-  // List of selectedFilters the user wants to see
-  List<String> selectedFilters = [];
-  // List of filter options the user can select
-  List<String> filterOptions = [
+class BarcodeLookupPage extends ConsumerWidget {
+  final List<String> filterOptions = [
     'Barcode Result',
     'Product Name',
     'Calories',
-    'testMacros',
+    'testMacros'
   ];
-  //hold selectedData from the User
-  Map<String, dynamic> selectedData = {};
+  BarcodeLookupPage({Key? key}) : super(key: key);
 
-  //Code opens the barcode scanner portion
-  Future<void> _scanBarcode() async {
+  Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
     var scannedBarcode = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -42,118 +34,73 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
       ),
     );
 
-    //Functionality to determine if Scanned code is UPC or barcode
     if (scannedBarcode is String) {
-      //debugging UPC
-      //
-      print("UPC before: " + scannedBarcode);
       scannedBarcode = isValidUPC(scannedBarcode);
-      print("UPC after: " + scannedBarcode);
       if (isValidBarcode(scannedBarcode)) {
         final productData = await testAPI.getProduct(scannedBarcode);
-        setState(() {
-          //inform program of these changes
-          result = scannedBarcode;
-          if (productData != null) {
-            productName = productData.productName!;
-            productCalories = productData.nutriments
-                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
-                0.0;
-            carbsPserving = productData.nutriments?.getValue(
-                    Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-                0.0;
-            proteinPserving = productData.nutriments
-                    ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
-                0.0;
-            fatsPserving = productData.nutriments
-                    ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
-                0.0;
-          } else {
-            productName = 'Please try again';
-          }
-          //store data
-          selectedData = {
-            'Barcode': result,
-            'productName': productName,
-            'productCalories': productCalories,
-            'carbsPerServing': carbsPserving,
-            'proteinPerServing': proteinPserving,
-            'fatsPerServing': fatsPserving,
-          };
-          sendDataToFirestore({});
-        });
+        ref.read(resultProvider.notifier).state = scannedBarcode;
+        if (productData != null) {
+          ref.read(productNameProvider.notifier).state =
+              productData.productName!;
+          ref.read(productCaloriesProvider.notifier).state = productData
+                  .nutriments
+                  ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+              0.0;
+          ref.read(carbsPservingProvider.notifier).state = productData
+                  .nutriments
+                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+              0.0;
+          ref.read(proteinPservingProvider.notifier).state = productData
+                  .nutriments
+                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+              0.0;
+          ref.read(fatsPservingProvider.notifier).state = productData.nutriments
+                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+              0.0;
+        } else {
+          ref.read(productNameProvider.notifier).state = 'Please try again';
+        }
+        ref.read(selectedDataProvider.notifier).state = {
+          'Barcode': scannedBarcode,
+          'productName': ref.read(productNameProvider.notifier).state,
+          'productCalories': ref.read(productCaloriesProvider.notifier).state,
+          'carbsPerServing': ref.read(carbsPservingProvider.notifier).state,
+          'proteinPerServing': ref.read(proteinPservingProvider.notifier).state,
+          'fatsPerServing': ref.read(fatsPservingProvider.notifier).state,
+        };
+        sendDataToFirestore(context, ref, {});
       } else {
-        //Handle invalid barcode or UPC code
-        setState(() {
-          result = 'Invalid Barcode/UPC Code';
-          productName = 'Please try again';
-        });
+        ref.read(resultProvider.notifier).state = 'Invalid Barcode/UPC Code';
+        ref.read(productNameProvider.notifier).state = 'Please try again';
       }
     }
   }
 
-  // isValidBarcode Function
   bool isValidBarcode(String barcode) {
-    print("barcode: $barcode");
-    //RegExp for valid barcode
-    //12 digit barcode
-    // RegExp assigns 12 digit string to barcodePattern
     final RegExp barcodePattern = RegExp(r'^\d{13}$');
-    // Does barcodePattern match the barcode?
     return barcodePattern.hasMatch(barcode);
   }
 
-// Function to check for UPC code
   String isValidUPC(String barcode) {
-    print("UPC: $barcode");
-    // Define the regExp pattern
-    final RegExp barcodePattern =
-        RegExp(r'^\d{12}$'); // Updated pattern to match 11 digits
-    // Check if the UPC code matches the pattern
+    final RegExp barcodePattern = RegExp(r'^\d{12}$');
     if (barcodePattern.hasMatch(barcode)) {
-      // Add "0" in the beginning and check again
       final modifiedBarcode = '0$barcode';
-      print("UPC modified: " + modifiedBarcode);
       return modifiedBarcode;
     }
-    //returns barcodePattern.hasMatch(modifiedBarcode);
-    print("UPC barcode(not transitioned): $barcode");
     return barcode;
   }
 
-  // Function for changing the filters
-  void _onFilterChanged(String newFilter) {
-    //? = null check
-    setState(() {
-      //This chunk lets you filter out which portions you want in the code
-      if (selectedFilters.contains(newFilter)) {
-        selectedFilters.remove(newFilter);
-      } else {
-        selectedFilters.add(newFilter);
-      }
-    });
-  }
-
-  // Function to send data to Firebase/FireStore
-  Future<void> sendDataToFirestore(Map<String, dynamic> data) async {
-    try {
-      if (selectedData.isNotEmpty) {
-        await FirebaseFirestore.instance
-            //Collection in Firebase for the Barcode logs and lookup
-            .collection('Barcode_Lookup')
-            .add(selectedData);
-        print("Data to FireStore sent!!!");
-      } else {
-        print("No data selected");
-      }
-    } catch (e) {
-      print('Error sending data: Error: $e');
-    }
-  }
-// Function to generate a sample card based on the selected filter
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final barcode = ref.watch(barcodeProvider.notifier).state;
+    final result = ref.watch(resultProvider.notifier).state;
+    final productName = ref.watch(productNameProvider.notifier).state;
+    final productCalories = ref.watch(productCaloriesProvider.notifier).state;
+    final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
+    final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
+    final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
+    final selectedFilters = ref.watch(selectedFiltersProvider.notifier).state;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Barcode Lookup'),
@@ -161,70 +108,64 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
       ),
       body: Container(
         decoration: const BoxDecoration(
-            gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
-        )),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
+          ),
+        ),
         child: SingleChildScrollView(
           child: Center(
-            //will contain widgets
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                //FilterChip widget here
                 Wrap(
+                  spacing: .8,
                   children: filterOptions.map((filter) {
                     return FilterChip(
-                      // This filter allows the user to select the nutritional information they want to see
                       label: Text(filter),
                       selected: selectedFilters.contains(filter),
                       onSelected: (isSelected) {
-                        _onFilterChanged(filter);
+                        _onFilterChanged(filter, context, ref);
                       },
                     );
                   }).toList(),
                 ),
-                // Button that opens the barcode scanner portion
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _scanBarcode,
+                  onPressed: () async {
+                    await _scanBarcode(context, ref);
+                  },
                   child: const Text('Open Scanner'),
                 ),
                 const SizedBox(height: 20),
-                //Button to send user to a log of barcodes page
                 ElevatedButton(
-                    //Navigator to create the log page
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BarcodeLogPage()),
-                      );
-                    },
-                    child: const Text("Barcode logs")),
-                //if (barcodeData != null) Text('Barcode Data: $barcodeData')
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BarcodeLogPage(),
+                      ),
+                    );
+                  },
+                  child: const Text("Barcode logs"),
+                ),
                 GridView.count(
-                  crossAxisCount: 2, //makes 2 columns
-
-                  //content wrapper
+                  crossAxisCount: 2,
                   shrinkWrap: true,
-
-                  //reads off the results of the callback
-                  //9/16/2023: Adding selected Filter into the mix
                   children: [
                     if (selectedFilters.isNotEmpty)
                       ...selectedFilters.map((filter) {
-                        //print('here');
                         return Container(
                           child: generateTileCard(
-                              result: result,
-                              productName: productName,
-                              productCalories: productCalories,
-                              carbsPserving: carbsPserving,
-                              proteinPserving: proteinPserving,
-                              fatsPserving: fatsPserving,
-                              filter: filter),
+                            result: result,
+                            productName: productName,
+                            productCalories: productCalories,
+                            carbsPserving: carbsPserving,
+                            proteinPserving: proteinPserving,
+                            fatsPserving: fatsPserving,
+                            filter: filter,
+                          ),
                         );
                       }),
                   ],
@@ -236,14 +177,35 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
       ),
     );
   }
+
+  Future<void> sendDataToFirestore(
+      BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
+    try {
+      if (ref.read(selectedDataProvider.notifier).state.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .add(ref.read(selectedDataProvider.notifier).state);
+        print("Data to Firestore sent!!!");
+      } else {
+        print("No data selected");
+      }
+    } catch (e) {
+      print('Error sending data: Error: $e');
+    }
+  }
+
+  void _onFilterChanged(String newFilter, BuildContext context, WidgetRef ref) {
+    if (ref.read(selectedFiltersProvider.notifier).state.contains(newFilter)) {
+      ref.read(selectedFiltersProvider.notifier).state.remove(newFilter);
+    } else {
+      ref.read(selectedFiltersProvider.notifier).state.add(newFilter);
+    }
+  }
 }
-//AliChowdhury: 9/16/2023: added barcode and filter dropdown
-//AliChowdhury: 9/19/2023: Added Generate Tile card and creating firebase collection
 
 class generateTileCard extends StatelessWidget {
   const generateTileCard({
-    //variables for each of the components
-    super.key,
+    Key? key,
     required this.result,
     required this.productName,
     required this.productCalories,
@@ -251,7 +213,7 @@ class generateTileCard extends StatelessWidget {
     required this.proteinPserving,
     required this.fatsPserving,
     required this.filter,
-  });
+  }) : super(key: key);
 
   final String result;
   final String productName;
@@ -263,8 +225,6 @@ class generateTileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Switch case based on the filter you select. Will be researching
-    // how to make this more formless
     switch (filter) {
       case 'Barcode Result':
         return ProductCard(title: 'Barcode Result:', data: result);
@@ -277,13 +237,12 @@ class generateTileCard extends StatelessWidget {
         return ProductCard(title: 'Calories:', data: '$productCalories');
       case 'testMacros':
         return ProductCard(
-            title: "Macros",
-            data:
-                'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving');
+          title: "Macros",
+          data:
+              'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving',
+        );
       default:
-        return const SizedBox
-            .shrink(); // Return an empty container if no filter matches
+        return const SizedBox.shrink();
     }
   }
 }
-//AliChowdhury: 9/16/2023: added barcode and filter dropdown

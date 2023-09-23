@@ -12,6 +12,7 @@ class BarcodeLookupPage extends StatefulWidget {
 }
 
 class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
+  // Variables for barcode lookup
   String? barcodeData;
 
   String productName = '';
@@ -28,7 +29,6 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     'Product Name',
     'Calories',
     'testMacros',
-    'testMaxServings'
   ];
   //hold selectedData from the User
   Map<String, dynamic> selectedData = {};
@@ -139,6 +139,7 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
     try {
       if (selectedData.isNotEmpty) {
         await FirebaseFirestore.instance
+            //Collection in Firebase for the Barcode logs and lookup
             .collection('Barcode_Lookup')
             .add(selectedData);
         print("Data to FireStore sent!!!");
@@ -205,6 +206,7 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                 //if (barcodeData != null) Text('Barcode Data: $barcodeData')
                 GridView.count(
                   crossAxisCount: 2, //makes 2 columns
+
                   //content wrapper
                   shrinkWrap: true,
 
@@ -214,14 +216,16 @@ class _BarcodeLookupPageState extends State<BarcodeLookupPage> {
                     if (selectedFilters.isNotEmpty)
                       ...selectedFilters.map((filter) {
                         //print('here');
-                        return generateTileCard(
-                            result: result,
-                            productName: productName,
-                            productCalories: productCalories,
-                            carbsPserving: carbsPserving,
-                            proteinPserving: proteinPserving,
-                            fatsPserving: fatsPserving,
-                            filter: filter);
+                        return Container(
+                          child: generateTileCard(
+                              result: result,
+                              productName: productName,
+                              productCalories: productCalories,
+                              carbsPserving: carbsPserving,
+                              proteinPserving: proteinPserving,
+                              fatsPserving: fatsPserving,
+                              filter: filter),
+                        );
                       }),
                   ],
                 ),
@@ -277,7 +281,7 @@ class generateTileCard extends StatelessWidget {
             data:
                 'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving');
       default:
-        return SizedBox
+        return const SizedBox
             .shrink(); // Return an empty container if no filter matches
     }
   }

@@ -18,7 +18,7 @@ class _resultsState extends State<Recipes> {
   List<dynamic> recipes = [];
 
   @override
-  Widget build(BuildContext conext) {
+  Widget build(BuildContext context) {
     return Scaffold(appBar: appBar(), body: gradient());
   }
 

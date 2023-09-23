@@ -14,8 +14,24 @@ class recipeDetails extends StatefulWidget {
 class _recipeDetailsState extends State<recipeDetails> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(),
-        body: Column(children: [
+    return Scaffold(appBar: appBar(),
+        body: gradient() 
+        );
+  }
+
+  Widget gradient() {
+    return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250)
+            ],
+          ),
+        ),
+        child: Column(children: [
           Expanded(child: ListView(
             children: [
               Image.network(widget.recipes["strMealThumb"], height: 200,),
@@ -29,3 +45,14 @@ class _recipeDetailsState extends State<recipeDetails> {
   }
 }
 
+  AppBar appBar() {
+  String userName = 'DEV';
+  return AppBar(
+    title: Text('Welcome, $userName!',
+        style: const TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 18,
+            fontWeight: FontWeight.bold)),
+    backgroundColor: const Color(0xffA9B7FF),
+   );
+}

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:atlas/recipe-details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:atlas/recipe-details.dart';
 
 class Recipes extends StatefulWidget {
   const Recipes({super.key});
@@ -17,12 +19,10 @@ class _resultsState extends State<Recipes> {
 
   @override
   Widget build(BuildContext conext) {
-    return Scaffold(
-        appBar: appBar(),
-        body: gradient());
+    return Scaffold(appBar: appBar(), body: gradient());
   }
 
-Widget gradient() {
+  Widget gradient() {
     return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -48,41 +48,42 @@ Widget gradient() {
                 fontWeight: FontWeight.bold)),
       ),
       Container(
-          margin: EdgeInsets.only(top: 40, left: 20, right: 20),
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
-            ],
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(children: [
-              TextFormField(
-                controller: searchController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please Input A Value into Searchbar';
-                  }
-                },
-                decoration:
-                    InputDecoration(filled: true, fillColor: Colors.white),
-                // alignLabelWithHint: filled:border: )
-              ),
-              button(),
-              SizedBox(
-                  height: 250,
-                  child: ListView.builder(
-                      itemCount: recipes.length,
-                      itemBuilder: (context, index) {
-                        final recipe = recipes[index];
-                        final mealName = recipe['strMeal'];
-                        return ListTile(title: Text(mealName));
-                      }))
-            ]),
-          ),
-
-    )]);
+        margin: EdgeInsets.only(top: 40, left: 20, right: 20),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(color: Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
+          ],
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(children: [
+            TextFormField(
+              controller: searchController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please Input A Value into Searchbar';
+                }
+              },
+              decoration:
+                  InputDecoration(filled: true, fillColor: Colors.white),
+              // alignLabelWithHint: filled:border: )
+            ),
+            button(),
+            SizedBox(
+                height: 250,
+                child: ListView.builder(
+                    itemCount: recipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = recipes[index];
+                      final mealName = recipe['strMeal'];
+                      return ListTile(
+                          title: Text(mealName),
+                          onTap: () => navigateToRecipeDetails(index));
+                    }))
+          ]),
+        ),
+      )
+    ]);
   }
 
   FloatingActionButton button() {
@@ -92,7 +93,7 @@ Widget gradient() {
     );
   }
 
- void onSubmit() async {
+  void onSubmit() async {
     if (_formKey.currentState!.validate()) {
       //print('Onsubmit called');
       ScaffoldMessenger.of(context)
@@ -108,25 +109,30 @@ Widget gradient() {
       //print("fetch completed");
     }
   }
+
+  void navigateToRecipeDetails(int index) {
+    
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => recipeDetails( recipes: recipes[index])));
+  }
 }
 
-  AppBar appBar() {
-    String userName = 'John Smith';
-    return AppBar(
-      title: Text('Welcome, $userName!',
-          style: const TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 18,
-              fontWeight: FontWeight.bold)),
-      backgroundColor: Color(0xffA9B7FF),
-      leading: Container(
-          margin: EdgeInsets.all(10),
-          alignment: Alignment.center,
-          child: SvgPicture.asset('assets/icons/burger-menu.svg',
-              height: 20, width: 20),
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              borderRadius: BorderRadius.circular(10))),
-    );
-  }
-
+AppBar appBar() {
+  String userName = 'DEV';
+  return AppBar(
+    title: Text('Welcome, $userName!',
+        style: const TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 18,
+            fontWeight: FontWeight.bold)),
+    backgroundColor: const Color(0xffA9B7FF),
+    leading: Container(
+        margin: const EdgeInsets.all(10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(10)),
+        child: SvgPicture.asset('assets/icons/burger-menu.svg',
+            height: 20, width: 20)),
+  );
+}

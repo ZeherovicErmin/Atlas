@@ -1,17 +1,15 @@
 import 'package:atlas/main.dart';
-import 'package:atlas/pages/home_page.dart';
-import 'package:atlas/pages/home_page2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // A file for frequently used widgets to clean up code
 
 // App Bar
-AppBar myAppBar(BuildContext context, WidgetRef ref) {
+AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-      title: const Text(
-        "Home",
+      title: Text(
+        title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
       ),
       centerTitle: true,
@@ -49,6 +47,17 @@ var myDrawer = const Drawer(
       ],
     ));
 
+// A gradient for our application
+
+var myGradient = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    Color.fromARGB(255, 90, 117, 255),
+    Color.fromARGB(255, 161, 195, 250),
+  ],
+);
+  
 /* Creating a bottom navigation bar
 class myBottomNavigationBar extends ConsumerWidget {
   @override

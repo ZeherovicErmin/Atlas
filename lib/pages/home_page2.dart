@@ -15,7 +15,7 @@ class HomePage2 extends ConsumerWidget {
     return Scaffold(
         //Home page for when a user logs in
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        appBar: myAppBar(context, ref),
+        appBar: myAppBar(context, ref, 'Home Two'),
         drawer: myDrawer,
         body: user != null
             ? Column(

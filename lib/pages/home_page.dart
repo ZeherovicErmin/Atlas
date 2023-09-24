@@ -15,7 +15,7 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
         //Home page for when a user logs in
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        appBar: myAppBar(context, ref),
+        appBar: myAppBar(context, ref, 'Home'),
         drawer: myDrawer,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,13 +34,24 @@ class HomePage extends ConsumerWidget {
                   child: myWidgCont(
                       150, 175, const Color.fromARGB(255, 100, 167, 100)),
                 ),
-                myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/recipes');
+                  },
+                  child: myWidgCont(
+                      150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                ),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224)),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/userprof');
+                    },
+                    child: myWidgCont(
+                        150, 175, const Color.fromARGB(255, 224, 224, 224))),
                 myWidgCont(150, 175, const Color.fromARGB(255, 100, 167, 226)),
               ],
             ),

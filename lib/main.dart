@@ -2,7 +2,9 @@
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/home_page2.dart';
 import 'package:atlas/pages/login_page.dart';
+import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/register_page.dart';
+import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'pages/auth_page.dart';
@@ -75,6 +77,8 @@ class MyApp extends ConsumerWidget {
               'home2': (context) => HomePage2(),
               '/login': (context) => LoginPage(),
               '/register': (context) => RegisterPage(),
+              '/recipes': (context) => Recipes(),
+              '/userprof': (context) => UserProfile(),
             },
           ),
         );

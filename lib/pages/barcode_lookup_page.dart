@@ -25,6 +25,7 @@ class DataItem {
   DataItem(this.category, this.value);
 }
 
+// Creating the barcode class
 class BarcodeLookupPage extends ConsumerWidget {
   final List<String> filterOptions = [
     'Barcode Result',

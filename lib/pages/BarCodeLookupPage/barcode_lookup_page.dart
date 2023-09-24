@@ -15,7 +15,14 @@ final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
-final selectedDataProvider = StateProvider<Map<String, dynamic>>((ref) => {});
+final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
+
+class DataItem {
+  final String category;
+  final dynamic value;
+
+  DataItem(this.category, this.value);
+}
 
 class BarcodeLookupPage extends ConsumerWidget {
   final List<String> filterOptions = [
@@ -71,21 +78,19 @@ class BarcodeLookupPage extends ConsumerWidget {
           ref.watch(productNameProvider.notifier).state =
               'Please try again'; // Corrected line
         }
-        ref.watch(selectedDataProvider.notifier).state = {
-          'Barcode': scannedBarcode,
-          'productName':
-              ref.watch(productNameProvider.notifier).state, // Corrected line
-          'productCalories': ref
-              .watch(productCaloriesProvider.notifier)
-              .state, // Corrected line
-          'carbsPerServing':
-              ref.watch(carbsPservingProvider.notifier).state, // Corrected line
-          'proteinPerServing': ref
-              .watch(proteinPservingProvider.notifier)
-              .state, // Corrected line
-          'fatsPerServing':
-              ref.watch(fatsPservingProvider.notifier).state, // Corrected line
-        };
+        ref.read(selectedDataProvider.notifier).state = [
+          DataItem('Barcode', scannedBarcode),
+          DataItem('productName', ref.read(productNameProvider.notifier).state),
+          DataItem('productCalories',
+              ref.read(productCaloriesProvider.notifier).state),
+          DataItem('carbsPerServing',
+              ref.read(carbsPservingProvider.notifier).state),
+          DataItem('proteinPerServing',
+              ref.read(proteinPservingProvider.notifier).state),
+          DataItem(
+              'fatsPerServing', ref.read(fatsPservingProvider.notifier).state),
+        ];
+
         sendDataToFirestore(context, ref, {});
       } else {
         ref.watch(resultProvider.notifier).state =
@@ -119,8 +124,12 @@ class BarcodeLookupPage extends ConsumerWidget {
     final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
     final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
-    final selectedFilters = ref.watch(selectedFiltersProvider.notifier).state;
+    final selectedFilters = ref.watch(selectedFiltersProvider);
+    final selectedData = ref.watch(selectedDataProvider);
 
+    final filteredItems = selectedData
+        .where((dataItem) => selectedFilters.contains(dataItem.category))
+        .toList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Barcode Lookup'),
@@ -202,9 +211,9 @@ class BarcodeLookupPage extends ConsumerWidget {
       BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
     try {
       if (ref.read(selectedDataProvider.notifier).state.isNotEmpty) {
-        await FirebaseFirestore.instance
-            .collection('Barcode_Lookup')
-            .add(ref.read(selectedDataProvider.notifier).state);
+        await FirebaseFirestore.instance.collection('Barcode_Lookup').add(ref
+            .read(selectedDataProvider.notifier)
+            .state as Map<String, dynamic>);
         print("Data to Firestore sent!!!");
       } else {
         print("No data selected");

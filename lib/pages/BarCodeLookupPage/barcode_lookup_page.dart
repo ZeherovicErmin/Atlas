@@ -41,8 +41,16 @@ class BarcodeLookupPage extends ConsumerWidget {
         ref.watch(resultProvider.notifier).state =
             scannedBarcode; // Corrected line
         if (productData != null) {
-          ref.watch(productNameProvider.notifier).state =
-              productData.productName!; // Corrected line
+          if (productData.productName != null) {
+            ref.watch(productNameProvider.notifier).state =
+                productData.productName!;
+          } else {
+            // Handle the case where productData.productName is null.
+            // For example, you might set a default value or log an error.
+            ref.watch(productNameProvider.notifier).state =
+                'Unknown product name';
+          }
+          // Corrected line
           ref.watch(productCaloriesProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
@@ -104,7 +112,7 @@ class BarcodeLookupPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final barcode = ref.watch(barcodeProvider.notifier).state;
+    final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
@@ -215,12 +223,14 @@ class BarcodeLookupPage extends ConsumerWidget {
     } else {
       _addFilter(notifier, currentFilters, newFilter);
     }
+    notifier.state = notifier.state;
   }
 
   void _addFilter(StateController<List<String>> notifier,
       List<String> currentFilters, String newFilter) {
     notifier.state = [...currentFilters, newFilter];
     print("Filters after adding: ${notifier.state}");
+    notifier.state = notifier.state;
   }
 
   void _removeFilter(StateController<List<String>> notifier,
@@ -230,6 +240,7 @@ class BarcodeLookupPage extends ConsumerWidget {
         if (filterToRemove != item) item
     ];
     print("Filters after removing: ${notifier.state}");
+    notifier.state = notifier.state;
   }
 }
 

@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atlas/components/database_manager.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -28,5 +31,6 @@ class HomePage extends StatelessWidget {
           )
         ),
     );
+
   }
 }

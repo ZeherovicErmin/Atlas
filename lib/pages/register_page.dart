@@ -3,6 +3,7 @@ import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atlas/components/database_manager.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -44,6 +45,8 @@ class _RegisterPage extends State<RegisterPage> {
           email: emailController.text,
           password: passwordController.text,
         );
+      //Adds the user's uid to their firebase table
+      userSetup(emailController.text);
       //Gets rid of the loading circle
       Navigator.pop(context);
       } on FirebaseAuthException catch (e) {

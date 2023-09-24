@@ -21,6 +21,7 @@ class _LoginOrRegisterState extends State<LoginOrRegisterPage> {
     });
   }
 
+  //Toggles between logging in or signing up
   @override
   Widget build(BuildContext context) {
     if (showLoginPage) {

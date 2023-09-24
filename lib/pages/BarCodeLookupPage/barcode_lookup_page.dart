@@ -22,7 +22,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     'Barcode Result',
     'Product Name',
     'Calories',
-    'testMacros'
+    'testMacros',
   ];
   BarcodeLookupPage({Key? key}) : super(key: key);
 
@@ -38,50 +38,51 @@ class BarcodeLookupPage extends ConsumerWidget {
       scannedBarcode = isValidUPC(scannedBarcode);
       if (isValidBarcode(scannedBarcode)) {
         final productData = await testAPI.getProduct(scannedBarcode);
-        ref.read(resultProvider.notifier).state =
+        ref.watch(resultProvider.notifier).state =
             scannedBarcode; // Corrected line
         if (productData != null) {
-          ref.read(productNameProvider.notifier).state =
+          ref.watch(productNameProvider.notifier).state =
               productData.productName!; // Corrected line
-          ref.read(productCaloriesProvider.notifier).state = productData
+          ref.watch(productCaloriesProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
-          ref.read(carbsPservingProvider.notifier).state = productData
+          ref.watch(carbsPservingProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
-          ref.read(proteinPservingProvider.notifier).state = productData
+          ref.watch(proteinPservingProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
-          ref.read(fatsPservingProvider.notifier).state = productData.nutriments
+          ref.watch(fatsPservingProvider.notifier).state = productData
+                  .nutriments
                   ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
         } else {
-          ref.read(productNameProvider.notifier).state =
+          ref.watch(productNameProvider.notifier).state =
               'Please try again'; // Corrected line
         }
-        ref.read(selectedDataProvider.notifier).state = {
+        ref.watch(selectedDataProvider.notifier).state = {
           'Barcode': scannedBarcode,
           'productName':
-              ref.read(productNameProvider.notifier).state, // Corrected line
+              ref.watch(productNameProvider.notifier).state, // Corrected line
           'productCalories': ref
-              .read(productCaloriesProvider.notifier)
+              .watch(productCaloriesProvider.notifier)
               .state, // Corrected line
           'carbsPerServing':
-              ref.read(carbsPservingProvider.notifier).state, // Corrected line
+              ref.watch(carbsPservingProvider.notifier).state, // Corrected line
           'proteinPerServing': ref
-              .read(proteinPservingProvider.notifier)
+              .watch(proteinPservingProvider.notifier)
               .state, // Corrected line
           'fatsPerServing':
-              ref.read(fatsPservingProvider.notifier).state, // Corrected line
+              ref.watch(fatsPservingProvider.notifier).state, // Corrected line
         };
         sendDataToFirestore(context, ref, {});
       } else {
-        ref.read(resultProvider.notifier).state =
+        ref.watch(resultProvider.notifier).state =
             'Invalid Barcode/UPC Code'; // Corrected line
-        ref.read(productNameProvider.notifier).state =
+        ref.watch(productNameProvider.notifier).state =
             'Please try again'; // Corrected line
       }
     }
@@ -168,7 +169,7 @@ class BarcodeLookupPage extends ConsumerWidget {
                     if (selectedFilters.isNotEmpty)
                       ...selectedFilters.map((filter) {
                         return Container(
-                          child: generateTileCard(
+                          child: GenerateTileCard(
                             result: result,
                             productName: productName,
                             productCalories: productCalories,
@@ -208,16 +209,32 @@ class BarcodeLookupPage extends ConsumerWidget {
   void _onFilterChanged(String newFilter, BuildContext context, WidgetRef ref) {
     final notifier = ref.read(selectedFiltersProvider.notifier);
     final currentFilters = notifier.state;
+    print("Selected Filter: $newFilter");
     if (currentFilters.contains(newFilter)) {
-      notifier.state = currentFilters..remove(newFilter);
+      _removeFilter(notifier, currentFilters, newFilter);
     } else {
-      notifier.state = currentFilters..add(newFilter);
+      _addFilter(notifier, currentFilters, newFilter);
     }
+  }
+
+  void _addFilter(StateController<List<String>> notifier,
+      List<String> currentFilters, String newFilter) {
+    notifier.state = [...currentFilters, newFilter];
+    print("Filters after adding: ${notifier.state}");
+  }
+
+  void _removeFilter(StateController<List<String>> notifier,
+      List<String> currentFilters, String filterToRemove) {
+    notifier.state = [
+      for (final item in currentFilters)
+        if (filterToRemove != item) item
+    ];
+    print("Filters after removing: ${notifier.state}");
   }
 }
 
-class generateTileCard extends StatefulWidget {
-  const generateTileCard({
+class GenerateTileCard extends ConsumerStatefulWidget {
+  GenerateTileCard({
     Key? key,
     required this.result,
     required this.productName,
@@ -226,7 +243,9 @@ class generateTileCard extends StatefulWidget {
     required this.proteinPserving,
     required this.fatsPserving,
     required this.filter,
-  }) : super(key: key);
+  }) : super(key: key) {
+    print("GenerateTileCard constructed with filter: $filter");
+  }
 
   final String result;
   final String productName;
@@ -237,10 +256,10 @@ class generateTileCard extends StatefulWidget {
   final String filter;
 
   @override
-  State<generateTileCard> createState() => _generateTileCardState();
+  _GenerateTileCardState createState() => _GenerateTileCardState();
 }
 
-class _generateTileCardState extends State<generateTileCard> {
+class _GenerateTileCardState extends ConsumerState<GenerateTileCard> {
   @override
   Widget build(BuildContext context) {
     print("Filter: ${widget.result}");

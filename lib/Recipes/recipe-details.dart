@@ -60,43 +60,43 @@ Widget recipeInformation(){
 
 Widget recipeIngredients(){
   String ingredients = "";
-  if(recipes["strIngredient1"] != "")
+  if(recipes["strIngredient1"] != "" && recipes["strIngredient1"] != null)
   {
     ingredients += recipes["strIngredient1"] + ", ";
   }
-  if(recipes["strIngredient2"] != "")
+  if(recipes["strIngredient2"] != "" && recipes["strIngredient2"] != null)
   {
     ingredients += recipes["strIngredient2"] + ", ";
   }
-  if(recipes["strIngredient3"] != "")
+  if(recipes["strIngredient3"] != ""  && recipes["strIngredient3"] != null)
   {
     ingredients += recipes["strIngredient3"] + ", ";
   }
-  if(recipes["strIngredient4"] != "")
+  if(recipes["strIngredient4"] != ""  && recipes["strIngredient4"] != null)
   {
     ingredients += recipes["strIngredient4"] + ", ";
   }
-  if(recipes["strIngredient5"] != "")
+  if(recipes["strIngredient5"] != "" && recipes["strIngredient5"] != null)
   {
     ingredients += recipes["strIngredient5"] + ", ";
   }
-  if(recipes["strIngredient6"] != "")
+  if(recipes["strIngredient6"] != "" && recipes["strIngredient6"] != null)
   {
     ingredients += recipes["strIngredient6"] + ", ";
   }
-  if(recipes["strIngredient7"] != "")
+  if(recipes["strIngredient7"] != "" && recipes["strIngredient7"] != null)
   {
     ingredients += recipes["strIngredient7"] + ", ";
   }
-  if(recipes["strIngredient8"] != "")
+  if(recipes["strIngredient8"] != "" && recipes["strIngredient8"] != null)
   {
     ingredients += recipes["strIngredient8"] + ", ";
   }
-  if(recipes["strIngredient9"] != "")
+  if(recipes["strIngredient9"] != ""  && recipes["strIngredient9"] != null)
   {
     ingredients += recipes["strIngredient9"] + ", ";
   }
-  if(recipes["strIngredient10"] != "")
+  if(recipes["strIngredient10"] != "" && recipes["strIngredient10"] != null)
   {
     ingredients += recipes["strIngredient10"] + ", ";
   }

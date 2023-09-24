@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-      title: Text(
+      title:  Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
       ),

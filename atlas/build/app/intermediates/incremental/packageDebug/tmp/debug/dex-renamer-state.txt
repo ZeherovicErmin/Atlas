@@ -1,0 +1,4 @@
+#Sat Sep 23 13:49:43 EDT 2023
+base.0=D\:\\1CAPS\\ProtoType1\\AliC\\BarcodeLookup\\Atlas\\atlas\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

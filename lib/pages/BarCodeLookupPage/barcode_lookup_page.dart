@@ -38,40 +38,51 @@ class BarcodeLookupPage extends ConsumerWidget {
       scannedBarcode = isValidUPC(scannedBarcode);
       if (isValidBarcode(scannedBarcode)) {
         final productData = await testAPI.getProduct(scannedBarcode);
-        ref.read(resultProvider.notifier).state = scannedBarcode;
+        ref.read(resultProvider.notifier).state =
+            scannedBarcode; // Corrected line
         if (productData != null) {
           ref.read(productNameProvider.notifier).state =
-              productData.productName!;
+              productData.productName!; // Corrected line
           ref.read(productCaloriesProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
-              0.0;
+              0.0; // Corrected line
           ref.read(carbsPservingProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-              0.0;
+              0.0; // Corrected line
           ref.read(proteinPservingProvider.notifier).state = productData
                   .nutriments
                   ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
-              0.0;
+              0.0; // Corrected line
           ref.read(fatsPservingProvider.notifier).state = productData.nutriments
                   ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
-              0.0;
+              0.0; // Corrected line
         } else {
-          ref.read(productNameProvider.notifier).state = 'Please try again';
+          ref.read(productNameProvider.notifier).state =
+              'Please try again'; // Corrected line
         }
         ref.read(selectedDataProvider.notifier).state = {
           'Barcode': scannedBarcode,
-          'productName': ref.read(productNameProvider.notifier).state,
-          'productCalories': ref.read(productCaloriesProvider.notifier).state,
-          'carbsPerServing': ref.read(carbsPservingProvider.notifier).state,
-          'proteinPerServing': ref.read(proteinPservingProvider.notifier).state,
-          'fatsPerServing': ref.read(fatsPservingProvider.notifier).state,
+          'productName':
+              ref.read(productNameProvider.notifier).state, // Corrected line
+          'productCalories': ref
+              .read(productCaloriesProvider.notifier)
+              .state, // Corrected line
+          'carbsPerServing':
+              ref.read(carbsPservingProvider.notifier).state, // Corrected line
+          'proteinPerServing': ref
+              .read(proteinPservingProvider.notifier)
+              .state, // Corrected line
+          'fatsPerServing':
+              ref.read(fatsPservingProvider.notifier).state, // Corrected line
         };
         sendDataToFirestore(context, ref, {});
       } else {
-        ref.read(resultProvider.notifier).state = 'Invalid Barcode/UPC Code';
-        ref.read(productNameProvider.notifier).state = 'Please try again';
+        ref.read(resultProvider.notifier).state =
+            'Invalid Barcode/UPC Code'; // Corrected line
+        ref.read(productNameProvider.notifier).state =
+            'Please try again'; // Corrected line
       }
     }
   }
@@ -92,7 +103,7 @@ class BarcodeLookupPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final barcode = ref.watch(barcodeProvider.notifier).state;
+    //final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
@@ -120,7 +131,7 @@ class BarcodeLookupPage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Wrap(
-                  spacing: .8,
+                  spacing: 1,
                   children: filterOptions.map((filter) {
                     return FilterChip(
                       label: Text(filter),
@@ -195,15 +206,17 @@ class BarcodeLookupPage extends ConsumerWidget {
   }
 
   void _onFilterChanged(String newFilter, BuildContext context, WidgetRef ref) {
-    if (ref.read(selectedFiltersProvider.notifier).state.contains(newFilter)) {
-      ref.read(selectedFiltersProvider.notifier).state.remove(newFilter);
+    final notifier = ref.read(selectedFiltersProvider.notifier);
+    final currentFilters = notifier.state;
+    if (currentFilters.contains(newFilter)) {
+      notifier.state = currentFilters..remove(newFilter);
     } else {
-      ref.read(selectedFiltersProvider.notifier).state.add(newFilter);
+      notifier.state = currentFilters..add(newFilter);
     }
   }
 }
 
-class generateTileCard extends StatelessWidget {
+class generateTileCard extends StatefulWidget {
   const generateTileCard({
     Key? key,
     required this.result,
@@ -224,22 +237,29 @@ class generateTileCard extends StatelessWidget {
   final String filter;
 
   @override
+  State<generateTileCard> createState() => _generateTileCardState();
+}
+
+class _generateTileCardState extends State<generateTileCard> {
+  @override
   Widget build(BuildContext context) {
-    switch (filter) {
+    print("Filter: ${widget.result}");
+    switch (widget.filter) {
       case 'Barcode Result':
-        return ProductCard(title: 'Barcode Result:', data: result);
+        return ProductCard(title: 'Barcode Result:', data: widget.result);
       case 'Product Name':
         return ProductCard(
           title: 'Product Name:',
-          data: productName,
+          data: widget.productName,
         );
       case 'Calories':
-        return ProductCard(title: 'Calories:', data: '$productCalories');
+        return ProductCard(
+            title: 'Calories:', data: '${widget.productCalories}');
       case 'testMacros':
         return ProductCard(
           title: "Macros",
           data:
-              'Carbs: $carbsPserving\nProtein: $proteinPserving\nFats: $fatsPserving',
+              'Carbs: ${widget.carbsPserving}\nProtein: ${widget.proteinPserving}\nFats: ${widget.fatsPserving}',
         );
       default:
         return const SizedBox.shrink();

@@ -210,10 +210,16 @@ class BarcodeLookupPage extends ConsumerWidget {
   Future<void> sendDataToFirestore(
       BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
     try {
-      if (ref.read(selectedDataProvider.notifier).state.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('Barcode_Lookup').add(ref
-            .read(selectedDataProvider.notifier)
-            .state as Map<String, dynamic>);
+      final List<DataItem> selectedData =
+          ref.read(selectedDataProvider.notifier).state;
+      if (selectedData.isNotEmpty) {
+        final Map<String, dynamic> dataMap = {};
+        for (final item in selectedData) {
+          dataMap[item.category] = item.value;
+        }
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .add(dataMap);
         print("Data to Firestore sent!!!");
       } else {
         print("No data selected");

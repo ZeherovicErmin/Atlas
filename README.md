@@ -1,16 +1,40 @@
-# atlas
+<div align="center">
+    <h1>Atlas: Conquer Your World, One Rep at a Time.</h1>
+</div>
 
-A new Flutter project.
+Atlas is a comprehensive mobile fitness application designed to guide you on your fitness journey. Experience a seamless and totally free fitness experience right at your fingertips!
 
-## Getting Started
+<div align="center">Features </div>
 
-This project is a starting point for a Flutter application.
+Barcode Scanning 
 
-A few resources to get you started if this is your first Flutter project:
+Instant Nutritional Info: Just scan the barcode of any food product to get detailed nutritional information.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Track Your Intake: Easily keep track of your daily caloric and nutritional intake.  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Generative Fitness Regiments 
+
+Personalized Workouts: Get workout plans tailored to your fitness level and goals.  
+
+Progress Tracking: Monitor your fitness progress with visual charts and milestones.  
+
+Social Interaction  
+Connect with Others: Join a community of fitness junkies. Share your progress, motivate others, and get inspired.  
+ 
+
+Recipe Browser 
+Healthy Recipes: Browse through a vast collection of healthy and delicious recipes.
+
+<div align="center">Our Team </div>
+Team Lead : Ali Chowdhury  
+
+Ermin Zeherovic : Backend Developer Lead  
+Matthew McGowan : Database Lead  
+Hussein Daher : Documentation Lead / Front End  
+Ayesha Helal : Front End Lead
+
+Dietary Preferences: Filter recipes based on dietary needs such as vegan, gluten-free, and more.
+
+
+License 📄  
+This project is licensed under the MIT License. See LICENSE for details.

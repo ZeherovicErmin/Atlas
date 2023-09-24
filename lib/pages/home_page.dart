@@ -52,7 +52,12 @@ class HomePage extends ConsumerWidget {
                     },
                     child: myWidgCont(
                         150, 175, const Color.fromARGB(255, 224, 224, 224))),
-                myWidgCont(150, 175, const Color.fromARGB(255, 100, 167, 226)),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/barcode');
+                    },
+                    child: myWidgCont(
+                        150, 175, const Color.fromARGB(255, 100, 167, 226))),
               ],
             ),
           ],

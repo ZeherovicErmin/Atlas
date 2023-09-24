@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/home_page2.dart';
 import 'package:atlas/pages/login_page.dart';
@@ -79,6 +80,7 @@ class MyApp extends ConsumerWidget {
               '/register': (context) => RegisterPage(),
               '/recipes': (context) => Recipes(),
               '/userprof': (context) => UserProfile(),
+              '/barcode': (context) => BarcodeLookupPage(),
             },
           ),
         );

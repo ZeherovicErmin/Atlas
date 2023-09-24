@@ -34,7 +34,7 @@ class Recipes extends ConsumerWidget {
 
   AppBar appBar() {
     //DEV needs to be removed and replaced with name of user authenticated
-    String userName = 'DEV';
+    String userName = 'John Smith';
     return AppBar(
       title: Text(
         'Welcome, $userName!',
@@ -45,19 +45,19 @@ class Recipes extends ConsumerWidget {
         ),
       ),
       backgroundColor: const Color(0xffA9B7FF),
-      leading: Container(
-        margin: const EdgeInsets.all(10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: SvgPicture.asset(
-          'assets/icons/burger-menu.svg',
-          height: 20,
-          width: 20,
-        ),
-      ),
+      // leading: Container(
+      //   margin: const EdgeInsets.all(10),
+      //   alignment: Alignment.center,
+      //   decoration: BoxDecoration(
+      //     color: const Color.fromARGB(255, 255, 255, 255),
+      //     borderRadius: BorderRadius.circular(10),
+      //   ),
+      //   child: SvgPicture.asset(
+      //     'assets/icons/burger-menu.svg',
+      //     height: 20,
+      //     width: 20,
+      //   ),
+      // ),
     );
   }
 
@@ -125,7 +125,9 @@ class Recipes extends ConsumerWidget {
         return null;
       },
       decoration:
-          const InputDecoration(filled: true, fillColor: Colors.white),
+          const InputDecoration(filled: true, fillColor: Colors.white,
+                                hintText: "Enter Recipe Search"),
+      
     );
   }
 

@@ -5,15 +5,10 @@ import 'package:atlas/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 
-  // here you write the codes to input the data into firestore
-
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 class BarcodeLogPage extends ConsumerWidget {
   const BarcodeLogPage({super.key});
-  //dont need this code since it is a stateful and not consumer
-  //@override
-  //State<BarcodeLogPage> createState() => _BarcodeLogPageState();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,12 +20,11 @@ class BarcodeLogPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text('Barcode logs'),
       ),
-
-      // Listens to changes in Firestore
       body: StreamBuilder(
-        stream:
-            FirebaseFirestore.instance.collection('Barcode_Lookup').where('uid', isEqualTo: uid).snapshots(),
-            //FirebaseFirestore.instance.collection('Barcode_Lookup').doc(uid).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .where('uid', isEqualTo: uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
@@ -43,24 +37,35 @@ class BarcodeLogPage extends ConsumerWidget {
             );
           }
 
-          final firstLogData = logs.first.data() as Map<String, dynamic>;
-          final columns = firstLogData.keys.toList();
+          // Define the column order, place 'Barcode' as the first column
+          final columns = [
+            'Barcode',
+            ...logs.first.data()!.keys.where((k) => k != 'uid')
+          ];
 
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                // Takes data from firebase to create the initial columns
-                columns: columns
-                    .map((column) => DataColumn(label: Text(column)))
-                    .toList(),
+                columns: columns.map((column) {
+                  if (column == 'uid') {
+                    // Make the 'uid' column invisible
+                    return DataColumn(label: Text(''));
+                  } else {
+                    return DataColumn(label: Text(column));
+                  }
+                }).toList(),
                 rows: logs.map((log) {
                   final data = log.data() as Map<String, dynamic>;
+                  if (data.containsKey('uid')) {
+                    data['uid'] = ''; // Make the 'uid' row empty
+                  }
                   return DataRow(
                     cells: columns.map((column) {
-                      return DataCell(Text(
-                          '${data[column]}')); //creates rows for each of the datatype
+                      return DataCell(
+                        Text('${data[column]}'),
+                      );
                     }).toList(),
                   );
                 }).toList(),

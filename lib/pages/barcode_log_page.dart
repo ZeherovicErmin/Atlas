@@ -1,3 +1,4 @@
+import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,9 +13,7 @@ class BarcodeLogPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Barcode logs'),
-      ),
+      appBar: myAppBar(context, ref, 'Barcode logs'),
 
       // Listens to changes in Firestore
       body: StreamBuilder(

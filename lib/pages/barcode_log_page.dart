@@ -40,6 +40,7 @@ class BarcodeLogPage extends ConsumerWidget {
           // Define the column order, place 'Barcode' as the first column
           final columns = [
             'Barcode',
+            // Hides UserID variable
             ...logs.first.data()!.keys.where((k) => k != 'uid')
           ];
 
@@ -62,6 +63,8 @@ class BarcodeLogPage extends ConsumerWidget {
                     data['uid'] = ''; // Make the 'uid' row empty
                   }
                   return DataRow(
+                    // Each column fed from DataSentToFireStore
+                    // is logged here
                     cells: columns.map((column) {
                       return DataCell(
                         Text('${data[column]}'),

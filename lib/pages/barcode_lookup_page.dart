@@ -33,11 +33,10 @@ class DataItem {
 
 class BarcodeLookupPage extends ConsumerWidget {
   final List<String> filterOptions = [
-    'uid',
     'Barcode Result',
     'Product Name',
     'Calories',
-    'testMacros',
+    'Macros',
   ];
   BarcodeLookupPage({Key? key}) : super(key: key);
 
@@ -144,14 +143,12 @@ class BarcodeLookupPage extends ConsumerWidget {
         .toList();
     return Scaffold(
       appBar: myAppBar(context, ref, 'Barcode Lookup'),
+      backgroundColor: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
+      ).colors[0],
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
-          ),
-        ),
         child: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -311,7 +308,7 @@ class _GenerateTileCardState extends ConsumerState<GenerateTileCard> {
       case 'Calories':
         return ProductCard(
             title: 'Calories:', data: '${widget.productCalories}');
-      case 'testMacros':
+      case 'Macros':
         return ProductCard(
           title: "Macros",
           data:

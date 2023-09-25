@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import 'barcode_log_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
@@ -18,6 +19,10 @@ final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final user = auth.currentUser;
+    final uid = user?.uid;
+
 class DataItem {
   final String category;
   final dynamic value;
@@ -27,6 +32,7 @@ class DataItem {
 
 class BarcodeLookupPage extends ConsumerWidget {
   final List<String> filterOptions = [
+    'uid',
     'Barcode Result',
     'Product Name',
     'Calories',
@@ -35,12 +41,14 @@ class BarcodeLookupPage extends ConsumerWidget {
   BarcodeLookupPage({Key? key}) : super(key: key);
 
   Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
-    var scannedBarcode = await Navigator.push(
+    var scannedBarcode2 = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SimpleBarcodeScannerPage(),
       ),
     );
+
+    var scannedBarcode = "3017620422003";
 
     if (scannedBarcode is String) {
       scannedBarcode = isValidUPC(scannedBarcode);
@@ -80,6 +88,7 @@ class BarcodeLookupPage extends ConsumerWidget {
               'Please try again'; // Corrected line
         }
         ref.read(selectedDataProvider.notifier).state = [
+          DataItem('uid', uid),
           DataItem('Barcode', scannedBarcode),
           DataItem('productName', ref.read(productNameProvider.notifier).state),
           DataItem('productCalories',
@@ -127,6 +136,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
+    final uid = ref.watch(selectedDataProvider);
 
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
@@ -212,6 +222,7 @@ class BarcodeLookupPage extends ConsumerWidget {
           ref.read(selectedDataProvider.notifier).state;
       if (selectedData.isNotEmpty) {
         final Map<String, dynamic> dataMap = {};
+        dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
         }

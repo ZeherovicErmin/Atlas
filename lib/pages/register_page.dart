@@ -8,6 +8,7 @@ import 'package:atlas/main.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
+  final auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =

@@ -14,6 +14,24 @@ class LoginPage extends ConsumerWidget {
     final user = ref.watch(userProvider);
     final emailController = ref.watch(emailControllerProvider);
     final passwordController = ref.watch(passwordControllerProvider);
+    final auth = FirebaseAuth.instance;
+
+    void showErrorMessage(String message) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.red,
+            title: Center(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        },
+      );
+    }
 
     // Function to handle signing in to firebase
     Future<void> signIn(BuildContextcontext) async {
@@ -29,6 +47,7 @@ class LoginPage extends ConsumerWidget {
         // Successful login
         Navigator.of(context).pushReplacementNamed('/home');
       } catch (e) {
+        showErrorMessage('Email or password is incorrect');
         print("Sign-in failed: $e");
       }
     }

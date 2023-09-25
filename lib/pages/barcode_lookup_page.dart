@@ -41,14 +41,12 @@ class BarcodeLookupPage extends ConsumerWidget {
   BarcodeLookupPage({Key? key}) : super(key: key);
 
   Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
-    var scannedBarcode2 = await Navigator.push(
+    var scannedBarcode = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SimpleBarcodeScannerPage(),
       ),
     );
-
-    var scannedBarcode = "3017620422003";
 
     if (scannedBarcode is String) {
       scannedBarcode = isValidUPC(scannedBarcode);

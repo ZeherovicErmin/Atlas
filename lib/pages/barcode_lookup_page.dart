@@ -18,10 +18,11 @@ final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
+final uidProvider = StateProvider<String>((ref) => '');
 
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final user = auth.currentUser;
-    final uid = user?.uid;
+final FirebaseAuth auth = FirebaseAuth.instance;
+final user = auth.currentUser;
+final uid = user?.uid;
 
 class DataItem {
   final String category;
@@ -81,12 +82,14 @@ class BarcodeLookupPage extends ConsumerWidget {
                   .nutriments
                   ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
+
+          ref.watch(uidProvider.notifier).state = uid.toString();
         } else {
           ref.watch(productNameProvider.notifier).state =
               'Please try again'; // Corrected line
         }
         ref.read(selectedDataProvider.notifier).state = [
-          DataItem('uid', uid),
+          DataItem('uid', ref.read(uidProvider.notifier).state),
           DataItem('Barcode', scannedBarcode),
           DataItem('productName', ref.read(productNameProvider.notifier).state),
           DataItem('productCalories',
@@ -134,7 +137,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
-    final uid = ref.watch(selectedDataProvider);
+    final uid = ref.watch(uidProvider.notifier).state;
 
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
@@ -223,6 +226,7 @@ class BarcodeLookupPage extends ConsumerWidget {
         dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
+          print(dataMap);
         }
         await FirebaseFirestore.instance
             .collection('Barcode_Lookup')

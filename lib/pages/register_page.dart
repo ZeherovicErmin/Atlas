@@ -114,7 +114,7 @@ class RegisterPage extends ConsumerWidget {
                         height: 120,
                         width: 120,
                         //color: Colors.blue,
-                        child: Image.asset('lib/icons/fitness.png')),
+                        child: Image.asset('lib/images/atlas.png')),
 
                     //const SizedBox(height: 5),
 

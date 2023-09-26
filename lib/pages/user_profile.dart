@@ -1,4 +1,5 @@
 import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +28,9 @@ class UserProfile extends ConsumerWidget {
           ),
           content: TextField(
             autofocus: true,
-            style: TextStyle(color: Colors.white), // Change text color to white
+            style: TextStyle(
+                color: const Color.fromARGB(
+                    255, 0, 0, 0)), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: Colors.black),
@@ -59,7 +62,7 @@ class UserProfile extends ConsumerWidget {
       );
 
       // Update in Firestore
-      if (newValue.trim().length > 0) {
+      if (newValue.trim().isNotEmpty) {
         // Only update if there is something in the text field
         await usersCollection.doc(currentUser.email).update({field: newValue});
       }
@@ -122,19 +125,18 @@ class UserProfile extends ConsumerWidget {
                 ),
 
                 // Username
-                MyTextField(
-                  controller:
-                      TextEditingController(text: userData['username'] ?? ''),
-                  hintText: 'Enter your username',
-                  obscureText: false,
+                MyTextBox(
+                  text: userData?['username']?.toString() ??
+                      '', // Safely access username
+                  sectionName: 'Username',
+                  onPressed: () => editField('username'),
                 ),
 
                 // Bio
-                MyTextField(
-                  controller:
-                      TextEditingController(text: userData['bio'] ?? ''),
-                  hintText: 'Enter your bio',
-                  obscureText: false,
+                MyTextBox(
+                  text: userData?['bio']?.toString() ?? '', // Safely access bio
+                  sectionName: 'Bio',
+                  onPressed: () => editField('bio'),
                 ),
 
                 const SizedBox(height: 50),

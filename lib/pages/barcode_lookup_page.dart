@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../util/test.dart' as testAPI;
 import '../../components/product_card.dart';
 import 'barcode_log_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
@@ -17,6 +18,11 @@ final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
+final uidProvider = StateProvider<String>((ref) => '');
+
+final FirebaseAuth auth = FirebaseAuth.instance;
+final user = auth.currentUser;
+final uid = user?.uid;
 
 class DataItem {
   final String category;
@@ -31,7 +37,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     'Barcode Result',
     'Product Name',
     'Calories',
-    'testMacros',
+    'Macros',
   ];
   BarcodeLookupPage({Key? key}) : super(key: key);
 
@@ -76,11 +82,14 @@ class BarcodeLookupPage extends ConsumerWidget {
                   .nutriments
                   ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
               0.0; // Corrected line
+
+          ref.watch(uidProvider.notifier).state = uid.toString();
         } else {
           ref.watch(productNameProvider.notifier).state =
               'Please try again'; // Corrected line
         }
         ref.read(selectedDataProvider.notifier).state = [
+          DataItem('uid', ref.read(uidProvider.notifier).state),
           DataItem('Barcode', scannedBarcode),
           DataItem('productName', ref.read(productNameProvider.notifier).state),
           DataItem('productCalories',
@@ -128,20 +137,19 @@ class BarcodeLookupPage extends ConsumerWidget {
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
+    final uid = ref.watch(uidProvider.notifier).state;
 
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
     return Scaffold(
       appBar: myAppBar(context, ref, 'Barcode Lookup'),
+      backgroundColor: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
+      ).colors[0],
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
-          ),
-        ),
         child: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -213,8 +221,10 @@ class BarcodeLookupPage extends ConsumerWidget {
           ref.read(selectedDataProvider.notifier).state;
       if (selectedData.isNotEmpty) {
         final Map<String, dynamic> dataMap = {};
+        dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
+          print(dataMap);
         }
         await FirebaseFirestore.instance
             .collection('Barcode_Lookup')
@@ -299,7 +309,7 @@ class _GenerateTileCardState extends ConsumerState<GenerateTileCard> {
       case 'Calories':
         return ProductCard(
             title: 'Calories:', data: '${widget.productCalories}');
-      case 'testMacros':
+      case 'Macros':
         return ProductCard(
           title: "Macros",
           data:

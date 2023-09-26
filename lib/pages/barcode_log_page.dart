@@ -13,13 +13,7 @@ class BarcodeLogPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-<<<<<<< Updated upstream
-      appBar: myAppBar(context, ref, 'Barcode logs'),
-
-      // Listens to changes in Firestore
-=======
       appBar: myAppBar(context, ref, 'Barcode Logs'),
->>>>>>> Stashed changes
       body: StreamBuilder(
         stream:
             FirebaseFirestore.instance.collection('Barcode_Lookup').snapshots(),

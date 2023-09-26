@@ -16,7 +16,6 @@ class HomePage extends ConsumerWidget {
         //Home page for when a user logs in
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
         appBar: myAppBar(context, ref, 'Home'),
-        drawer: myDrawer,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,15 +33,20 @@ class HomePage extends ConsumerWidget {
                   child: myWidgCont(
                       150,
                       175,
-                      const Color.fromARGB(255, 100, 167, 100),
-                      Icons.fitness_center),
+                      const Color.fromARGB(255, 38, 97, 185),
+                      Icons.fitness_center,
+                      Colors.white),
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/recipes');
                   },
-                  child: myWidgCont(150, 175,
-                      const Color.fromARGB(255, 224, 224, 224), Icons.book),
+                  child: myWidgCont(
+                      150,
+                      175,
+                      const Color.fromARGB(255, 224, 224, 224),
+                      Icons.book,
+                      Color.fromARGB(255, 38, 97, 185)),
                 ),
               ],
             ),
@@ -57,16 +61,14 @@ class HomePage extends ConsumerWidget {
                         150,
                         175,
                         const Color.fromARGB(255, 224, 224, 224),
-                        Icons.person)),
+                        Icons.person,
+                        Color.fromARGB(255, 38, 97, 185))),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/barcode');
                   },
-                  child: myWidgCont(
-                      150,
-                      175,
-                      const Color.fromARGB(255, 100, 167, 226),
-                      Icons.barcode_reader),
+                  child: myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
+                      Icons.barcode_reader, Colors.white),
                 ),
               ],
             ),

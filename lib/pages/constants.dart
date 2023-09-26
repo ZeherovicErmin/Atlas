@@ -26,8 +26,8 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 }
 
 // Function to Create containers
-Container myWidgCont(
-    double width, double height, Color color, IconData iconData) {
+Container myWidgCont(double width, double height, Color color,
+    IconData iconData, Color iconColor) {
   return Container(
       margin: const EdgeInsets.all(8),
       width: width,
@@ -37,7 +37,7 @@ Container myWidgCont(
         color: color,
       ),
       child: Center(
-        child: Icon(iconData, size: 50, color: Colors.white),
+        child: Icon(iconData, size: 50, color: iconColor),
       ));
 }
 

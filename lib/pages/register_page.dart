@@ -63,7 +63,7 @@ class RegisterPage extends ConsumerWidget {
       if (registrationState.passwordController.text !=
           registrationState.confirmPasswordController.text) {
         Navigator.pop(context);
-        showErrorMessage('Passowrds do not match');
+        showErrorMessage('Passwords do not match');
         return;
       }
 
@@ -72,15 +72,18 @@ class RegisterPage extends ConsumerWidget {
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
-
         Navigator.pop(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/home');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        if (e.code == 'weak-password') {
-          showErrorMessage('Password is too weak');
-        } else if (e.code == 'email-already-in-use') {
+        if (e.code == 'email-already-in-use') {
           showErrorMessage('An account already exists for that email');
+        }
+        else if (e.code == 'weak-password') {
+          showErrorMessage('Password is too weak');
+        }
+        else {
+          showErrorMessage('The email address is badly formatted');
         }
       }
     }

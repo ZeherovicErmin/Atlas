@@ -111,7 +111,7 @@ return Column(
     Text("Ingredients: $ingredients", 
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold,
-              fontSize: 15)
+              fontSize: 20)
       ),
     ],
   );
@@ -152,9 +152,10 @@ Widget recipeImage(){
                 width: 300,
                 child: 
                 Padding(
-                  padding: EdgeInsets.all(15.0),
+                  padding: EdgeInsets.all(10.0),
                   child: Center(child: Text(
                         recipes["strInstructions"],
+                        style: const TextStyle(fontSize:20),
                 )
               ),
             ),

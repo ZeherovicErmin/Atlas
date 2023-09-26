@@ -83,19 +83,16 @@ class RegisterPage extends ConsumerWidget {
           'bio': 'Empty Bio...' //initally empty bio
           //add additional fields as needed
         });
-        
-        
+
         Navigator.pop(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/home');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         if (e.code == 'email-already-in-use') {
           showErrorMessage('An account already exists for that email');
-        }
-        else if (e.code == 'weak-password') {
+        } else if (e.code == 'weak-password') {
           showErrorMessage('Password is too weak');
-        }
-        else {
+        } else {
           showErrorMessage('The email address is badly formatted');
         }
       }
@@ -198,7 +195,7 @@ class RegisterPage extends ConsumerWidget {
 
                     const SizedBox(height: 10),
 
-                    //Apple and Google sign-in
+                    /* //Apple and Google sign-in
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -214,7 +211,7 @@ class RegisterPage extends ConsumerWidget {
                             imagePath: 'lib/images/apple-logo-transparent.png')
                       ],
                     ),
-
+*/
                     const SizedBox(height: 25),
 
                     //Register now

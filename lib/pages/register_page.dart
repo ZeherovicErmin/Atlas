@@ -64,11 +64,11 @@ class RegisterPage extends ConsumerWidget {
       if (registrationState.passwordController.text !=
           registrationState.confirmPasswordController.text) {
         Navigator.pop(context);
-        showErrorMessage('Passowrds do not match');
+        showErrorMessage('Passwords do not match');
         return;
       }
 
-try {
+      try {
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: registrationState.emailController.text,
@@ -76,9 +76,9 @@ try {
         );
 
         FirebaseFirestore.instance
-          .collection("Users")
-          .doc(userCredential.user!.email)
-          .set({
+            .collection("Users")
+            .doc(userCredential.user!.email)
+            .set({
           'username': registrationState.emailController.text
               .split('@')[0], // initial username
           'bio': 'Empty Bio...' //initally empty bio
@@ -222,7 +222,7 @@ try {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text (
+                        const Text(
                           'Already have an account?',
                           style: TextStyle(color: Colors.black),
                         ),

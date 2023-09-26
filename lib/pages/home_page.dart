@@ -45,7 +45,7 @@ class HomePage extends ConsumerWidget {
                       150,
                       175,
                       const Color.fromARGB(255, 224, 224, 224),
-                      Icons.book,
+                      Icons.dining_rounded,
                       Color.fromARGB(255, 38, 97, 185)),
                 ),
               ],

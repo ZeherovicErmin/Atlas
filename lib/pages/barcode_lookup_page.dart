@@ -101,7 +101,8 @@ class BarcodeLookupPage extends ConsumerWidget {
               'fatsPerServing', ref.read(fatsPservingProvider.notifier).state),
         ];
 
-        sendDataToFirestore(context, ref, {});
+        sendDataToFirestore(
+            context, ref, {}, ref.read(productNameProvider.notifier).state);
       } else {
         ref.watch(resultProvider.notifier).state =
             'Invalid Barcode/UPC Code'; // Corrected line
@@ -213,8 +214,8 @@ class BarcodeLookupPage extends ConsumerWidget {
     );
   }
 
-  Future<void> sendDataToFirestore(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> data) async {
+  Future<void> sendDataToFirestore(BuildContext context, WidgetRef ref,
+      Map<String, dynamic> data, String productName) async {
     try {
       final List<DataItem> selectedData =
           ref.read(selectedDataProvider.notifier).state;
@@ -229,6 +230,15 @@ class BarcodeLookupPage extends ConsumerWidget {
             .collection('Barcode_Lookup')
             .add(dataMap);
         print("Data to Firestore sent!!!");
+
+        // Send a Snackbar when data is sent to database
+        // ScaffoldMessenger
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("$productName sent to Firestore"),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         print("No data selected");
       }

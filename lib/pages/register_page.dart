@@ -1,6 +1,7 @@
 import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +9,6 @@ import 'package:atlas/main.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
-  final auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -68,10 +68,21 @@ class RegisterPage extends ConsumerWidget {
       }
 
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
+
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userCredential.user!.email)
+            .set({
+          'username': registrationState.emailController.text
+              .split('@')[0], // initial username
+          'bio': 'Empty Bio...' //initally empty bio
+          //add additional fields as needed
+        });
 
         Navigator.pop(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/home');
@@ -98,20 +109,19 @@ class RegisterPage extends ConsumerWidget {
 
                     //Logo
                     SizedBox(
-                        height: 220,
-                        width: 220,
+                        height: 120,
+                        width: 120,
                         //color: Colors.blue,
-                        child: Image.asset('lib/images/atlas.png')),
+                        child: Image.asset('lib/icons/fitness.png')),
 
                     //const SizedBox(height: 5),
 
                     //Atlas title
-                    const Text(
+                    Text(
                       'Atlas',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.blue[700],
                         fontSize: 32,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
@@ -142,7 +152,7 @@ class RegisterPage extends ConsumerWidget {
                       obscureText: true,
                     ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 15),
 
                     //Sign-in button
                     MyButton(
@@ -152,8 +162,6 @@ class RegisterPage extends ConsumerWidget {
 
                     const SizedBox(height: 10),
 
-                    /*
-                    NOT FUNCTIONAL YET
                     //Continue
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -202,17 +210,15 @@ class RegisterPage extends ConsumerWidget {
                       ],
                     ),
 
-                    */
-
                     const SizedBox(height: 25),
 
                     //Register now
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text (
+                        Text(
                           'Already have an account?',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.grey[700]),
                         ),
                         const SizedBox(width: 4),
                         GestureDetector(
@@ -222,7 +228,7 @@ class RegisterPage extends ConsumerWidget {
                           child: const Text(
                             'Login now',
                             style: TextStyle(
-                                color: Color.fromARGB(255, 0, 60, 255),
+                                color: Colors.blue,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),

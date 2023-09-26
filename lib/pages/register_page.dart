@@ -8,6 +8,7 @@ import 'package:atlas/main.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
+  final auth = FirebaseAuth.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -97,19 +98,20 @@ class RegisterPage extends ConsumerWidget {
 
                     //Logo
                     SizedBox(
-                        height: 120,
-                        width: 120,
+                        height: 220,
+                        width: 220,
                         //color: Colors.blue,
-                        child: Image.asset('lib/icons/fitness.png')),
+                        child: Image.asset('lib/images/atlas.png')),
 
                     //const SizedBox(height: 5),
 
                     //Atlas title
-                    Text(
+                    const Text(
                       'Atlas',
                       style: TextStyle(
-                        color: Colors.blue[700],
+                        color: Colors.black,
                         fontSize: 32,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
@@ -140,7 +142,7 @@ class RegisterPage extends ConsumerWidget {
                       obscureText: true,
                     ),
 
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 25),
 
                     //Sign-in button
                     MyButton(
@@ -150,6 +152,8 @@ class RegisterPage extends ConsumerWidget {
 
                     const SizedBox(height: 10),
 
+                    /*
+                    NOT FUNCTIONAL YET
                     //Continue
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -198,15 +202,17 @@ class RegisterPage extends ConsumerWidget {
                       ],
                     ),
 
+                    */
+
                     const SizedBox(height: 25),
 
                     //Register now
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text (
                           'Already have an account?',
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: TextStyle(color: Colors.black),
                         ),
                         const SizedBox(width: 4),
                         GestureDetector(
@@ -216,7 +222,7 @@ class RegisterPage extends ConsumerWidget {
                           child: const Text(
                             'Login now',
                             style: TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromARGB(255, 0, 60, 255),
                                 fontWeight: FontWeight.bold),
                           ),
                         ),

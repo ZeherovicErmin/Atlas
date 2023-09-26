@@ -51,63 +51,77 @@ class BarcodeLookupPage extends ConsumerWidget {
     if (scannedBarcode is String) {
       scannedBarcode = isValidUPC(scannedBarcode);
       if (isValidBarcode(scannedBarcode)) {
-        final productData = await testAPI.getProduct(scannedBarcode);
-        ref.watch(resultProvider.notifier).state =
-            scannedBarcode; // Corrected line
-        if (productData != null) {
-          if (productData.productName != null) {
-            ref.watch(productNameProvider.notifier).state =
-                productData.productName!;
+        try {
+          final productData = await testAPI.getProduct(scannedBarcode);
+          ref.watch(resultProvider.notifier).state =
+              scannedBarcode; // Corrected line
+          if (productData != null) {
+            if (productData.productName != null) {
+              ref.watch(productNameProvider.notifier).state =
+                  productData.productName!;
+            } else {
+              ref.watch(productNameProvider.notifier).state =
+                  'Unknown product name';
+            }
+
+            ref.watch(productCaloriesProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                0.0;
+            ref.watch(carbsPservingProvider.notifier).state =
+                productData.nutriments?.getValue(
+                        Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                    0.0;
+            ref.watch(proteinPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+                0.0;
+            ref.watch(fatsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+                0.0;
+
+            ref.watch(uidProvider.notifier).state = uid.toString();
           } else {
-            // Handle the case where productData.productName is null.
-            // For example, you might set a default value or log an error.
-            ref.watch(productNameProvider.notifier).state =
-                'Unknown product name';
+            ref.watch(productNameProvider.notifier).state = 'Please try again';
+            ref.watch(productCaloriesProvider.notifier).state = 0.0;
+            throw Exception(
+                'Product not found, please insert data for $scannedBarcode');
           }
-          // Corrected line
-          ref.watch(productCaloriesProvider.notifier).state = productData
-                  .nutriments
-                  ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
-              0.0; // Corrected line
-          ref.watch(carbsPservingProvider.notifier).state = productData
-                  .nutriments
-                  ?.getValue(Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-              0.0; // Corrected line
-          ref.watch(proteinPservingProvider.notifier).state = productData
-                  .nutriments
-                  ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
-              0.0; // Corrected line
-          ref.watch(fatsPservingProvider.notifier).state = productData
-                  .nutriments
-                  ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
-              0.0; // Corrected line
 
-          ref.watch(uidProvider.notifier).state = uid.toString();
-        } else {
-          ref.watch(productNameProvider.notifier).state =
-              'Please try again'; // Corrected line
+          ref.read(selectedDataProvider.notifier).state = [
+            DataItem('uid', ref.read(uidProvider.notifier).state),
+            DataItem('Barcode', scannedBarcode),
+            DataItem(
+                'productName', ref.read(productNameProvider.notifier).state),
+            DataItem('productCalories',
+                ref.read(productCaloriesProvider.notifier).state),
+            DataItem('carbsPerServing',
+                ref.read(carbsPservingProvider.notifier).state),
+            DataItem('proteinPerServing',
+                ref.read(proteinPservingProvider.notifier).state),
+            DataItem('fatsPerServing',
+                ref.read(fatsPservingProvider.notifier).state),
+          ];
+
+          sendDataToFirestore(
+              context, ref, {}, ref.read(productNameProvider.notifier).state);
+        } catch (e) {
+          ref.watch(resultProvider.notifier).state =
+              'Product not found'; // Set an appropriate message
+          ref.watch(productNameProvider.notifier).state = 'Product not found';
+          ref.watch(productCaloriesProvider.notifier).state = 0.0;
+          ref.watch(proteinPservingProvider.notifier).state = 0.0;
+          ref.watch(carbsPservingProvider.notifier).state = 0.0;
+          ref.watch(fatsPservingProvider.notifier).state = 0.0;
         }
-        ref.read(selectedDataProvider.notifier).state = [
-          DataItem('uid', ref.read(uidProvider.notifier).state),
-          DataItem('Barcode', scannedBarcode),
-          DataItem('productName', ref.read(productNameProvider.notifier).state),
-          DataItem('productCalories',
-              ref.read(productCaloriesProvider.notifier).state),
-          DataItem('carbsPerServing',
-              ref.read(carbsPservingProvider.notifier).state),
-          DataItem('proteinPerServing',
-              ref.read(proteinPservingProvider.notifier).state),
-          DataItem(
-              'fatsPerServing', ref.read(fatsPservingProvider.notifier).state),
-        ];
-
-        sendDataToFirestore(
-            context, ref, {}, ref.read(productNameProvider.notifier).state);
       } else {
-        ref.watch(resultProvider.notifier).state =
-            'Invalid Barcode/UPC Code'; // Corrected line
-        ref.watch(productNameProvider.notifier).state =
-            'Please try again'; // Corrected line
+        ref.watch(resultProvider.notifier).state = 'Invalid Barcode/UPC Code';
+        ref.watch(productNameProvider.notifier).state = 'Please try again';
+        ref.watch(productCaloriesProvider.notifier).state = 0.0;
+        ref.watch(proteinPservingProvider.notifier).state = 0.0;
+        ref.watch(carbsPservingProvider.notifier).state = 0.0;
+        ref.watch(fatsPservingProvider.notifier).state = 0.0;
       }
     }
   }

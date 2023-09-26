@@ -10,11 +10,16 @@ final recipeProvider = StateProvider<List<dynamic>>((ref) {
   return [];
 });
 
-//Consumer Widget that handles and displays the recipes
+//Recipe Class that handles and displays the recipes is 
+//child of class Consumer Widget 
 class Recipes extends ConsumerWidget {
+  //Constructors
   Recipes({Key? key}) : super(key: key);
 
+  //global key used for recipe form-handling
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  //Text controller used to store value from recipe search bar
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -25,6 +30,7 @@ class Recipes extends ConsumerWidget {
     return Scaffold(
       appBar: appBar(),
       body: gradient(recipes, context, ref),
+      //Recipe search bar submit button
       floatingActionButton: FloatingActionButton(
         onPressed: () => onSubmit(context, ref),
         child: Text('Submit'),
@@ -36,6 +42,7 @@ class Recipes extends ConsumerWidget {
     //DEV needs to be removed and replaced with name of user authenticated
     String userName = 'John Smith';
     return AppBar(
+      //Welcome message
       title: Text(
         'Welcome, $userName!',
         style: const TextStyle(
@@ -45,25 +52,29 @@ class Recipes extends ConsumerWidget {
         ),
       ),
       backgroundColor: const Color(0xffA9B7FF),
-      // leading: Container(
-      //   margin: const EdgeInsets.all(10),
-      //   alignment: Alignment.center,
-      //   decoration: BoxDecoration(
-      //     color: const Color.fromARGB(255, 255, 255, 255),
-      //     borderRadius: BorderRadius.circular(10),
-      //   ),
-      //   child: SvgPicture.asset(
-      //     'assets/icons/burger-menu.svg',
-      //     height: 20,
-      //     width: 20,
-      //   ),
-      // ),
+      // Burger menu for page navigation
+      /*
+        leading: Container(
+        margin: const EdgeInsets.all(10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 255, 255, 255),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: SvgPicture.asset(
+          'assets/icons/burger-menu.svg',
+          height: 20,
+          width: 20,
+        ),
+      ),
+      */
     );
   }
 
   // bg gradient color
   Widget gradient(recipes, context, ref) {
     return Container(
+      //gradient decoration
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -74,6 +85,8 @@ class Recipes extends ConsumerWidget {
           ],
         ),
       ),
+      //Rest of page material including search form and list 
+      //recipes returned from API
       child: Column(
         children: [
           form(), 
@@ -83,13 +96,14 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-
-
+ //Recipe search form
  Widget form(){
   return  Column(
     children: [
+      //Spacing between components
       const Padding(
         padding: EdgeInsets.all(15), //apply padding to all sides
+        //Page Title
         child: Text('Recipes',
             style: TextStyle(
                 color: Color.fromARGB(255, 255, 255, 255),
@@ -115,31 +129,40 @@ class Recipes extends ConsumerWidget {
   ]);
 }
 
-  Widget searchBar() {
-    return TextFormField(
-      controller: searchController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please Input A Value into Searchbar';
-        }
-        return null;
-      },
-      decoration:
-          const InputDecoration(filled: true, fillColor: Colors.white,
-                                hintText: "Enter Recipe Search"),
-      
-    );
-  }
+// Recipe search bar
+Widget searchBar() {
+  return TextFormField(
+    //Controller stores value entered by user
+    controller: searchController,
+    //Checks if searchbar has a value, if not: show error message
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please Input A Value into Searchbar';
+      }
+      return null;
+    },
+    decoration:
+      const InputDecoration(filled: true, fillColor: Colors.white,
+                            //Placeholder message in search bar directing user
+                            hintText: "Enter Recipe Search"),
+    
+  );
+}
 
  
   // List of recipe results from the API request
   Widget recipeList(List<dynamic> recipes, BuildContext context, WidgetRef ref){
+    //Expanded takes up entire container space
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
+        //ListView used to output recipe list element into individual components
         child: ListView.separated(
+          //Used to ensure list is scrollable
           physics: const AlwaysScrollableScrollPhysics(),
+          //Number of recipes
           itemCount: recipes.length,
+          //Used to build recipe list tiles
           itemBuilder: (context, index) {
             final recipe = recipes[index];
             final mealName = recipe['strMeal'];
@@ -149,9 +172,11 @@ class Recipes extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontWeight: FontWeight.bold)
               ),
+              //Function used to capture tap event for list items
               onTap: () => navigateToRecipeDetails(context, recipe)
             );
           },
+          //Used to put a divider line between recipes
           separatorBuilder: (context,index){
             return Divider();
           },

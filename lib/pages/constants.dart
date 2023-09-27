@@ -1,6 +1,7 @@
 import 'package:atlas/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 
 // A file for frequently used widgets to clean up code
 

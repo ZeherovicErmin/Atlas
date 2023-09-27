@@ -1,9 +1,11 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'home_page2.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -45,7 +47,7 @@ class HomePage extends ConsumerWidget {
                       150,
                       175,
                       const Color.fromARGB(255, 224, 224, 224),
-                      Icons.dining_rounded,
+                      CupertinoIcons.book_fill,
                       Color.fromARGB(255, 38, 97, 185)),
                 ),
               ],
@@ -61,14 +63,14 @@ class HomePage extends ConsumerWidget {
                         150,
                         175,
                         const Color.fromARGB(255, 224, 224, 224),
-                        Icons.person,
+                        CupertinoIcons.profile_circled,
                         Color.fromARGB(255, 38, 97, 185))),
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, '/barcode');
                   },
                   child: myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
-                      Icons.barcode_reader, Colors.white),
+                      CupertinoIcons.qrcode_viewfinder, Colors.white),
                 ),
               ],
             ),

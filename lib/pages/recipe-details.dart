@@ -96,7 +96,7 @@ class RecipeDetails extends ConsumerWidget {
       children: [
         Text("Ingredients: $ingredients",
             textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
       ],
     );
   }

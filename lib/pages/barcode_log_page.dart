@@ -1,3 +1,4 @@
+import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,9 +18,7 @@ class BarcodeLogPage extends ConsumerWidget {
     final uid = user?.uid;
     log("The user id is = $uid");
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Barcode logs'),
-      ),
+      appBar: myAppBar(context, ref, 'Barcode Logs'),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Barcode_Lookup')

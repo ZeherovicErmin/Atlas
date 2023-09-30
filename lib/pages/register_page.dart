@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
@@ -63,24 +64,39 @@ class RegisterPage extends ConsumerWidget {
       if (registrationState.passwordController.text !=
           registrationState.confirmPasswordController.text) {
         Navigator.pop(context);
-        showErrorMessage('Passowrds do not match');
+        showErrorMessage('Passwords do not match');
         return;
       }
 
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
+
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userCredential.user!.email)
+            .set({
+          'username': registrationState.emailController.text
+              .split('@')[0], // initial username
+          'bio': 'Empty Bio...' //initally empty bio
+          //add additional fields as needed
+        });
 
         Navigator.pop(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/home');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        if (e.code == 'weak-password') {
-          showErrorMessage('Password is too weak');
-        } else if (e.code == 'email-already-in-use') {
+        if (e.code == 'email-already-in-use') {
           showErrorMessage('An account already exists for that email');
+        }
+        else if (e.code == 'weak-password') {
+          showErrorMessage('Password is too weak');
+        }
+        else {
+          showErrorMessage('The email address is badly formatted');
         }
       }
     }
@@ -210,7 +226,7 @@ class RegisterPage extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text (
+                        const Text(
                           'Already have an account?',
                           style: TextStyle(color: Colors.black),
                         ),

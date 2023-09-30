@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-      title:  Text(
+      title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
       ),
@@ -26,16 +26,19 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 }
 
 // Function to Create containers
-Container myWidgCont(double width, double height, Color color) {
+Container myWidgCont(double width, double height, Color color,
+    IconData iconData, Color iconColor) {
   return Container(
-    margin: const EdgeInsets.all(8),
-    width: width,
-    height: height,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: color,
-    ),
-  );
+      margin: const EdgeInsets.all(8),
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: color,
+      ),
+      child: Center(
+        child: Icon(iconData, size: 50, color: iconColor),
+      ));
 }
 
 // Creating A Drawer

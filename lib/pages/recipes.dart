@@ -53,11 +53,11 @@ class Recipes extends ConsumerWidget {
     return Column(children: [
       const Padding(
         padding: EdgeInsets.all(15), //apply padding to all sides
-        child: Text('Recipes',
-            style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
+        // child: Text('Welcome',
+        //     style: TextStyle(
+        //         color: Color.fromARGB(255, 255, 255, 255),
+        //         fontSize: 18,
+        //         fontWeight: FontWeight.bold)),
       ),
       Container(
         margin: const EdgeInsets.only(top: 40, left: 20, right: 20),

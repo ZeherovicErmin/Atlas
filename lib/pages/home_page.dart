@@ -4,7 +4,7 @@ import 'package:atlas/pages/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'home_page2.dart';
+import 'fitness_center.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
 
 class HomePage extends ConsumerWidget {
@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage2()),
+                      MaterialPageRoute(builder: (context) => FitCenter()),
                     );
                   },
                   child: myWidgCont(

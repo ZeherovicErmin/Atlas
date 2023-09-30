@@ -75,7 +75,7 @@ class MyApp extends ConsumerWidget {
             home: const AuthPage(),
             routes: {
               '/home': (context) => HomePage(),
-              'home2': (context) => HomePage2(),
+              'fitcenter': (context) => FitCenter(),
               '/login': (context) => LoginPage(),
               '/register': (context) => RegisterPage(),
               '/recipes': (context) => Recipes(),

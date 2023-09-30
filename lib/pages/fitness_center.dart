@@ -14,7 +14,7 @@ class FitCenter extends ConsumerWidget {
     return Scaffold(
         //Home page for when a user logs in
         backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        appBar: myAppBar(context, ref, 'Fitness Center'),
+        appBar: myAppBar2(context, ref, 'Fitness Center'),
         body: user != null
             ? Column()
             : const Center(

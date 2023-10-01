@@ -1,3 +1,4 @@
+//this file is in case I royally mess up Barcode lookup
 import 'package:atlas/pages/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
@@ -9,60 +10,16 @@ import '../../components/product_card.dart';
 import 'barcode_log_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Creating a Data Model class to store variables
-class ProductData {
-  String? barcode;
-  String productName;
-  double productCalories;
-  final double fatsPerServing;
-  late final double carbsPerServing;
-  final double proteinPerServing;
-
-  ProductData({
-    required this.barcode,
-    required this.productName,
-    required this.productCalories,
-    required this.fatsPerServing,
-    required this.carbsPerServing,
-    required this.proteinPerServing,
-  });
-}
-
-class UserData {
-  final String uid;
-  UserData({required this.uid});
-}
-
-class SelectedFilter {
-  final String category;
-  final bool isSelected;
-
-  SelectedFilter({required this.category, required this.isSelected});
-}
-
-// final barcodeProvider = StateProvider<String?>((ref) => null);
-// final productNameProvider = StateProvider<String>((ref) => '');
-// final resultProvider = StateProvider<String>((ref) => '');
-// final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
-// final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
-// final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
-// final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
-// final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
-// final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
-// final uidProvider = StateProvider<String>((ref) => '');
-
 final barcodeProvider = StateProvider<String?>((ref) => null);
-final productDataProvider = StateProvider<ProductData>((ref) => ProductData(
-    barcode: null,
-    productName: '',
-    productCalories: 0.0,
-    fatsPerServing: 0.0,
-    carbsPerServing: 0.0,
-    proteinPerServing: 0.0));
-final selectedFiltersProvider =
-    StateProvider<List<SelectedFilter>>((ref) => []);
+final productNameProvider = StateProvider<String>((ref) => '');
+final resultProvider = StateProvider<String>((ref) => '');
+final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
+final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
+final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
+final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
-final userDataProvider = StateProvider<UserData>((ref) => UserData(uid: ''));
+final uidProvider = StateProvider<String>((ref) => '');
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final user = auth.currentUser;
@@ -98,39 +55,38 @@ class BarcodeLookupPage extends ConsumerWidget {
       if (isValidBarcode(scannedBarcode)) {
         try {
           final productData = await testAPI.getProduct(scannedBarcode);
-          ref.watch(productDataProvider).barcode =
+          ref.watch(resultProvider.notifier).state =
               scannedBarcode; // Corrected line
           if (productData != null) {
             if (productData.productName != null) {
-              ref.watch(productDataProvider).productName =
+              ref.watch(productNameProvider.notifier).state =
                   productData.productName!;
             } else {
-              ref.watch(productDataProvider).productName =
+              ref.watch(productNameProvider.notifier).state =
                   'Unknown product name';
             }
 
-            ref.watch(productDataProvider).productCalories = productData
+            ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
+                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
                 0.0;
-            ref.watch(productDataProvider).carbsPerServing = productData
-                    .nutriments
-                    ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
-                0.0;
-            ref.watch(productDataProvider).proteinPerServing = productData
+            ref.watch(carbsPservingProvider.notifier).state =
+                productData.nutriments?.getValue(
+                        Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                    0.0;
+            ref.watch(proteinPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
                 0.0;
-            ref.watch(productDataProvider).fatsPerServing = productData
+            ref.watch(fatsPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
                 0.0;
 
-            ref.watch(userDataProvider.notifier).state =
-                uid.toString() as UserData;
+            ref.watch(uidProvider.notifier).state = uid.toString();
           } else {
-            ref.watch(productDataProvider).productName = 'Please try again';
-            ref.watch(productDataProvider).productCalories = 0.0;
+            ref.watch(productNameProvider.notifier).state = 'Please try again';
+            ref.watch(productCaloriesProvider.notifier).state = 0.0;
             throw Exception(
                 'Product not found, please insert data for $scannedBarcode');
           }

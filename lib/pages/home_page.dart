@@ -1,4 +1,4 @@
-//Atlas Fitness App CSC 4996
+import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,9 +72,24 @@ class HomePage extends ConsumerWidget {
                   child: myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
                       CupertinoIcons.qrcode_viewfinder, Colors.white),
                 ),
-              ],
-            ),
-          ],
-        ));
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/barcode');
+                },
+                child: myWidgCont(
+                  150,
+                  175,
+                  Color.fromARGB(255, 38, 97, 185),
+                  Icons.barcode_reader,
+                  Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNav(),
+    );
   }
 }

@@ -159,7 +159,7 @@ class BarcodeLookupPage extends ConsumerWidget {
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'Barcode Lookup'),
+      appBar: myAppBar(context, ref, 'Barcode Lookup'),
       backgroundColor: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

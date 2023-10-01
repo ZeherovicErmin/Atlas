@@ -9,7 +9,7 @@ class RecipeDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        appBar: myAppBar(context, ref, 'Recipes'), body: gradient());
+        appBar: myAppBar2(context, ref, 'Recipes'), body: gradient());
   }
 
   Widget gradient() {

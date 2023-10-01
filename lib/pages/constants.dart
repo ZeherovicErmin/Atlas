@@ -1,10 +1,11 @@
 import 'package:atlas/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:developer';
 
 // A file for frequently used widgets to clean up code
 
-// App Bar
+// App Bar for the homepage
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: const Color.fromARGB(255, 38, 97, 185),
@@ -18,11 +19,23 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
           onPressed: () async {
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
+
             Navigator.of(context).pushReplacementNamed('/login');
           },
           icon: Icon(Icons.logout),
         )
       ]);
+}
+
+// App Bar for the homepage
+AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
+  return AppBar(
+    backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+    title: Text(
+      title,
+      style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+    ),
+  );
 }
 
 // Function to Create containers

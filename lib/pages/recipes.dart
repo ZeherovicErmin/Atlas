@@ -23,7 +23,7 @@ class Recipes extends ConsumerWidget {
     final recipes = ref.watch(recipeProvider);
 
     return Scaffold(
-      appBar: myAppBar(context, ref, 'Recipes'),
+      appBar: myAppBar2(context, ref, 'Recipes'),
       body: gradient(recipes, context, ref),
       floatingActionButton: FloatingActionButton(
         onPressed: () => onSubmit(context, ref),

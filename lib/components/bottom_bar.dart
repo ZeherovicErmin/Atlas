@@ -49,19 +49,19 @@ class BottomNav extends ConsumerWidget {
         index: ref.watch(indexProvider),
         items: [
           Icon(
-            Icons.home,
+            Icons.barcode_reader,
             color: Colors.white,
           ),
           Icon(
-            Icons.search,
+            Icons.dinner_dining,
             color: Colors.white,
           ),
           Icon(
-            Icons.scanner,
+            Icons.verified_user,
             color: Colors.white,
           ),
           Icon(
-            Icons.scanner,
+            Icons.fitness_center,
             color: Colors.white,
           ),
         ],

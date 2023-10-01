@@ -44,6 +44,7 @@ dependencies:
   openfoodfacts: ^2.10.1
   simple_barcode_scanner: ^0.0.8
   auto_size_text: ^3.0.0
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

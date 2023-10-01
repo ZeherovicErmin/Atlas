@@ -1,7 +1,7 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/home_page.dart';
-import 'package:atlas/pages/home_page2.dart';
+import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/register_page.dart';
@@ -75,7 +75,7 @@ class MyApp extends ConsumerWidget {
             home: const AuthPage(),
             routes: {
               '/home': (context) => HomePage(),
-              'home2': (context) => HomePage2(),
+              'fitcenter': (context) => FitCenter(),
               '/login': (context) => LoginPage(),
               '/register': (context) => RegisterPage(),
               '/recipes': (context) => Recipes(),

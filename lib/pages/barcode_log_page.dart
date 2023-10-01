@@ -18,7 +18,7 @@ class BarcodeLogPage extends ConsumerWidget {
     final uid = user?.uid;
     log("The user id is = $uid");
     return Scaffold(
-      appBar: myAppBar(context, ref, 'Barcode Logs'),
+      appBar: myAppBar2(context, ref, 'Barcode Logs'),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Barcode_Lookup')

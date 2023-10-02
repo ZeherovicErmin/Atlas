@@ -68,98 +68,111 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-      appBar: myAppBar2(context, ref, 'User Profile'),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("Users")
-            .doc(currentUser.email)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 90, 117, 255),
+            Color.fromARGB(255, 161, 195, 250),
+          ],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: myAppBar2(context, ref, 'User Profile'),
+        body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("Users")
+              .doc(currentUser.email)
+              .snapshots(),
+          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
 
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: const Text('User data not found.'),
-            );
-          }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return Center(
+                child: const Text('User data not found.'),
+              );
+            }
 
-          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+            final userData = snapshot.data!.data() as Map<String, dynamic>?;
 
-          if (userData != null) {
-            return ListView(
-              children: [
-                const SizedBox(height: 50),
+            if (userData != null) {
+              return ListView(
+                children: [
+                  const SizedBox(height: 50),
 
-                // Profile pic
-                const Icon(
-                  Icons.fitness_center,
-                  size: 72,
-                ),
-
-                const SizedBox(height: 10),
-
-                // User email
-                Text(
-                  currentUser.email!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
+                  // Profile pic
+                  const Icon(
+                    Icons.fitness_center,
+                    size: 72,
                   ),
-                ),
 
-                const SizedBox(height: 50),
+                  const SizedBox(height: 10),
 
-                // User details
-                const Padding(
-                  padding: EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    'My Details',
-                    style: TextStyle(
+                  // User email
+                  Text(
+                    currentUser.email!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
-                ),
 
-                // Username
-                MyTextBox(
-                  text: userData?['username']?.toString() ??
-                      '', // Safely access username
-                  sectionName: 'Username',
-                  onPressed: () => editField('username'),
-                ),
+                  const SizedBox(height: 50),
 
-                // Bio
-                MyTextBox(
-                  text: userData?['bio']?.toString() ?? '', // Safely access bio
-                  sectionName: 'Bio',
-                  onPressed: () => editField('bio'),
-                ),
-
-                const SizedBox(height: 50),
-
-                // User posts
-                const Padding(
-                  padding: EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    'My Posts',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
+                  // User details
+                  const Padding(
+                    padding: EdgeInsets.only(left: 25.0),
+                    child: Text(
+                      'My Details',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          } else {
-            // Handle the case where userData is null
-            return Center(
-              child: const Text('User data is null.'),
-            );
-          }
-        },
+
+                  // Username
+                  MyTextBox(
+                    text: userData?['username']?.toString() ??
+                        '', // Safely access username
+                    sectionName: 'Username',
+                    onPressed: () => editField('username'),
+                  ),
+
+                  // Bio
+                  MyTextBox(
+                    text:
+                        userData?['bio']?.toString() ?? '', // Safely access bio
+                    sectionName: 'Bio',
+                    onPressed: () => editField('bio'),
+                  ),
+
+                  const SizedBox(height: 50),
+
+                  // User posts
+                  const Padding(
+                    padding: EdgeInsets.only(left: 25.0),
+                    child: Text(
+                      'My Posts',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Handle the case where userData is null
+              return Center(
+                child: const Text('User data is null.'),
+              );
+            }
+          },
+        ),
       ),
       /*drawer: myDrawer,
       bottomNavigationBar: BottomNavigationBar(

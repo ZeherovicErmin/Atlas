@@ -21,11 +21,11 @@ class BottomNav extends ConsumerWidget {
     final currentIndex = ref.watch(indexProvider);
 
     final List<Widget> pages = [
-      BarcodeLookupPage(),
+      const FitCenter(),
       Recipes(),
       const HomePage(),
+      BarcodeLookupPage(),
       const UserProfile(),
-      const FitCenter(),
     ];
 
     return Scaffold(
@@ -39,7 +39,7 @@ class BottomNav extends ConsumerWidget {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 169, 183, 255),
+        backgroundColor: Color.fromARGB(255, 161, 195, 250),
         color: const Color.fromARGB(255, 38, 97, 185),
         // Defines animation duration
         animationDuration: Duration(milliseconds: 300),
@@ -51,7 +51,7 @@ class BottomNav extends ConsumerWidget {
         index: ref.watch(indexProvider),
         items: [
           Icon(
-            CupertinoIcons.barcode_viewfinder,
+            Icons.fitness_center,
             color: Colors.white,
           ),
           Icon(
@@ -63,11 +63,11 @@ class BottomNav extends ConsumerWidget {
             color: Colors.white,
           ),
           Icon(
-            CupertinoIcons.profile_circled,
+            CupertinoIcons.barcode_viewfinder,
             color: Colors.white,
           ),
           Icon(
-            Icons.fitness_center,
+            CupertinoIcons.profile_circled,
             color: Colors.white,
           ),
         ],

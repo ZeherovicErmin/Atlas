@@ -14,19 +14,6 @@ class RegistrationState {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-  }
-
-  // Function to clear the text boxes
-  void clearTextControllers() {
-    emailController.clear();
-    passwordController.clear();
-    confirmPasswordController.clear();
-  }
 }
 
 // Class to attempt to register a user
@@ -91,11 +78,9 @@ class RegisterPage extends ConsumerWidget {
         Navigator.pop(context);
         if (e.code == 'email-already-in-use') {
           showErrorMessage('An account already exists for that email');
-        }
-        else if (e.code == 'weak-password') {
+        } else if (e.code == 'weak-password') {
           showErrorMessage('Password is too weak');
-        }
-        else {
+        } else {
           showErrorMessage('The email address is badly formatted');
         }
       }

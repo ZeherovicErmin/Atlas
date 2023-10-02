@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
@@ -41,17 +42,15 @@ final emailControllerProvider = Provider<TextEditingController>((ref) {
   return TextEditingController();
 });
 
-final passwordControllerProvider = Provider<TextEditingController>((ref) {
+final passwordControllerProvider = Provider.autoDispose((ref) {
   return TextEditingController();
 });
 
 // Provider for signing out
 final signOutProvider = FutureProvider<void>((ref) async {
   final user = ref.watch(userProvider);
-  if (user != null) {
-    await FirebaseAuth.instance.signOut();
-    ref.read(registrationProvider).clearTextControllers();
-  }
+
+  await FirebaseAuth.instance.signOut();
 });
 
 // Creating a registration provider
@@ -75,12 +74,13 @@ class MyApp extends ConsumerWidget {
             home: const AuthPage(),
             routes: {
               '/home': (context) => HomePage(),
-              'fitcenter': (context) => FitCenter(),
+              '/fitcenter': (context) => FitCenter(),
               '/login': (context) => LoginPage(),
               '/register': (context) => RegisterPage(),
               '/recipes': (context) => Recipes(),
               '/userprof': (context) => UserProfile(),
               '/barcode': (context) => BarcodeLookupPage(),
+              '/start': (context) => BottomNav(),
             },
           ),
         );

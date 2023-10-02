@@ -14,6 +14,7 @@ class LoginPage extends ConsumerWidget {
     final user = ref.watch(userProvider);
     final emailController = ref.watch(emailControllerProvider);
     final passwordController = ref.watch(passwordControllerProvider);
+
     final auth = FirebaseAuth.instance;
 
     void showErrorMessage(String message) {
@@ -45,7 +46,7 @@ class LoginPage extends ConsumerWidget {
         );
 
         // Successful login
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/start');
       } catch (e) {
         showErrorMessage('Email or password is incorrect');
         print("Sign-in failed: $e");
@@ -130,7 +131,7 @@ class LoginPage extends ConsumerWidget {
 
                     const SizedBox(height: 25),
 
-                  /*
+                    /*
                   NOT FUNCTIONAL YET
                     //Continue
                     Padding(

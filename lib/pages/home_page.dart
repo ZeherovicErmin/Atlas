@@ -44,7 +44,7 @@ class HomePage extends ConsumerWidget {
             ],
           ),
           myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
-              CupertinoIcons.qrcode_viewfinder, Colors.white),
+              CupertinoIcons.barcode_viewfinder, Colors.white),
         ],
       ),
     );

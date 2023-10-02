@@ -28,52 +28,49 @@ class BottomNav extends ConsumerWidget {
       const FitCenter(),
     ];
 
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        // Indexed Stack holds the index of the page
-        // So the programmer knows what page you are on
-        body: IndexedStack(
-          index: currentIndex,
-          // See 'pages' variable above
-          // Passes in pages of the application
-          children: pages,
-        ),
-        bottomNavigationBar: CurvedNavigationBar(
-          // Colors of the nav
-          backgroundColor: Color.fromARGB(255, 169, 183, 255),
-          color: const Color.fromARGB(255, 38, 97, 185),
-          // Defines animation duration
-          animationDuration: Duration(milliseconds: 300),
-          onTap: (index) {
-            // Watches for any changes to the index provider
-            ref.read(indexProvider.notifier).state = index;
-            print(ref.read(indexProvider.notifier).state);
-          },
-          index: ref.watch(indexProvider),
-          items: [
-            Icon(
-              CupertinoIcons.barcode_viewfinder,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.dining_outlined,
-              color: Colors.white,
-            ),
-            Icon(
-              CupertinoIcons.home,
-              color: Colors.white,
-            ),
-            Icon(
-              CupertinoIcons.profile_circled,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.fitness_center,
-              color: Colors.white,
-            ),
-          ],
-        ),
+    return Scaffold(
+      // Indexed Stack holds the index of the page
+      // So the programmer knows what page you are on
+      body: IndexedStack(
+        index: currentIndex,
+        // See 'pages' variable above
+        // Passes in pages of the application
+        children: pages,
+      ),
+      bottomNavigationBar: CurvedNavigationBar(
+        // Colors of the nav
+        backgroundColor: Color.fromARGB(255, 169, 183, 255),
+        color: const Color.fromARGB(255, 38, 97, 185),
+        // Defines animation duration
+        animationDuration: Duration(milliseconds: 300),
+        onTap: (index) {
+          // Watches for any changes to the index provider
+          ref.read(indexProvider.notifier).state = index;
+          print(ref.read(indexProvider.notifier).state);
+        },
+        index: ref.watch(indexProvider),
+        items: [
+          Icon(
+            CupertinoIcons.barcode_viewfinder,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.dining_outlined,
+            color: Colors.white,
+          ),
+          Icon(
+            CupertinoIcons.home,
+            color: Colors.white,
+          ),
+          Icon(
+            CupertinoIcons.profile_circled,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.fitness_center,
+            color: Colors.white,
+          ),
+        ],
       ),
     );
   }

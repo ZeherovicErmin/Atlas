@@ -1,3 +1,4 @@
+import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +16,12 @@ class AuthPage extends ConsumerWidget {
     final user = ref.watch(userProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: user.when(
         data: (user) {
           // User is logged in
           if (user != null) {
-            return HomePage();
+            return BottomNav();
           }
           // User isn't logged in
           else {

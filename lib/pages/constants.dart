@@ -35,6 +35,7 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
       title,
       style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),
+    centerTitle: true,
   );
 }
 

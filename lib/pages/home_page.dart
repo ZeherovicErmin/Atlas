@@ -15,81 +15,38 @@ class HomePage extends ConsumerWidget {
     final user = ref.watch(userProvider);
 
     return Scaffold(
-        //Home page for when a user logs in
-        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        appBar: myAppBar(context, ref, 'Home'),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FitCenter()),
-                    );
-                  },
-                  child: myWidgCont(
-                      150,
-                      175,
-                      const Color.fromARGB(255, 38, 97, 185),
-                      Icons.fitness_center,
-                      Colors.white),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/recipes');
-                  },
-                  child: myWidgCont(
-                      150,
-                      175,
-                      const Color.fromARGB(255, 224, 224, 224),
-                      CupertinoIcons.book_fill,
-                      Color.fromARGB(255, 38, 97, 185)),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/userprof');
-                    },
-                    child: myWidgCont(
-                        150,
-                        175,
-                        const Color.fromARGB(255, 224, 224, 224),
-                        CupertinoIcons.profile_circled,
-                        Color.fromARGB(255, 38, 97, 185))),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/barcode');
-                  },
-                  child: myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
-                      CupertinoIcons.qrcode_viewfinder, Colors.white),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/barcode');
-                },
-                child: myWidgCont(
-                  150,
-                  175,
-                  Color.fromARGB(255, 38, 97, 185),
-                  Icons.barcode_reader,
-                  Colors.white,
-                ),
+      //Home page for when a user logs in
+      backgroundColor: const Color.fromARGB(255, 169, 183, 255),
+      appBar: myAppBar(context, ref, 'Home'),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              myWidgCont(150, 175, const Color.fromARGB(255, 38, 97, 185),
+                  Icons.fitness_center, Colors.white),
+              myWidgCont(150, 175, const Color.fromARGB(255, 224, 224, 224),
+                  CupertinoIcons.book_fill, Color.fromARGB(255, 38, 97, 185)),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              myWidgCont(
+                150,
+                175,
+                const Color.fromARGB(255, 224, 224, 224),
+                CupertinoIcons.profile_circled,
+                Color.fromARGB(255, 38, 97, 185),
               ),
             ],
           ),
+          myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
+              CupertinoIcons.qrcode_viewfinder, Colors.white),
         ],
       ),
-      bottomNavigationBar: BottomNav(),
     );
   }
 }

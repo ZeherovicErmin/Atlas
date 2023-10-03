@@ -24,7 +24,7 @@ class Recipes extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: myAppBar2(context, ref, 'Recipes'),
+      appBar: myAppBar2(context, ref, 'R e c i p e s'),
       body: gradient(recipes, context, ref),
       floatingActionButton: FloatingActionButton(
         onPressed: () => onSubmit(context, ref),

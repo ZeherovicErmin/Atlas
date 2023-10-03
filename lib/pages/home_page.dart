@@ -1,65 +1,72 @@
+import 'package:atlas/components/bottom_bar.dart';
+import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
-import 'package:atlas/pages/habit_tracker.dart';
-import 'package:atlas/util/habit_creation_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class HabitTileWidget extends StatelessWidget {
-  final Habit habit;
-
-  HabitTileWidget({required this.habit});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        title: Text(habit.name),
-        subtitle: habit.description != null ? Text(habit.description!) : null,
-        trailing: IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () {
-            // Implement habit deletion logic here using Riverpod
-          },
-        ),
-        // You can add more actions like marking habit as completed here
-      ),
-    );
-  }
-}
+import 'fitness_center.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final habits = ref.watch(habitListNotifierProvider);
+    final user = ref.watch(userProvider);
 
-    return Scaffold(
-      appBar: myAppBar(context, ref, 'HomePage'),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Number of columns in the grid
+    Widget gradient(context, ref) {
+      return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250),
+            ],
+          ),
         ),
-        itemCount: habits.habits.length,
-        itemBuilder: (context, index) {
-          final habit = habits.habits[index];
-          return HabitTileWidget(habit: habit);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "addHabit",
-        onPressed: () {
-          // Navigate to the habit creation screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HabitCreationScreen(),
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-    );
+        child: Scaffold(
+          //Home page for when a user logs in
+          backgroundColor: Colors.transparent,
+          appBar: myAppBar(context, ref, 'Home'),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  myWidgCont(150, 175, const Color.fromARGB(255, 38, 97, 185),
+                      Icons.fitness_center, Colors.white),
+                  myWidgCont(
+                      150,
+                      175,
+                      const Color.fromARGB(255, 224, 224, 224),
+                      CupertinoIcons.book_fill,
+                      Color.fromARGB(255, 38, 97, 185)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  myWidgCont(
+                    150,
+                    175,
+                    const Color.fromARGB(255, 224, 224, 224),
+                    CupertinoIcons.profile_circled,
+                    Color.fromARGB(255, 38, 97, 185),
+                  ),
+                  myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
+                      CupertinoIcons.qrcode_viewfinder, Colors.white),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return gradient(context, ref);
   }
 }

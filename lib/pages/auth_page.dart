@@ -16,7 +16,6 @@ class AuthPage extends ConsumerWidget {
     final user = ref.watch(userProvider);
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: user.when(
         data: (user) {
           // User is logged in

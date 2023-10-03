@@ -11,14 +11,26 @@ class FitCenter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
 
-    return Scaffold(
-        //Home page for when a user logs in
-        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        appBar: myAppBar2(context, ref, 'Fitness Center'),
-        body: user != null
-            ? Column()
-            : const Center(
-                child: CircularProgressIndicator(),
-              ));
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 90, 117, 255),
+            Color.fromARGB(255, 161, 195, 250),
+          ],
+        ),
+      ),
+      child: Scaffold(
+          //Home page for when a user logs in
+          backgroundColor: Colors.transparent,
+          appBar: myAppBar2(context, ref, 'Fitness Center'),
+          body: user != null
+              ? Column()
+              : const Center(
+                  child: CircularProgressIndicator(),
+                )),
+    );
   }
 }

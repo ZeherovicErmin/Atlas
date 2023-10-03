@@ -158,14 +158,20 @@ class BarcodeLookupPage extends ConsumerWidget {
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
-    return SafeArea(
-      child: Scaffold(
-        appBar: myAppBar2(context, ref, 'Barcode Lookup'),
-        backgroundColor: LinearGradient(
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
-        ).colors[0],
+          colors: [
+            Color.fromARGB(255, 90, 117, 255),
+            Color.fromARGB(255, 161, 195, 250),
+          ],
+        ),
+      ),
+      child: Scaffold(
+        appBar: myAppBar2(context, ref, 'Barcode Lookup'),
+        backgroundColor: Colors.transparent,
         body: Container(
           child: SingleChildScrollView(
             child: Center(

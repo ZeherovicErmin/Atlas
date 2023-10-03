@@ -1,4 +1,6 @@
-# atlas
+<div align="center">
+    <h1>Atlas: Conqueor Your World, One Rep at a Time.</h1>
+</div>
 
 A new Flutter project.
 

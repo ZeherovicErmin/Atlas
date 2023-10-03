@@ -1,9 +1,25 @@
+//Atlas Fitness App CSC 4996
+import 'package:atlas/components/bottom_bar.dart';
+import 'package:atlas/pages/barcode_lookup_page.dart';
+import 'package:atlas/pages/home_page.dart';
+import 'package:atlas/pages/fitness_center.dart';
+import 'package:atlas/pages/login_page.dart';
+import 'package:atlas/pages/recipes.dart';
+import 'package:atlas/pages/register_page.dart';
+import 'package:atlas/pages/user_profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
-import 'Recipes/recipes.dart';
+import 'pages/auth_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     ProviderScope(
       child: MyApp(),
@@ -11,35 +27,68 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+// Implementing a Provider for firebase initialization and authentication
+final firebaseProvider = FutureProvider<FirebaseApp>((ref) async {
+  final options = DefaultFirebaseOptions.currentPlatform;
+  return Firebase.initializeApp(options: options);
+});
 
+final userProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
+// Text box providers
+final emailControllerProvider = Provider<TextEditingController>((ref) {
+  return TextEditingController();
+});
+
+final passwordControllerProvider = Provider.autoDispose((ref) {
+  return TextEditingController();
+});
+
+// Provider for signing out
+final signOutProvider = FutureProvider<void>((ref) async {
+  final user = ref.watch(userProvider);
+
+  await FirebaseAuth.instance.signOut();
+});
+
+// Creating a registration provider
+final registrationProvider = Provider((ref) => RegistrationState());
+
+// Creating a provider for keeping track of the selected index of the navigation bar
+final selectedIndexProvider = StateProvider<int>((ref) => 0);
+
+class MyApp extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Recipes(),
-    );
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Storing our user with provider
+    final user = ref.watch(userProvider);
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
+    return user.when(
+      data: (user) {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: const AuthPage(),
+            routes: {
+              '/home': (context) => HomePage(),
+              '/fitcenter': (context) => FitCenter(),
+              '/login': (context) => LoginPage(),
+              '/register': (context) => RegisterPage(),
+              '/recipes': (context) => Recipes(),
+              '/userprof': (context) => UserProfile(),
+              '/barcode': (context) => BarcodeLookupPage(),
+              '/start': (context) => BottomNav(),
+            },
+          ),
+        );
+      },
+      error: (e, s) => Text('error'),
+      loading: () {
+        return CircularProgressIndicator();
+      },
     );
   }
 }

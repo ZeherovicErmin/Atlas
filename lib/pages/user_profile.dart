@@ -3,17 +3,9 @@ import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
-import "package:cupertino_icons/cupertino_icons.dart";
-import 'package:image_picker/image_picker.dart';
-
-// Riverpod Provider
-final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
 
 class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key});
@@ -22,42 +14,7 @@ class UserProfile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final usersCollection = FirebaseFirestore.instance.collection("Users");
-    final currentIndex = ref.watch(selectedIndexProvider);
-    final image = ref.watch(profilePictureProvider.notifier);
-
-    // Awaits for user input to select an Image
-// Awaits for user input to select an Image
-// Awaits user input to select an Image
-    void selectImage() async {
-      // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      // Check if an image was picked.
-      if (pickedFile != null) {
-        // Read the image file as bytes.
-        final imageBytes = await pickedFile.readAsBytes();
-
-        // Update the profilePictureProvider state with the selected image as Uint8List.
-        ref.read(profilePictureProvider.notifier).state =
-            Uint8List.fromList(imageBytes);
-      }
-    }
-
-    void saveProfile() async {
-      final imageBytes = image.state;
-
-      if (imageBytes != null) {
-        try {
-          await FirebaseFirestore.instance
-              .collection("profilePictures")
-              .doc(currentUser.email)
-              .set({"profilePicture": imageBytes});
-        } catch (e) {
-          print("Error: $e");
-        }
-      }
-    }
+    final _currentIndex = ref.watch(selectedIndexProvider);
 
     // Edit field
     Future<void> editField(String field) async {
@@ -124,7 +81,7 @@ class UserProfile extends ConsumerWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
+        appBar: myAppBar2(context, ref, 'U s e r P r o f i l e'),
         body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection("Users")
@@ -148,31 +105,10 @@ class UserProfile extends ConsumerWidget {
                 children: [
                   const SizedBox(height: 50),
 
-// Profile pic
-                  Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center, // Center the icon
-                        child: image.state != null
-                            ? CircleAvatar(
-                                radius: 64,
-                                backgroundImage: MemoryImage(image.state!),
-                              )
-                            : const Icon(
-                                CupertinoIcons.profile_circled,
-                                size: 72,
-                              ),
-                      ),
-                      Positioned(
-                        bottom: -10,
-                        left: 80,
-                        child: IconButton(
-                          // onPressed, opens Image Picker
-                          onPressed: selectImage,
-                          icon: const Icon(Icons.add_a_photo),
-                        ),
-                      )
-                    ],
+                  // Profile pic
+                  const Icon(
+                    Icons.fitness_center,
+                    size: 72,
                   ),
 
                   const SizedBox(height: 10),

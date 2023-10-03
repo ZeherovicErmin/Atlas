@@ -26,44 +26,51 @@ class HomePage extends ConsumerWidget {
             ],
           ),
         ),
-        child: Scaffold(
-          //Home page for when a user logs in
-          backgroundColor: Colors.transparent,
-          appBar: myAppBar(context, ref, 'Home'),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  myWidgCont(150, 175, const Color.fromARGB(255, 38, 97, 185),
-                      Icons.fitness_center, Colors.white),
-                  myWidgCont(
-                      150,
-                      175,
-                      const Color.fromARGB(255, 224, 224, 224),
-                      CupertinoIcons.book_fill,
-                      Color.fromARGB(255, 38, 97, 185)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  myWidgCont(
-                    150,
-                    175,
-                    const Color.fromARGB(255, 224, 224, 224),
-                    CupertinoIcons.profile_circled,
-                    Color.fromARGB(255, 38, 97, 185),
+              child: Scaffold(
+                resizeToAvoidBottomInset : false,
+                //Home page for when a user logs in
+                backgroundColor: Colors.transparent,
+                appBar: myAppBar(context, ref, 'Home'),
+                body: SafeArea(
+                  child: Center (
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              myWidgCont(150, 175, const Color.fromARGB(255, 38, 97, 185),
+                                  Icons.fitness_center, Colors.white),
+                              myWidgCont(
+                                  150,
+                                  175,
+                                  const Color.fromARGB(255, 224, 224, 224),
+                                  CupertinoIcons.book_fill,
+                                  Color.fromARGB(255, 38, 97, 185)),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              myWidgCont(
+                                150,
+                                175,
+                                const Color.fromARGB(255, 224, 224, 224),
+                                CupertinoIcons.profile_circled,
+                                Color.fromARGB(255, 38, 97, 185),
+                              ),
+                            ],
+                          ),
+                          myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
+                              CupertinoIcons.qrcode_viewfinder, Colors.white),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              myWidgCont(150, 175, Color.fromARGB(255, 38, 97, 185),
-                  CupertinoIcons.qrcode_viewfinder, Colors.white),
-            ],
-          ),
-        ),
+                ),
+                ),
       );
     }
 

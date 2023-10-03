@@ -170,7 +170,7 @@ class BarcodeLookupPage extends ConsumerWidget {
         ),
       ),
       child: Scaffold(
-        appBar: myAppBar2(context, ref, 'Barcode Lookup'),
+        appBar: myAppBar2(context, ref, 'B a r c o d e L o o k u p'),
         backgroundColor: Colors.transparent,
         body: Container(
           child: SingleChildScrollView(

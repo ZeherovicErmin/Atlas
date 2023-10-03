@@ -30,7 +30,7 @@ class BarcodeLogPage extends ConsumerWidget {
           ),
         ),
         child: Scaffold(
-          appBar: myAppBar2(context, ref, 'Barcode Logs'),
+          appBar: myAppBar2(context, ref, 'B a r c o d e L o g s'),
           body: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('Barcode_Lookup')

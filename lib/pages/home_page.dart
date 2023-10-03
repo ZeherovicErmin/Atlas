@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
         child: Scaffold(
           //Home page for when a user logs in
           backgroundColor: Colors.transparent,
-          appBar: myAppBar(context, ref, 'Home'),
+          appBar: myAppBar(context, ref, 'H o m e'),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

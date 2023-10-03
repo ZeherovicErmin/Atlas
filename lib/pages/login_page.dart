@@ -5,7 +5,6 @@ import 'package:atlas/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:atlas/pages/forgot_password_page.dart';
 
 // Converting loginPage to use Providers created in main.dart
 class LoginPage extends ConsumerWidget {
@@ -54,90 +53,96 @@ class LoginPage extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //White space above logo
-                    const SizedBox(height: 5),
+    return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250),
+            ],
+          ),
+        ),
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //White space above logo
+                        const SizedBox(height: 5),
 
-                    //Logo
-                    SizedBox(
-                        height: 220,
-                        width: 220,
-                        //color: Colors.blue,
-                        child: Image.asset('lib/images/atlas.png')),
+                        //Logo
+                        SizedBox(
+                            height: 220,
+                            width: 220,
+                            //color: Colors.blue,
+                            child: Image.asset('lib/images/atlas.png')),
 
-                    //const SizedBox(height: 5),
+                        //const SizedBox(height: 5),
 
-                    //Atlas title
-                    const Text(
-                      'Atlas',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        //Atlas title
+                        const Text(
+                          'Atlas',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
-                    const SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
-                    //Username textfield
-                    MyTextField(
-                      controller: emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                    ),
+                        //Username textfield
+                        MyTextField(
+                          controller: emailController,
+                          hintText: 'Email',
+                          obscureText: false,
+                        ),
 
-                    const SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
-                    //Password textfield
-                    MyTextField(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                    ),
+                        //Password textfield
+                        MyTextField(
+                          controller: passwordController,
+                          hintText: 'Password',
+                          obscureText: true,
+                        ),
 
-                    const SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
+                        /*
+                    NOT FUNCTIONAL YET
                     //Forgot Password
-                    Padding (
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          GestureDetector (
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return ForgotPasswordPage();
-                              }));
-                            },
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(color: Color.fromARGB(255, 0, 60, 255),
-                              fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          Text(
+                            'Forgot Password?',
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 15),
+                  */
 
-                    //Sign-in button
-                    MyButton(
-                      text: 'Sign In',
-                      onTap: () => signIn(context),
-                    ),
+                        const SizedBox(height: 15),
 
-                    const SizedBox(height: 25),
+                        //Sign-in button
+                        MyButton(
+                          text: 'Sign In',
+                          onTap: () => signIn(context),
+                        ),
 
-                    /*
+                        const SizedBox(height: 25),
+
+                        /*
                   NOT FUNCTIONAL YET
                     //Continue
                     Padding(
@@ -189,33 +194,33 @@ class LoginPage extends ConsumerWidget {
 
                   */
 
-                    const SizedBox(height: 25),
+                        const SizedBox(height: 25),
 
-                    //Register now
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Not a member?',
-                          style: TextStyle(color: Colors.black),
+                        //Register now
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Not a member?',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed('/register');
+                              },
+                              child: const Text(
+                                'Register now',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 60, 255),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushNamed('/register');
-                          },
-                          child: const Text(
-                            'Register now',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 60, 255),
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ]),
-            ),
-          ),
-        ));
+                      ]),
+                ),
+              ),
+            )));
   }
 }

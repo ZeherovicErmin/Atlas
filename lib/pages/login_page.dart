@@ -5,6 +5,7 @@ import 'package:atlas/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:atlas/pages/forgot_password_page.dart';
 
 // Converting loginPage to use Providers created in main.dart
 class LoginPage extends ConsumerWidget {
@@ -103,23 +104,28 @@ class LoginPage extends ConsumerWidget {
 
                     const SizedBox(height: 10),
 
-                    /*
-                    NOT FUNCTIONAL YET
                     //Forgot Password
-                    Padding(
+                    Padding (
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            'Forgot Password?',
-                            style: TextStyle(color: Colors.grey[600]),
+                          GestureDetector (
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return ForgotPasswordPage();
+                              }));
+                            },
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(color: Color.fromARGB(255, 0, 60, 255),
+                              fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-
-                  */
 
                     const SizedBox(height: 15),
 

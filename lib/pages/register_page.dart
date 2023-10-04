@@ -99,104 +99,33 @@ class RegisterPage extends ConsumerWidget {
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-          ],
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // White space above logo
-                  const SizedBox(height: 5),
-
-                  // Logo
-                  SizedBox(
-                    height: 220,
-                    width: 220,
-                    child: Image.asset('lib/images/atlas.png'),
-                  ),
-
-                  // Atlas title
-                  const SizedBox(height: 10),
-
-                  // Username textfield
-                  MyTextField(
-                    controller: registrationState.emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Password textfield
-                  MyTextField(
-                    controller: registrationState.passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Confirm password textfield
-                  MyTextField(
-                    controller: registrationState.confirmPasswordController,
-                    hintText: 'Confirm Password',
-                    obscureText: true,
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  // Sign-in button
-                  MyButton(
-                    text: 'Sign Up',
-                    onTap: signUserUp,
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Register now
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Already have an account?',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed('/login');
-                        },
-                        child: const Text(
-                          'Login now',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 60, 255),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250),
+            ],
           ),
         ),
-      ),
-    );
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // White space above logo
+                        const SizedBox(height: 5),
 
+                        // Logo
+                        SizedBox(
+                          height: 220,
+                          width: 220,
+                          child: Image.asset('lib/images/atlas.png'),
+                        ),
 
                         const SizedBox(height: 10),
 
@@ -237,31 +166,31 @@ class RegisterPage extends ConsumerWidget {
                                 child: Divider(
                                   thickness: 1.0,
                                   color: Colors.black,
-                            ),
-                          ),
-
-                        //Password Constraints
-                        Padding(
-                          padding:
-                            EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              'Password must contain 6 or more characters',
-                              style: TextStyle(color:  Colors.black,
-                              //fontWeight: FontWeight.bold
+                                ),
                               ),
-                            ),
-                          ),
 
-                        //Spacing
-                        Expanded(
-                          child: Divider(
-                            thickness: 1.0,
-                            color: Colors.black,
+                              //Password Constraints
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Text(
+                                  'Password must contain 6 or more characters',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    //fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+
+                              //Spacing
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1.0,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
 
                         const SizedBox(height: 25),
 
@@ -291,13 +220,13 @@ class RegisterPage extends ConsumerWidget {
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 0, 60, 255),
                                     fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ]),
                 ),
-            ]),
-          ),
-        ),
-    )));
+              ),
+            )));
   }
 }

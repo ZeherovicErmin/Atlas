@@ -49,7 +49,6 @@ final passwordControllerProvider = Provider.autoDispose((ref) {
 // Provider for signing out
 final signOutProvider = FutureProvider<void>((ref) async {
   final user = ref.watch(userProvider);
-
   await FirebaseAuth.instance.signOut();
 });
 

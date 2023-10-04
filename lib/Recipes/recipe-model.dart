@@ -211,3 +211,64 @@ class Step {
     required this.equipment,
   });
 }
+
+
+//Converts API list of Nutrition nutrients to Nutrient List
+List<Nutrient> nutrientsListFromJson(List<dynamic> apiNutrientList) {
+  List<Nutrient> nutrientsList = []; //List of Nutrients to be returned
+  //Loops through "nutrient" list from API and maps
+  //each nutrient to a Nutrient object, then adds that to the nutrients List
+  apiNutrientList.forEach((n) {
+    Nutrient nutrient = Nutrient(
+        name: n["name"] as String,
+        //checks if this value is int, if it is return 0.0 else return 
+        //the value bc it is correct type (double)
+        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        unit: n["unit"] as String,
+        //checks if this value is int, if it is return 0.0 else return 
+        //the value bc it is correct type (double)
+        percentOfDailyNeeds: n["percentOfDailyNeeds"] is int
+            ? 0.0
+            : n["percentOfDailyNeeds"] as double); 
+
+    nutrientsList.add(nutrient);
+  });
+
+  return nutrientsList;
+}
+
+//Converts API list of Nutrition properties to Property List
+List<Property> propertiesListFromJson(List<dynamic> apiPropertyList) {
+  List<Property> propertiesList = []; //List of Nutrients to be returned
+  //Loops through "property" list from API and maps each property to a
+  //Property object and adds that to the property List
+  apiPropertyList.forEach((n) {
+    Property property = Property(
+        name: n["name"] as String,
+        //checks if this value is int, if it is return 0.0 else return 
+        //the value bc it is correct type (double)
+        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        unit: n["unit"] as String);
+    propertiesList.add(property);
+  });
+
+  return propertiesList;
+}
+
+//Converts API list of Nutrition flavanoids to Flavanoid List
+List<Flavanoid> flavanoidsListFromJson(List<dynamic> apiFlavanoidList) {
+  List<Flavanoid> flavanoidsList = []; //List of Nutrients to be returned
+  //Loops through "flavanoid" list from API and maps each flavanoid to a 
+  //Flavanoid object and adds that to the flavanoid List
+  apiFlavanoidList.forEach((n) {
+    Flavanoid flavanoid = Flavanoid(
+        name: n["name"] as String,
+        //checks if this value is int, if it is return 0.0 else return 
+        //the value bc it is correct type (double)
+        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        unit: n["unit"] as String);
+    flavanoidsList.add(flavanoid);
+  });
+
+  return flavanoidsList;
+}

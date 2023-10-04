@@ -45,7 +45,18 @@ class UserProfile extends ConsumerWidget {
     }
 
     void saveProfile() async {
-      final imageBytes = image?.state;
+      final imageBytes = image.state;
+
+      if (imageBytes != null) {
+        try {
+          await FirebaseFirestore.instance
+              .collection("profilePictures")
+              .doc(currentUser.email)
+              .set({"profilePicture": imageBytes});
+        } catch (e) {
+          print("Error: $e");
+        }
+      }
     }
 
     // Edit field
@@ -142,10 +153,10 @@ class UserProfile extends ConsumerWidget {
                     children: [
                       Align(
                         alignment: Alignment.center, // Center the icon
-                        child: image?.state != null
+                        child: image.state != null
                             ? CircleAvatar(
                                 radius: 64,
-                                backgroundImage: MemoryImage(image!.state!),
+                                backgroundImage: MemoryImage(image.state!),
                               )
                             : const Icon(
                                 CupertinoIcons.profile_circled,
@@ -156,6 +167,7 @@ class UserProfile extends ConsumerWidget {
                         bottom: -10,
                         left: 80,
                         child: IconButton(
+                          // onPressed, opens Image Picker
                           onPressed: selectImage,
                           icon: const Icon(Icons.add_a_photo),
                         ),

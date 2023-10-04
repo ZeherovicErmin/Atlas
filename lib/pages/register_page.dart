@@ -3,6 +3,7 @@ import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,13 +15,22 @@ class RegistrationState {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  // Riverpod Provider
+  final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
+  // Variable for initial profile image data
+  final Uint8List initialProfileImageData =
+      Uint8List.fromList(List<int>.generate(1024, (index) => index % 256));
+
+  RegistrationState();
 }
 
 // Class to attempt to register a user
 class RegisterPage extends ConsumerWidget {
   const RegisterPage({Key? key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Obtain the registration provider state
     final registrationState = ref.watch(registrationProvider);
 
     void showErrorMessage(String message) {
@@ -68,8 +78,10 @@ class RegisterPage extends ConsumerWidget {
             .set({
           'username': registrationState.emailController.text
               .split('@')[0], // initial username
-          'bio': 'Empty Bio...' //initally empty bio
-          //add additional fields as needed
+          'bio': 'Empty Bio...', // initially empty bio
+          'profilePicture':
+              registrationState.initialProfileImageData, // profile pic
+          // add additional fields as needed
         });
 
         Navigator.pop(context); // Closes the loading circle
@@ -87,45 +99,104 @@ class RegisterPage extends ConsumerWidget {
     }
 
     return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250),
-            ],
-          ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 90, 117, 255),
+            Color.fromARGB(255, 161, 195, 250),
+          ],
         ),
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //White space above logo
-                        const SizedBox(height: 5),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // White space above logo
+                  const SizedBox(height: 5),
 
-                        //Logo
-                        SizedBox(
-                            height: 220,
-                            width: 220,
-                            //color: Colors.blue,
-                            child: Image.asset('lib/images/atlas.png')),
+                  // Logo
+                  SizedBox(
+                    height: 220,
+                    width: 220,
+                    child: Image.asset('lib/images/atlas.png'),
+                  ),
 
-                        //const SizedBox(height: 5),
+                  // Atlas title
+                  const SizedBox(height: 10),
 
-                        //Atlas title
-                        const Text(
-                          'Atlas',
+                  // Username textfield
+                  MyTextField(
+                    controller: registrationState.emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Password textfield
+                  MyTextField(
+                    controller: registrationState.passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Confirm password textfield
+                  MyTextField(
+                    controller: registrationState.confirmPasswordController,
+                    hintText: 'Confirm Password',
+                    obscureText: true,
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // Sign-in button
+                  MyButton(
+                    text: 'Sign Up',
+                    onTap: signUserUp,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Register now
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already have an account?',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed('/login');
+                        },
+                        child: const Text(
+                          'Login now',
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 32,
+                            color: Color.fromARGB(255, 0, 60, 255),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
 
                         const SizedBox(height: 10),
 

@@ -11,197 +11,168 @@ import 'package:atlas/pages/forgot_password_page.dart';
 class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // watching the provider in main.dart for user changes
-    final user = ref.watch(userProvider);
-    final emailController = ref.watch(emailControllerProvider);
-    final passwordController = ref.watch(passwordControllerProvider);
+  // watching the provider in main.dart for user changes
+  final user = ref.watch(userProvider);
+  final emailController = ref.watch(emailControllerProvider);
+  final passwordController = ref.watch(passwordControllerProvider);
 
-    final auth = FirebaseAuth.instance;
+  final auth = FirebaseAuth.instance;
 
-    void showErrorMessage(String message) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: Colors.red,
-            title: Center(
-              child: Text(
-                message,
-                style: const TextStyle(color: Colors.white),
-              ),
+  void showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.red,
+          title: Center(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
             ),
-          );
-        },
-      );
-    }
-
-    // Function to handle signing in to firebase
-    Future<void> signIn(BuildContextcontext) async {
-      final email = emailController.text.trim();
-      final password = passwordController.text.trim();
-
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-
-        // Successful login
-        Navigator.of(context).pushReplacementNamed('/start');
-      } catch (e) {
-        showErrorMessage('Email or password is incorrect');
-        print("Sign-in failed: $e");
-      }
-    }
-
-    return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250),
-            ],
           ),
+        );
+      },
+    );
+  }
+
+  // Function to handle signing in to firebase
+  Future<void> signIn(BuildContextcontext) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Successful login
+      Navigator.of(context).pushReplacementNamed('/start');
+    } catch (e) {
+      showErrorMessage('Email or password is incorrect');
+      print("Sign-in failed: $e");
+    }
+  }
+
+  return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 90, 117, 255),
+            Color.fromARGB(255, 161, 195, 250),
+          ],
         ),
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //White space above logo
-                        const SizedBox(height: 5),
+      ),
+    child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //White space above logo
+                    const SizedBox(height: 5),
 
-                        //Logo
-                        SizedBox(
-                            height: 220,
-                            width: 220,
-                            //color: Colors.blue,
-                            child: Image.asset('lib/images/atlas.png')),
+                    //Logo
+                    SizedBox(
+                        height: 220,
+                        width: 220,
+                        //color: Colors.blue,
+                        child: Image.asset('lib/images/atlas.png')),
 
-                        //const SizedBox(height: 5),
+                    //const SizedBox(height: 5),
 
-                        //Atlas title
-                        const Text(
-                          'Atlas',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        //Username textfield
-                        MyTextField(
-                          controller: emailController,
-                          hintText: 'Email',
-                          obscureText: false,
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        //Password textfield
-                        MyTextField(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        //Sign-in button
-                        MyButton(
-                          text: 'Sign In',
-                          onTap: () => signIn(context),
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        /*
-                  NOT FUNCTIONAL YET
-                    //Continue
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              'Or continue with',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                        ],
+                    //Atlas title
+                    const Text(
+                      'Atlas',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
                     const SizedBox(height: 10),
 
-                    //Apple and Google sign-in
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //Google button
-                        SquareTile(
-                            imagePath:
-                                'lib/images/google-logo-transparent.png'),
-
-                        SizedBox(width: 30),
-
-                        //Apple button
-                        SquareTile(
-                            imagePath: 'lib/images/apple-logo-transparent.png')
-                      ],
+                    //Username textfield
+                    MyTextField(
+                      controller: emailController,
+                      hintText: 'Email',
+                      obscureText: false,
                     ),
 
-                  */
+                    const SizedBox(height: 10),
 
-                        const SizedBox(height: 25),
+                    //Password textfield
+                    MyTextField(
+                      controller: passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                    ),
 
-                        //Register now
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Not a member?',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/register');
-                              },
-                              child: const Text(
-                                'Register now',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 60, 255),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
+                const SizedBox(height: 15),
+
+                //Forgot Password
+                Padding (
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector (
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return ForgotPasswordPage();
+                          }));
+                        },
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Color.fromARGB(255, 0, 60, 255),
+                          fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
+
+            const SizedBox(height: 15),
+
+            //Sign-in button
+            MyButton(
+              text: 'Sign In',
+              onTap: () => signIn(context),
+            ),
+
+            const SizedBox(height: 25),
+
+          //Register now
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Not a member?',
+                style: TextStyle(color: Colors.black),
               ),
-            )));
+              const SizedBox(width: 4),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed('/register');
+                },
+                child: const Text(
+                  'Register now',
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 0, 60, 255),
+                      fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ]),
+          ),
+        ),
+    )));
   }
 }

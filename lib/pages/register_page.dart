@@ -155,6 +155,43 @@ class RegisterPage extends ConsumerWidget {
                           obscureText: true,
                         ),
 
+                        const SizedBox(height: 15),
+
+                        //Spacing
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 25.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1.0,
+                                  color: Colors.black,
+                            ),
+                          ),
+
+                        //Password Constraints
+                        Padding(
+                          padding:
+                            EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text(
+                              'Password must contain 6 or more characters',
+                              style: TextStyle(color:  Colors.black,
+                              //fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+
+                        //Spacing
+                        Expanded(
+                          child: Divider(
+                            thickness: 1.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                         const SizedBox(height: 25),
 
                         //Sign-in button
@@ -162,60 +199,6 @@ class RegisterPage extends ConsumerWidget {
                           text: 'Sign Up',
                           onTap: signUserUp,
                         ),
-
-                        const SizedBox(height: 10),
-
-                        /*
-                    NOT FUNCTIONAL YET
-                    //Continue
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              'Or continue with',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    //Apple and Google sign-in
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //Google button
-                        SquareTile(
-                            imagePath:
-                                'lib/images/google-logo-transparent.png'),
-
-                        SizedBox(width: 30),
-
-                        //Apple button
-                        SquareTile(
-                            imagePath: 'lib/images/apple-logo-transparent.png')
-                      ],
-                    ),
-
-                    */
 
                         const SizedBox(height: 25),
 
@@ -237,13 +220,13 @@ class RegisterPage extends ConsumerWidget {
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 0, 60, 255),
                                     fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ]),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            )));
+            ]),
+          ),
+        ),
+    )));
   }
 }

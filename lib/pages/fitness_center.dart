@@ -1,12 +1,39 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class FitCenter extends ConsumerWidget {
   const FitCenter({Key? key}) : super(key: key);
+
+  Future<List<dynamic>> getExercises() async{
+
+    // The Api key from API NINJAS
+    final String myApiKey = 'q48XgvLytBmNhVJHFzoZgg==QWOhrECybUKjiRR8';
+
+    // Creating a muscle variable to pass to the api to specify the muscle group
+    final muscle = 'biceps';
+
+    // THe url to Api ninjas site, the $muscle will be provided from the muscle variable  
+    final  apiUrl = 'https://api.api-ninjas.com/v1/exercises?muscle=$muscle';
+
+    // waiting for a response from the api
+    final response = await http.get(Uri.parse(apiUrl), headers: {'X-Api-Key': myApiKey});
+
+    // if statement to catch errors
+    if(response.statusCode == 200){
+      final List<dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      print("Error: ${response.statusCode} ${response.body}");
+      return []; // Returning an empty list in case there is an error
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,10 +71,41 @@ class FitCenter extends ConsumerWidget {
 
           body: TabBarView(
             children: [
-              Center(
-                // Content for the Discover Page
-                child: Text("Tab 1"),
-              ),
+              
+
+              // The Discover Tab Of the workouts page
+              GestureDetector (
+                        onTap: () async {
+                          // Calling the exercises API when tapping the button
+                          final exercisesData = await getExercises();
+
+                          // If the exercise data exists
+                          if(exercisesData.isNotEmpty){
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => Scaffold(
+                              appBar: AppBar(title: Text("Discovered Workouts"),),
+                              body: ListView.builder(itemCount: exercisesData.length, itemBuilder: (context,index){
+                                final exercise = exercisesData[index];
+                                return ListTile(title: Text(exercise['name']),);
+                              },),
+
+                            ),
+
+                          ),
+                            );
+                          
+                          // Throwing a snackbar error if data isnt found
+                        } else{ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("No Workout Data Available."),),);
+                        }
+                        },
+                        child: const Center(child: Text(
+                          'Find Workouts',
+                          style: TextStyle(color: Color.fromARGB(255, 0, 60, 255),
+                          fontWeight: FontWeight.bold,
+                          ),
+                        ),),
+                      ),
               Center(
                 child: Text("Tab 2"),
               ),

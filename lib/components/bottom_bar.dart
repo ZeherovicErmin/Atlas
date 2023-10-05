@@ -25,7 +25,7 @@ class BottomNav extends ConsumerWidget {
       const FitCenter(),
       Recipes(),
       const HomePage(),
-      DraggableScrollCard(),
+      BarcodeLookupComb(),
       const UserProfile(),
     ];
 

@@ -160,70 +160,66 @@ class BarcodeLookupPage extends ConsumerWidget {
         .toList();
     return Scaffold(
       appBar: myAppBar(context, ref, 'Barcode Lookup'),
-      backgroundColor: LinearGradient(
+      backgroundColor: const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
       ).colors[0],
-      body: Container(
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Wrap(
-                  spacing: 1,
-                  children: filterOptions.map((filter) {
-                    return FilterChip(
-                      label: Text(filter),
-                      selected: selectedFilters.contains(filter),
-                      onSelected: (isSelected) {
-                        _onFilterChanged(filter, context, ref);
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    await _scanBarcode(context, ref);
-                  },
-                  child: const Text('Open Scanner'),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BarcodeLogPage(),
-                      ),
-                    );
-                  },
-                  child: const Text("Barcode logs"),
-                ),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  children: [
-                    if (selectedFilters.isNotEmpty)
-                      ...selectedFilters.map((filter) {
-                        return Container(
-                          child: GenerateTileCard(
-                            result: result,
-                            productName: productName,
-                            productCalories: productCalories,
-                            carbsPserving: carbsPserving,
-                            proteinPserving: proteinPserving,
-                            fatsPserving: fatsPserving,
-                            filter: filter,
-                          ),
-                        );
-                      }),
-                  ],
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Wrap(
+                spacing: 1,
+                children: filterOptions.map((filter) {
+                  return FilterChip(
+                    label: Text(filter),
+                    selected: selectedFilters.contains(filter),
+                    onSelected: (isSelected) {
+                      _onFilterChanged(filter, context, ref);
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await _scanBarcode(context, ref);
+                },
+                child: const Text('Open Scanner'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BarcodeLogPage(),
+                    ),
+                  );
+                },
+                child: const Text("Barcode logs"),
+              ),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                children: [
+                  if (selectedFilters.isNotEmpty)
+                    ...selectedFilters.map((filter) {
+                      return GenerateTileCard(
+                        result: result,
+                        productName: productName,
+                        productCalories: productCalories,
+                        carbsPserving: carbsPserving,
+                        proteinPserving: proteinPserving,
+                        fatsPserving: fatsPserving,
+                        filter: filter,
+                      );
+                    }),
+                ],
+              ),
+            ],
           ),
         ),
       ),

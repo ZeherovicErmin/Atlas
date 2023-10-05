@@ -249,16 +249,14 @@ class BarcodeLookupPage extends ConsumerWidget {
                     children: [
                       if (selectedFilters.isNotEmpty)
                         ...selectedFilters.map((filter) {
-                          return Container(
-                            child: GenerateTileCard(
-                              result: result,
-                              productName: productName,
-                              productCalories: productCalories,
-                              carbsPserving: carbsPserving,
-                              proteinPserving: proteinPserving,
-                              fatsPserving: fatsPserving,
-                              filter: filter,
-                            ),
+                          return GenerateTileCard(
+                            result: result,
+                            productName: productName,
+                            productCalories: productCalories,
+                            carbsPserving: carbsPserving,
+                            proteinPserving: proteinPserving,
+                            fatsPserving: fatsPserving,
+                            filter: filter,
                           );
                         }),
                     ],

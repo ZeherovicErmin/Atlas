@@ -10,6 +10,7 @@ import '../../components/product_card.dart';
 import 'barcode_log_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Define state providers for various data
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
 final resultProvider = StateProvider<String>((ref) => '');
@@ -21,10 +22,16 @@ final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
 
+// Create an instance of FirebaseAuth
 final FirebaseAuth auth = FirebaseAuth.instance;
+
+// Get the current user (if logged in)
 final user = auth.currentUser;
+
+// Get the user's UID (if available)
 final uid = user?.uid;
 
+// Define a data item class
 class DataItem {
   final String category;
   final dynamic value;
@@ -32,17 +39,21 @@ class DataItem {
   DataItem(this.category, this.value);
 }
 
-// Creating the barcode class
+// Creating the barcode lookup page as a consumer widget
 class BarcodeLookupPage extends ConsumerWidget {
+  // Define a list of filter options
   final List<String> filterOptions = [
     'Barcode Result',
     'Product Name',
     'Calories',
     'Macros',
   ];
+
   BarcodeLookupPage({Key? key}) : super(key: key);
 
+  // Function to scan a barcode
   Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
+    // Use the barcode scanner page from the simple_barcode_scanner library
     var scannedBarcode = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -51,13 +62,20 @@ class BarcodeLookupPage extends ConsumerWidget {
     );
 
     if (scannedBarcode is String) {
+      // Normalize UPC code if needed
       scannedBarcode = isValidUPC(scannedBarcode);
+
+      // Check if the barcode is valid
       if (isValidBarcode(scannedBarcode)) {
         try {
+          // Retrieve product data using the openfoodfacts library
           final productData = await testAPI.getProduct(scannedBarcode);
-          ref.watch(resultProvider.notifier).state =
-              scannedBarcode; // Corrected line
+
+          // Set the scanned barcode as the result
+          ref.watch(resultProvider.notifier).state = scannedBarcode;
+
           if (productData != null) {
+            // Set product name or 'Unknown product name' if not available
             if (productData.productName != null) {
               ref.watch(productNameProvider.notifier).state =
                   productData.productName!;
@@ -66,6 +84,7 @@ class BarcodeLookupPage extends ConsumerWidget {
                   'Unknown product name';
             }
 
+            // Set product calories, carbs, protein, and fats per serving
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
@@ -83,14 +102,17 @@ class BarcodeLookupPage extends ConsumerWidget {
                     ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
                 0.0;
 
+            // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
           } else {
+            // Set error messages if product data is not found
             ref.watch(productNameProvider.notifier).state = 'Please try again';
             ref.watch(productCaloriesProvider.notifier).state = 0.0;
             throw Exception(
                 'Product not found, please insert data for $scannedBarcode');
           }
 
+          // Create a list of data items and set it as a state
           ref.read(selectedDataProvider.notifier).state = [
             DataItem('uid', ref.read(uidProvider.notifier).state),
             DataItem('Barcode', scannedBarcode),
@@ -106,9 +128,11 @@ class BarcodeLookupPage extends ConsumerWidget {
                 ref.read(fatsPservingProvider.notifier).state),
           ];
 
+          // Send data to Firestore
           sendDataToFirestore(
               context, ref, {}, ref.read(productNameProvider.notifier).state);
         } catch (e) {
+          // Set error messages if an exception occurs
           ref.watch(resultProvider.notifier).state =
               'Product not found'; // Set an appropriate message
           ref.watch(productNameProvider.notifier).state = 'Product not found';
@@ -118,6 +142,7 @@ class BarcodeLookupPage extends ConsumerWidget {
           ref.watch(fatsPservingProvider.notifier).state = 0.0;
         }
       } else {
+        // Set error messages for an invalid barcode
         ref.watch(resultProvider.notifier).state = 'Invalid Barcode/UPC Code';
         ref.watch(productNameProvider.notifier).state = 'Please try again';
         ref.watch(productCaloriesProvider.notifier).state = 0.0;
@@ -128,11 +153,13 @@ class BarcodeLookupPage extends ConsumerWidget {
     }
   }
 
+  // Function to check if a barcode is valid
   bool isValidBarcode(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{13}$');
     return barcodePattern.hasMatch(barcode);
   }
 
+  // Function to normalize UPC code
   String isValidUPC(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{12}$');
     if (barcodePattern.hasMatch(barcode)) {
@@ -144,6 +171,7 @@ class BarcodeLookupPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Get data from state providers
     final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
@@ -155,9 +183,11 @@ class BarcodeLookupPage extends ConsumerWidget {
     final selectedData = ref.watch(selectedDataProvider);
     final uid = ref.watch(uidProvider.notifier).state;
 
+    // Filter data based on selected filters
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -170,7 +200,7 @@ class BarcodeLookupPage extends ConsumerWidget {
         ),
       ),
       child: Scaffold(
-        appBar: myAppBar2(context, ref, 'B a r c o d e L o o k u p'),
+        appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
         backgroundColor: Colors.transparent,
         body: Container(
           child: SingleChildScrollView(
@@ -178,6 +208,7 @@ class BarcodeLookupPage extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Display filter chips for user selection
                   Wrap(
                     spacing: 1,
                     children: filterOptions.map((filter) {
@@ -191,6 +222,7 @@ class BarcodeLookupPage extends ConsumerWidget {
                     }).toList(),
                   ),
                   const SizedBox(height: 20),
+                  // Button to open the barcode scanner
                   ElevatedButton(
                     onPressed: () async {
                       await _scanBarcode(context, ref);
@@ -198,6 +230,7 @@ class BarcodeLookupPage extends ConsumerWidget {
                     child: const Text('Open Scanner'),
                   ),
                   const SizedBox(height: 20),
+                  // Button to navigate to barcode logs
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -209,6 +242,7 @@ class BarcodeLookupPage extends ConsumerWidget {
                     },
                     child: const Text("Barcode logs"),
                   ),
+                  // Display selected data based on filters in a grid
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -238,6 +272,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     );
   }
 
+  // Function to send data to Firestore
   Future<void> sendDataToFirestore(BuildContext context, WidgetRef ref,
       Map<String, dynamic> data, String productName) async {
     try {
@@ -250,13 +285,13 @@ class BarcodeLookupPage extends ConsumerWidget {
           dataMap[item.category] = item.value;
           print(dataMap);
         }
+        // Add data to Firestore
         await FirebaseFirestore.instance
             .collection('Barcode_Lookup')
             .add(dataMap);
         print("Data to Firestore sent!!!");
 
         // Send a Snackbar when data is sent to database
-        // ScaffoldMessenger
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("$productName sent to Firestore"),
@@ -271,6 +306,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     }
   }
 
+  // Function to handle filter changes
   void _onFilterChanged(String newFilter, BuildContext context, WidgetRef ref) {
     final notifier = ref.read(selectedFiltersProvider.notifier);
     final currentFilters = notifier.state;
@@ -283,6 +319,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     notifier.state = notifier.state;
   }
 
+  // Function to add a filter
   void _addFilter(StateController<List<String>> notifier,
       List<String> currentFilters, String newFilter) {
     notifier.state = [...currentFilters, newFilter];
@@ -290,6 +327,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     notifier.state = notifier.state;
   }
 
+  // Function to remove a filter
   void _removeFilter(StateController<List<String>> notifier,
       List<String> currentFilters, String filterToRemove) {
     notifier.state = [
@@ -301,6 +339,7 @@ class BarcodeLookupPage extends ConsumerWidget {
   }
 }
 
+// Widget to generate tile cards based on filter
 class GenerateTileCard extends ConsumerStatefulWidget {
   GenerateTileCard({
     Key? key,

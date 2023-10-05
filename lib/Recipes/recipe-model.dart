@@ -11,6 +11,99 @@ class RecipeModel {
     this.number,
     this.totalResults,
   });
+
+  //Converts Recipe API response to RecipeModel
+  RecipeModel.fromJson(Map<String, dynamic> json) {
+    List<Result> resultsList = [];
+    json["results"].forEach((r) {
+      //List of Nutrients mapped from API nutrients list
+      List<Nutrient> nutrientsList =
+          nutrientsListFromJson(r["nutrition"]["nutrients"]);
+
+      //List of properties mapped from API nutrients list
+      List<Property> propertiesList =
+          propertiesListFromJson(r["nutrition"]["properties"]);
+
+      //List of flavanoids mapped from API nutrients list
+      List<Flavanoid> flavanoidsList =
+          flavanoidsListFromJson(r["nutrition"]["flavonoids"]);
+
+      //List of flavanoids mapped from API nutrients list
+      List<Ingredient> ingredientsList =
+          ingredientListFromJson(r["nutrition"]["ingredients"]);
+
+      //Caloric Breakdown mapped from API
+      CaloricBreakdown caloricBreakdownObj = CaloricBreakdown(
+        percentProtein:
+            r["nutrition"]["caloricBreakdown"]["percentProtein"] as double,
+        percentFat: r["nutrition"]["caloricBreakdown"]["percentFat"] as double,
+        percentCarbs:
+            r["nutrition"]["caloricBreakdown"]["percentCarbs"] as double,
+      );
+
+      //Weight Per Serving data mapped from API
+      WeightPerServing weightPerServingObj = WeightPerServing(
+          amount: r["nutrition"]["weightPerServing"]["amount"] as int,
+          unit: r["nutrition"]["weightPerServing"]["unit"] as String);
+
+      //Object containing all of the nutrition data we mapped from the API
+      Nutrition nutritionObj = Nutrition(
+          nutrients: nutrientsList,
+          properties: propertiesList,
+          flavonoids: flavanoidsList,
+          ingredients: ingredientsList,
+          caloricBreakdown: caloricBreakdownObj,
+          weightPerServing: weightPerServingObj);
+
+      //List of recipe instructions mapped from the API
+      List<AnalyzedInstruction> analyzedInstructionList =
+          analyzedInstructionListFromJson(r["analyzedInstructions"]);
+
+      //Recipe Search Result Object containing all data pertaining to a recipe
+      //including all the data mapped from the API
+      Result result = Result(
+          vegetarian: r["vegetarian"] as bool,
+          vegan: r["vegan"] as bool,
+          glutenFree: r["glutenFree"] as bool,
+          dairyFree: r["dairyFree"] as bool,
+          veryHealthy: r["veryHealthy"] as bool,
+          cheap: r["cheap"] as bool,
+          veryPopular: r["veryPopular"] as bool,
+          sustainable: r["sustainable"] as bool,
+          lowFodmap: r["lowFodmap"] as bool,
+          weightWatcherSmartPoints: r["weightWatcherSmartPoints"] as int,
+          gaps: r["gaps"] as String,
+          preparationMinutes: r["preparationMinutes"] as int,
+          cookingMinutes: r["cookingMinutes"] as int,
+          aggregateLikes: r["aggregateLikes"] as int,
+          healthScore: r["healthScore"] as int,
+          creditsText: r["creditsText"] as String,
+          license: r["license"] as String,
+          sourceName: r["sourceName"] as String,
+          pricePerServing: r["pricePerServing"] as double,
+          id: r["id"] as int,
+          title: r["title"] as String,
+          readyInMinutes: r["readyInMinutes"] as int,
+          servings: r["servings"] as int,
+          sourceUrl: r["sourceUrl"] as String,
+          image: r["image"] as String,
+          imageType: r["imageType"] as String,
+          nutrition: nutritionObj,
+          summary: r["summary"] as String,
+          cuisines: r["cuisines"] as List<dynamic>,
+          dishTypes: r["dishTypes"] as List<dynamic>,
+          diets: r["diets"] as List<dynamic>,
+          occasions: r["occasions"] as List<dynamic>,
+          analyzedInstructions: analyzedInstructionList,
+          spoonacularSourceUrl: r["spoonacularSourceUrl"] as String);
+      resultsList.add(result);
+    });
+
+    results = resultsList;
+    offset = json["offset"] as int;
+    number = json["number"] as int;
+    totalResults = json["totalResults"] as int;
+  }
 }
 
 //Recipe model for search results
@@ -88,6 +181,7 @@ class Result {
   });
 }
 
+//Equipment data for cooking the recipes
 class Equipment {
   int id;
   String name;
@@ -102,6 +196,7 @@ class Equipment {
   });
 }
 
+//Recipe nutrition data
 class Nutrition {
   List<Nutrient> nutrients;
   List<Property> properties;
@@ -120,6 +215,7 @@ class Nutrition {
   });
 }
 
+//Nutrition nutrients data
 class Nutrient {
   String name;
   double amount;
@@ -134,6 +230,7 @@ class Nutrient {
   });
 }
 
+//Nutrition properties data
 class Property {
   String name;
   double amount;
@@ -142,6 +239,7 @@ class Property {
   Property({required this.name, required this.amount, required this.unit});
 }
 
+//Nutrition flavanoid data
 class Flavanoid {
   String name;
   double amount;
@@ -150,6 +248,7 @@ class Flavanoid {
   Flavanoid({required this.name, required this.amount, required this.unit});
 }
 
+//Ingredient Nutrition data
 class Ingredient {
   int id;
   String name;
@@ -166,6 +265,7 @@ class Ingredient {
   });
 }
 
+//Recipe Caloric Breakdown
 class CaloricBreakdown {
   double percentProtein;
   double percentFat;
@@ -178,6 +278,7 @@ class CaloricBreakdown {
   });
 }
 
+//Recipe Weight per Serving
 class WeightPerServing {
   int amount;
   String unit;
@@ -188,6 +289,7 @@ class WeightPerServing {
   });
 }
 
+//Instructions for cooking a recipe
 class AnalyzedInstruction {
   String name;
   List<Step> steps;
@@ -198,6 +300,7 @@ class AnalyzedInstruction {
   });
 }
 
+//Recipe instruction step
 class Step {
   int number;
   String step;
@@ -271,4 +374,67 @@ List<Flavanoid> flavanoidsListFromJson(List<dynamic> apiFlavanoidList) {
   });
 
   return flavanoidsList;
+}
+
+//Converts API list of Nutrition ingredients to Ingredient List
+List<Ingredient> ingredientListFromJson(List<dynamic> json) {
+  List<Ingredient> ingredientList = [];
+  json.forEach((n) {
+    Ingredient ingredient = Ingredient(
+        id: n["id"] as int,
+        name: n["name"] as String,
+        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        unit: n["unit"] as String,
+        nutrients: nutrientsListFromJson(n["nutrients"]));
+    ingredientList.add(ingredient);
+  });
+
+  return ingredientList;
+}
+
+//Converts API list of Nutrition equipments to Equipment List
+List<Equipment> equipmentListFromJson(List<dynamic> json) {
+  List<Equipment> equipmentList = [];
+  json.forEach((e) {
+    Equipment equipment = Equipment(
+        id: e["id"] as int,
+        name: e["name"] as String,
+        localizedName: e["name"] as String,
+        image: e["name"] as String);
+    equipmentList.add(equipment);
+  });
+
+  return equipmentList;
+}
+
+//Converts API list of analyzed instruction steps to Step List
+List<Step> stepsListFromJson(List<dynamic> json) {
+  List<Step> stepsList = [];
+  json.forEach((s) {
+    List<Equipment> ingredientsList = equipmentListFromJson(s["ingredients"]);
+    List<Equipment> equipmentList = equipmentListFromJson(s["equipment"]);
+
+    Step step = Step(
+        number: s["number"] as int,
+        step: s["step"] as String,
+        ingredients: ingredientsList as List<Equipment>,
+        equipment: equipmentList as List<Equipment>);
+    stepsList.add(step);
+  });
+
+  return stepsList;
+}
+
+//Converts API list of analyzed instructions to AnalyzedInstruction List
+List<AnalyzedInstruction> analyzedInstructionListFromJson(List<dynamic> json) {
+  List<AnalyzedInstruction> analyzedInstructionList = [];
+  json.forEach((n) {
+    AnalyzedInstruction analyzedInstruction = AnalyzedInstruction(
+      name: n["name"] as String,
+      steps: stepsListFromJson(n["steps"]),
+    );
+    analyzedInstructionList.add(analyzedInstruction);
+  });
+
+  return analyzedInstructionList;
 }

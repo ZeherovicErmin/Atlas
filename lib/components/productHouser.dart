@@ -395,7 +395,7 @@ class NutrientsList extends StatelessWidget {
     return DraggableScrollableSheet(
         initialChildSize: .05,
         minChildSize: .05,
-        maxChildSize: .2,
+        maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(

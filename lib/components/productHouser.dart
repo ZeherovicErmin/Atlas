@@ -209,18 +209,7 @@ class BarcodeLookupComb extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Display filter chips for user selection
-                      Wrap(
-                        spacing: 1,
-                        children: filterOptions.map((filter) {
-                          return FilterChip(
-                            label: Text(filter),
-                            selected: selectedFilters.contains(filter),
-                            onSelected: (isSelected) {
-                              _onFilterChanged(filter, context, ref);
-                            },
-                          );
-                        }).toList(),
-                      ),
+                      FilterChips(selectedFilters, context, ref),
                       const SizedBox(height: 20),
                       // Button to open the barcode scanner
                       ElevatedButton(
@@ -243,89 +232,32 @@ class BarcodeLookupComb extends ConsumerWidget {
                         child: const Text("Barcode logs"),
                       ),
                       // Display selected data based on filters in a grid
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        children: [
-                          if (selectedFilters.isNotEmpty)
-                            ...selectedFilters.map((filter) {
-                              return GenerateTileCard(
-                                result: result,
-                                productName: productName,
-                                productCalories: productCalories,
-                                carbsPserving: carbsPserving,
-                                proteinPserving: proteinPserving,
-                                fatsPserving: fatsPserving,
-                                filter: filter,
-                              );
-                            }),
-                        ],
-                      ),
+                      //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
                     ],
                   ),
                 ),
               ),
             ),
-            DraggableScrollableSheet(
-                initialChildSize: .05,
-                minChildSize: .05,
-                maxChildSize: .8,
-                builder: (BuildContext context, ScrollController _controller) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.purple[900],
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12.0),
-                        topRight: Radius.circular(12.0),
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      controller: _controller,
-                      child: Column(children: [
-                        //Drag Handle
-                        Center(
-                          child: Container(
-                              margin: EdgeInsets.all(8.0),
-                              width: 40,
-                              height: 5.0,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(12.0),
-                                ),
-                              )),
-                        ),
-                        Container(
-                          child: GridView.count(
-                            controller: _controller,
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            children: [
-                              if (selectedFilters.isNotEmpty)
-                                ...selectedFilters.map(
-                                  (filter) {
-                                    return GenerateTileCard(
-                                      result: result,
-                                      productName: productName,
-                                      productCalories: productCalories,
-                                      carbsPserving: carbsPserving,
-                                      proteinPserving: proteinPserving,
-                                      fatsPserving: fatsPserving,
-                                      filter: filter,
-                                    );
-                                  },
-                                )
-                            ],
-                          ),
-                        ),
-                      ]),
-                    ),
-                  );
-                }),
+            NutrientsList(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
           ],
         ),
       ),
     );
+  }
+
+  Wrap FilterChips(List<String> selectedFilters, BuildContext context, WidgetRef ref) {
+    return Wrap(
+                      spacing: 1,
+                      children: filterOptions.map((filter) {
+                        return FilterChip(
+                          label: Text(filter),
+                          selected: selectedFilters.contains(filter),
+                          onSelected: (isSelected) {
+                            _onFilterChanged(filter, context, ref);
+                          },
+                        );
+                      }).toList(),
+                    );
   }
 
   // Function to send data to Firestore
@@ -392,6 +324,158 @@ class BarcodeLookupComb extends ConsumerWidget {
     ];
     print("Filters after removing: ${notifier.state}");
     notifier.state = notifier.state;
+  }
+}
+
+class GridViewProductCards extends StatelessWidget {
+  const GridViewProductCards({
+    super.key,
+    required this.selectedFilters,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+  });
+
+  final List<String> selectedFilters;
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      children: [
+        if (selectedFilters.isNotEmpty)
+          ...selectedFilters.map((filter) {
+            return GenerateTileCard(
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving,
+              filter: filter,
+            );
+          }),
+      ],
+    );
+  }
+}
+
+class NutrientsList extends StatelessWidget {
+  const NutrientsList({
+    super.key,
+    required this.selectedFilters,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+  });
+
+  final List<String> selectedFilters;
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+        initialChildSize: .05,
+        minChildSize: .05,
+        maxChildSize: .2,
+        builder: (BuildContext context, ScrollController _controller) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.purple[900],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              controller: _controller,
+              child: Column(children: [
+                //Drag Handle
+                Center(
+                  child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      width: 40,
+                      height: 5.0,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12.0),
+                        ),
+                      )),
+                ),
+                NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+              ]),
+            ),
+          );
+        });
+  }
+}
+
+class NutriGridView extends StatelessWidget {
+  final ScrollController secondController;
+  const NutriGridView({
+    super.key,
+    required this.selectedFilters,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+    required this.secondController
+  });
+
+  final List<String> selectedFilters;
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: GridView.count(
+        controller: secondController,
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        children: [
+          if (selectedFilters.isNotEmpty)
+            ...selectedFilters.map(
+              (filter) {
+                return GenerateTileCard(
+                  result: result,
+                  productName: productName,
+                  productCalories: productCalories,
+                  carbsPserving: carbsPserving,
+                  proteinPserving: proteinPserving,
+                  fatsPserving: fatsPserving,
+                  filter: filter,
+                );
+              },
+            )
+        ],
+      ),
+    );
   }
 }
 

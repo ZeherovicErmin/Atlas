@@ -68,8 +68,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           confirmPassword();
         },
         decoration: InputDecoration(
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
+          enabledBorder:OutlineInputBorder(
+            borderSide: BorderSide(color: getColor(), width: 2),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey.shade400),
@@ -89,5 +89,14 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   void dispose() {
     widget.controller.removeListener(confirmPassword);
     super.dispose();
+  }
+
+  //Stores the appropriate color based on whether there is an error or not
+  Color getColor() {
+  if (errorMessage.isNotEmpty) {
+      return Colors.red;
+    } else {
+      return Colors.white;
+    }
   }
 }

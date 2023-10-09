@@ -9,7 +9,7 @@ import 'dart:developer';
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 class BarcodeLogPage extends ConsumerWidget {
-  const BarcodeLogPage({super.key});
+  const BarcodeLogPage({Key? key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,6 +17,7 @@ class BarcodeLogPage extends ConsumerWidget {
     final User? user = auth.currentUser;
     final uid = user?.uid;
     log("The user id is = $uid");
+
     Widget gradient(context, ref) {
       return Container(
         decoration: const BoxDecoration(
@@ -30,7 +31,7 @@ class BarcodeLogPage extends ConsumerWidget {
           ),
         ),
         child: Scaffold(
-          appBar: myAppBar2(context, ref, 'B a r c o d e L o g s'),
+          appBar: myAppBar2(context, ref, 'B a r c o d e   L o g s'),
           body: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('Barcode_Lookup')
@@ -48,43 +49,37 @@ class BarcodeLogPage extends ConsumerWidget {
                 );
               }
 
-              // Define the column order, place 'Barcode' as the first column
-              final columns = [
-                'Barcode',
-                // Hides UserID variable
-                ...logs.first.data()!.keys.where((k) => k != 'uid')
-              ];
-
-              return SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: columns.map((column) {
-                      if (column == 'uid') {
-                        // Make the 'uid' column invisible
-                        return DataColumn(label: Text(''));
-                      } else {
-                        return DataColumn(label: Text(column));
-                      }
-                    }).toList(),
-                    rows: logs.map((log) {
-                      final data = log.data() as Map<String, dynamic>;
-                      if (data.containsKey('uid')) {
-                        data['uid'] = ''; // Make the 'uid' row empty
-                      }
-                      return DataRow(
-                        // Each column fed from DataSentToFireStore
-                        // is logged here
-                        cells: columns.map((column) {
-                          return DataCell(
-                            Text('${data[column]}'),
-                          );
-                        }).toList(),
-                      );
-                    }).toList(),
-                  ),
-                ),
+              return Builder(
+                builder: (context) {
+                  return Container(
+                    child: ListView.builder(
+                      itemCount: logs.length,
+                      itemBuilder: (context, index) {
+                        final data = logs[index].data() as Map<String, dynamic>;
+                        if (data.containsKey('uid')) {
+                          data['uid'] = ''; // Make the 'uid' row empty
+                        }
+                        return ListTile(
+                          title: Text('Barcode: ${data['Barcode']}'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Product Name: ${data['productName']}'),
+                              Text(
+                                  'Product Calories: ${data['productCalories']}'),
+                              Text(
+                                  'Carbs Per Serving: ${data['carbsPerServing']}'),
+                              Text(
+                                  'Protein Per Serving: ${data['proteinPerServing']}'),
+                              Text(
+                                  'Fats Per Serving: ${data['fatsPerServing']}'),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               );
             },
           ),

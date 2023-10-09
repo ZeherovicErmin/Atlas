@@ -66,10 +66,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.blue,
-      elevation: 0,
-    ),
     body: gradient(context), // Use the gradient function here
   );
 }
@@ -124,6 +120,31 @@ Widget gradient (BuildContext context) {
                     MyButton (
                       text: ('Reset Password'),
                       onTap: passwordReset,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    //Back to Login page button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Back to Login: ',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/login');
+                          },
+                          child: const Text(
+                            'Login Page',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 0, 60, 255),
+                                fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

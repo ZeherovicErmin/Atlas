@@ -85,7 +85,7 @@ class RegisterPage extends ConsumerWidget {
         });
 
         Navigator.pop(context); // Closes the loading circle
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/start');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         if (e.code == 'email-already-in-use') {

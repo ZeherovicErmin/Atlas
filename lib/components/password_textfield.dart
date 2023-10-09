@@ -79,6 +79,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
             hintText: widget.hintText,
             hintStyle: TextStyle(color: Colors.grey[500]),
             errorText: errorMessage.isNotEmpty ? errorMessage : null,
+            errorStyle: const TextStyle(fontSize: 16),
         ),
       ),
     );

@@ -1,4 +1,3 @@
-import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:atlas/components/password_textfield.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
@@ -24,6 +24,8 @@ class RegistrationState {
   RegistrationState();
 }
 
+RegistrationState registrationState = RegistrationState();
+
 // Class to attempt to register a user
 class RegisterPage extends ConsumerWidget {
   const RegisterPage({Key? key});
@@ -33,6 +35,7 @@ class RegisterPage extends ConsumerWidget {
     // Obtain the registration provider state
     final registrationState = ref.watch(registrationProvider);
 
+    //Error message function for displaying an error message to the user
     void showErrorMessage(String message) {
       showDialog(
         context: context,
@@ -50,6 +53,7 @@ class RegisterPage extends ConsumerWidget {
       );
     }
 
+    //Attempts to sign the user up for Atlas
     void signUserUp() async {
       showDialog(
         context: context,
@@ -58,6 +62,7 @@ class RegisterPage extends ConsumerWidget {
         },
       );
 
+      //Checks that the passwords match when confirming a password
       if (registrationState.passwordController.text !=
           registrationState.confirmPasswordController.text) {
         Navigator.pop(context);
@@ -65,6 +70,7 @@ class RegisterPage extends ConsumerWidget {
         return;
       }
 
+      //Attempts to create an account for a user with their email address and password
       try {
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -72,6 +78,7 @@ class RegisterPage extends ConsumerWidget {
           password: registrationState.passwordController.text,
         );
 
+        //Uploads a collection containing all user's email addresses when they register with Atlas
         FirebaseFirestore.instance
             .collection("Users")
             .doc(userCredential.user!.email)
@@ -84,8 +91,9 @@ class RegisterPage extends ConsumerWidget {
           // add additional fields as needed
         });
 
+        //Error handling for registering for Atlas
         Navigator.pop(context); // Closes the loading circle
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/start');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         if (e.code == 'email-already-in-use') {
@@ -98,6 +106,7 @@ class RegisterPage extends ConsumerWidget {
       }
     }
 
+    //Builds the page
     return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -115,7 +124,7 @@ class RegisterPage extends ConsumerWidget {
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // White space above logo
                         const SizedBox(height: 5),
@@ -139,94 +148,60 @@ class RegisterPage extends ConsumerWidget {
                         const SizedBox(height: 10),
 
                         //Password textfield
-                        MyTextField(
+                        PasswordTextField(
                           controller: registrationState.passwordController,
                           hintText: 'Password',
                           obscureText: true,
+                          registrationState: registrationState,
+                          passwordTextField: true,
                         ),
 
                         const SizedBox(height: 10),
 
-                        //Confirm password textfield
-                        MyTextField(
-                          controller:
-                              registrationState.confirmPasswordController,
+                        //Confirm Password textfield
+                        PasswordTextField(
+                          controller: registrationState.confirmPasswordController,
                           hintText: 'Confirm Password',
                           obscureText: true,
+                          registrationState: registrationState,
+                          passwordTextField: false,
                         ),
 
-                        const SizedBox(height: 15),
+                    const SizedBox(height: 25),
 
-                        //Spacing
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Divider(
-                                  thickness: 1.0,
-                                  color: Colors.black,
-                                ),
-                              ),
+                    //Sign-in button
+                    MyButton(
+                      text: 'Sign Up',
+                      onTap: signUserUp,
+                    ),
 
-                              //Password Constraints
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Text(
-                                  'Password must contain 6 or more characters',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    //fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                              ),
+                    const SizedBox(height: 25),
 
-                              //Spacing
-                              Expanded(
-                                child: Divider(
-                                  thickness: 1.0,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
+                    //Register now
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Already have an account?',
+                          style: TextStyle(color: Colors.black),
                         ),
-
-                        const SizedBox(height: 25),
-
-                        //Sign-in button
-                        MyButton(
-                          text: 'Sign Up',
-                          onTap: signUserUp,
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        //Register now
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account?',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/login');
-                              },
-                              child: const Text(
-                                'Login now',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 60, 255),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ]),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/login');
+                          },
+                          child: const Text(
+                            'Login now',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 0, 60, 255),
+                                fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            )));
+              ],
+            ),
+          ]),
+        ),
+      ),
+    )));
   }
 }

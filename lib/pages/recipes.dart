@@ -7,12 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:atlas/pages/recipe-details.dart';
 
-//State Provider holds recipe data
-final recipeProvider = StateProvider<List<dynamic>>((ref) {
-  return [];
-});
-
-//State provider that holds API result data including recipes
+//State Provider holds API Response data including list of Recipes
 final resultProvider = StateProvider<RecipeModel>((ref) {
   return RecipeModel();
 });
@@ -32,52 +27,21 @@ class Recipes extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //recipe provider state getter
-    // final recipes = ref.watch(recipeProvider);
     final recipes = ref.watch(resultProvider).results;
 
     return Scaffold(
-      appBar: appBar(),
+      appBar: myAppBar2(context, ref, "Recipes"),
       body: gradient(recipes, context, ref),
       //Recipe search bar submit button
       floatingActionButton: FloatingActionButton(
-        onPressed: () => onSubmitTEST(context, ref),
+        //Use onSubmit to activate search, onSubmitTEST to deactivate search
+        //and use test data
+        onPressed: () => onSubmit(context, ref),
         child: Text('Submit'),
       ),
     );
   }
 
-  AppBar appBar() {
-    //DEV needs to be removed and replaced with name of user authenticated
-    String userName = 'John Smith';
-    return AppBar(
-      //Welcome message
-      title: Text(
-        'Welcome, $userName!',
-        style: const TextStyle(
-          color: Color.fromARGB(255, 255, 255, 255),
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      backgroundColor: const Color(0xffA9B7FF),
-      // Burger menu for page navigation
-      /*
-        leading: Container(
-        margin: const EdgeInsets.all(10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: SvgPicture.asset(
-          'assets/icons/burger-menu.svg',
-          height: 20,
-          width: 20,
-        ),
-      ),
-      */
-    );
-  }
 
   // bg gradient color
   Widget gradient(recipes, context, ref) {
@@ -151,7 +115,7 @@ class Recipes extends ConsumerWidget {
   // List of recipe results from the API request
   Widget recipeList(
       //List<dynamic> recipes,
-      dynamic recipes,
+      List<Result> recipes,
       BuildContext context,
       WidgetRef ref) {
     //Expanded takes up entire container space
@@ -180,28 +144,44 @@ class Recipes extends ConsumerWidget {
               },
               //Used to put a divider line between recipes
               separatorBuilder: (context, index) {
-                return Divider();
+                return const Divider();
               },
             )));
   }
 
-  //Form Submission Handler - Submits search to API
+  //Form Submission Handler - Submits recipe search to API
   void onSubmit(BuildContext context, WidgetRef ref) async {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Searching for Recipes')));
-      String value = searchController.text;
-      var url = 'http://www.themealdb.com/api/json/v1/1/search.php?s=$value';
+
+      //Parameter: Query - User-Inputted Search Query
+      String query = searchController.text;
+      //Parameter: API Key - Used to gain access to the API
+      String apiKey = "cd2573f729714ab5bba24521e30d23ec";
+      //Parameter: Number - number of results to be returned from API
+      int number = 5;
+      //Parameter: AddRecipeNutrition - true to add nutrition info, false to not
+      bool addNutrition = true;
+      //Parameter: AddRecipeInformation - true to add recipe info such as instructions, false to not
+      bool addRecipeInfo = true;
+      //API Request URL with Parameters
+      String url =
+          'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
       final uri = Uri.parse(url);
       final response = await http.get(uri);
       final data = jsonDecode(response.body);
-      ref.read(recipeProvider.notifier).state = data['meals'];
+      RecipeModel mappedData = RecipeModel.fromJson(data);
+      if (mappedData.results != null) {
+        ref.read(resultProvider.notifier).state = mappedData;
+      } else {
+        mappedData = RecipeModel();
+      }
     }
   }
 
-  //Form Submission Handler - Submits search to API
-  //Currently gets sample data from spoonacularResult.json
-  //and does NOT call spoonacular API
+  //TEST Form Submission Handler - Outputs Test Data from
+  //spoonacularResult.json
   void onSubmitTEST(BuildContext context, WidgetRef ref) async {
     print("Submit testing");
     if (_formKey.currentState!.validate()) {
@@ -211,9 +191,8 @@ class Recipes extends ConsumerWidget {
       final String response =
           await rootBundle.loadString('assets/spoonacularResult.json');
       final data = await json.decode(response);
-      print(data);
+      //print(data);
       RecipeModel mappedData = RecipeModel.fromJson(data);
-      print(mappedData);
       if (mappedData.results != null) {
         ref.read(resultProvider.notifier).state = mappedData;
       } else {
@@ -232,5 +211,3 @@ class Recipes extends ConsumerWidget {
     );
   }
 }
-  
-

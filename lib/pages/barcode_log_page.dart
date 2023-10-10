@@ -59,6 +59,11 @@ class BarcodeLogPage extends ConsumerWidget {
                         if (data.containsKey('uid')) {
                           data['uid'] = ''; // Make the 'uid' row empty
                         }
+//returns Listview of each product
+                        final fatsPerServing = data['fatsPerServing'].toInt();
+                        final carbsPerServing = data['carbsPerServing'].toInt();
+                        final proteinPerServing = data['carbsPerServing'].toInt();
+
                         return ListTile(
                           title: Text('Barcode: ${data['Barcode']}'),
                           subtitle: Column(
@@ -67,12 +72,10 @@ class BarcodeLogPage extends ConsumerWidget {
                               Text('Product Name: ${data['productName']}'),
                               Text(
                                   'Product Calories: ${data['productCalories']}'),
+                              Text('Carbs Per Serving: $carbsPerServing'),
                               Text(
-                                  'Carbs Per Serving: ${data['carbsPerServing']}'),
-                              Text(
-                                  'Protein Per Serving: ${data['proteinPerServing']}'),
-                              Text(
-                                  'Fats Per Serving: ${data['fatsPerServing']}'),
+                                  'Protein Per Serving: $proteinPerServing'),
+                              Text('Fats Per Serving: $fatsPerServing'),
                             ],
                           ),
                         );

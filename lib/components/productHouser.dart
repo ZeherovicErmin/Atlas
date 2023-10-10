@@ -1,14 +1,14 @@
-//this file is in case I royally mess up Barcode lookup
+import 'package:atlas/pages/barcode_log_page.dart';
+import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../util/test.dart' as testAPI;
-import '../../components/product_card.dart';
-import 'barcode_log_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 // Define state providers for various data
 final barcodeProvider = StateProvider<String?>((ref) => null);
@@ -39,8 +39,7 @@ class DataItem {
   DataItem(this.category, this.value);
 }
 
-// Creating the barcode lookup page as a consumer widget
-class BarcodeLookupPage extends ConsumerWidget {
+class BarcodeLookupComb extends ConsumerWidget {
   // Define a list of filter options
   final List<String> filterOptions = [
     'Barcode Result',
@@ -49,8 +48,7 @@ class BarcodeLookupPage extends ConsumerWidget {
     'Macros',
   ];
 
-  BarcodeLookupPage({Key? key}) : super(key: key);
-
+  BarcodeLookupComb({Key? key}) : super(key: key);
   // Function to scan a barcode
   Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
     // Use the barcode scanner page from the simple_barcode_scanner library
@@ -202,72 +200,64 @@ class BarcodeLookupPage extends ConsumerWidget {
       child: Scaffold(
         appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
         backgroundColor: Colors.transparent,
-        body: Container(
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Display filter chips for user selection
-                  Wrap(
-                    spacing: 1,
-                    children: filterOptions.map((filter) {
-                      return FilterChip(
-                        label: Text(filter),
-                        selected: selectedFilters.contains(filter),
-                        onSelected: (isSelected) {
-                          _onFilterChanged(filter, context, ref);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  // Button to open the barcode scanner
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _scanBarcode(context, ref);
-                    },
-                    child: const Text('Open Scanner'),
-                  ),
-                  const SizedBox(height: 20),
-                  // Button to navigate to barcode logs
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BarcodeLogPage(),
-                        ),
-                      );
-                    },
-                    child: const Text("Barcode logs"),
-                  ),
-                  // Display selected data based on filters in a grid
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
+        body: Stack(
+          children: [
+            Container(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (selectedFilters.isNotEmpty)
-                        ...selectedFilters.map((filter) {
-                          return GenerateTileCard(
-                            result: result,
-                            productName: productName,
-                            productCalories: productCalories,
-                            carbsPserving: carbsPserving,
-                            proteinPserving: proteinPserving,
-                            fatsPserving: fatsPserving,
-                            filter: filter,
+                      // Display filter chips for user selection
+                      FilterChips(selectedFilters, context, ref),
+                      const SizedBox(height: 20),
+                      // Button to open the barcode scanner
+                      ElevatedButton(
+                        onPressed: () async {
+                          await _scanBarcode(context, ref);
+                        },
+                        child: const Text('Open Scanner'),
+                      ),
+                      const SizedBox(height: 20),
+                      // Button to navigate to barcode logs
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BarcodeLogPage(),
+                            ),
                           );
-                        }),
+                        },
+                        child: const Text("Barcode logs"),
+                      ),
+                      // Display selected data based on filters in a grid
+                      //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            NutrientsList(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
+          ],
         ),
       ),
     );
+  }
+
+  Wrap FilterChips(List<String> selectedFilters, BuildContext context, WidgetRef ref) {
+    return Wrap(
+                      spacing: 1,
+                      children: filterOptions.map((filter) {
+                        return FilterChip(
+                          label: Text(filter),
+                          selected: selectedFilters.contains(filter),
+                          onSelected: (isSelected) {
+                            _onFilterChanged(filter, context, ref);
+                          },
+                        );
+                      }).toList(),
+                    );
   }
 
   // Function to send data to Firestore
@@ -337,56 +327,262 @@ class BarcodeLookupPage extends ConsumerWidget {
   }
 }
 
-// Widget to generate tile cards based on filter
-class GenerateTileCard extends ConsumerStatefulWidget {
-  GenerateTileCard({
-    Key? key,
+class GridViewProductCards extends StatelessWidget {
+  const GridViewProductCards({
+    super.key,
+    required this.selectedFilters,
     required this.result,
     required this.productName,
     required this.productCalories,
     required this.carbsPserving,
     required this.proteinPserving,
     required this.fatsPserving,
-    required this.filter,
-  }) : super(key: key) {
-    print("GenerateTileCard constructed with filter: $filter");
-  }
+  });
 
+  final List<String> selectedFilters;
   final String result;
   final String productName;
   final double productCalories;
   final double carbsPserving;
   final double proteinPserving;
   final double fatsPserving;
-  final String filter;
 
-  @override
-  _GenerateTileCardState createState() => _GenerateTileCardState();
-}
-
-class _GenerateTileCardState extends ConsumerState<GenerateTileCard> {
   @override
   Widget build(BuildContext context) {
-    print("Filter: ${widget.result}");
-    switch (widget.filter) {
-      case 'Barcode Result':
-        return ProductCard(title: 'Barcode Result:', data: widget.result);
-      case 'Product Name':
-        return ProductCard(
-          title: 'Product Name:',
-          data: widget.productName,
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      children: [
+        if (selectedFilters.isNotEmpty)
+          ...selectedFilters.map((filter) {
+            return GenerateTileCard(
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving,
+              filter: filter,
+            );
+          }),
+      ],
+    );
+  }
+}
+
+class NutrientsList extends StatelessWidget {
+  const NutrientsList({
+    super.key,
+    required this.selectedFilters,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+  });
+
+  final List<String> selectedFilters;
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+        initialChildSize: .05,
+        minChildSize: .05,
+        maxChildSize: .8,
+        builder: (BuildContext context, ScrollController _controller) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.purple[900],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              controller: _controller,
+              child: Column(children: [
+                //Drag Handle
+                Center(
+                  child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      width: 40,
+                      height: 5.0,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12.0),
+                        ),
+                      )),
+                ),
+                NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+              ]),
+            ),
+          );
+        });
+  }
+}
+
+class NutriGridView extends StatelessWidget {
+  final ScrollController secondController;
+  const NutriGridView({
+    super.key,
+    required this.selectedFilters,
+    required this.result,
+    required this.productName,
+    required this.productCalories,
+    required this.carbsPserving,
+    required this.proteinPserving,
+    required this.fatsPserving,
+    required this.secondController
+  });
+
+  final List<String> selectedFilters;
+  final String result;
+  final String productName;
+  final double productCalories;
+  final double carbsPserving;
+  final double proteinPserving;
+  final double fatsPserving;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: GridView.count(
+        controller: secondController,
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        children: [
+          if (selectedFilters.isNotEmpty)
+            ...selectedFilters.map(
+              (filter) {
+                return GenerateTileCard(
+                  result: result,
+                  productName: productName,
+                  productCalories: productCalories,
+                  carbsPserving: carbsPserving,
+                  proteinPserving: proteinPserving,
+                  fatsPserving: fatsPserving,
+                  filter: filter,
+                );
+              },
+            )
+        ],
+      ),
+    );
+  }
+}
+
+class DraggableScrollCard extends StatefulWidget {
+  const DraggableScrollCard({Key? key});
+
+  @override
+  State<DraggableScrollCard> createState() => _DraggableScrollCardState();
+}
+
+class _DraggableScrollCardState extends State<DraggableScrollCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple[900],
+        title: Text('Draggable Scrollable Sheet'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: productHouserSheet(),
+      ),
+    );
+  }
+
+  DraggableScrollableSheet productHouserSheet() {
+    return DraggableScrollableSheet(
+      builder: (BuildContext context, ScrollController _controller) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.purple[900],
+          ),
+          child: GridView.builder(
+            controller: _controller,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Number of columns in the grid
+            ),
+            itemCount: 50, // Adjust the number of items as needed
+            itemBuilder: (BuildContext context, int index) {
+              return ProductCard(
+                title: 'Item $index',
+                data: 'Some sample text for item $index.', // Sample data text
+              );
+            },
+          ),
         );
-      case 'Calories':
-        return ProductCard(
-            title: 'Calories:', data: '${widget.productCalories}');
-      case 'Macros':
-        return ProductCard(
-          title: "Macros",
-          data:
-              'Carbs: ${widget.carbsPserving}\nProtein: ${widget.proteinPserving}\nFats: ${widget.fatsPserving}',
-        );
-      default:
-        return const SizedBox.shrink();
+      },
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  final String title;
+  final String data;
+  final bool isVisible; // New property to control visibility
+
+  ProductCard({
+    required this.title,
+    required this.data,
+    this.isVisible = true, // Default is visible
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isVisible) {
+      // Return an empty container if it shouldn't be displayed
+      return Container();
     }
+
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: AutoSizeText(
+                title,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+                maxLines: 1,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Expanded(
+              child: AutoSizeText(
+                data,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+                maxLines:
+                    10, // Specify the maximum number of lines before text ellipsis
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

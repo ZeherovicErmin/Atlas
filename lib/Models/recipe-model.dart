@@ -78,7 +78,6 @@ class RecipeModel {
           aggregateLikes: r["aggregateLikes"] as int,
           healthScore: r["healthScore"] as int,
           creditsText: r["creditsText"] as String,
-          license: r["license"] as String,
           sourceName: r["sourceName"] as String,
           pricePerServing: r["pricePerServing"] as double,
           id: r["id"] as int,
@@ -124,7 +123,6 @@ class Result {
   int aggregateLikes;
   int healthScore;
   String creditsText;
-  String license;
   String sourceName;
   double pricePerServing;
   int id;
@@ -160,7 +158,6 @@ class Result {
     required this.aggregateLikes,
     required this.healthScore,
     required this.creditsText,
-    required this.license,
     required this.sourceName,
     required this.pricePerServing,
     required this.id,
@@ -324,9 +321,9 @@ List<Nutrient> nutrientsListFromJson(List<dynamic> apiNutrientList) {
   apiNutrientList.forEach((n) {
     Nutrient nutrient = Nutrient(
         name: n["name"] as String,
-        //checks if this value is int, if it is return 0.0 else return 
+        //checks if this value is int, if it is, convert it to a double else return 
         //the value bc it is correct type (double)
-        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String,
         //checks if this value is int, if it is return 0.0 else return 
         //the value bc it is correct type (double)
@@ -348,9 +345,9 @@ List<Property> propertiesListFromJson(List<dynamic> apiPropertyList) {
   apiPropertyList.forEach((n) {
     Property property = Property(
         name: n["name"] as String,
-        //checks if this value is int, if it is return 0.0 else return 
+        //checks if this value is int, if it is, convert it to a double else return 
         //the value bc it is correct type (double)
-        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String);
     propertiesList.add(property);
   });
@@ -366,9 +363,9 @@ List<Flavanoid> flavanoidsListFromJson(List<dynamic> apiFlavanoidList) {
   apiFlavanoidList.forEach((n) {
     Flavanoid flavanoid = Flavanoid(
         name: n["name"] as String,
-        //checks if this value is int, if it is return 0.0 else return 
+        //checks if this value is int, if it is, convert it to a double else return 
         //the value bc it is correct type (double)
-        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String);
     flavanoidsList.add(flavanoid);
   });
@@ -383,7 +380,9 @@ List<Ingredient> ingredientListFromJson(List<dynamic> json) {
     Ingredient ingredient = Ingredient(
         id: n["id"] as int,
         name: n["name"] as String,
-        amount: n["amount"] is int ? 0.0 : n["amount"] as double,
+        //checks if this value is int, if it is, convert it to a double else return 
+        //the value bc it is correct type (double)
+        amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String,
         nutrients: nutrientsListFromJson(n["nutrients"]));
     ingredientList.add(ingredient);

@@ -1,3 +1,4 @@
+import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/habit_tracker.dart';
 import 'package:atlas/util/habit_creation_screen.dart';
 import 'package:flutter/material.dart';
@@ -35,14 +36,14 @@ class HomePage extends ConsumerWidget {
     final habits = ref.watch(habitListNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Habit Tracker'),
-      ),
-      body: ListView.builder(
-        itemCount: habits.habits.length, // Use habits.habits.length
+      appBar: myAppBar(context, ref, 'HomePage'),
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns in the grid
+        ),
+        itemCount: habits.habits.length,
         itemBuilder: (context, index) {
-          final habit =
-              habits.habits[index]; // Access the habit from habits.habits
+          final habit = habits.habits[index];
           return HabitTileWidget(habit: habit);
         },
       ),

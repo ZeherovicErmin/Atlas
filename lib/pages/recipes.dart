@@ -114,7 +114,6 @@ class Recipes extends ConsumerWidget {
 
   // List of recipe results from the API request
   Widget recipeList(
-      //List<dynamic> recipes,
       List<Result> recipes,
       BuildContext context,
       WidgetRef ref) {
@@ -168,10 +167,17 @@ class Recipes extends ConsumerWidget {
       //API Request URL with Parameters
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
+      //formats url   
       final uri = Uri.parse(url);
+      //sends request to api 
       final response = await http.get(uri);
+      //converts response from json
       final data = jsonDecode(response.body);
+      //maps API response data to RecipeModel
       RecipeModel mappedData = RecipeModel.fromJson(data);
+      //If the results is not null(or empty) we use state management
+      //to set the result equal to the mapped RecipeModel containing
+      //All of the API response data
       if (mappedData.results != null) {
         ref.read(resultProvider.notifier).state = mappedData;
       } else {

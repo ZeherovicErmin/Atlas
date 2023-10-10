@@ -1,6 +1,11 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/components/feed_post.dart';
+import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +15,26 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final usersCollection = FirebaseFirestore.instance.collection("Users");
+    final textController = TextEditingController();
+
+    void postMessage() {
+      //only post if there is something in the textfield
+      if (textController.text.isNotEmpty) {
+        FirebaseFirestore.instance.collection("User Posts").add({
+          'UserEmail': currentUser.email,
+          'Message': textController.text,
+          'TimeStamp': Timestamp.now(),
+        });
+      }
+
+      // //clear the textfield
+      // setState(() {
+      //   textController.clear();
+      // });
+    }
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -23,7 +48,7 @@ class FitCenter extends ConsumerWidget {
       ),
       child: DefaultTabController(
         initialIndex: 1,
-        length: 3,
+        length: 4,
         child: Scaffold(
           //Home page for when a user logs in
           appBar: AppBar(
@@ -38,21 +63,93 @@ class FitCenter extends ConsumerWidget {
                 Tab(text: "Discover"),
                 Tab(text: "My Workouts"),
                 Tab(text: "Progress"),
+                Tab(text: "Feed"),
               ],
             ),
           ),
 
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              Center(
+              const Center(
                 // Content for the Discover Page
                 child: Text("Tab 1"),
               ),
-              Center(
+              const Center(
                 child: Text("Tab 2"),
               ),
-              Center(
+              const Center(
                 child: Text("Tab 3"),
+              ),
+              //ADDED USER POSTS TO THIS PAGE FOR TESTING
+              Column(
+                children: [
+                  //The Feed
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .orderBy(
+                            "TimeStamp",
+                            descending: false,
+                          )
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              //get the message
+                              final post = snapshot.data!.docs[index];
+                              return FeedPost(
+                                message: post['Message'],
+                                user: post['UserEmail'],
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error:${snapshot.error}'),
+                          );
+                        }
+
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  ),
+
+                  //post message
+                  Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Row(
+                      children: [
+                        //textfield
+                        Expanded(
+                            child: MyTextField(
+                          controller: textController,
+                          hintText: "Share your progress!",
+                          obscureText: false,
+                        )),
+                        //post button
+                        IconButton(
+                          onPressed: postMessage,
+                          icon: const Icon(Icons.arrow_circle_up),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  //logged in as
+                  Text(
+                    "Logged in as ${currentUser.email!}",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(
+                    height: 50,
+                  ),
+                ],
               ),
             ],
           ),

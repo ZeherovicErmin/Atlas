@@ -10,7 +10,7 @@ class RecipeDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'Recipes'), body: gradient());
+      appBar: myAppBar2(context, ref, "Recipe Details"), body: gradient());
   }
 
   Widget gradient() {
@@ -32,8 +32,10 @@ class RecipeDetails extends ConsumerWidget {
               children: [
                 recipeImage(),
                 recipeInformation(),
+                //margin for spacing
                 Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
-                //recipeIngredients(),
+                recipeIngredients(),
+                //margin for spacing
                 Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
                 recipeInstructions(),
               ],
@@ -43,11 +45,16 @@ class RecipeDetails extends ConsumerWidget {
   }
 
   Widget recipeInformation() {
+    //Recipe calories
+    int calories = recipe.nutrition.nutrients[0].amount.ceil();
+
     return Column(
       children: [
+        //recipe title
         Text(recipe.title,
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        //Recipe Cuisine
         Text(
             "Cuisine: " +
                 //if cuisine list is empty, return N/A, else return first result
@@ -55,6 +62,62 @@ class RecipeDetails extends ConsumerWidget {
                 (recipe.cuisines.isNotEmpty ? recipe.cuisines[0] : "N/A"),
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        //Recipe Calories, Servings, and Ready Time
+        Row(
+            //Centers row content
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Recipe Calories
+              Text("Calories: $calories",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+              //Recipe Servings
+              Text("   Servings: ${recipe.servings}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+              //Recipe Ready Time
+              Text("   Ready Time: ${recipe.readyInMinutes} min",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+            ]),
+      ],
+    );
+  }
+
+  Widget recipeIngredients() {
+    //Expandable section
+    return ExpansionTile(
+      title: const Text("INGREDIENTS: ",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      //Make the arrow appear before the title
+      controlAffinity: ListTileControlAffinity.leading,
+      collapsedTextColor: Colors.black,
+      children: [
+        //Outputs each ingredient in the ingredients list
+        ListView.builder(
+            shrinkWrap: true,
+            //Used to ensure list is scrollable
+            physics: const NeverScrollableScrollPhysics(),
+            //Number of ingredients
+            itemCount: recipe.nutrition.ingredients.length,
+            //Used to build instruction list tiles
+            itemBuilder: (context, index) {
+              //recipe igredient
+              Ingredient ingredient = recipe.nutrition.ingredients[index];
+              //Amount of the ingredient
+              var ingredientAmount = ingredient.amount;
+              //Formatted ingredient string with amount and unit
+              String ingredientFormatted =
+                  "${ingredient.name} - $ingredientAmount ${ingredient.unit}";
+
+              return ListTile(
+                  title: Text(ingredientFormatted,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontWeight: FontWeight.bold)));
+            }),
       ],
     );
   }
@@ -77,43 +140,43 @@ class RecipeDetails extends ConsumerWidget {
   }
 
   Widget recipeInstructions() {
-    return Column(
-      children: [
-        const Text("INSTRUCTIONS: ",
+    //if this recipe does not contain instructions, return a message
+    //notifying the user. If it does, output the instructions
+    if (recipe.analyzedInstructions.isEmpty) {
+      return const ExpansionTile(
+        title: Text("INSTRUCTIONS: ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-        Padding(
-            padding: EdgeInsets.all(5),
-            //outputs all recipe instructions
-            child: ListView.builder(
-                shrinkWrap: true,
-                //Used to ensure list is scrollable
-                physics: const AlwaysScrollableScrollPhysics(),
-                //Number of instructions
-                itemCount: recipe.analyzedInstructions[0].steps.length,
-                //Used to build instruction list tiles
-                itemBuilder: (context, index) {
-                  var currentStep = recipe.analyzedInstructions[0].steps[index];
-                  String instruction = currentStep.step; //Instruction
-                  int stepNumber = index + 1;
-                  String instructionFormatted = "$stepNumber) $instruction ";
-                  return ListTile(
-                      title: Text(instructionFormatted,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold)));
-                })),
-      ],
-    );
+        controlAffinity: ListTileControlAffinity.leading,
+        collapsedTextColor: Colors.black,
+        children: [Text("Sorry! This Recipe Does Not Contain Instructions")],
+      );
+    } 
+    else {
+      return ExpansionTile(
+        title: const Text("INSTRUCTIONS: ",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        controlAffinity: ListTileControlAffinity.leading,
+        collapsedTextColor: Colors.black,
+        children: [
+          ListView.builder(
+              shrinkWrap: true,
+              //Used to ensure list is scrollable
+              physics: const NeverScrollableScrollPhysics(),
+              //Number of instructions
+              itemCount: recipe.analyzedInstructions[0].steps.length,
+              //Used to build instruction list tiles
+              itemBuilder: (context, index) {
+                final instruction = recipe.analyzedInstructions[0].steps[index];
+                String step = instruction.step;
+                var stepCount = index + 1;
+                String instructionTitle = "$stepCount.) $step ";
+                return ListTile(
+                    title: Text(instructionTitle,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold)));
+              }),
+        ],
+      );
+    }
   }
-}
-
-AppBar appBar() {
-  String userName = 'DEV';
-  return AppBar(
-    title: Text('Welcome, $userName!',
-        style: const TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
-            fontSize: 18,
-            fontWeight: FontWeight.bold)),
-    backgroundColor: const Color(0xffA9B7FF),
-  );
 }

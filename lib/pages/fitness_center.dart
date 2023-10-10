@@ -27,13 +27,13 @@ class FitCenter extends ConsumerWidget {
         child: Scaffold(
           //Home page for when a user logs in
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               "F i t n e s s C e n t e r",
               style: TextStyle(
                   fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
             ),
-            backgroundColor: Color.fromARGB(255, 38, 97, 185),
-            bottom: TabBar(
+            backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+            bottom: const TabBar(
               tabs: [
                 Tab(text: "Discover"),
                 Tab(text: "My Workouts"),
@@ -42,7 +42,7 @@ class FitCenter extends ConsumerWidget {
             ),
           ),
 
-          body: TabBarView(
+          body: const TabBarView(
             children: [
               Center(
                 // Content for the Discover Page

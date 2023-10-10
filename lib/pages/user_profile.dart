@@ -1,20 +1,90 @@
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
+import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
+import 'package:image_picker/image_picker.dart';
+
+// Riverpod Provider
+final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
 
 class UserProfile extends ConsumerWidget {
+  // ignore: use_key_in_widget_constructors
   const UserProfile({Key? key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final usersCollection = FirebaseFirestore.instance.collection("Users");
-    final _currentIndex = ref.watch(selectedIndexProvider);
+    final currentIndex = ref.watch(selectedIndexProvider);
+    final image = ref.watch(profilePictureProvider.notifier);
+
+    void saveProfilePic() async {
+      final imageBytes = image.state;
+
+      if (imageBytes != null) {
+        try {
+          await usersCollection
+              .doc(currentUser.email)
+              .update({'profilePicture': imageBytes});
+        } catch (e) {
+          print("Error: $e");
+        }
+      }
+    }
+
+    // Awaits user input to select an Image
+    void selectImage() async {
+      // Use the ImagePicker plugin to open the device's gallery to pick an image.
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      // Check if an image was picked.
+      if (pickedFile != null) {
+        // Read the image file as bytes.
+        final imageBytes = await pickedFile.readAsBytes();
+
+        // Update the profilePictureProvider state with the selected image as Uint8List.
+        ref.read(profilePictureProvider.notifier).state =
+            Uint8List.fromList(imageBytes);
+
+        saveProfilePic();
+      }
+    }
+
+    Widget buildProfilePicture(Uint8List? picBytes) {
+      return Stack(
+        children: [
+          Align(
+            alignment: Alignment.center, // Center the icon
+            child: image.state != null
+                ? CircleAvatar(
+                    radius: 64,
+                    backgroundImage: MemoryImage(image.state!),
+                  )
+                : const Icon(
+                    CupertinoIcons.profile_circled,
+                    size: 72,
+                  ),
+          ),
+          Positioned(
+            bottom: -10,
+            left: 80,
+            child: IconButton(
+              // onPressed, opens Image Picker
+              onPressed: selectImage,
+              icon: const Icon(Icons.add_a_photo),
+            ),
+          )
+        ],
+      );
+    }
 
     // Edit field
     Future<void> editField(String field) async {
@@ -28,12 +98,12 @@ class UserProfile extends ConsumerWidget {
           ),
           content: TextField(
             autofocus: true,
-            style: TextStyle(
-                color: const Color.fromARGB(
-                    255, 0, 0, 0)), // Change text color to white
+            style: const TextStyle(
+                color:
+                    Color.fromARGB(255, 0, 0, 0)), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: TextStyle(color: Colors.black),
+              hintStyle: const TextStyle(color: Colors.black),
             ),
             onChanged: (value) {
               newValue = value;
@@ -81,7 +151,7 @@ class UserProfile extends ConsumerWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: myAppBar2(context, ref, 'U s e r P r o f i l e'),
+        appBar: myAppBar2(context, ref, 'U s e r    P r o f i l e'),
         body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection("Users")
@@ -93,8 +163,8 @@ class UserProfile extends ConsumerWidget {
             }
 
             if (!snapshot.hasData || snapshot.data == null) {
-              return Center(
-                child: const Text('User data not found.'),
+              return const Center(
+                child: Text('User data not found.'),
               );
             }
 
@@ -105,11 +175,7 @@ class UserProfile extends ConsumerWidget {
                 children: [
                   const SizedBox(height: 50),
 
-                  // Profile pic
-                  const Icon(
-                    Icons.fitness_center,
-                    size: 72,
-                  ),
+                  buildProfilePicture(image.state),
 
                   const SizedBox(height: 10),
 
@@ -137,7 +203,7 @@ class UserProfile extends ConsumerWidget {
 
                   // Username
                   MyTextBox(
-                    text: userData?['username']?.toString() ??
+                    text: userData['username']?.toString() ??
                         '', // Safely access username
                     sectionName: 'Username',
                     onPressed: () => editField('username'),
@@ -146,7 +212,7 @@ class UserProfile extends ConsumerWidget {
                   // Bio
                   MyTextBox(
                     text:
-                        userData?['bio']?.toString() ?? '', // Safely access bio
+                        userData['bio']?.toString() ?? '', // Safely access bio
                     sectionName: 'Bio',
                     onPressed: () => editField('bio'),
                   ),
@@ -167,8 +233,8 @@ class UserProfile extends ConsumerWidget {
               );
             } else {
               // Handle the case where userData is null
-              return Center(
-                child: const Text('User data is null.'),
+              return const Center(
+                child: Text('User data is null.'),
               );
             }
           },

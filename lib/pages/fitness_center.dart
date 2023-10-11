@@ -29,10 +29,8 @@ class FitCenter extends ConsumerWidget {
         });
       }
 
-      // //clear the textfield
-      // setState(() {
-      //   textController.clear();
-      // });
+      //clear the textfield
+      textController.clear();
     }
 
     return Container(

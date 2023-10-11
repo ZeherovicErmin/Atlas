@@ -81,6 +81,7 @@ class RegisterPage extends ConsumerWidget {
           'bio': 'Empty Bio...', // initially empty bio
           'profilePicture':
               registrationState.initialProfileImageData, // profile pic
+
           // add additional fields as needed
         });
 

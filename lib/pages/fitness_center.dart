@@ -26,6 +26,7 @@ class FitCenter extends ConsumerWidget {
           'UserEmail': currentUser.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          'Likes': [],
         });
       }
 
@@ -101,6 +102,8 @@ class FitCenter extends ConsumerWidget {
                               return FeedPost(
                                 message: post['Message'],
                                 user: post['UserEmail'],
+                                postId: post.id,
+                                likes: List<String>.from(post['Likes'] ?? []),
                               );
                             },
                           );

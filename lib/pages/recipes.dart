@@ -135,7 +135,7 @@ class Recipes extends ConsumerWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RecipeDetails(recipes: recipe),
+        builder: (context) => RecipeDetails(recipe: recipe),
       ),
     );
   }

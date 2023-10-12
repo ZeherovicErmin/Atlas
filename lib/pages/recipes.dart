@@ -41,8 +41,8 @@ class Recipes extends ConsumerWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
+            Color.fromARGB(255, 232, 229, 229),
+            Color.fromARGB(255, 232, 229, 229),
           ],
         ),
       ),
@@ -64,8 +64,7 @@ class Recipes extends ConsumerWidget {
         margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
         decoration: BoxDecoration(
           boxShadow: [
-            BoxShadow(
-                color: const Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
+            BoxShadow(color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.11))
           ],
         ),
         child: Form(
@@ -77,18 +76,24 @@ class Recipes extends ConsumerWidget {
   }
 
   Widget searchBar() {
-    return TextFormField(
-      controller: searchController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please Input A Value into Searchbar';
-        }
-        return null;
-      },
-      decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          hintText: "Enter Recipe Search"),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25.0),
+      ),
+      child: TextFormField(
+        controller: searchController,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please Input A Value into Searchbar';
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+            border: InputBorder.none,
+            hintText: "Enter Recipe Search"),
+      ),
     );
   }
 

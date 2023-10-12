@@ -188,81 +188,69 @@ class BarcodeLookupPage extends ConsumerWidget {
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-          ],
-        ),
-      ),
-      child: Scaffold(
-        appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-        backgroundColor: Colors.transparent,
-        body: Container(
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Display filter chips for user selection
-                  Wrap(
-                    spacing: 1,
-                    children: filterOptions.map((filter) {
-                      return FilterChip(
-                        label: Text(filter),
-                        selected: selectedFilters.contains(filter),
-                        onSelected: (isSelected) {
-                          _onFilterChanged(filter, context, ref);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  // Button to open the barcode scanner
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _scanBarcode(context, ref);
-                    },
-                    child: const Text('Open Scanner'),
-                  ),
-                  const SizedBox(height: 20),
-                  // Button to navigate to barcode logs
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BarcodeLogPage(),
-                        ),
-                      );
-                    },
-                    child: const Text("Barcode logs"),
-                  ),
-                  // Display selected data based on filters in a grid
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    children: [
-                      if (selectedFilters.isNotEmpty)
-                        ...selectedFilters.map((filter) {
-                          return GenerateTileCard(
-                            result: result,
-                            productName: productName,
-                            productCalories: productCalories,
-                            carbsPserving: carbsPserving,
-                            proteinPserving: proteinPserving,
-                            fatsPserving: fatsPserving,
-                            filter: filter,
-                          );
-                        }),
-                    ],
-                  ),
-                ],
-              ),
+    return Scaffold(
+      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Display filter chips for user selection
+                Wrap(
+                  spacing: 1,
+                  children: filterOptions.map((filter) {
+                    return FilterChip(
+                      label: Text(filter),
+                      selected: selectedFilters.contains(filter),
+                      onSelected: (isSelected) {
+                        _onFilterChanged(filter, context, ref);
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 20),
+                // Button to open the barcode scanner
+                ElevatedButton(
+                  onPressed: () async {
+                    await _scanBarcode(context, ref);
+                  },
+                  child: const Text('Open Scanner'),
+                ),
+                const SizedBox(height: 20),
+                // Button to navigate to barcode logs
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BarcodeLogPage(),
+                      ),
+                    );
+                  },
+                  child: const Text("Barcode logs"),
+                ),
+                // Display selected data based on filters in a grid
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  children: [
+                    if (selectedFilters.isNotEmpty)
+                      ...selectedFilters.map((filter) {
+                        return GenerateTileCard(
+                          result: result,
+                          productName: productName,
+                          productCalories: productCalories,
+                          carbsPserving: carbsPserving,
+                          proteinPserving: proteinPserving,
+                          fatsPserving: fatsPserving,
+                          filter: filter,
+                        );
+                      }),
+                  ],
+                ),
+              ],
             ),
           ),
         ),

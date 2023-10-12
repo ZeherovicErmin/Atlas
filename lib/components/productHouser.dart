@@ -186,78 +186,74 @@ class BarcodeLookupComb extends ConsumerWidget {
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-          ],
-        ),
-      ),
-      child: Scaffold(
-        appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Container(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Display filter chips for user selection
-                      FilterChips(selectedFilters, context, ref),
-                      const SizedBox(height: 20),
-                      // Button to open the barcode scanner
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _scanBarcode(context, ref);
-                        },
-                        child: const Text('Open Scanner'),
-                      ),
-                      const SizedBox(height: 20),
-                      // Button to navigate to barcode logs
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BarcodeLogPage(),
-                            ),
-                          );
-                        },
-                        child: const Text("Barcode logs"),
-                      ),
-                      // Display selected data based on filters in a grid
-                      //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
-                    ],
-                  ),
+    return Scaffold(
+      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      body: Stack(
+        children: [
+          Container(
+            child: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Display filter chips for user selection
+                    FilterChips(selectedFilters, context, ref),
+                    const SizedBox(height: 20),
+                    // Button to open the barcode scanner
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _scanBarcode(context, ref);
+                      },
+                      child: const Text('Open Scanner'),
+                    ),
+                    const SizedBox(height: 20),
+                    // Button to navigate to barcode logs
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BarcodeLogPage(),
+                          ),
+                        );
+                      },
+                      child: const Text("Barcode logs"),
+                    ),
+                    // Display selected data based on filters in a grid
+                    //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
+                  ],
                 ),
               ),
             ),
-            NutrientsList(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
-          ],
-        ),
+          ),
+          NutrientsList(
+              selectedFilters: selectedFilters,
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving),
+        ],
       ),
     );
   }
 
-  Wrap FilterChips(List<String> selectedFilters, BuildContext context, WidgetRef ref) {
+  Wrap FilterChips(
+      List<String> selectedFilters, BuildContext context, WidgetRef ref) {
     return Wrap(
-                      spacing: 1,
-                      children: filterOptions.map((filter) {
-                        return FilterChip(
-                          label: Text(filter),
-                          selected: selectedFilters.contains(filter),
-                          onSelected: (isSelected) {
-                            _onFilterChanged(filter, context, ref);
-                          },
-                        );
-                      }).toList(),
-                    );
+      spacing: 1,
+      children: filterOptions.map((filter) {
+        return FilterChip(
+          label: Text(filter),
+          selected: selectedFilters.contains(filter),
+          onSelected: (isSelected) {
+            _onFilterChanged(filter, context, ref);
+          },
+        );
+      }).toList(),
+    );
   }
 
   // Function to send data to Firestore
@@ -399,7 +395,7 @@ class NutrientsList extends StatelessWidget {
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.purple[900],
+              color: Color.fromARGB(255, 90, 86, 86),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),
@@ -421,7 +417,15 @@ class NutrientsList extends StatelessWidget {
                         ),
                       )),
                 ),
-                NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+                NutriGridView(
+                    selectedFilters: selectedFilters,
+                    result: result,
+                    productName: productName,
+                    productCalories: productCalories,
+                    carbsPserving: carbsPserving,
+                    proteinPserving: proteinPserving,
+                    fatsPserving: fatsPserving,
+                    secondController: ScrollController()),
               ]),
             ),
           );
@@ -431,17 +435,16 @@ class NutrientsList extends StatelessWidget {
 
 class NutriGridView extends StatelessWidget {
   final ScrollController secondController;
-  const NutriGridView({
-    super.key,
-    required this.selectedFilters,
-    required this.result,
-    required this.productName,
-    required this.productCalories,
-    required this.carbsPserving,
-    required this.proteinPserving,
-    required this.fatsPserving,
-    required this.secondController
-  });
+  const NutriGridView(
+      {super.key,
+      required this.selectedFilters,
+      required this.result,
+      required this.productName,
+      required this.productCalories,
+      required this.carbsPserving,
+      required this.proteinPserving,
+      required this.fatsPserving,
+      required this.secondController});
 
   final List<String> selectedFilters;
   final String result;

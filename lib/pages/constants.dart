@@ -8,7 +8,7 @@ import 'dart:developer';
 // App Bar for the homepage
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+      backgroundColor: Color.fromARGB(255, 90, 86, 86),
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -30,7 +30,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 // App Bar for the homepage
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-    backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+    backgroundColor: Color.fromARGB(255, 90, 86, 86),
     title: Text(
       title,
       style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),

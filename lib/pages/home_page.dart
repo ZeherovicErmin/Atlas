@@ -19,7 +19,7 @@ class HabitTileWidget extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
-            // Implement habit deletion logic here using Riverpod
+            // Habit deletion goes here
           },
         ),
         // Habit marking goes here
@@ -36,6 +36,7 @@ class HomePage extends ConsumerWidget {
     final habits = ref.watch(habitListNotifierProvider);
 
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
       appBar: myAppBar(context, ref, 'HomePage'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

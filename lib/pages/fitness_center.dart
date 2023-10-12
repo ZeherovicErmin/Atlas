@@ -8,8 +8,55 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
+// Creating a list of target muscles
+const List<String> list = <String>['biceps', 'triceps', 'chest'];
+
+
+// Creating a state provider to return a string for selected muscle
+final selectedMuscleProvider = StateProvider<String>((ref){
+String muscle = 'biceps';
+return muscle;
+});
+
+
+// Creating a drop down button to modify selectedMuscleProvider
+class fitDropdown extends ConsumerWidget{
+  
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref){
+  String dropdownVal = ref.watch(selectedMuscleProvider);
+    
+    // Creating the dropdown button to modify the value of the muscle in selectedMuscleProvider
+    return DropdownButton<String>(
+      value: dropdownVal,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: const TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      items: list.map<DropdownMenuItem<String>>((String value){
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+      }).toList(),
+      onChanged: (String? value){
+        if(value != null){
+        ref.read(selectedMuscleProvider.state).state = value;}
+      }
+      
+      );
+  }
+} 
+
+
 class FitCenter extends ConsumerWidget {
+  
   const FitCenter({Key? key}) : super(key: key);
+
 
   Future<List<dynamic>> getExercises() async{
 
@@ -37,6 +84,8 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    var muscleval = ref.watch(selectedMuscleProvider);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -99,15 +148,24 @@ class FitCenter extends ConsumerWidget {
                         } else{ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("No Workout Data Available."),),);
                         }
                         },
-                        child: const Center(child: Text(
+
+                        // Placing the Dropdown menu on the Discover Tab
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children:[
+                          fitDropdown(),
+                          const Center(child: Text(
                           'Find Workouts',
                           style: TextStyle(color: Color.fromARGB(255, 0, 60, 255),
                           fontWeight: FontWeight.bold,
                           ),
                         ),),
+                        ],
                       ),
+              ),
               Center(
-                child: Text("Tab 2"),
+                child: Text(muscleval),
               ),
               Center(
                 child: Text("Tab 3"),

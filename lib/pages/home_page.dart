@@ -22,7 +22,7 @@ class HabitTileWidget extends StatelessWidget {
             // Implement habit deletion logic here using Riverpod
           },
         ),
-        // You can add more actions like marking habit as completed here
+        // Habit marking goes here
       ),
     );
   }
@@ -50,7 +50,7 @@ class HomePage extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         heroTag: "addHabit",
         onPressed: () {
-          // Navigate to the habit creation screen
+          // Navigate to habit creation screen
           Navigator.push(
             context,
             MaterialPageRoute(

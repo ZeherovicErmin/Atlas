@@ -15,6 +15,8 @@ final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
 final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
+//amount of servings a container has provider
+final amtServingsProvider = StateProvider<double>((ref) => 0.0);
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
@@ -76,14 +78,7 @@ class BarcodeLookupComb extends ConsumerWidget {
 
           if (productData != null) {
             // Set product name or 'Unknown product name' if not available
-            if (productData.productName != null) {
-              ref.watch(productNameProvider.notifier).state =
-                  productData.productName!;
-            } else {
-              ref.watch(productNameProvider.notifier).state =
-                  'Unknown product name';
-            }
-
+            ref.watch(productNameProvider.notifier).state = productData.productName != null ?productData.productName! : "Unknown product name";
             // Set product calories, carbs, protein, and fats per serving
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
@@ -101,7 +96,11 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.fat, PerSize.serving) ??
                 0.0;
-            ref.watch(cholesterolProvider.notifier).state = productData.nutriments ?.getValue(Nutrient.cholesterol, PerSize.serving)??0.0;
+            ref.watch(cholesterolProvider.notifier).state = productData
+                    .nutriments 
+                    ?.getValue(Nutrient.cholesterol, PerSize.serving) ?? 
+                0.0;
+            ref.watch(amtServingsProvider.notifier).state = productData.servingQuantity!=null ?productData.servingQuantity! : 0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
@@ -127,6 +126,10 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(proteinPservingProvider.notifier).state),
             DataItem('fatsPerServing',
                 ref.read(fatsPservingProvider.notifier).state),
+            DataItem('cholesterolPerServing', 
+                ref.read(cholesterolProvider.notifier).state),
+            DataItem('amtServingsProvider', 
+            ref.read(amtServingsProvider.notifier).state)
           ];
 
           // Send data to Firestore
@@ -141,6 +144,8 @@ class BarcodeLookupComb extends ConsumerWidget {
           ref.watch(proteinPservingProvider.notifier).state = 0.0;
           ref.watch(carbsPservingProvider.notifier).state = 0.0;
           ref.watch(fatsPservingProvider.notifier).state = 0.0;
+          ref.watch(cholesterolProvider.notifier).state = 0.0;
+          ref.watch(amtServingsProvider.notifier).state = 0.0;
         }
       } else {
         // Set error messages for an invalid barcode
@@ -150,6 +155,8 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(proteinPservingProvider.notifier).state = 0.0;
         ref.watch(carbsPservingProvider.notifier).state = 0.0;
         ref.watch(fatsPservingProvider.notifier).state = 0.0;
+        ref.watch(cholesterolProvider.notifier).state = 0.0;
+        ref.watch(amtServingsProvider.notifier).state = 0.0;
       }
     }
   }
@@ -177,9 +184,11 @@ class BarcodeLookupComb extends ConsumerWidget {
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
+    final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
     final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
     final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
+    final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
     final uid = ref.watch(uidProvider.notifier).state;
@@ -241,7 +250,16 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ),
               ),
             ),
-            NutrientsList(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
+            NutrientsList(
+            selectedFilters: selectedFilters,
+            result: result, 
+            productName: productName, 
+            productCalories: productCalories,
+            carbsPserving: carbsPserving, 
+            proteinPserving: proteinPserving, 
+            fatsPserving: fatsPserving,
+            cholesterolPerServing: cholesterolPerServing,
+            amtPerServing:amtPerServing),
           ],
         ),
       ),
@@ -383,15 +401,20 @@ class NutrientsList extends StatelessWidget {
     required this.carbsPserving,
     required this.proteinPserving,
     required this.fatsPserving,
+    required this.cholesterolPerServing,
+    required this.amtPerServing,
   });
 
   final List<String> selectedFilters;
   final String result;
   final String productName;
   final double productCalories;
+  final double amtPerServing;
   final double carbsPserving;
   final double proteinPserving;
   final double fatsPserving;
+  final double cholesterolPerServing;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +454,7 @@ class NutrientsList extends StatelessWidget {
                   children: [
                     Align(child: Text('Nutrition Facts',
                     textAlign: TextAlign.start,
-                    style: TextStyle(fontFamily: 'Arial',fontSize: 45,fontWeight: FontWeight.bold),
+                    style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 48,fontWeight: FontWeight.w900),
                     ),),
                   ],
                   
@@ -442,26 +465,37 @@ class NutrientsList extends StatelessWidget {
                   child: Container(
                     height: 25,
                     // Stack to hold the fats and the fats variable
-                    child: Stack(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        //Fats row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("X Servings per container",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
-                            ),
-                            // Fats variable
-                            Text('$fatsPserving',
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                        Text("${amtPerServing.toInt()} Servings per container",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w800),
+                        ),
+                        
+                      ],
 
-                      )],
-                    ),
+                      ),
+                      
                     
                   ),
+                ),
+                Container(
+                  height: 50,
+                  //holds the Serving Size Row
+                  child: Stack(
+                    children:[ Row(
+                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Calories',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 40,fontWeight: FontWeight.w900),),
+                    Text('${carbsPserving.toInt()}',
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 50,fontWeight: FontWeight.w800),
+                            ),
+                      ],
+                      ),
+              ],),
                 ),
                 //Nutritional Column Dividers
                 //End NUTRITION FACTS ROW
@@ -476,13 +510,13 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Fats....",
+                            Text("Total Fats",
                             textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
                             ),
                             // Fats variable
                             Text('$fatsPserving',
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
                             ),
                           ],
 
@@ -504,13 +538,67 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Carbs....",
+                            Text("Total Carbohydrate",
                             textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
                             ),
                             // Fats variable
                             Text('$carbsPserving',
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
+                //end Protein
+                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Align(
+                  
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the fats and the fats variable
+                    child: Stack(
+                      children: [
+                        //Protein row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Protein....",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
+                            ),
+                            // Fats variable
+                            Text('$proteinPserving',
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
+                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Align(
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the Carbs and the Carbs variable
+                    child: Stack(
+                      children: [
+                        //Carbs row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Cholesterol....",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                            // Fats variable
+                            Text('$cholesterolPerServing',
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
                             ),
                           ],
 
@@ -533,11 +621,11 @@ class NutrientsList extends StatelessWidget {
                           children: [
                             Text("Protein....",
                             textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
                             ),
                             // Fats variable
                             Text('$proteinPserving',
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
                             ),
                           ],
 

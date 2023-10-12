@@ -18,6 +18,7 @@ final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
+final cholesterolProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
@@ -46,6 +47,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     'Product Name',
     'Calories',
     'Macros',
+    'Cholesterol'
   ];
 
   BarcodeLookupComb({Key? key}) : super(key: key);
@@ -85,20 +87,21 @@ class BarcodeLookupComb extends ConsumerWidget {
             // Set product calories, carbs, protein, and fats per serving
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
             ref.watch(carbsPservingProvider.notifier).state =
                 productData.nutriments?.getValue(
-                        Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
+                        Nutrient.carbohydrates, PerSize.serving) ??
                     0.0;
             ref.watch(proteinPservingProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.proteins, PerSize.serving) ??
                 0.0;
             ref.watch(fatsPservingProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.fat, PerSize.serving) ??
                 0.0;
+            ref.watch(cholesterolProvider.notifier).state = productData.nutriments ?.getValue(Nutrient.cholesterol, PerSize.serving)??0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();

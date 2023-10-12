@@ -24,13 +24,8 @@ class BottomNav extends ConsumerWidget {
     final List<Widget> pages = [
       const FitCenter(),
       Recipes(),
-  
       HomePage(),
       BarcodeLookupComb(),
-
-
-      
-
       const UserProfile(),
     ];
 

@@ -209,7 +209,7 @@ class BarcodeLookupComb extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Display filter chips for user selection
-                      FilterChips(selectedFilters, context, ref),
+                      //FilterChips(selectedFilters, context, ref),
                       const SizedBox(height: 20),
                       // Button to open the barcode scanner
                       ElevatedButton(
@@ -393,13 +393,13 @@ class NutrientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .05,
-        minChildSize: .05,
+        initialChildSize: .1,
+        minChildSize: .1,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.purple[900],
+              color: Color.fromARGB(255, 255, 255, 255),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),
@@ -415,13 +415,134 @@ class NutrientsList extends StatelessWidget {
                       width: 40,
                       height: 5.0,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: Color.fromARGB(255, 104, 104, 104),
                         borderRadius: BorderRadius.all(
                           Radius.circular(12.0),
                         ),
                       )),
                 ),
-                NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+                //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+                //Nutritional Facts Column Sheet
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Align(child: Text('Nutrition Facts',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontFamily: 'Arial',fontSize: 45,fontWeight: FontWeight.bold),
+                    ),),
+                  ],
+                  
+
+                ),
+                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Align(
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the fats and the fats variable
+                    child: Stack(
+                      children: [
+                        //Fats row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("X Servings per container",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                            // Fats variable
+                            Text('$fatsPserving',
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
+                //Nutritional Column Dividers
+                //End NUTRITION FACTS ROW
+                Divider(thickness: 5,color: Color.fromARGB(255, 0, 0, 0)),
+                Align(
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the fats and the fats variable
+                    child: Stack(
+                      children: [
+                        //Fats row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Fats....",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                            // Fats variable
+                            Text('$fatsPserving',
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
+
+                //end fats
+                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Align(
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the fats and the fats variable
+                    child: Stack(
+                      children: [
+                        //Protein row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Carbs....",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                            // Fats variable
+                            Text('$carbsPserving',
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
+                //end Protein
+                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Align(
+                  child: Container(
+                    height: 25,
+                    // Stack to hold the fats and the fats variable
+                    child: Stack(
+                      children: [
+                        //Protein row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Protein....",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                            // Fats variable
+                            Text('$proteinPserving',
+                            style: TextStyle(fontFamily: 'Arial',fontSize: 20,fontWeight: FontWeight.bold),
+                            ),
+                          ],
+
+                      )],
+                    ),
+                    
+                  ),
+                ),
               ]),
             ),
           );
@@ -491,7 +612,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[900],
+        backgroundColor: const Color.fromARGB(255, 104, 104, 104),
         title: Text('Draggable Scrollable Sheet'),
         centerTitle: true,
       ),
@@ -506,7 +627,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
       builder: (BuildContext context, ScrollController _controller) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.purple[900],
+            color: Color.fromARGB(255, 209, 209, 209),
           ),
           child: GridView.builder(
             controller: _controller,

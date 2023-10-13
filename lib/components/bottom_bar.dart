@@ -1,3 +1,4 @@
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/home_page.dart';
@@ -23,8 +24,8 @@ class BottomNav extends ConsumerWidget {
     final List<Widget> pages = [
       const FitCenter(),
       Recipes(),
-      const HomePage(),
-      BarcodeLookupPage(),
+      HomePage(),
+      BarcodeLookupComb(),
       const UserProfile(),
     ];
 

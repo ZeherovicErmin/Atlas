@@ -1,11 +1,12 @@
-import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:atlas/components/password_textfield.dart';
 
 // Creating the necessary Registration States and text controllers
 class RegistrationState {
@@ -14,15 +15,27 @@ class RegistrationState {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  // Riverpod Provider
+  final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
+  // Variable for initial profile image data
+  final Uint8List initialProfileImageData =
+      Uint8List.fromList(List<int>.generate(1024, (index) => index % 256));
+
+  RegistrationState();
 }
+
+RegistrationState registrationState = RegistrationState();
 
 // Class to attempt to register a user
 class RegisterPage extends ConsumerWidget {
   const RegisterPage({Key? key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Obtain the registration provider state
     final registrationState = ref.watch(registrationProvider);
 
+    //Error message function for displaying an error message to the user
     void showErrorMessage(String message) {
       showDialog(
         context: context,
@@ -40,6 +53,7 @@ class RegisterPage extends ConsumerWidget {
       );
     }
 
+    //Attempts to sign the user up for Atlas
     void signUserUp() async {
       showDialog(
         context: context,
@@ -48,6 +62,7 @@ class RegisterPage extends ConsumerWidget {
         },
       );
 
+      //Checks that the passwords match when confirming a password
       if (registrationState.passwordController.text !=
           registrationState.confirmPasswordController.text) {
         Navigator.pop(context);
@@ -55,6 +70,7 @@ class RegisterPage extends ConsumerWidget {
         return;
       }
 
+      //Attempts to create an account for a user with their email address and password
       try {
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -62,18 +78,22 @@ class RegisterPage extends ConsumerWidget {
           password: registrationState.passwordController.text,
         );
 
+        //Uploads a collection containing all user's email addresses when they register with Atlas
         FirebaseFirestore.instance
             .collection("Users")
             .doc(userCredential.user!.email)
             .set({
           'username': registrationState.emailController.text
               .split('@')[0], // initial username
-          'bio': 'Empty Bio...' //initally empty bio
-          //add additional fields as needed
+          'bio': 'Empty Bio...', // initially empty bio
+          'profilePicture':
+              registrationState.initialProfileImageData, // profile pic
+          // add additional fields as needed
         });
 
+        //Error handling for registering for Atlas
         Navigator.pop(context); // Closes the loading circle
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/start');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         if (e.code == 'email-already-in-use') {
@@ -86,62 +106,66 @@ class RegisterPage extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 169, 183, 255),
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //White space above logo
-                    const SizedBox(height: 5),
+    //Builds the page
+    return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 90, 117, 255),
+              Color.fromARGB(255, 161, 195, 250),
+            ],
+          ),
+        ),
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // White space above logo
+                        const SizedBox(height: 5),
 
-                    //Logo
-                    SizedBox(
-                        height: 220,
-                        width: 220,
-                        //color: Colors.blue,
-                        child: Image.asset('lib/images/atlas.png')),
+                        // Logo
+                        SizedBox(
+                          height: 220,
+                          width: 220,
+                          child: Image.asset('lib/images/atlas.png'),
+                        ),
 
-                    //const SizedBox(height: 5),
+                        const SizedBox(height: 10),
 
-                    //Atlas title
-                    const Text(
-                      'Atlas',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        //Username textfield
+                        MyTextField(
+                          controller: registrationState.emailController,
+                          hintText: 'Email',
+                          obscureText: false,
+                        ),
 
-                    const SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
-                    //Username textfield
-                    MyTextField(
-                      controller: registrationState.emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                    ),
+                        //Password textfield
+                        PasswordTextField(
+                          controller: registrationState.passwordController,
+                          hintText: 'Password',
+                          obscureText: true,
+                          registrationState: registrationState,
+                          passwordTextField: true,
+                        ),
 
-                    const SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
-                    //Password textfield
-                    MyTextField(
-                      controller: registrationState.passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    //Confirm password textfield
-                    MyTextField(
-                      controller: registrationState.confirmPasswordController,
-                      hintText: 'Confirm Password',
-                      obscureText: true,
-                    ),
+                        //Confirm Password textfield
+                        PasswordTextField(
+                          controller: registrationState.confirmPasswordController,
+                          hintText: 'Confirm Password',
+                          obscureText: true,
+                          registrationState: registrationState,
+                          passwordTextField: false,
+                        ),
 
                     const SizedBox(height: 25),
 
@@ -150,60 +174,6 @@ class RegisterPage extends ConsumerWidget {
                       text: 'Sign Up',
                       onTap: signUserUp,
                     ),
-
-                    const SizedBox(height: 10),
-
-                    /*
-                    NOT FUNCTIONAL YET
-                    //Continue
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text(
-                              'Or continue with',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.5,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    //Apple and Google sign-in
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //Google button
-                        SquareTile(
-                            imagePath:
-                                'lib/images/google-logo-transparent.png'),
-
-                        SizedBox(width: 30),
-
-                        //Apple button
-                        SquareTile(
-                            imagePath: 'lib/images/apple-logo-transparent.png')
-                      ],
-                    ),
-
-                    */
 
                     const SizedBox(height: 25),
 
@@ -225,13 +195,13 @@ class RegisterPage extends ConsumerWidget {
                             style: TextStyle(
                                 color: Color.fromARGB(255, 0, 60, 255),
                                 fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ]),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ));
+          ]),
+        ),
+      ),
+    )));
   }
 }

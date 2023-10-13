@@ -78,16 +78,19 @@ class BarcodeLookupComb extends ConsumerWidget {
 
           if (productData != null) {
             // Set product name or 'Unknown product name' if not available
-            ref.watch(productNameProvider.notifier).state = productData.productName != null ?productData.productName! : "Unknown product name";
+            ref.watch(productNameProvider.notifier).state =
+                productData.productName != null
+                    ? productData.productName!
+                    : "Unknown product name";
             // Set product calories, carbs, protein, and fats per serving
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
-            ref.watch(carbsPservingProvider.notifier).state =
-                productData.nutriments?.getValue(
-                        Nutrient.carbohydrates, PerSize.serving) ??
-                    0.0;
+            ref.watch(carbsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
+                0.0;
             ref.watch(proteinPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.proteins, PerSize.serving) ??
@@ -97,10 +100,13 @@ class BarcodeLookupComb extends ConsumerWidget {
                     ?.getValue(Nutrient.fat, PerSize.serving) ??
                 0.0;
             ref.watch(cholesterolProvider.notifier).state = productData
-                    .nutriments 
-                    ?.getValue(Nutrient.cholesterol, PerSize.serving) ?? 
+                    .nutriments
+                    ?.getValue(Nutrient.cholesterol, PerSize.serving) ??
                 0.0;
-            ref.watch(amtServingsProvider.notifier).state = productData.servingQuantity!=null ?productData.servingQuantity! : 0.0;
+            ref.watch(amtServingsProvider.notifier).state =
+                productData.servingQuantity != null
+                    ? productData.servingQuantity!
+                    : 0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
@@ -126,10 +132,10 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(proteinPservingProvider.notifier).state),
             DataItem('fatsPerServing',
                 ref.read(fatsPservingProvider.notifier).state),
-            DataItem('cholesterolPerServing', 
+            DataItem('cholesterolPerServing',
                 ref.read(cholesterolProvider.notifier).state),
-            DataItem('amtServingsProvider', 
-            ref.read(amtServingsProvider.notifier).state)
+            DataItem('amtServingsProvider',
+                ref.read(amtServingsProvider.notifier).state)
           ];
 
           // Send data to Firestore
@@ -198,87 +204,58 @@ class BarcodeLookupComb extends ConsumerWidget {
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-          ],
-        ),
-      ),
-      child: Scaffold(
+    return Scaffold(
         appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            Container(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Display filter chips for user selection
-                      //FilterChips(selectedFilters, context, ref),
-                      const SizedBox(height: 20),
-                      // Button to open the barcode scanner
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _scanBarcode(context, ref);
-                        },
-                        child: const Text('Open Scanner'),
-                      ),
-                      const SizedBox(height: 20),
-                      // Button to navigate to barcode logs
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BarcodeLogPage(),
-                            ),
-                          );
-                        },
-                        child: const Text("Barcode logs"),
-                      ),
-                      // Display selected data based on filters in a grid
-                      //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
-                    ],
-                  ),
-                ),
+            //const SizedBox(height: 20),
+            // Button to open the barcode scanner
+
+            //const SizedBox(height: 20),
+            // Button to navigate to barcode logs
+
+            Padding(
+              padding: const EdgeInsets.only(top: 200.0),
+              child: BarcodeLogPage(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _scanBarcode(context, ref);
+                },
+                child: const Text('Open Scanner'),
               ),
             ),
             NutrientsList(
-            selectedFilters: selectedFilters,
-            result: result, 
-            productName: productName, 
-            productCalories: productCalories,
-            carbsPserving: carbsPserving, 
-            proteinPserving: proteinPserving, 
-            fatsPserving: fatsPserving,
-            cholesterolPerServing: cholesterolPerServing,
-            amtPerServing:amtPerServing),
+                selectedFilters: selectedFilters,
+                result: result,
+                productName: productName,
+                productCalories: productCalories,
+                carbsPserving: carbsPserving,
+                proteinPserving: proteinPserving,
+                fatsPserving: fatsPserving,
+                cholesterolPerServing: cholesterolPerServing,
+                amtPerServing: amtPerServing),
           ],
-        ),
-      ),
-    );
+        ));
   }
 
-  Wrap FilterChips(List<String> selectedFilters, BuildContext context, WidgetRef ref) {
+  Wrap FilterChips(
+      List<String> selectedFilters, BuildContext context, WidgetRef ref) {
     return Wrap(
-                      spacing: 1,
-                      children: filterOptions.map((filter) {
-                        return FilterChip(
-                          label: Text(filter),
-                          selected: selectedFilters.contains(filter),
-                          onSelected: (isSelected) {
-                            _onFilterChanged(filter, context, ref);
-                          },
-                        );
-                      }).toList(),
-                    );
+      spacing: 1,
+      children: filterOptions.map((filter) {
+        return FilterChip(
+          label: Text(filter),
+          selected: selectedFilters.contains(filter),
+          onSelected: (isSelected) {
+            _onFilterChanged(filter, context, ref);
+          },
+        );
+      }).toList(),
+    );
   }
 
   // Function to send data to Firestore
@@ -414,7 +391,6 @@ class NutrientsList extends StatelessWidget {
   final double proteinPserving;
   final double fatsPserving;
   final double cholesterolPerServing;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -452,15 +428,20 @@ class NutrientsList extends StatelessWidget {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Align(child: Text('Nutrition Facts',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 48,fontWeight: FontWeight.w900),
-                    ),),
+                    Align(
+                      child: Text(
+                        'Nutrition Facts',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontFamily: 'Helvetica Black',
+                            fontSize: 48,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    ),
                   ],
-                  
-
                 ),
-                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Divider(
+                    thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
                 Align(
                   child: Container(
                     height: 25,
@@ -468,38 +449,49 @@ class NutrientsList extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("${amtPerServing.toInt()} Servings per container",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w800),
+                        Text(
+                          "${amtPerServing.toInt()} Servings per container",
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontFamily: 'Helvetica Black',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800),
                         ),
-                        
                       ],
-
-                      ),
-                      
-                    
+                    ),
                   ),
                 ),
                 Container(
                   height: 50,
                   //holds the Serving Size Row
                   child: Stack(
-                    children:[ Row(
-                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Calories',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 40,fontWeight: FontWeight.w900),),
-                    Text('${carbsPserving.toInt()}',
-                            style: TextStyle(fontFamily: 'Arial',fontSize: 50,fontWeight: FontWeight.w800),
-                            ),
-                      ],
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Calories',
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                fontFamily: 'Helvetica Black',
+                                fontSize: 40,
+                                fontWeight: FontWeight.w900),
+                          ),
+                          Text(
+                            '${carbsPserving.toInt()}',
+                            style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 50,
+                                fontWeight: FontWeight.w800),
+                          ),
+                        ],
                       ),
-              ],),
+                    ],
+                  ),
                 ),
                 //Nutritional Column Dividers
                 //End NUTRITION FACTS ROW
-                Divider(thickness: 5,color: Color.fromARGB(255, 0, 0, 0)),
+                Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
                 Align(
                   child: Container(
                     height: 25,
@@ -510,24 +502,32 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Total Fats",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
+                            Text(
+                              "Total Fats",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900),
                             ),
                             // Fats variable
-                            Text('$fatsPserving',
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              '$fatsPserving',
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-
-                      )],
+                        )
+                      ],
                     ),
-                    
                   ),
                 ),
 
                 //end fats
-                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Divider(
+                    thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
                 Align(
                   child: Container(
                     height: 25,
@@ -538,25 +538,32 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Total Carbohydrate",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
+                            Text(
+                              "Total Carbohydrate",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900),
                             ),
                             // Fats variable
-                            Text('$carbsPserving',
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              '$carbsPserving',
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-
-                      )],
+                        )
+                      ],
                     ),
-                    
                   ),
                 ),
                 //end Protein
-                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Divider(
+                    thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
                 Align(
-                  
                   child: Container(
                     height: 25,
                     // Stack to hold the fats and the fats variable
@@ -566,22 +573,30 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Protein....",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.w900),
+                            Text(
+                              "Protein....",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900),
                             ),
                             // Fats variable
-                            Text('$proteinPserving',
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              '$proteinPserving',
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-
-                      )],
+                        )
+                      ],
                     ),
-                    
                   ),
                 ),
-                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Divider(
+                    thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
                 Align(
                   child: Container(
                     height: 25,
@@ -592,23 +607,31 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Cholesterol....",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              "Cholesterol....",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                             // Fats variable
-                            Text('$cholesterolPerServing',
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              '$cholesterolPerServing',
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-
-                      )],
+                        )
+                      ],
                     ),
-                    
                   ),
                 ),
                 //end Protein
-                Divider(thickness: 1,color: Color.fromARGB(255, 118, 117, 117)),
+                Divider(
+                    thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
                 Align(
                   child: Container(
                     height: 25,
@@ -619,19 +642,26 @@ class NutrientsList extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Protein....",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              "Protein....",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                             // Fats variable
-                            Text('$proteinPserving',
-                            style: TextStyle(fontFamily: 'Helvetica Black',fontSize: 20,fontWeight: FontWeight.bold),
+                            Text(
+                              '$proteinPserving',
+                              style: TextStyle(
+                                  fontFamily: 'Helvetica Black',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-
-                      )],
+                        )
+                      ],
                     ),
-                    
                   ),
                 ),
               ]),
@@ -643,17 +673,16 @@ class NutrientsList extends StatelessWidget {
 
 class NutriGridView extends StatelessWidget {
   final ScrollController secondController;
-  const NutriGridView({
-    super.key,
-    required this.selectedFilters,
-    required this.result,
-    required this.productName,
-    required this.productCalories,
-    required this.carbsPserving,
-    required this.proteinPserving,
-    required this.fatsPserving,
-    required this.secondController
-  });
+  const NutriGridView(
+      {super.key,
+      required this.selectedFilters,
+      required this.result,
+      required this.productName,
+      required this.productCalories,
+      required this.carbsPserving,
+      required this.proteinPserving,
+      required this.fatsPserving,
+      required this.secondController});
 
   final List<String> selectedFilters;
   final String result;

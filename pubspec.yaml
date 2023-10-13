@@ -45,9 +45,8 @@ dependencies:
   auto_size_text: ^3.0.0
   equatable: ^2.0.5
   curved_navigation_bar: ^1.0.3
-  flutter_hooks: ^0.18.0
-  hooks_riverpod: ^2.4.0
-  image_picker: ^1.04
+  image_picker: ^1.0.4
+  flutter_slidable: ^3.0.0
 
 dev_dependencies:
   flutter_test:

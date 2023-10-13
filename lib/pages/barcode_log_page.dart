@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class BarcodeLogPage extends ConsumerWidget {
   const BarcodeLogPage({Key? key});
@@ -52,6 +55,10 @@ class BarcodeLogPage extends ConsumerWidget {
       itemBuilder: (context, index) {
         final data = logs[index].data() as Map<String, dynamic>;
 
+        //Captures doc ID for the current log
+        String docId = logs[index].id;
+        data['docId'] = docId;
+
         if (data.containsKey('uid')) {
           data['uid'] = ''; // Make the 'uid' row empty
         }
@@ -60,20 +67,59 @@ class BarcodeLogPage extends ConsumerWidget {
         final carbsPerServing = data['carbsPerServing'].toInt();
         final proteinPerServing = data['proteinPerServing'].toInt();
 
-        return ListTile(
-          title: Text('Barcode: ${data['Barcode']}'),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        return Slidable(
+          key: ValueKey(logs[index].id),
+          startActionPane: ActionPane(
+            motion: ScrollMotion(),
             children: [
-              Text('Product Name: ${data['productName']}'),
-              Text('Product Calories: ${data['productCalories']}'),
-              Text('Carbs Per Serving: $carbsPerServing'),
-              Text('Protein Per Serving: $proteinPerServing'),
-              Text('Fats Per Serving: $fatsPerServing'),
+              SlidableAction(
+                onPressed: (context) => deleteLog(context, data),
+                backgroundColor: const Color.fromARGB(2, 140, 215, 85),
+                foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                icon: Icons.delete,
+                label: 'Delete',
+              )
             ],
+          ),
+          child: ListTile(
+            title: Text('Barcode: ${data['Barcode']}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Product Name: ${data['productName']}'),
+                Text('Product Calories: ${data['productCalories']}'),
+                Text('Carbs Per Serving: $carbsPerServing'),
+                Text('Protein Per Serving: $proteinPerServing'),
+                Text('Fats Per Serving: $fatsPerServing'),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  void deleteLog(BuildContext context, Map<String, dynamic> data) async {
+    //Deletes the barcode log
+    try {
+      //stores documentID into variable
+      String? docId = data['docId'];
+
+      if (docId != null) {
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .doc(docId)
+            .delete();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Barcode log deleted successfully')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting barcode log: $e'),
+        ),
+      );
+    }
   }
 }

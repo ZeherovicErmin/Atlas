@@ -1,15 +1,16 @@
+import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipeDetails extends ConsumerWidget {
-  const RecipeDetails({Key? key, required this.recipes}) : super(key: key);
-  final Map<String, dynamic> recipes;
+  const RecipeDetails({Key? key, required this.recipe}) : super(key: key);
+  final Result recipe; //recipe object
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        appBar: myAppBar2(context, ref, 'Recipes'), body: gradient());
+      appBar: myAppBar2(context, ref, "Recipe Details"), body: gradient());
   }
 
   Widget gradient() {
@@ -31,8 +32,10 @@ class RecipeDetails extends ConsumerWidget {
               children: [
                 recipeImage(),
                 recipeInformation(),
+                //margin for spacing
                 Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
                 recipeIngredients(),
+                //margin for spacing
                 Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
                 recipeInstructions(),
               ],
@@ -42,61 +45,79 @@ class RecipeDetails extends ConsumerWidget {
   }
 
   Widget recipeInformation() {
+    //Recipe calories
+    int calories = recipe.nutrition.nutrients[0].amount.ceil();
+
     return Column(
       children: [
-        Text(recipes["strMeal"],
+        //recipe title
+        Text(recipe.title,
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-        Text("Cuisine: " + recipes["strArea"],
+        //Recipe Cuisine
+        Text(
+            "Cuisine: " +
+                //if cuisine list is empty, return N/A, else return first result
+                //in cuisine list
+                (recipe.cuisines.isNotEmpty ? recipe.cuisines[0] : "N/A"),
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        //Recipe Calories, Servings, and Ready Time
+        Row(
+            //Centers row content
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Recipe Calories
+              Text("Calories: $calories",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+              //Recipe Servings
+              Text("   Servings: ${recipe.servings}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+              //Recipe Ready Time
+              Text("   Ready Time: ${recipe.readyInMinutes} min",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
+            ]),
       ],
     );
   }
 
   Widget recipeIngredients() {
-    String ingredients = "";
-    if (recipes["strIngredient1"] != "" && recipes["strIngredient1"] != null) {
-      ingredients += recipes["strIngredient1"] + ", ";
-    }
-    if (recipes["strIngredient2"] != "" && recipes["strIngredient2"] != null) {
-      ingredients += recipes["strIngredient2"] + ", ";
-    }
-    if (recipes["strIngredient3"] != "" && recipes["strIngredient3"] != null) {
-      ingredients += recipes["strIngredient3"] + ", ";
-    }
-    if (recipes["strIngredient4"] != "" && recipes["strIngredient4"] != null) {
-      ingredients += recipes["strIngredient4"] + ", ";
-    }
-    if (recipes["strIngredient5"] != "" && recipes["strIngredient5"] != null) {
-      ingredients += recipes["strIngredient5"] + ", ";
-    }
-    if (recipes["strIngredient6"] != "" && recipes["strIngredient6"] != null) {
-      ingredients += recipes["strIngredient6"] + ", ";
-    }
-    if (recipes["strIngredient7"] != "" && recipes["strIngredient7"] != null) {
-      ingredients += recipes["strIngredient7"] + ", ";
-    }
-    if (recipes["strIngredient8"] != "" && recipes["strIngredient8"] != null) {
-      ingredients += recipes["strIngredient8"] + ", ";
-    }
-    if (recipes["strIngredient9"] != "" && recipes["strIngredient9"] != null) {
-      ingredients += recipes["strIngredient9"] + ", ";
-    }
-    if (recipes["strIngredient10"] != "" &&
-        recipes["strIngredient10"] != null) {
-      ingredients += recipes["strIngredient10"] + ", ";
-    }
-
-    if (ingredients.endsWith(", ")) {
-      ingredients = ingredients.substring(0, ingredients.length - 2);
-    }
-
-    return Column(
+    //Expandable section
+    return ExpansionTile(
+      title: const Text("INGREDIENTS: ",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      //Make the arrow appear before the title
+      controlAffinity: ListTileControlAffinity.leading,
+      collapsedTextColor: Colors.black,
       children: [
-        Text("Ingredients: $ingredients",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+        //Outputs each ingredient in the ingredients list
+        ListView.builder(
+            shrinkWrap: true,
+            //Used to ensure list is scrollable
+            physics: const NeverScrollableScrollPhysics(),
+            //Number of ingredients
+            itemCount: recipe.nutrition.ingredients.length,
+            //Used to build instruction list tiles
+            itemBuilder: (context, index) {
+              //recipe igredient
+              Ingredient ingredient = recipe.nutrition.ingredients[index];
+              //Amount of the ingredient
+              var ingredientAmount = ingredient.amount;
+              //Formatted ingredient string with amount and unit
+              String ingredientFormatted =
+                  "${ingredient.name} - $ingredientAmount ${ingredient.unit}";
+
+              return ListTile(
+                  title: Text(ingredientFormatted,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontWeight: FontWeight.bold)));
+            }),
       ],
     );
   }
@@ -112,32 +133,50 @@ class RecipeDetails extends ConsumerWidget {
         child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              recipes["strMealThumb"],
+              recipe.image,
               height: 200,
               fit: BoxFit.fill,
             )));
   }
 
   Widget recipeInstructions() {
-    return Column(
-      children: [
-        const Text("INSTRUCTIONS: ",
+    //if this recipe does not contain instructions, return a message
+    //notifying the user. If it does, output the instructions
+    if (recipe.analyzedInstructions.isEmpty) {
+      return const ExpansionTile(
+        title: Text("INSTRUCTIONS: ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-        Card(
-          elevation: 1,
-          color: const Color(0xffA9B7FF),
-          child: SizedBox(
-            width: 300,
-            child: Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Center(
-                  child: Text(
-                recipes["strInstructions"],
-              )),
-            ),
-          ),
-        )
-      ],
-    );
+        controlAffinity: ListTileControlAffinity.leading,
+        collapsedTextColor: Colors.black,
+        children: [Text("Sorry! This Recipe Does Not Contain Instructions")],
+      );
+    } 
+    else {
+      return ExpansionTile(
+        title: const Text("INSTRUCTIONS: ",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        controlAffinity: ListTileControlAffinity.leading,
+        collapsedTextColor: Colors.black,
+        children: [
+          ListView.builder(
+              shrinkWrap: true,
+              //Used to ensure list is scrollable
+              physics: const NeverScrollableScrollPhysics(),
+              //Number of instructions
+              itemCount: recipe.analyzedInstructions[0].steps.length,
+              //Used to build instruction list tiles
+              itemBuilder: (context, index) {
+                final instruction = recipe.analyzedInstructions[0].steps[index];
+                String step = instruction.step;
+                var stepCount = index + 1;
+                String instructionTitle = "$stepCount.) $step ";
+                return ListTile(
+                    title: Text(instructionTitle,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold)));
+              }),
+        ],
+      );
+    }
   }
 }

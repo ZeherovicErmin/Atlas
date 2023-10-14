@@ -8,7 +8,7 @@ import 'dart:developer';
 // App Bar for the homepage
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+      backgroundColor: Color.fromARGB(255, 90, 86, 86),
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -30,7 +30,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 // App Bar for the homepage
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-    backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+    backgroundColor: Color.fromARGB(255, 90, 86, 86),
     title: Text(
       title,
       style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -74,40 +74,3 @@ var myGradient = LinearGradient(
     Color.fromARGB(255, 161, 195, 250),
   ],
 );
-  
-/* Creating a bottom navigation bar
-class myBottomNavigationBar extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = ref.watch(selectedIndexProvider);
-
-    // Creating the pages we will redirect to
-    final List<Widget> pages = [
-      HomePage(),
-      HomePage2(),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Atlas'),
-      ),
-      body: pages[selectedIndex.state],
-      bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "Profile",
-            ),
-          ],
-          currentIndex: selectedIndex.state,
-          selectedItemColor: Colors.blue,
-          onTap: (index) {
-            selectedIndex.state = index;
-          }),
-    );
-  }
-} */

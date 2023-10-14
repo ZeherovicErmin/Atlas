@@ -111,156 +111,120 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-          ],
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
-        body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("Users")
-              .doc(currentUser.email)
-              .snapshots(),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
 
-            if (!snapshot.hasData || snapshot.data == null) {
-              return Center(
-                child: const Text('User data not found.'),
-              );
-            }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return Center(
+              child: const Text('User data not found.'),
+            );
+          }
 
-            final userData = snapshot.data!.data() as Map<String, dynamic>?;
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
 
-            if (userData != null) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 50),
+          if (userData != null) {
+            return ListView(
+              children: [
+                const SizedBox(height: 50),
 
 // Profile pic
-                  Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center, // Center the icon
-                        child: image.state != null
-                            ? CircleAvatar(
-                                radius: 64,
-                                backgroundImage: MemoryImage(image.state!),
-                              )
-                            : const Icon(
-                                CupertinoIcons.profile_circled,
-                                size: 72,
-                              ),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center, // Center the icon
+                      child: image.state != null
+                          ? CircleAvatar(
+                              radius: 64,
+                              backgroundImage: MemoryImage(image.state!),
+                            )
+                          : const Icon(
+                              CupertinoIcons.profile_circled,
+                              size: 72,
+                            ),
+                    ),
+                    Positioned(
+                      bottom: -10,
+                      left: 80,
+                      child: IconButton(
+                        // onPressed, opens Image Picker
+                        onPressed: selectImage,
+                        icon: const Icon(Icons.add_a_photo),
                       ),
-                      Positioned(
-                        bottom: -10,
-                        left: 80,
-                        child: IconButton(
-                          // onPressed, opens Image Picker
-                          onPressed: selectImage,
-                          icon: const Icon(Icons.add_a_photo),
-                        ),
-                      )
-                    ],
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // User email
+                Text(
+                  currentUser.email!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 50),
 
-                  // User email
-                  Text(
-                    currentUser.email!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
+                // User details
+                const Padding(
+                  padding: EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Details',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 50),
+                // Username
+                MyTextBox(
+                  text: userData?['username']?.toString() ??
+                      '', // Safely access username
+                  sectionName: 'Username',
+                  onPressed: () => editField('username'),
+                ),
 
-                  // User details
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
-                      'My Details',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
+                // Bio
+                MyTextBox(
+                  text: userData?['bio']?.toString() ?? '', // Safely access bio
+                  sectionName: 'Bio',
+                  onPressed: () => editField('bio'),
+                ),
+
+                const SizedBox(height: 50),
+
+                // User posts
+                const Padding(
+                  padding: EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'My Posts',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
-
-                  // Username
-                  MyTextBox(
-                    text: userData?['username']?.toString() ??
-                        '', // Safely access username
-                    sectionName: 'Username',
-                    onPressed: () => editField('username'),
-                  ),
-
-                  // Bio
-                  MyTextBox(
-                    text:
-                        userData?['bio']?.toString() ?? '', // Safely access bio
-                    sectionName: 'Bio',
-                    onPressed: () => editField('bio'),
-                  ),
-
-                  const SizedBox(height: 50),
-
-                  // User posts
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
-                      'My Posts',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              // Handle the case where userData is null
-              return Center(
-                child: const Text('User data is null.'),
-              );
-            }
-          },
-        ),
-      ),
-      /*drawer: myDrawer,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          ref.read(selectedIndexProvider.notifier).state = index;
-          // Using Navigator to put a selected page onto the stack
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => tabs[index]),
-          );
+                ),
+              ],
+            );
+          } else {
+            // Handle the case where userData is null
+            return Center(
+              child: const Text('User data is null.'),
+            );
+          }
         },
-      ),*/
+      ),
     );
   }
 }

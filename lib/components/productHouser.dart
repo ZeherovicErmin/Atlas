@@ -1,3 +1,4 @@
+import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/constants.dart';
@@ -17,7 +18,12 @@ final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 //amount of servings a container has provider
 final amtServingsProvider = StateProvider<double>((ref) => 0.0);
+
+//defining fats
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final satfatsPservingProvider = StateProvider<double>((ref) => 0.0);
+
+// Carbs Per Serving
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final cholesterolProvider = StateProvider<double>((ref) => 0.0);
@@ -95,10 +101,17 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.proteins, PerSize.serving) ??
                 0.0;
+            // Fats per serving
             ref.watch(fatsPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.fat, PerSize.serving) ??
                 0.0;
+
+            ref.watch(satfatsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.saturatedFat, PerSize.serving) ?? 
+                0.0;
+
             ref.watch(cholesterolProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.cholesterol, PerSize.serving) ??
@@ -463,214 +476,120 @@ class NutrientsList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    height: 50,
-                    //holds the Serving Size Row
-                    child: Stack(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Calories',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  fontFamily: 'Helvetica Black',
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.w900),
-                            ),
-                            Text(
-                              '${carbsPserving.toInt()}',
-                              style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  NutritionRow(
+                    title: "Calories",
+                    value: '$productCalories',
+                    fontSize: 24,
+                    dividerThickness: 5,
+                    showDivider: false,
                   ),
                   //Nutritional Column Dividers
                   //End NUTRITION FACTS ROW
                   Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Stack(
-                        children: [
-                          //Fats row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total Fats",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                              // Fats variable
-                              Text(
-                                '$fatsPserving',
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+
+//Start of Nutrition rows
+//
+
+                  NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
 
                   //end fats
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Stack(
-                        children: [
-                          //Protein row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total Carbohydrate",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                              // Fats variable
-                              Text(
-                                '$carbsPserving',
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+
+                  NutritionRow(
+                      title: "Total Carbohydrates", value: '$carbsPserving'),
                   //end Protein
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Stack(
-                        children: [
-                          //Protein row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Protein....",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900),
-                              ),
-                              // Fats variable
-                              Text(
-                                '$proteinPserving',
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the Carbs and the Carbs variable
-                      child: Stack(
-                        children: [
-                          //Carbs row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Cholesterol....",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              // Fats variable
-                              Text(
-                                '$cholesterolPerServing',
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+
+                  //protein per serving
+                  NutritionRow(title: "Protein", value: "$proteinPserving"),
+
+                  NutritionRow(
+                      title: "Cholesterol", value: '$cholesterolPerServing'),
                   //end Protein
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Stack(
-                        children: [
-                          //Protein row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Protein....",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              // Fats variable
-                              Text(
-                                '$proteinPserving',
-                                style: TextStyle(
-                                    fontFamily: 'Helvetica Black',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
                 ]),
               ),
             ),
           );
         });
+  }
+}
+
+class NutritionDivider extends StatelessWidget {
+  final double thickness;
+// constructor/ Default Value
+  NutritionDivider({this.thickness = 1.0});
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      thickness: thickness,
+      color: Color.fromARGB(255, 118, 117, 117),
+    );
+  }
+}
+
+class NutritionRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final bool isSubcategory;
+  final bool hideIfZero;
+  final double fontSize;
+  final FontWeight titleFontWeight;
+  final FontWeight valueFontWeight;
+  final double dividerThickness;
+  final bool showDivider;
+
+  const NutritionRow(
+      {Key? key,
+      required this.title,
+      required this.value,
+      this.isSubcategory = false,
+      this.hideIfZero = false,
+      this.fontSize = 20, // default font size value
+      this.titleFontWeight = FontWeight.w900, // default Title weight
+      this.valueFontWeight = FontWeight.bold, // default textWeight
+      this.showDivider = true,
+      this.dividerThickness = 1.0 //default Divider thickmess
+      })
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (hideIfZero && value == '0') {
+      return SizedBox.shrink(); // returns an empty widgetif value is 0
+    }
+
+    return Column(
+      children: [
+        Container(
+          height: fontSize * 1.25, // roughly aligns with text height
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  // if SubCategory (sat fats) then use different font
+                  fontFamily: isSubcategory ? 'Arial' : 'Helvetica Black',
+                  fontSize: fontSize,
+                  fontWeight: isSubcategory ? valueFontWeight : titleFontWeight,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: 'Helvetica Black',
+                  fontSize: fontSize,
+                  fontWeight: valueFontWeight,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (showDivider)
+          NutritionDivider(
+            thickness: dividerThickness,
+          )
+      ],
+    );
   }
 }
 
@@ -767,66 +686,6 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
           ),
         );
       },
-    );
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  final String title;
-  final String data;
-  final bool isVisible; // New property to control visibility
-
-  ProductCard({
-    required this.title,
-    required this.data,
-    this.isVisible = true, // Default is visible
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isVisible) {
-      // Return an empty container if it shouldn't be displayed
-      return Container();
-    }
-
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: AutoSizeText(
-                title,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-                maxLines: 1,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Expanded(
-              child: AutoSizeText(
-                data,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                ),
-                maxLines:
-                    10, // Specify the maximum number of lines before text ellipsis
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

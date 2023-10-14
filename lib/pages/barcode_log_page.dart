@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:atlas/components/productHouser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,6 +67,7 @@ class BarcodeLogPage extends ConsumerWidget {
         final fatsPerServing = data['fatsPerServing'].toInt();
         final carbsPerServing = data['carbsPerServing'].toInt();
         final proteinPerServing = data['proteinPerServing'].toInt();
+        final cholesterolPerServing = data['cholesterolPerServing'].toInt();
 
         return Slidable(
           key: ValueKey(logs[index].id),
@@ -91,6 +93,7 @@ class BarcodeLogPage extends ConsumerWidget {
                 Text('Carbs Per Serving: $carbsPerServing'),
                 Text('Protein Per Serving: $proteinPerServing'),
                 Text('Fats Per Serving: $fatsPerServing'),
+                Text('Cholesterol Per Serving: $cholesterolPerServing'),
               ],
             ),
           ),

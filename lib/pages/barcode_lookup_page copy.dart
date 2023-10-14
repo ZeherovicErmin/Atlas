@@ -15,6 +15,7 @@ final productNameProvider = StateProvider<String>((ref) => '');
 final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final satfatsPservingProvider = StateProvider<double>((ref) => 0.0);
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
@@ -68,12 +69,12 @@ class BarcodeLookupPage extends ConsumerWidget {
 
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
-            ref.watch(carbsPservingProvider.notifier).state =
-                productData.nutriments?.getValue(
-                        Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-                    0.0;
+            ref.watch(carbsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
+                0.0;
             ref.watch(proteinPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??

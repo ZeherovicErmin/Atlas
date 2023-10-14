@@ -1,4 +1,7 @@
+import 'package:atlas/components/comment.dart';
+import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/like_button.dart';
+import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:flutter/material.dart';
 class FeedPost extends StatefulWidget {
   final String message;
   final String user;
+  final String time;
   final String postId;
   final List<String> likes;
   const FeedPost({
@@ -14,6 +18,7 @@ class FeedPost extends StatefulWidget {
     required this.user,
     required this.postId,
     required this.likes,
+    required this.time,
   });
 
   @override
@@ -24,6 +29,8 @@ class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
+
+  final _commentTextController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +43,47 @@ class _FeedPostState extends State<FeedPost> {
     setState(() {
       isLiked = !isLiked;
     });
+
+    // // add a comment
+    // void addComment(String commentText) {
+    //   // write the comment to firestore
+    //   FirebaseFirestore.instance
+    //       .collection("User Posts")
+    //       .doc(widget.postId)
+    //       .collection("Comments")
+    //       .add({
+    //     "CommentText": commentText,
+    //     "CommentedBy": currentUser.email,
+    //     "CommentTime": Timestamp.now() //format when displaying
+    //   });
+    // }
+
+    // // show a dialog box to add a comment
+    // void showCommentDialog() {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => AlertDialog(
+    //       title: const Text("Add Comment"),
+    //       content: TextField(
+    //         controller: _commentTextController,
+    //         decoration: const InputDecoration(hintText: "Write a comment..."),
+    //       ),
+    //       actions: [
+    //         //post button
+    //         TextButton(
+    //           onPressed: () => addComment(_commentTextController.text),
+    //           child: const Text("Post"),
+    //         ),
+
+    //         //cancel button
+    //         TextButton(
+    //           onPressed: () => Navigator.pop(context),
+    //           child: const Text("Cancel"),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     //Access the document in Firebase
     DocumentReference postRef =
@@ -63,38 +111,175 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
       padding: const EdgeInsets.all(25),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            children: [
-              //like button
-              LikeButton(
-                isLiked: isLiked,
-                onTap: toggleLike,
-              ),
-
-              const SizedBox(height: 5),
-
-              //like count
-              Text(widget.likes.length.toString(),
-                  style: const TextStyle(color: Colors.grey)),
-            ],
-          ),
-          const SizedBox(width: 20),
-          //message and user email
+          // feed post
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.user,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 10),
+              //message
               Text(widget.message),
+
+              const SizedBox(height: 5),
+
+              //user
+              Row(
+                children: [
+                  Text(
+                    widget.user,
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                  Text(
+                    " • ",
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                  Text(
+                    widget.time,
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ],
+              ),
             ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //LIKE
+              Column(
+                children: [
+                  //like button
+                  LikeButton(
+                    isLiked: isLiked,
+                    onTap: toggleLike,
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  //like count
+                  Text(
+                    widget.likes.length.toString(),
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+
+              const SizedBox(width: 10),
+
+              //COMMENT
+              Column(
+                children: [
+                  //comment button
+                  CommentButton(onTap: showCommentDialog),
+
+                  const SizedBox(height: 5),
+
+                  //comment count
+                  const Text(
+                    '0',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          //comments under the post
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("User Posts")
+                .doc(widget.postId)
+                .collection("Comments")
+                .orderBy("CommentTime", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              //show loading circle if theres no data
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: snapshot.data!.docs.map((doc) {
+                  //get the comment
+                  final commentData = doc.data() as Map<String, dynamic>;
+
+                  //return the comment
+                  return Comment(
+                    text: commentData["CommentText"],
+                    user: commentData["CommentedBy"],
+                    time: formatDate(commentData["CommentTime"]),
+                  );
+                }).toList(),
+              );
+            },
           )
         ],
       ),
     );
+  }
+
+  //show dialog box to add a comment
+  void showCommentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Add Comment"),
+        content: TextField(
+          controller: _commentTextController,
+          decoration: const InputDecoration(hintText: "Write a comment..."),
+        ),
+        actions: [
+          //cancel button
+          TextButton(
+            onPressed: () {
+              //pop box
+              Navigator.pop(context);
+
+              //clear controller
+              _commentTextController.clear();
+            },
+            child: const Text("Cancel"),
+          ),
+
+          //post button
+          TextButton(
+            onPressed: () {
+              //add comment
+              addComment(_commentTextController.text);
+
+              //pop box
+              Navigator.pop(context);
+
+              //clear controller
+              _commentTextController.clear();
+            },
+            child: const Text("Post"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  addComment(String commentText) {
+    // write the comment to firestore
+    FirebaseFirestore.instance
+        .collection("User Posts")
+        .doc(widget.postId)
+        .collection("Comments")
+        .add({
+      "CommentText": commentText,
+      "CommentedBy": currentUser.email,
+      "CommentTime": Timestamp.now() //format when displaying
+    });
   }
 }

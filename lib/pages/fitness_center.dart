@@ -1,6 +1,7 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/helper/helper_method.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -104,6 +105,7 @@ class FitCenter extends ConsumerWidget {
                                 user: post['UserEmail'],
                                 postId: post.id,
                                 likes: List<String>.from(post['Likes'] ?? []),
+                                time: formatDate(post['TimeStamp']),
                               );
                             },
                           );

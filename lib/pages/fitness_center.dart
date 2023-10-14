@@ -6,116 +6,41 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 // Creating a list of target muscles
-const List<String> list = <String>['biceps', 'triceps', 'chest'];
+const List<String> list = <String>[
+  "abdominals",
+  "abductors",
+  "adductors",
+  "biceps",
+  "calves",
+  "chest",
+  "forearms",
+  "glutes",
+  "hamstrings",
+  "lats",
+  "lower_back",
+  "middle_back",
+  "neck",
+  "quadriceps",
+  "traps",
+  "triceps",
+];
+
+// Creating a method to capitalize the first letter of each muscle
+String capitalizeFirstLetter(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
+}
+
+// Creating A map of Icons for each specific muscles
+final Map<String, IconData> muscleIcons = {
+  "abdominals": Icons.star,
+};
 
 // Creating a state provider to return a string for selected muscle
 final selectedMuscleProvider = StateProvider<String>((ref) {
   String muscle = 'biceps';
   return muscle;
 });
-
-// Creating a drop down button to modify selectedMuscleProvider
-class fitDropdown extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    String dropdownVal = ref.watch(selectedMuscleProvider);
-
-    // Creating the dropdown button to modify the value of the muscle in selectedMuscleProvider
-    return Center(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-            isExpanded: true,
-            value: dropdownVal,
-            style: const TextStyle(color: Colors.deepPurple),
-            underline: Container(
-              height: 2,
-              color: Colors.deepPurpleAccent,
-            ),
-            hint: const Row(
-              children: [
-                Icon(
-                  Icons.list,
-                  size: 16,
-                  color: Colors.yellow,
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Expanded(
-                  child: Text(
-                    'Select Item',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.yellow,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            items: list.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(
-                  value,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 0, 0, 0)),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList(),
-            onChanged: (String? value) {
-              if (value != null) {
-                ref.read(selectedMuscleProvider.notifier).state = value;
-              }
-            },
-            //changes how the button looks AC
-            buttonStyleData: ButtonStyleData(
-              height: 50,
-              width: 160,
-              padding: const EdgeInsets.only(left: 14, right: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: Colors.black26,
-                ),
-                color: Color.fromARGB(255, 90, 86, 86),
-              ),
-              elevation: 2,
-            ),
-            iconStyleData: const IconStyleData(
-              icon: Icon(
-                Icons.arrow_forward_ios_outlined,
-              ),
-              iconSize: 14,
-              iconEnabledColor: Colors.yellow,
-              iconDisabledColor: Colors.grey,
-            ),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: Color.fromARGB(255, 232, 229, 229),
-              ),
-              offset: const Offset(-20, 0),
-              scrollbarTheme: ScrollbarThemeData(
-                radius: const Radius.circular(40),
-                thickness: MaterialStateProperty.all(6),
-                thumbVisibility: MaterialStateProperty.all(true),
-              ),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-              height: 40,
-              padding: EdgeInsets.only(left: 14, right: 14),
-            )),
-      ),
-    );
-  }
-}
 
 class FitCenter extends ConsumerWidget {
   const FitCenter({Key? key}) : super(key: key);
@@ -148,7 +73,6 @@ class FitCenter extends ConsumerWidget {
 
     // Container for the gradient of the application
     return Container(
-      decoration: const BoxDecoration(),
       child: DefaultTabController(
         initialIndex: 1,
         length: 3,
@@ -179,60 +103,75 @@ class FitCenter extends ConsumerWidget {
           body: TabBarView(
             children: [
               // The Discover Tab Of the workouts page
-              Container(
-                color: Color.fromARGB(255, 232, 229, 229),
-                child: GestureDetector(
-                  onTap: () async {
-                    // Calling the exercises API when tapping the button
-                    final muscle =
-                        ref.watch(selectedMuscleProvider.notifier).state;
-                    final exercisesData = await getExercises(muscle);
 
-                    // If the exercise data exists
-                    if (exercisesData.isNotEmpty) {
-                      Navigator.of(context).push(MaterialPageRoute(
+              // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
+              ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final muscle = list[index];
+                  final icon = muscleIcons[
+                      muscle]; // Initalize each entry of the list to the muscle
+                  return InkWell(
+                    onTap: () async {
+                      final exercisesData = await getExercises(muscle);
+
+                      if (exercisesData.isNotEmpty) {
+                        Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Scaffold(
-                                appBar: AppBar(
-                                  title: Text("Discovered Workouts"),
-                                ),
-                                body: ListView.builder(
-                                  itemCount: exercisesData.length,
-                                  itemBuilder: (context, index) {
-                                    final exercise = exercisesData[index];
-                                    return ListTile(
-                                      title: Text(exercise['name']),
-                                    );
-                                  },
-                                ),
-                              )));
+                            appBar: AppBar(
+                              backgroundColor: Color.fromARGB(255, 90, 86, 86),
+                              title: Text("Workouts for $muscle"),
+                            ),
+                            body: ListView.builder(
+                              itemCount: exercisesData.length,
+                              itemBuilder: (context, index) {
+                                final exercise = exercisesData[index];
+                                return ListTile(
+                                  title: Text(exercise['name']),
+                                );
+                              },
+                            ),
+                          ),
+                        ));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "No Workout Data is Available for $muscle."),
+                          ),
+                        );
+                      }
+                    },
 
-                      // Throwing a snackbar error if data isnt found
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("No Workout Data Available."),
-                        ),
-                      );
-                    }
-                  },
-
-                  // Placing the Dropdown menu on the Discover Tab
-                  child: Column(
-                    children: [
-                      fitDropdown(),
-                      const Center(
-                        child: Text(
-                          'Find Workouts',
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline),
+                    // Styling elements for each specific muscle
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Adding an icon to each specific muscle
+                            Icon(icon ?? Icons.fitness_center,
+                                size:
+                                    34), // Setting the default Icon if one does not exist
+                            Text(
+                              capitalizeFirstLetter(
+                                  muscle.replaceAll('_', ' ')),
+                              style: TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            ),
+                            Icon(Icons.arrow_forward_ios, size: 34),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
+
               Container(
                 color: Color.fromARGB(255, 232, 229, 229),
                 child: Center(

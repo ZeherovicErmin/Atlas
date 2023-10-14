@@ -1,6 +1,6 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,14 +19,17 @@ final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 //amount of servings a container has provider
 final amtServingsProvider = StateProvider<double>((ref) => 0.0);
 
-//defining fats
+// Defining fats
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
 final satfatsPservingProvider = StateProvider<double>((ref) => 0.0);
-
+final transfatsPservingProvider = StateProvider<double>((ref) => 0.0);
 // Carbs Per Serving
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
 final cholesterolProvider = StateProvider<double>((ref) => 0.0);
+
+// Sodium per serving
+final sodiumPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
@@ -109,7 +112,12 @@ class BarcodeLookupComb extends ConsumerWidget {
 
             ref.watch(satfatsPservingProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.saturatedFat, PerSize.serving) ?? 
+                    ?.getValue(Nutrient.saturatedFat, PerSize.serving) ??
+                0.0;
+
+            ref.watch(transfatsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.transFat, PerSize.serving) ??
                 0.0;
 
             ref.watch(cholesterolProvider.notifier).state = productData
@@ -120,6 +128,10 @@ class BarcodeLookupComb extends ConsumerWidget {
                 productData.servingQuantity != null
                     ? productData.servingQuantity!
                     : 0.0;
+            ref.watch(sodiumPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.sodium, PerSize.serving) ??
+                0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
@@ -148,7 +160,12 @@ class BarcodeLookupComb extends ConsumerWidget {
             DataItem('cholesterolPerServing',
                 ref.read(cholesterolProvider.notifier).state),
             DataItem('amtServingsProvider',
-                ref.read(amtServingsProvider.notifier).state)
+                ref.read(amtServingsProvider.notifier).state),
+            DataItem('satfatsPserving',
+                ref.read(satfatsPservingProvider.notifier).state),
+            DataItem('transfatsPserving',
+                ref.read(transfatsPservingProvider.notifier).state),
+            DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
           ];
 
           // Send data to Firestore
@@ -158,13 +175,16 @@ class BarcodeLookupComb extends ConsumerWidget {
           // Set error messages if an exception occurs
           ref.watch(resultProvider.notifier).state =
               'Product not found'; // Set an appropriate message
-          ref.watch(productNameProvider.notifier).state = 'Product not found';
+          ref.watch(productNameProvider.notifier).state = 'Please try again';
           ref.watch(productCaloriesProvider.notifier).state = 0.0;
           ref.watch(proteinPservingProvider.notifier).state = 0.0;
           ref.watch(carbsPservingProvider.notifier).state = 0.0;
           ref.watch(fatsPservingProvider.notifier).state = 0.0;
           ref.watch(cholesterolProvider.notifier).state = 0.0;
           ref.watch(amtServingsProvider.notifier).state = 0.0;
+          ref.watch(satfatsPservingProvider.notifier).state = 0.0;
+          ref.watch(transfatsPservingProvider.notifier).state = 0.0;
+          ref.watch(sodiumPservingProvider.notifier).state = 0.0;
         }
       } else {
         // Set error messages for an invalid barcode
@@ -176,6 +196,9 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(fatsPservingProvider.notifier).state = 0.0;
         ref.watch(cholesterolProvider.notifier).state = 0.0;
         ref.watch(amtServingsProvider.notifier).state = 0.0;
+        ref.watch(satfatsPservingProvider.notifier).state = 0.0;
+        ref.watch(transfatsPservingProvider.notifier).state = 0.0;
+        ref.watch(sodiumPservingProvider.notifier).state = 0.0;
       }
     }
   }
@@ -204,7 +227,11 @@ class BarcodeLookupComb extends ConsumerWidget {
     final productName = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
     final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
+    //fats
     final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
+    final satfatsPserving = ref.watch(satfatsPservingProvider.notifier).state;
+    final transfatsPserving =
+        ref.watch(transfatsPservingProvider.notifier).state;
     final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
     final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
@@ -242,15 +269,18 @@ class BarcodeLookupComb extends ConsumerWidget {
               ),
             ),
             NutrientsList(
-                selectedFilters: selectedFilters,
-                result: result,
-                productName: productName,
-                productCalories: productCalories,
-                carbsPserving: carbsPserving,
-                proteinPserving: proteinPserving,
-                fatsPserving: fatsPserving,
-                cholesterolPerServing: cholesterolPerServing,
-                amtPerServing: amtPerServing),
+              selectedFilters: selectedFilters,
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving,
+              cholesterolPerServing: cholesterolPerServing,
+              amtPerServing: amtPerServing,
+              satfatsPserving: satfatsPserving,
+              transfatsPserving: transfatsPserving,
+            ),
           ],
         ));
   }
@@ -338,49 +368,6 @@ class BarcodeLookupComb extends ConsumerWidget {
   }
 }
 
-class GridViewProductCards extends StatelessWidget {
-  const GridViewProductCards({
-    super.key,
-    required this.selectedFilters,
-    required this.result,
-    required this.productName,
-    required this.productCalories,
-    required this.carbsPserving,
-    required this.proteinPserving,
-    required this.fatsPserving,
-  });
-
-  final List<String> selectedFilters;
-  final String result;
-  final String productName;
-  final double productCalories;
-  final double carbsPserving;
-  final double proteinPserving;
-  final double fatsPserving;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      children: [
-        if (selectedFilters.isNotEmpty)
-          ...selectedFilters.map((filter) {
-            return GenerateTileCard(
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving,
-              filter: filter,
-            );
-          }),
-      ],
-    );
-  }
-}
-
 class NutrientsList extends StatelessWidget {
   const NutrientsList({
     super.key,
@@ -393,6 +380,8 @@ class NutrientsList extends StatelessWidget {
     required this.fatsPserving,
     required this.cholesterolPerServing,
     required this.amtPerServing,
+    required this.satfatsPserving,
+    required this.transfatsPserving,
   });
 
   final List<String> selectedFilters;
@@ -404,6 +393,8 @@ class NutrientsList extends StatelessWidget {
   final double proteinPserving;
   final double fatsPserving;
   final double cholesterolPerServing;
+  final double satfatsPserving;
+  final double transfatsPserving;
 
   @override
   Widget build(BuildContext context) {
@@ -440,7 +431,7 @@ class NutrientsList extends StatelessWidget {
                   ),
                   //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
                   //Nutritional Facts Column Sheet
-                  Column(
+                  const Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Align(
@@ -486,12 +477,22 @@ class NutrientsList extends StatelessWidget {
                   //Nutritional Column Dividers
                   //End NUTRITION FACTS ROW
                   Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
-
-//Start of Nutrition rows
-//
-
+                  //Start of Nutrition rows
+                  //
                   NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
-
+                  //saturated Fats
+                  NutritionRow(
+                    title: 'Saturated Fat',
+                    value: '$satfatsPserving',
+                    isSubcategory: true,
+                    hideIfZero: true,
+                  ),
+                  NutritionRow(
+                    title: 'Trans Fat',
+                    value: '$transfatsPserving',
+                    isSubcategory: true,
+                    hideIfZero: true,
+                  ),
                   //end fats
 
                   NutritionRow(
@@ -552,7 +553,7 @@ class NutritionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (hideIfZero && value == '0') {
+    if (hideIfZero && value == '0.0') {
       return SizedBox.shrink(); // returns an empty widgetif value is 0
     }
 
@@ -563,14 +564,18 @@ class NutritionRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  // if SubCategory (sat fats) then use different font
-                  fontFamily: isSubcategory ? 'Arial' : 'Helvetica Black',
-                  fontSize: fontSize,
-                  fontWeight: isSubcategory ? valueFontWeight : titleFontWeight,
+              Padding(
+                padding: EdgeInsets.only(left: isSubcategory ? 30.0 : 0.0),
+                child: Text(
+                  title,
+                  textAlign: isSubcategory ? TextAlign.start : TextAlign.end,
+                  style: TextStyle(
+                    // if SubCategory (sat fats) then use different font
+                    fontFamily: isSubcategory ? 'Arial' : 'Helvetica Black',
+                    fontSize: fontSize,
+                    fontWeight:
+                        isSubcategory ? valueFontWeight : titleFontWeight,
+                  ),
                 ),
               ),
               Text(
@@ -589,55 +594,6 @@ class NutritionRow extends StatelessWidget {
             thickness: dividerThickness,
           )
       ],
-    );
-  }
-}
-
-class NutriGridView extends StatelessWidget {
-  final ScrollController secondController;
-  const NutriGridView(
-      {super.key,
-      required this.selectedFilters,
-      required this.result,
-      required this.productName,
-      required this.productCalories,
-      required this.carbsPserving,
-      required this.proteinPserving,
-      required this.fatsPserving,
-      required this.secondController});
-
-  final List<String> selectedFilters;
-  final String result;
-  final String productName;
-  final double productCalories;
-  final double carbsPserving;
-  final double proteinPserving;
-  final double fatsPserving;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: GridView.count(
-        controller: secondController,
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        children: [
-          if (selectedFilters.isNotEmpty)
-            ...selectedFilters.map(
-              (filter) {
-                return GenerateTileCard(
-                  result: result,
-                  productName: productName,
-                  productCalories: productCalories,
-                  carbsPserving: carbsPserving,
-                  proteinPserving: proteinPserving,
-                  fatsPserving: fatsPserving,
-                  filter: filter,
-                );
-              },
-            )
-        ],
-      ),
     );
   }
 }

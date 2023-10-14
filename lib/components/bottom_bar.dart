@@ -1,6 +1,6 @@
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/recipes.dart';

@@ -177,7 +177,7 @@ class FitCenter extends ConsumerWidget {
           ),
 
           body: TabBarView(
-            children: <Widget>[
+            children: [
               // The Discover Tab Of the workouts page
               Container(
                 color: Color.fromARGB(255, 232, 229, 229),
@@ -190,20 +190,21 @@ class FitCenter extends ConsumerWidget {
 
                     // If the exercise data exists
                     if (exercisesData.isNotEmpty) {
-                      Scaffold(
-                        appBar: AppBar(
-                          title: Text("Discovered Workouts"),
-                        ),
-                        body: ListView.builder(
-                          itemCount: exercisesData.length,
-                          itemBuilder: (context, index) {
-                            final exercise = exercisesData[index];
-                            return ListTile(
-                              title: Text(exercise['name']),
-                            );
-                          },
-                        ),
-                      );
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Scaffold(
+                                appBar: AppBar(
+                                  title: Text("Discovered Workouts"),
+                                ),
+                                body: ListView.builder(
+                                  itemCount: exercisesData.length,
+                                  itemBuilder: (context, index) {
+                                    final exercise = exercisesData[index];
+                                    return ListTile(
+                                      title: Text(exercise['name']),
+                                    );
+                                  },
+                                ),
+                              )));
 
                       // Throwing a snackbar error if data isnt found
                     } else {
@@ -223,9 +224,9 @@ class FitCenter extends ConsumerWidget {
                         child: Text(
                           'Find Workouts',
                           style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline),
                         ),
                       ),
                     ],

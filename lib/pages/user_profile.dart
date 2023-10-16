@@ -1,6 +1,7 @@
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +25,32 @@ class UserProfile extends ConsumerWidget {
     final usersCollection = FirebaseFirestore.instance.collection("Users");
     final currentIndex = ref.watch(selectedIndexProvider);
     final image = ref.watch(profilePictureProvider.notifier);
+
+void signOut() {
+  FirebaseAuth.instance.signOut();
+  runApp(
+    MaterialApp (
+      home: LoginPage()
+    )
+  );
+}
+
+void showSettings(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Settings'),
+          content: Column (
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget> [
+              ElevatedButton(onPressed: signOut, child: Text("Sign out Button")),
+            ]
+          ),
+        );
+      }
+    );
+  }
 
     // Awaits for user input to select an Image
 // Awaits for user input to select an Image
@@ -137,7 +164,7 @@ class UserProfile extends ConsumerWidget {
               children: [
                 const SizedBox(height: 50),
 
-// Profile pic
+          // Profile pic
                 Stack(
                   children: [
                     Align(

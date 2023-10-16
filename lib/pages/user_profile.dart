@@ -86,6 +86,24 @@ void showSettings(BuildContext context) {
       }
     }
 
+PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
+  return PreferredSize (
+    preferredSize: const Size.fromHeight(70),
+    child: AppBar (
+      backgroundColor: Color.fromARGB(255, 90, 86, 86),
+      elevation: 0,
+      leading: IconButton (
+        icon: const Icon(Icons.settings),
+        onPressed: () => showSettings(context),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+          )
+        )
+    );
+}
+
     // Edit field
     Future<void> editField(String field) async {
       String newValue = "";
@@ -140,7 +158,7 @@ void showSettings(BuildContext context) {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
+      appBar: userProfileAppBar(context, ref, '       U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")

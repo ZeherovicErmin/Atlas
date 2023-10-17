@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class SignoutButton extends StatelessWidget {
   final String text;
-  final VoidCallback onTap;
-  const SignoutButton({required this.onTap, required this.text});
+  final VoidCallback onPressed;
+  const SignoutButton({required this.onPressed, required this.text});
 
   //Adds button functionality
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(25),
         margin: const EdgeInsets.symmetric(horizontal: 125),

@@ -51,6 +51,7 @@ dependencies:
 
   image_picker: ^1.0.4
   dropdown_button2: ^2.3.9
+  settings_ui: ^2.0.2
 
 dev_dependencies:
   flutter_test:

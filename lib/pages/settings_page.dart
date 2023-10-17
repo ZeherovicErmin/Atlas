@@ -23,19 +23,29 @@ class SettingsPage extends ConsumerWidget {
               SettingsSection(
                 title: const Text(
                   'Account',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 tiles: [
                   SettingsTile(
-                    title: const Text(
-                      'Change Password'
-                      ),
+                    title: const Text('Change Password'),
                     leading: const Icon(Icons.lock),
                     onPressed: (BuildContext context) {},
                   ),
                   ],
                 ),
                 SettingsSection(
-                title: const Text('Appearance'),
+                title: const Text(
+                  'Appearance',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                    ),
+                  ),
                 tiles: [
                   SettingsTile.switchTile (
                     title: const Text('Dark Mode'),

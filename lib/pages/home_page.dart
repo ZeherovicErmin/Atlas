@@ -37,7 +37,7 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: myAppBar(context, ref, 'HomePage'),
+      appBar: myAppBar2(context, ref, 'HomePage'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Number of columns in the grid

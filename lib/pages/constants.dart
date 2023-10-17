@@ -5,7 +5,7 @@ import 'dart:developer';
 
 // A file for frequently used widgets to clean up code
 
-// App Bar for the homepage
+//App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: Color.fromARGB(255, 90, 86, 86),
@@ -27,7 +27,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
       ]);
 }
 
-// App Bar for the homepage
+//AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
     backgroundColor: Color.fromARGB(255, 90, 86, 86),

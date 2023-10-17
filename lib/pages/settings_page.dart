@@ -35,9 +35,9 @@ class SettingsPage extends ConsumerWidget {
                     leading: const Icon(Icons.lock),
                     onPressed: (BuildContext context) {},
                   ),
-                  ],
-                ),
-                SettingsSection(
+                ],
+              ),
+              SettingsSection(
                 title: const Text(
                   'Appearance',
                       style: TextStyle(

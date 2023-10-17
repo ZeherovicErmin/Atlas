@@ -2,6 +2,7 @@ import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/login_page.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,6 +57,36 @@ class UserProfile extends ConsumerWidget {
                   onPressed: () async {
                     await ref.read(signOutProvider);
                     // After succesful logout redirect to logout page
+                    Navigator.of(context).pushReplacementNamed('/settings');
+                  },
+                  child: const Text (
+                    "Sign out Button"
+                  )
+                ),
+              ]
+            ),
+          );
+        }
+      );
+    }
+
+  //Shows the settings page when called
+  //Saving for later because it works
+  /*
+  void showSettings(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Settings'),
+            content: Column (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                //Signout button
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref.read(signOutProvider);
+                    // After succesful logout redirect to logout page
                     Navigator.of(context).pushReplacementNamed('/login');
                   },
                   child: const Text (
@@ -68,6 +99,7 @@ class UserProfile extends ConsumerWidget {
         }
       );
     }
+    */
 
   // Awaits for user input to select an Image
   // Awaits for user input to select an Image
@@ -108,11 +140,16 @@ class UserProfile extends ConsumerWidget {
       preferredSize: const Size.fromHeight(70),
       child: AppBar (
         backgroundColor: const Color.fromARGB(255, 90, 86, 86),
-        actions: [ 
+        actions: [
           //Settings icon button
           IconButton (
           icon: const Icon(Icons.settings),
-          onPressed: () => showSettings(context),
+          onPressed: () {
+              Navigator.push (
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
           ),
         ],
           title: Text(
@@ -177,7 +214,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: userProfileAppBar(context, ref, '       U s e r  P r o f i l e'),
+      appBar: userProfileAppBar(context, ref, '                        U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -200,7 +237,7 @@ class UserProfile extends ConsumerWidget {
             return ListView(
               children: [
                 const SizedBox(height: 50),
-                
+
                 //Profile pic
                 Stack(
                   children: [

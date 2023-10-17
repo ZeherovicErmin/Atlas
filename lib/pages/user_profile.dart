@@ -5,7 +5,6 @@ import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,135 +25,155 @@ class UserProfile extends ConsumerWidget {
     final currentIndex = ref.watch(selectedIndexProvider);
     final image = ref.watch(profilePictureProvider.notifier);
 
-void signOut() {
-  FirebaseAuth.instance.signOut();
-  runApp(
-    MaterialApp (
-      home: LoginPage()
-    )
-  );
-}
-
-void showSettings(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Settings'),
-          content: Column (
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget> [
-              ElevatedButton(onPressed: signOut, child: Text("Sign out Button")),
-            ]
-          ),
-        );
-      }
+  //Signs the user out when called
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    runApp(
+      ProviderScope(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: LoginPage(),
+          routes: {
+            '/home': (context) => LoginPage(),
+          },
+        ),
+      ),
     );
   }
 
-    // Awaits for user input to select an Image
-// Awaits for user input to select an Image
-// Awaits user input to select an Image
-    void selectImage() async {
-      // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      // Check if an image was picked.
-      if (pickedFile != null) {
-        // Read the image file as bytes.
-        final imageBytes = await pickedFile.readAsBytes();
-
-        // Update the profilePictureProvider state with the selected image as Uint8List.
-        ref.read(profilePictureProvider.notifier).state =
-            Uint8List.fromList(imageBytes);
-      }
-    }
-
-    void saveProfile() async {
-      final imageBytes = image.state;
-
-      if (imageBytes != null) {
-        try {
-          await FirebaseFirestore.instance
-              .collection("profilePictures")
-              .doc(currentUser.email)
-              .set({"profilePicture": imageBytes});
-        } catch (e) {
-          print("Error: $e");
-        }
-      }
-    }
-
-PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
-  return PreferredSize (
-    preferredSize: const Size.fromHeight(70),
-    child: AppBar (
-      backgroundColor: Color.fromARGB(255, 90, 86, 86),
-      elevation: 0,
-      leading: IconButton (
-        icon: const Icon(Icons.settings),
-        onPressed: () => showSettings(context),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-          )
-        )
-    );
-}
-
-    // Edit field
-    Future<void> editField(String field) async {
-      String newValue = "";
-      await showDialog(
+  //Shows the settings page when called
+  void showSettings(BuildContext context) {
+      showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text(
-            "Edit $field",
-            style: const TextStyle(color: Colors.blue),
-          ),
-          content: TextField(
-            autofocus: true,
-            style: TextStyle(
-                color: const Color.fromARGB(
-                    255, 0, 0, 0)), // Change text color to white
-            decoration: InputDecoration(
-              hintText: "Enter new $field",
-              hintStyle: TextStyle(color: Colors.black),
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Settings'),
+            content: Column (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                //Signout button
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref.read(signOutProvider);
+                    // After succesful logout redirect to logout page
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  },
+                  child: const Text (
+                    "Sign out Button"
+                  )
+                ),
+              ]
             ),
-            onChanged: (value) {
-              newValue = value;
-            },
-          ),
-          actions: [
-            // Cancel button
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-
-            // Save button
-            TextButton(
-              child: Text(
-                'Save',
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-              onPressed: () => Navigator.of(context).pop(newValue),
-            ),
-          ],
-        ),
+          );
+        }
       );
+    }
 
-      // Update in Firestore
-      if (newValue.trim().isNotEmpty) {
-        // Only update if there is something in the text field
-        await usersCollection.doc(currentUser.email).update({field: newValue});
+  // Awaits for user input to select an Image
+  // Awaits for user input to select an Image
+  // Awaits user input to select an Image
+  void selectImage() async {
+    // Use the ImagePicker plugin to open the device's gallery to pick an image.
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    // Check if an image was picked.
+    if (pickedFile != null) {
+      // Read the image file as bytes.
+      final imageBytes = await pickedFile.readAsBytes();
+
+      // Update the profilePictureProvider state with the selected image as Uint8List.
+      ref.read(profilePictureProvider.notifier).state = Uint8List.fromList(imageBytes);
+    }
+  }
+
+  //Saves the profile
+  void saveProfile() async {
+    final imageBytes = image.state;
+    if (imageBytes != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("profilePictures")
+            .doc(currentUser.email)
+            .set({"profilePicture": imageBytes});
+      } catch (e) {
+        print("Error: $e");
       }
     }
+  }
+
+  //App bar for the user profile page
+  PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
+    return PreferredSize (
+      preferredSize: const Size.fromHeight(70),
+      child: AppBar (
+        backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+        actions: [ 
+          //Settings icon button
+          IconButton (
+          icon: const Icon(Icons.settings),
+          onPressed: () => showSettings(context),
+          ),
+        ],
+          title: Text(
+            title,
+            style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+            )
+          )
+      );
+  }
+
+  // Edit field
+  Future<void> editField(String field) async {
+    String newValue = "";
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Edit $field",
+          style: const TextStyle(color: Colors.blue),
+        ),
+        content: TextField(
+          autofocus: true,
+          style: TextStyle(
+              color: const Color.fromARGB(
+                  255, 0, 0, 0)), // Change text color to white
+          decoration: InputDecoration(
+            hintText: "Enter new $field",
+            hintStyle: TextStyle(color: Colors.black),
+          ),
+          onChanged: (value) {
+            newValue = value;
+          },
+        ),
+        actions: [
+          // Cancel button
+          TextButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+
+          // Save button
+          TextButton(
+            child: Text(
+              'Save',
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            onPressed: () => Navigator.of(context).pop(newValue),
+          ),
+        ],
+      ),
+    );
+
+    // Update in Firestore
+    if (newValue.trim().isNotEmpty) {
+      // Only update if there is something in the text field
+      await usersCollection.doc(currentUser.email).update({field: newValue});
+    }
+  }
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
@@ -181,8 +200,8 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
             return ListView(
               children: [
                 const SizedBox(height: 50),
-
-          // Profile pic
+                
+                //Profile pic
                 Stack(
                   children: [
                     Align(
@@ -211,7 +230,7 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
 
                 const SizedBox(height: 10),
 
-                // User email
+                //User email
                 Text(
                   currentUser.email!,
                   textAlign: TextAlign.center,
@@ -222,7 +241,7 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
 
                 const SizedBox(height: 50),
 
-                // User details
+                //User details
                 const Padding(
                   padding: EdgeInsets.only(left: 25.0),
                   child: Text(
@@ -233,7 +252,7 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
                   ),
                 ),
 
-                // Username
+                //Username
                 MyTextBox(
                   text: userData?['username']?.toString() ??
                       '', // Safely access username
@@ -241,7 +260,7 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
                   onPressed: () => editField('username'),
                 ),
 
-                // Bio
+                //Bio
                 MyTextBox(
                   text: userData?['bio']?.toString() ?? '', // Safely access bio
                   sectionName: 'Bio',
@@ -250,7 +269,7 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
 
                 const SizedBox(height: 50),
 
-                // User posts
+                //User posts
                 const Padding(
                   padding: EdgeInsets.only(left: 25.0),
                   child: Text(
@@ -264,8 +283,8 @@ PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String titl
             );
           } else {
             // Handle the case where userData is null
-            return Center(
-              child: const Text('User data is null.'),
+            return const Center(
+              child: Text('User data is null.'),
             );
           }
         },

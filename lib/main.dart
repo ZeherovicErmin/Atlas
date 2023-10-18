@@ -65,26 +65,33 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Storing our user with provider
     final user = ref.watch(userProvider);
-    final lightDarkTheme = ref.watch(themeProvider);
 
     return user.when(
       data: (user) {
         return Directionality(
           textDirection: TextDirection.ltr,
-          child: MaterialApp(
+          child: Consumer (
+            builder: (context, ref, _) {
+            final lightDarkTheme = ref.watch(themeProvider);
+            return MaterialApp (
             debugShowCheckedModeBanner: false,
-            home: const AuthPage(),
-            routes: {
-              '/home': (context) => HomePage(),
-              '/fitcenter': (context) => FitCenter(),
-              '/login': (context) => LoginPage(),
-              '/register': (context) => RegisterPage(),
-              '/recipes': (context) => Recipes(),
-              '/userprof': (context) => UserProfile(),
-              '/barcode': (context) => BarcodeLookupPage(),
-              '/start': (context) => BottomNav(),
-            },
-          ),
+              theme: ThemeData.light(),
+              darkTheme: ThemeData.dark(),
+              themeMode: lightDarkTheme ? ThemeMode.dark : ThemeMode.light,
+              home: const AuthPage(),
+                routes: {
+                  '/home': (context) => HomePage(),
+                  '/fitcenter': (context) => FitCenter(),
+                  '/login': (context) => LoginPage(),
+                  '/register': (context) => RegisterPage(),
+                  '/recipes': (context) => Recipes(),
+                  '/userprof': (context) => UserProfile(),
+                  '/barcode': (context) => BarcodeLookupPage(),
+                  '/start': (context) => BottomNav(),
+                },
+              );
+            }
+          )
         );
       },
       error: (e, s) => Text('error'),

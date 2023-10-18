@@ -51,8 +51,17 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 tiles: [
                   SettingsTile(
-                    title: const Text('Change Password'),
-                    leading: const Icon(Icons.lock),
+                    title: Text(
+                      'Change Password',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: themeColor,
+                      ),
+                    ),
+                    leading: Icon(
+                      Icons.lock,
+                      color: themeColor,
+                      ),
                     onPressed: (BuildContext context) {},
                   ),
                 ],
@@ -68,8 +77,17 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 tiles: [
                   SettingsTile.switchTile (
-                    title: const Text('Dark Mode'),
-                    leading: const Icon(Icons.flashlight_on_outlined),
+                    title: Text(
+                      'Dark Mode',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: themeColor,
+                    ),
+                      ),
+                    leading: Icon(
+                      Icons.flashlight_on_outlined,
+                      color: themeColor,
+                      ),
                     initialValue: lightDarkTheme,
                     onToggle: (bool lightDarkTheme) {
                       ref.read(themeProvider.notifier).toggleTheme();

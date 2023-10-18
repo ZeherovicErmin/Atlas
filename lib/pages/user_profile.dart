@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:atlas/pages/settings_page.dart';
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
@@ -19,12 +20,19 @@ final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
 class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key});
 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final usersCollection = FirebaseFirestore.instance.collection("Users");
     final currentIndex = ref.watch(selectedIndexProvider);
     final image = ref.watch(profilePictureProvider.notifier);
+
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
 
   //Signs the user out when called
   void signOut() {
@@ -169,7 +177,7 @@ class UserProfile extends ConsumerWidget {
       builder: (context) => AlertDialog(
         title: Text(
           "Edit $field",
-          style: const TextStyle(color: Colors.blue),
+          style: TextStyle(color: themeColor),
         ),
         content: TextField(
           autofocus: true,
@@ -214,7 +222,7 @@ class UserProfile extends ConsumerWidget {
   }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: const Color.fromARGB(255, 232, 229, 229),
       appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance

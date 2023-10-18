@@ -29,7 +29,7 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //Saves the state of dark mode being on or off
     final lightDarkTheme = ref.watch(themeProvider);
-    
+
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
 

@@ -5,14 +5,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:atlas/components/signout_button.dart';
 
+final themeProvider = StateNotifierProvider<ThemeNotifier, bool> ( (ref) {
+    return ThemeNotifier();
+  }
+);
+
+class ThemeNotifier extends StateNotifier<bool> {
+  ThemeNotifier() : super(true);
+
+  //Calling this function toggles the state of the theme
+  void toggleTheme() {
+    state = !state;
+    }
+}
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
-
 
   //For the customizing the fields a user can use to type in
   //(username and password text field)
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
     return Scaffold(
       appBar: myAppBar2(context, ref, 'S e t t i n g s'),
       body: Column (
@@ -50,9 +66,9 @@ class SettingsPage extends ConsumerWidget {
                   SettingsTile.switchTile (
                     title: const Text('Dark Mode'),
                     leading: const Icon(Icons.flashlight_on_outlined),
-                    initialValue: false,
-                    onToggle: (bool dorl) {
-                      print('test');
+                    initialValue: lightDarkTheme,
+                    onToggle: (bool lightDarkTheme) {
+                      ref.read(themeProvider.notifier).toggleTheme();
                     },
                   ),
                 ],

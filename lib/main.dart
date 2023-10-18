@@ -6,6 +6,7 @@ import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/register_page.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,11 +59,13 @@ final registrationProvider = Provider((ref) => RegistrationState());
 // Creating a provider for keeping track of the selected index of the navigation bar
 final selectedIndexProvider = StateProvider<int>((ref) => 0);
 
+
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Storing our user with provider
     final user = ref.watch(userProvider);
+    final lightDarkTheme = ref.watch(themeProvider);
 
     return user.when(
       data: (user) {

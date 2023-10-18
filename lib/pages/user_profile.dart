@@ -139,6 +139,7 @@ class UserProfile extends ConsumerWidget {
     return PreferredSize (
       preferredSize: const Size.fromHeight(70),
       child: AppBar (
+        centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 90, 86, 86),
         actions: [
           //Settings icon button
@@ -214,7 +215,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: userProfileAppBar(context, ref, '                     U s e r  P r o f i l e'),
+      appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")

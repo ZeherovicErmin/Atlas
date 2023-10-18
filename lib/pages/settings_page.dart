@@ -1,3 +1,4 @@
+import 'package:atlas/pages/change_password.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
@@ -23,8 +24,6 @@ class ThemeNotifier extends StateNotifier<bool> {
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
-  //For the customizing the fields a user can use to type in
-  //(username and password text field)
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //Saves the state of dark mode being on or off
@@ -62,7 +61,12 @@ class SettingsPage extends ConsumerWidget {
                       Icons.lock,
                       color: themeColor,
                       ),
-                    onPressed: (BuildContext context) {},
+                    onPressed: (BuildContext context) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute (builder: (context) => const ChangePassword()),
+                        );
+                    },
                   ),
                 ],
               ),

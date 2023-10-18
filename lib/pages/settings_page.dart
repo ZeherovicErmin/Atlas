@@ -29,6 +29,9 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //Saves the state of dark mode being on or off
     final lightDarkTheme = ref.watch(themeProvider);
+    
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
 
     return Scaffold(
       appBar: myAppBar2(context, ref, 'S e t t i n g s'),
@@ -38,12 +41,12 @@ class SettingsPage extends ConsumerWidget {
           child: SettingsList(
             sections: [
               SettingsSection(
-                title: const Text(
+                title: Text(
                   'Account',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: themeColor,
                     ),
                   ),
                 tiles: [
@@ -55,12 +58,12 @@ class SettingsPage extends ConsumerWidget {
                 ],
               ),
               SettingsSection(
-                title: const Text(
+                title: Text(
                   'Appearance',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: themeColor,
                     ),
                   ),
                 tiles: [

@@ -10,7 +10,7 @@ class RecipeDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: myAppBar2(context, ref, "Recipe Details"), body: gradient());
+        appBar: myAppBar2(context, ref, "Recipe Details"), body: gradient());
   }
 
   Widget gradient() {
@@ -20,8 +20,8 @@ class RecipeDetails extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250)
+              Color.fromARGB(255, 232, 229, 229),
+              Color.fromARGB(255, 232, 229, 229),
             ],
           ),
         ),
@@ -150,8 +150,7 @@ class RecipeDetails extends ConsumerWidget {
         collapsedTextColor: Colors.black,
         children: [Text("Sorry! This Recipe Does Not Contain Instructions")],
       );
-    } 
-    else {
+    } else {
       return ExpansionTile(
         title: const Text("INSTRUCTIONS: ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),

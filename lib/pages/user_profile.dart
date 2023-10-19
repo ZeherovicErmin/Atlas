@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
@@ -13,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import 'package:image_picker/image_picker.dart';
-//import 'image'
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
@@ -92,7 +90,6 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
-
     void selectImage() async {
       // Use the ImagePicker plugin to open the device's gallery to pick an image.
       final pickedFile =
@@ -106,7 +103,6 @@ class UserProfile extends ConsumerWidget {
         // Update the profilePictureProvider state with the selected image as Uint8List.
         ref.read(profilePictureProvider.notifier).state =
             Uint8List.fromList(imageBytes);
-
 
         saveProfilePic();
       }
@@ -138,9 +134,6 @@ class UserProfile extends ConsumerWidget {
           )
         ],
       );
-
-        saveProfile(Uint8List.fromList(imageBytes));
-      }
     }
 
     // Edit field
@@ -195,27 +188,24 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
+      appBar: myAppBar2(context, ref, 'U s e r    P r o f i l e'),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
 
-    
-      return Scaffold(
-        backgroundColor: Color.fromARGB(255, 238, 238, 238),
-        appBar: myAppBar2(context, ref, 'U s e r    P r o f i l e'),
-        body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("Users")
-              .doc(currentUser.email)
-              .snapshots(),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-
-            if (!snapshot.hasData || snapshot.data == null) {
-              return const Center(
-                child: Text('User data not found.'),
-              );
-            }
-
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(
+              child: Text('User data not found.'),
+            );
+          }
 
           final userData = snapshot.data!.data() as Map<String, dynamic>?;
 
@@ -224,51 +214,7 @@ class UserProfile extends ConsumerWidget {
               children: [
                 const SizedBox(height: 50),
 
-                  buildProfilePicture(image.state),
-
-// Profile pic
-                Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center, // Center the icon
-                      child: profilePictureUrl.when(
-                        data: (url) {
-                          if (url != null && url.isNotEmpty) {
-                            return CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(url),
-                            );
-                          }
-                          return image.state != null
-                              ? CircleAvatar(
-                                  radius: 64,
-                                  backgroundImage: image.state != null
-                                      ? MemoryImage(image.state!)
-                                      : null,
-                                )
-                              : const Icon(
-                                  CupertinoIcons.profile_circled,
-                                  size: 72,
-                                );
-                        },
-                        loading: () => const CircularProgressIndicator(),
-                        error: (e, stack) => const Icon(
-                            CupertinoIcons.profile_circled,
-                            size: 72),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -10,
-                      left: 80,
-                      child: IconButton(
-                        // onPressed, opens Image Picker
-                        onPressed: selectImage,
-                        icon: const Icon(Icons.add_a_photo),
-                      ),
-                    )
-                  ],
-                ),
-
+                buildProfilePicture(image.state),
 
                 const SizedBox(height: 10),
 
@@ -320,50 +266,15 @@ class UserProfile extends ConsumerWidget {
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
-
-                ],
-              );
-            } else {
-              // Handle the case where userData is null
-              return const Center(
-                child: Text('User data is null.'),
-              );
-            }
-          },
-        ),
-      ),
-      /*drawer: myDrawer,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          ref.read(selectedIndexProvider.notifier).state = index;
-          // Using Navigator to put a selected page onto the stack
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => tabs[index]),
-          );
-
                 ),
               ],
             );
           } else {
             // Handle the case where userData is null
-            return Center(
-              child: const Text('User data is null.'),
+            return const Center(
+              child: Text('User data is null.'),
             );
           }
-
         },
       ),
     );

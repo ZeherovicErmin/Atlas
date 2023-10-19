@@ -109,161 +109,82 @@ class RegisterPage extends ConsumerWidget {
 
     //Builds the page
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 238, 238, 238),
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // White space above logo
-                  const SizedBox(height: 5),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // White space above logo
+                const SizedBox(height: 5),
 
-                  // Logo
-                  SizedBox(
-                    height: 220,
-                    width: 220,
-                    child: Image.asset('lib/images/atlas.png'),
-                  ),
+                // Logo
+                SizedBox(
+                  height: 220,
+                  width: 220,
+                  child: Image.asset('lib/images/atlas.png'),
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-                  // Username textfield
-                  MyTextField(
-                    controller: registrationState.emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                  ),
+                // Username textfield
+                MyTextField(
+                  controller: registrationState.emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-                  // Password textfield
-                  MyTextField(
-                    controller: registrationState.passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                  ),
+                // Password textfield
+                MyTextField(
+                  controller: registrationState.passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-                  // Confirm password textfield
-                  MyTextField(
-                    controller: registrationState.confirmPasswordController,
-                    hintText: 'Confirm Password',
-                    obscureText: true,
-                  ),
+                // Confirm password textfield
+                MyTextField(
+                  controller: registrationState.confirmPasswordController,
+                  hintText: 'Confirm Password',
+                  obscureText: true,
+                ),
 
-                  const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
+                const SizedBox(height: 10),
+
+                // Register now
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // White space above logo
-                    const SizedBox(height: 5),
-
-                    // Logo
-                    SizedBox(
-                      height: 220,
-                      width: 220,
-                      child: Image.asset('lib/images/atlas.png'),
+                    const Text(
+                      'Already have an account?',
+                      style: TextStyle(color: Colors.black),
                     ),
-
-
-                    const SizedBox(height: 10),
-
-                    //Username textfield
-                    MyTextField(
-                      controller: registrationState.emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                    ),
-
-                  // Register now
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Already have an account?',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed('/login');
-                        },
-                        child: const Text(
-                          'Login now',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 60, 255),
-                            fontWeight: FontWeight.bold,
-                          ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/login');
+                      },
+                      child: const Text(
+                        'Login now',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 60, 255),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
-                    const SizedBox(height: 10),
-
-                    //Password textfield
-                    PasswordTextField(
-                      controller: registrationState.passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                      registrationState: registrationState,
-                      passwordTextField: true,
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    //Confirm Password textfield
-                    PasswordTextField(
-                      controller: registrationState.confirmPasswordController,
-                      hintText: 'Confirm Password',
-                      obscureText: true,
-                      registrationState: registrationState,
-                      passwordTextField: false,
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    //Sign-in button
-                    MyButton(
-                      text: 'Sign Up',
-                      onTap: signUserUp,
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    //Register now
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Already have an account?',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushNamed('/login');
-                          },
-                          child: const Text(
-                            'Login now',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 60, 255),
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ]),
-            ),
-          ),
-        ));
   }
 }

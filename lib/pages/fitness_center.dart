@@ -76,7 +76,6 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final currentUser = FirebaseAuth.instance.currentUser!;
     final usersCollection = FirebaseFirestore.instance.collection("Users");
     final textController = TextEditingController();
@@ -108,15 +107,6 @@ class FitCenter extends ConsumerWidget {
           backgroundColor: Color.fromARGB(255, 238, 238, 238),
           //Home page for when a user logs in
           appBar: AppBar(
-            
-            title: const Text(
-              "F i t n e s s C e n t e r",
-              style: TextStyle(
-                  fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: const Color.fromARGB(255, 38, 97, 185),
-            bottom: const TabBar(
-
             title: Center(
               child: Text(
                 "F i t n e s s C e n t e r",
@@ -127,7 +117,6 @@ class FitCenter extends ConsumerWidget {
             backgroundColor: Color.fromARGB(255, 102, 102, 102),
             bottom: TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
-
               tabs: [
                 Tab(
                   text: "Discover",
@@ -141,7 +130,6 @@ class FitCenter extends ConsumerWidget {
 
           body: TabBarView(
             children: [
-
               // The Discover Tab Of the workouts page
 
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page

@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to utilize the barcode scanning feature.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your gallery to utilize the profile picture feature</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

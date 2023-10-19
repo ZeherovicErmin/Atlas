@@ -1,5 +1,6 @@
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/recipes.dart';
@@ -23,8 +24,8 @@ class BottomNav extends ConsumerWidget {
     final List<Widget> pages = [
       const FitCenter(),
       Recipes(),
-      const HomePage(),
-      BarcodeLookupPage(),
+      HomePage(),
+      BarcodeLookupComb(),
       const UserProfile(),
     ];
 
@@ -39,8 +40,8 @@ class BottomNav extends ConsumerWidget {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 161, 195, 250),
-        color: const Color.fromARGB(255, 38, 97, 185),
+        backgroundColor: Color.fromARGB(255, 238, 238, 238),
+        color: const Color.fromARGB(255, 102, 102, 102),
         // Defines animation duration
         animationDuration: Duration(milliseconds: 300),
         onTap: (index) {

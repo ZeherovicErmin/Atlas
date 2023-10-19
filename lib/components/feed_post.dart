@@ -16,6 +16,7 @@ class FeedPost extends StatefulWidget {
     super.key,
     required this.message,
     required this.user,
+
     required this.postId,
     required this.likes,
     required this.time,
@@ -111,6 +112,7 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
       padding: const EdgeInsets.all(25),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -222,6 +224,7 @@ class _FeedPostState extends State<FeedPost> {
                 }).toList(),
               );
             },
+
           )
         ],
       ),

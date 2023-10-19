@@ -107,65 +107,54 @@ class RegisterPage extends ConsumerWidget {
     }
 
     //Builds the page
-    return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250),
-            ],
-          ),
-        ),
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // White space above logo
-                        const SizedBox(height: 5),
+    return Scaffold(
+        backgroundColor: Color.fromARGB(255, 238, 238, 238),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // White space above logo
+                    const SizedBox(height: 5),
 
-                        // Logo
-                        SizedBox(
-                          height: 220,
-                          width: 220,
-                          child: Image.asset('lib/images/atlas.png'),
-                        ),
+                    // Logo
+                    SizedBox(
+                      height: 220,
+                      width: 220,
+                      child: Image.asset('lib/images/atlas.png'),
+                    ),
 
-                        const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                        //Username textfield
-                        MyTextField(
-                          controller: registrationState.emailController,
-                          hintText: 'Email',
-                          obscureText: false,
-                        ),
+                    //Username textfield
+                    MyTextField(
+                      controller: registrationState.emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                    ),
 
-                        const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                        //Password textfield
-                        PasswordTextField(
-                          controller: registrationState.passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
-                          registrationState: registrationState,
-                          passwordTextField: true,
-                        ),
+                    //Password textfield
+                    PasswordTextField(
+                      controller: registrationState.passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                      registrationState: registrationState,
+                      passwordTextField: true,
+                    ),
 
-                        const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                        //Confirm Password textfield
-                        PasswordTextField(
-                          controller: registrationState.confirmPasswordController,
-                          hintText: 'Confirm Password',
-                          obscureText: true,
-                          registrationState: registrationState,
-                          passwordTextField: false,
-                        ),
+                    //Confirm Password textfield
+                    PasswordTextField(
+                      controller: registrationState.confirmPasswordController,
+                      hintText: 'Confirm Password',
+                      obscureText: true,
+                      registrationState: registrationState,
+                      passwordTextField: false,
+                    ),
 
                     const SizedBox(height: 25),
 
@@ -195,13 +184,13 @@ class RegisterPage extends ConsumerWidget {
                             style: TextStyle(
                                 color: Color.fromARGB(255, 0, 60, 255),
                                 fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
             ),
-          ]),
-        ),
-      ),
-    )));
+          ),
+        ));
   }
 }

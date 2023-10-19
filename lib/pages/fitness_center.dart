@@ -77,7 +77,7 @@ class FitCenter extends ConsumerWidget {
         initialIndex: 1,
         length: 3,
         child: Scaffold(
-          backgroundColor: Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: Color.fromARGB(255, 238, 238, 238),
           //Home page for when a user logs in
           appBar: AppBar(
             title: Center(
@@ -87,7 +87,7 @@ class FitCenter extends ConsumerWidget {
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 90, 86, 86),
+            backgroundColor: Color.fromARGB(255, 102, 102, 102),
             bottom: TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -119,7 +119,8 @@ class FitCenter extends ConsumerWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Scaffold(
                             appBar: AppBar(
-                              backgroundColor: Color.fromARGB(255, 90, 86, 86),
+                              backgroundColor:
+                                  Color.fromARGB(255, 102, 102, 102),
                               title: Text("Workouts for $muscle"),
                             ),
                             body: ListView.builder(

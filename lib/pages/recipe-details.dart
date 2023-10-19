@@ -20,8 +20,8 @@ class RecipeDetails extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 232, 229, 229),
-              Color.fromARGB(255, 232, 229, 229),
+              Color.fromARGB(255, 238, 238, 238),
+              Color.fromARGB(255, 238, 238, 238),
             ],
           ),
         ),

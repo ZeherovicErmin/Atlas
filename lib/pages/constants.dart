@@ -9,7 +9,7 @@ import 'dart:developer';
 // App Bar for the homepage
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: Color.fromARGB(255, 90, 86, 86),
+      backgroundColor: Color.fromARGB(255, 102, 102, 102),
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -18,8 +18,6 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
       actions: [
         IconButton(
           onPressed: () async {
-            
-            
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
 
@@ -35,7 +33,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 // App Bar for the homepage
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-    backgroundColor: Color.fromARGB(255, 90, 86, 86),
+    backgroundColor: Color.fromARGB(255, 102, 102, 102),
     title: Text(
       title,
       style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),

@@ -246,7 +246,7 @@ class BarcodeLookupComb extends ConsumerWidget {
 
     return Scaffold(
         appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(0, 231, 0, 0),
         body: Stack(
           children: [
             //const SizedBox(height: 20),
@@ -405,7 +405,7 @@ class NutrientsList extends StatelessWidget {
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Color.fromARGB(255, 151, 151, 151),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),
@@ -625,7 +625,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
       builder: (BuildContext context, ScrollController _controller) {
         return Container(
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 209, 209, 209),
+            color: Color.fromARGB(255, 238, 238, 238),
           ),
           child: GridView.builder(
             controller: _controller,

@@ -50,7 +50,6 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-
   // bg gradient color
   Widget gradient(List<Result>? recipes, List<Result>? savedRecipes,
       BuildContext context, WidgetRef ref) {
@@ -61,8 +60,8 @@ class Recipes extends ConsumerWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromARGB(255, 232, 229, 229),
-            Color.fromARGB(255, 232, 229, 229),
+            Color.fromARGB(255, 238, 238, 238),
+            Color.fromARGB(255, 238, 238, 238),
           ],
         ),
       ),
@@ -84,15 +83,7 @@ class Recipes extends ConsumerWidget {
   Widget form() {
     return Column(children: [
       //Spacing between components
-      const Padding(
-        padding: EdgeInsets.all(15), //apply padding to all sides
-        //Page Title
-        child: Text('Recipes',
-            style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-      ),
+
       Container(
         margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
         decoration: BoxDecoration(
@@ -128,7 +119,6 @@ class Recipes extends ConsumerWidget {
             border: InputBorder.none,
             hintText: "Enter Recipe Search"),
       ),
-
     );
   }
 
@@ -207,9 +197,9 @@ class Recipes extends ConsumerWidget {
       //API Request URL with Parameters
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
-      //formats url   
+      //formats url
       final uri = Uri.parse(url);
-      //sends request to api 
+      //sends request to api
       final response = await http.get(uri);
       //converts response from json
       final data = jsonDecode(response.body);
@@ -278,20 +268,18 @@ class Recipes extends ConsumerWidget {
                   Result recipe = recipes[index];
                   String recipeName = recipe.title;
                   return ListTile(
-                    onTap: () => navigateToRecipeDetails(context, recipe),
-                    title: Text(recipeName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    //Add remove button to end of tile
-                    trailing: ElevatedButton(
-                        child: const Text("Remove"),
-                        onPressed: () => onRemove(recipe, ref, context),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.red)
-                          )
-                        )
-                      );
-              },
+                      onTap: () => navigateToRecipeDetails(context, recipe),
+                      title: Text(recipeName,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      //Add remove button to end of tile
+                      trailing: ElevatedButton(
+                          child: const Text("Remove"),
+                          onPressed: () => onRemove(recipe, ref, context),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.red))));
+                },
                 //Used to put a divider line between recipes
                 separatorBuilder: (context, index) {
                   return const Divider();

@@ -36,7 +36,7 @@ class HomePage extends ConsumerWidget {
     final habits = ref.watch(habitListNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
       appBar: myAppBar(context, ref, 'HomePage'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

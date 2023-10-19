@@ -149,7 +149,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
       appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance

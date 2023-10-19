@@ -24,6 +24,7 @@ class BarcodeLogPage extends ConsumerWidget {
   Widget _buildGradient(BuildContext context, WidgetRef ref, String? uid) {
     return Scaffold(
       body: _buildStreamBuilder(context, uid),
+      backgroundColor: Color.fromARGB(0, 153, 57, 57),
     );
   }
 

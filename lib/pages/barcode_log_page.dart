@@ -71,6 +71,8 @@ class BarcodeLogPage extends ConsumerWidget {
         final cholesterolPerServing = data['cholesterolPerServing'].toInt();
 
         return Slidable(
+          // Allows logs to be deleted, Wraps entire list widget
+
           key: ValueKey(logs[index].id),
           startActionPane: ActionPane(
             motion: ScrollMotion(),
@@ -84,18 +86,52 @@ class BarcodeLogPage extends ConsumerWidget {
               )
             ],
           ),
-          child: ListTile(
-            title: Text('Barcode: ${data['Barcode']}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Product Name: ${data['productName']}'),
-                Text('Product Calories: ${data['productCalories']}'),
-                Text('Carbs Per Serving: $carbsPerServing'),
-                Text('Protein Per Serving: $proteinPerServing'),
-                Text('Fats Per Serving: $fatsPerServing'),
-                Text('Cholesterol Per Serving: $cholesterolPerServing'),
-              ],
+          child: Card(
+            shape: ,
+            elevation: 7, // Card-like appearance
+            margin: EdgeInsets.all(12), // Margin for spacing
+            child: InkWell(
+              // Logic for showing a nutritional label
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListTile(
+                  title: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Barcode: ${data['Barcode']}'),
+                            Text('Product Name: ${data['productName']}'),
+                            Text('Carbs Per Serving: $carbsPerServing'),
+                            Text('Protein Per Serving: $proteinPerServing'),
+                            Text('Fats Per Serving: $fatsPerServing'),
+                            Text(
+                                'Cholesterol Per Serving: $cholesterolPerServing'),
+                          ],
+                        ),
+                      ),
+                      VerticalDivider(
+                        color: Colors.grey,
+                        thickness: 1.0,
+                        width: 10.0,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Calories'),
+                            Text('${data['productCalories']}'),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         );

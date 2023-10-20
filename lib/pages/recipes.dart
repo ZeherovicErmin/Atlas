@@ -70,6 +70,10 @@ class Recipes extends ConsumerWidget {
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
+      //Spacing between components
+      const Padding(
+        padding: EdgeInsets.all(15) //apply padding to all sides
+      ),
         ElevatedButton(
             onPressed: () => navigateToSavedRecipesPage(context),
             child: Text('Saved Recipes')),
@@ -82,16 +86,6 @@ class Recipes extends ConsumerWidget {
   //Recipe search form
   Widget form() {
     return Column(children: [
-      //Spacing between components
-      const Padding(
-        padding: EdgeInsets.all(15), //apply padding to all sides
-        //Page Title
-        child: Text('Recipes',
-            style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
-      ),
       Container(
         margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
         decoration: BoxDecoration(

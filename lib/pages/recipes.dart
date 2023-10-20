@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/saved_recipes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,13 +70,11 @@ class Recipes extends ConsumerWidget {
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
+        ElevatedButton(
+            onPressed: () => navigateToSavedRecipesPage(context),
+            child: Text('Saved Recipes')),
         form(),
-        recipeList(recipes, context, ref),
-        const Text(
-          "SAVED RECIPES",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-        ),
-        savedRecipeList(savedRecipes, context, ref),
+        recipeList(recipes, context, ref)
       ]),
     );
   }
@@ -160,29 +159,26 @@ class Recipes extends ConsumerWidget {
                     //Function used to capture tap event for list items
                     onTap: () => navigateToRecipeDetails(context, recipe),
                     //Add Save button to end of tile
-                    trailing: ElevatedButton(
-                        child: const Text("Save"),
-                        onPressed: () => onSave(recipe, ref, context)));
+                    trailing: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.lightBlue,
+                        child: IconButton(
+                          onPressed: () => onSave(recipe, ref, context),
+                          icon: const Icon(Icons.bookmark_add_rounded),
+                          tooltip: "Save Recipe",
+                          color: const Color.fromARGB(255, 24, 23, 23),
+                          highlightColor: Colors.purpleAccent,
+                          hoverColor: Colors.blue.withOpacity(0.3),
+                          splashRadius: 20,
+                          splashColor: Colors.red,
+                        ))
+                );
               },
               //Used to put a divider line between recipes
               separatorBuilder: (context, index) {
                 return const Divider();
               },
             )));
-  }
-
-  //Save Button Handler - Save New Recipe
-  void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
-    //copy list of saved recipes
-    List<Result> recipes = [...ref.watch(savedRecipesProvider)];
-    //add new recicpe
-    recipes.add(recipe);
-    //save new list of recipes
-    ref.read(savedRecipesProvider.notifier).state = recipes;
-    //output recipe saved message
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Recipe Saved'), duration: Duration(seconds: 1)));
-    print(ref.watch(savedRecipesProvider));
   }
 
   //Form Submission Handler - Submits recipe search to API
@@ -254,61 +250,28 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-  Widget savedRecipeList(
-      //List<dynamic> recipes,
-      List<Result>? recipes,
-      BuildContext context,
-      WidgetRef ref) {
-    if (recipes != null) {
-      return Expanded(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              //ListView used to output recipe list element into individual components
-              child: ListView.separated(
-                shrinkWrap: true,
-                //Used to ensure list is scrollable
-                physics: const AlwaysScrollableScrollPhysics(),
-                //Number of recipes
-                itemCount: recipes.length,
-                //Used to build recipe list tiles
-                itemBuilder: (context, index) {
-                  Result recipe = recipes[index];
-                  String recipeName = recipe.title;
-                  return ListTile(
-                    onTap: () => navigateToRecipeDetails(context, recipe),
-                    title: Text(recipeName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    //Add remove button to end of tile
-                    trailing: ElevatedButton(
-                        child: const Text("Remove"),
-                        onPressed: () => onRemove(recipe, ref, context),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.red)
-                          )
-                        )
-                      );
-              },
-                //Used to put a divider line between recipes
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              )));
-    }
-    return const Text("No Saved Recipes");
+  // Function to navigate to Saved Recipes Page
+  navigateToSavedRecipesPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SavedRecipes(savedRecipesProvider: savedRecipesProvider),
+      ),
+    );
   }
 
-  //Remove Button Handler - Remove Saved Recipe
-  onRemove(Result recipe, WidgetRef ref, BuildContext context) {
+
+  //Save Button Handler - Save New Recipe
+  void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
     //copy list of saved recipes
     List<Result> recipes = [...ref.watch(savedRecipesProvider)];
-    //remove the selected recipe
-    recipes.remove(recipe);
-    //save new list without the removed recipe
+    //add new recicpe
+    recipes.add(recipe);
+    //save new list of recipes
     ref.read(savedRecipesProvider.notifier).state = recipes;
-    //Output removed message
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Recipe Removed'), duration: Duration(seconds: 1)));
-    //print(ref.watch(savedRecipesProvider));
+    //output recipe saved message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Recipe Saved - ${recipe.title}'), duration: Duration(seconds: 1)));
   }
 }

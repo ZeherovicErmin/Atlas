@@ -1,5 +1,6 @@
 //this file is in case I royally mess up Barcode lookup
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
@@ -182,6 +183,12 @@ class BarcodeLookupPage extends ConsumerWidget {
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
     final uid = ref.watch(uidProvider.notifier).state;
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     // Filter data based on selected filters
     final filteredItems = selectedData
@@ -190,8 +197,9 @@ class BarcodeLookupPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-      backgroundColor: Colors.transparent,
-      body: Container(
+      backgroundColor: Colors.black,
+      body: Container (
+        color: Colors.black,
         child: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -212,11 +220,14 @@ class BarcodeLookupPage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
                 // Button to open the barcode scanner
-                ElevatedButton(
-                  onPressed: () async {
-                    await _scanBarcode(context, ref);
-                  },
-                  child: const Text('Open Scanner'),
+                Container(
+                  color: Colors.black,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await _scanBarcode(context, ref);
+                    },
+                    child: const Text('Open Scanner'),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 // Button to navigate to barcode logs
@@ -225,10 +236,13 @@ class BarcodeLookupPage extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BarcodeLogPage(),
+                        builder: (context) => const BarcodeLogPage(),
                       ),
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColor2,
+                  ),
                   child: const Text("Barcode logs"),
                 ),
                 // Display selected data based on filters in a grid

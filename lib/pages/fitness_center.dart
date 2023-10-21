@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/pages/settings_page.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,6 +71,12 @@ class FitCenter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     // Container for the gradient of the application
     return Container(
@@ -77,7 +84,7 @@ class FitCenter extends ConsumerWidget {
         initialIndex: 1,
         length: 3,
         child: Scaffold(
-          backgroundColor: Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: themeColor2,
           //Home page for when a user logs in
           appBar: AppBar(
             title: Center(
@@ -146,7 +153,7 @@ class FitCenter extends ConsumerWidget {
                     // Styling elements for each specific muscle
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
+                        border: Border.all(color: themeColor2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -173,7 +180,7 @@ class FitCenter extends ConsumerWidget {
               ),
 
               Container(
-                color: Color.fromARGB(255, 232, 229, 229),
+                color: themeColor2,
                 child: Center(
                   child: Text(muscle),
                 ),

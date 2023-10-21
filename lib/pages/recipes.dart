@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,11 +29,21 @@ class Recipes extends ConsumerWidget {
 
   //Text controller used to store value from recipe search bar
   final TextEditingController searchController = TextEditingController();
+  
+  get themeColor => null;
+  
+  get themeColor2 => null;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //recipes provider state getter
     final recipes = ref.watch(resultProvider).results;
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
     //Saved recipes provider state getter
     List<Result> savedRecipes = ref.watch(savedRecipesProvider);
 
@@ -40,6 +51,7 @@ class Recipes extends ConsumerWidget {
       resizeToAvoidBottomInset: false,
       appBar: myAppBar2(context, ref, "Recipes"),
       body: gradient(recipes, savedRecipes, context, ref),
+      backgroundColor: themeColor2,
       //Recipe search bar submit button
       floatingActionButton: FloatingActionButton(
         //Use onSubmit to activate search, onSubmitTEST to deactivate search
@@ -52,17 +64,23 @@ class Recipes extends ConsumerWidget {
 
 
   // bg gradient color
-  Widget gradient(List<Result>? recipes, List<Result>? savedRecipes,
-      BuildContext context, WidgetRef ref) {
+  Widget gradient(List<Result>? recipes, List<Result>? savedRecipes, BuildContext context, WidgetRef ref) {
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+
     return Container(
       //gradient decoration
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromARGB(255, 232, 229, 229),
-            Color.fromARGB(255, 232, 229, 229),
+            themeColor2,
+            themeColor2,
           ],
         ),
       ),
@@ -71,25 +89,26 @@ class Recipes extends ConsumerWidget {
       child: Column(children: [
         form(),
         recipeList(recipes, context, ref),
-        const Text(
+        Text(
           "SAVED RECIPES",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: themeColor),
         ),
         savedRecipeList(savedRecipes, context, ref),
       ]),
     );
   }
 
+
   //Recipe search form
   Widget form() {
     return Column(children: [
       //Spacing between components
-      const Padding(
+      Padding(
         padding: EdgeInsets.all(15), //apply padding to all sides
         //Page Title
         child: Text('Recipes',
             style: TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: themeColor2,
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
       ),
@@ -112,7 +131,7 @@ class Recipes extends ConsumerWidget {
   Widget searchBar() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: themeColor2,
         borderRadius: BorderRadius.circular(25.0),
       ),
       child: TextFormField(
@@ -126,7 +145,8 @@ class Recipes extends ConsumerWidget {
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
             border: InputBorder.none,
-            hintText: "Enter Recipe Search"),
+            hintText: "Enter Recipe Search",
+            ),
       ),
 
     );

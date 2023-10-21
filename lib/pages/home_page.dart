@@ -1,5 +1,6 @@
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/habit_tracker.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:atlas/util/habit_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,9 +35,15 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final habits = ref.watch(habitListNotifierProvider);
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: themeColor2,
       appBar: myAppBar2(context, ref, 'HomePage'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -2,7 +2,6 @@ import 'package:atlas/pages/change_password.dart';
 import 'package:flutter/material.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:atlas/components/signout_button.dart';
@@ -103,10 +102,10 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           Padding (
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           child: SignoutButton(
             onPressed: () async {
-              await ref.read(signOutProvider);
+              ref.read(signOutProvider);
               // After succesful logout redirect to logout page
               Navigator.of(context).pushReplacementNamed('/login');
             },

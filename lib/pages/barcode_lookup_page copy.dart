@@ -1,5 +1,7 @@
 //this file is in case I royally mess up Barcode lookup
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/login_page.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
@@ -158,13 +160,22 @@ class BarcodeLookupPage extends ConsumerWidget {
     final filteredItems = selectedData
         .where((dataItem) => selectedFilters.contains(dataItem.category))
         .toList();
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
     return Scaffold(
       appBar: myAppBar(context, ref, 'Barcode Lookup'),
+      /*
       backgroundColor: const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [Color(0xFFA9B7FF), Color(0xFF83B0FA)],
       ).colors[0],
+      */
+      backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Center(
           child: Column(

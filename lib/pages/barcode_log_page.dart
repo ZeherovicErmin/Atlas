@@ -1,4 +1,5 @@
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,21 +18,35 @@ class BarcodeLogPage extends ConsumerWidget {
     final User? user = auth.currentUser;
     final uid = user?.uid;
     log("The user id is = $uid");
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     Widget gradient(context, ref) {
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+
       return Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250),
+              Colors.black,
+              Colors.black,
             ],
           ),
         ),
         child: Scaffold(
           appBar: myAppBar2(context, ref, 'B a r c o d e   L o g s'),
+          backgroundColor: Colors.black,
           body: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('Barcode_Lookup')
@@ -59,7 +74,7 @@ class BarcodeLogPage extends ConsumerWidget {
                         if (data.containsKey('uid')) {
                           data['uid'] = ''; // Make the 'uid' row empty
                         }
-//returns Listview of each product
+                        //returns Listview of each product
                         final fatsPerServing = data['fatsPerServing'].toInt();
                         final carbsPerServing = data['carbsPerServing'].toInt();
                         final proteinPerServing = data['carbsPerServing'].toInt();

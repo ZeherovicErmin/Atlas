@@ -19,7 +19,6 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
           onPressed: () async {
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
-
             Navigator.of(context).pushReplacementNamed('/login');
           },
           icon: Icon(Icons.logout),

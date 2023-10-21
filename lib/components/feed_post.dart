@@ -1,5 +1,6 @@
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
+import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -77,31 +78,46 @@ class _FeedPostState extends State<FeedPost> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // feed post
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //message
-              Text(widget.message),
 
-              const SizedBox(height: 5),
-
-              //user
-              Row(
+              // group of text (message + user email)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.user,
-                    style: TextStyle(color: Colors.grey[500]),
-                  ),
-                  Text(
-                    " • ",
-                    style: TextStyle(color: Colors.grey[500]),
-                  ),
-                  Text(
-                    widget.time,
-                    style: TextStyle(color: Colors.grey[500]),
+                  //message
+                  Text(widget.message),
+
+                  const SizedBox(height: 5),
+
+                  //user
+                  Row(
+                    children: [
+                      Text(
+                        widget.user,
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                      Text(
+                        " • ",
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                    ],
                   ),
                 ],
               ),
+
+              // delete button
+              if (widget.user == currentUser.email)
+              DeleteButton(onTap: deletePost),
+
+
+
             ],
           ),
 
@@ -230,6 +246,59 @@ class _FeedPostState extends State<FeedPost> {
           ),
         ],
       ),
+    );
+  }
+
+  // delete a post 
+  void deletePost() {
+    //show a dialog box for asking for confirmation before deleting the post 
+    showDialog(context: context, 
+    builder: (context) => AlertDialog(
+      title: const Text("Delete Post"),
+      content: const Text("Are you sure you want to delete this post?"),
+      actions: [
+        //CANCEL BUTTON
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+          ),
+
+        //DELETE BUTTON
+        TextButton(
+          onPressed: () async {
+            //delete the comments from firestore first
+            //(if you only delete the post, the comments will still be stored in firestore)
+            final commentDocs = await FirebaseFirestore.instance
+              .collection("User Posts")
+              .doc(widget.postId)
+              .collection("Comments")
+              .get();
+
+            for (var doc in commentDocs.docs) {
+              await FirebaseFirestore.instance
+                .collection("User Posts")
+                .doc(widget.postId)
+                .collection("Comments")
+                .doc(doc.id)
+                .delete();
+            }
+
+            // delete the post 
+            FirebaseFirestore.instance
+              .collection("User Posts")
+              .doc(widget.postId)
+              .delete()
+              .then((value) => print("post deleted"))
+              .catchError(
+                (error) => print("failed to delete post: $error"));
+
+            // dismiss the dialog 
+            Navigator.pop(context);
+          },
+          child: const Text("Delete"),
+          ),
+      ],
+    ),
     );
   }
 

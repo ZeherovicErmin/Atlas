@@ -40,7 +40,8 @@ class BottomNav extends ConsumerWidget {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 238, 238, 238),
+        //backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(255, 101, 51, 51),
         color: const Color.fromARGB(255, 102, 102, 102),
         // Defines animation duration
         animationDuration: Duration(milliseconds: 300),

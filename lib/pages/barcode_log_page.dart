@@ -23,6 +23,7 @@ class BarcodeLogPage extends ConsumerWidget {
 
   Widget _buildGradient(BuildContext context, WidgetRef ref, String? uid) {
     return Scaffold(
+      extendBody: true,
       body: _buildStreamBuilder(context, uid),
       backgroundColor: Color.fromARGB(0, 153, 57, 57),
     );
@@ -74,6 +75,7 @@ class BarcodeLogPage extends ConsumerWidget {
           // Allows logs to be deleted, Wraps entire list widget
 
           key: ValueKey(logs[index].id),
+
           startActionPane: ActionPane(
             motion: ScrollMotion(),
             children: [
@@ -87,15 +89,19 @@ class BarcodeLogPage extends ConsumerWidget {
             ],
           ),
           child: Card(
-            shape: ,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black, width: 5),
+              borderRadius: BorderRadius.circular(20),
+            ),
             elevation: 7, // Card-like appearance
             margin: EdgeInsets.all(12), // Margin for spacing
             child: InkWell(
               // Logic for showing a nutritional label
               onTap: () {},
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(top: 0, bottom: 0),
                 child: ListTile(
+                  contentPadding: EdgeInsets.all(0),
                   title: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -103,20 +109,59 @@ class BarcodeLogPage extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Barcode: ${data['Barcode']}'),
-                            Text('Product Name: ${data['productName']}'),
-                            Text('Carbs Per Serving: $carbsPerServing'),
-                            Text('Protein Per Serving: $proteinPerServing'),
-                            Text('Fats Per Serving: $fatsPerServing'),
-                            Text(
-                                'Cholesterol Per Serving: $cholesterolPerServing'),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Text('${data['productName']}'),
+                            ),
+                            Divider(
+                              color: Colors.black,
+                              thickness: 5,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child:
+                                  Text('Carbs Per Serving: $carbsPerServing'),
+                            ),
+                            Divider(),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Image.asset(
+                                  "assets/icons/chickenLeg.png",
+                                  width: 36,
+                                  height: 36,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: Text(
+                                      'Protein Per Serving: $proteinPerServing'),
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Text('Fats Per Serving: $fatsPerServing'),
+                            ),
+                            Divider(),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Text(
+                                  'Cholesterol Per Serving: $cholesterolPerServing'),
+                            ),
                           ],
                         ),
                       ),
-                      VerticalDivider(
-                        color: Colors.grey,
-                        thickness: 1.0,
-                        width: 10.0,
+                      Container(
+                        width: 5,
+                        height: 170,
+                        child: VerticalDivider(
+                          color: Colors.black,
+                          thickness: 5.0,
+                          width: 1.0,
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),

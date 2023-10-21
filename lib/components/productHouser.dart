@@ -1,6 +1,5 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-
 import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

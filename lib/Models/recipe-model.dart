@@ -16,86 +16,7 @@ class RecipeModel {
   RecipeModel.fromJson(Map<String, dynamic> json) {
     List<Result> resultsList = [];
     json["results"].forEach((r) {
-      //List of Nutrients mapped from API nutrients list
-      List<Nutrient> nutrientsList =
-          nutrientsListFromJson(r["nutrition"]["nutrients"]);
-
-      //List of properties mapped from API nutrients list
-      List<Property> propertiesList =
-          propertiesListFromJson(r["nutrition"]["properties"]);
-
-      //List of flavanoids mapped from API nutrients list
-      List<Flavanoid> flavanoidsList =
-          flavanoidsListFromJson(r["nutrition"]["flavonoids"]);
-
-      //List of flavanoids mapped from API nutrients list
-      List<Ingredient> ingredientsList =
-          ingredientListFromJson(r["nutrition"]["ingredients"]);
-
-      //Caloric Breakdown mapped from API
-      CaloricBreakdown caloricBreakdownObj = CaloricBreakdown(
-        percentProtein:
-            r["nutrition"]["caloricBreakdown"]["percentProtein"] as double,
-        percentFat: r["nutrition"]["caloricBreakdown"]["percentFat"] as double,
-        percentCarbs:
-            r["nutrition"]["caloricBreakdown"]["percentCarbs"] as double,
-      );
-
-      //Weight Per Serving data mapped from API
-      WeightPerServing weightPerServingObj = WeightPerServing(
-          amount: r["nutrition"]["weightPerServing"]["amount"] as int,
-          unit: r["nutrition"]["weightPerServing"]["unit"] as String);
-
-      //Object containing all of the nutrition data we mapped from the API
-      Nutrition nutritionObj = Nutrition(
-          nutrients: nutrientsList,
-          properties: propertiesList,
-          flavonoids: flavanoidsList,
-          ingredients: ingredientsList,
-          caloricBreakdown: caloricBreakdownObj,
-          weightPerServing: weightPerServingObj);
-
-      //List of recipe instructions mapped from the API
-      List<AnalyzedInstruction> analyzedInstructionList =
-          analyzedInstructionListFromJson(r["analyzedInstructions"]);
-
-      //Recipe Search Result Object containing all data pertaining to a recipe
-      //including all the data mapped from the API
-      Result result = Result(
-          vegetarian: r["vegetarian"] as bool,
-          vegan: r["vegan"] as bool,
-          glutenFree: r["glutenFree"] as bool,
-          dairyFree: r["dairyFree"] as bool,
-          veryHealthy: r["veryHealthy"] as bool,
-          cheap: r["cheap"] as bool,
-          veryPopular: r["veryPopular"] as bool,
-          sustainable: r["sustainable"] as bool,
-          lowFodmap: r["lowFodmap"] as bool,
-          weightWatcherSmartPoints: r["weightWatcherSmartPoints"] as int,
-          gaps: r["gaps"] as String,
-          preparationMinutes: r["preparationMinutes"] as int,
-          cookingMinutes: r["cookingMinutes"] as int,
-          aggregateLikes: r["aggregateLikes"] as int,
-          healthScore: r["healthScore"] as int,
-          creditsText: r["creditsText"] as String,
-          sourceName: r["sourceName"] as String,
-          pricePerServing: r["pricePerServing"] as double,
-          id: r["id"] as int,
-          title: r["title"] as String,
-          readyInMinutes: r["readyInMinutes"] as int,
-          servings: r["servings"] as int,
-          sourceUrl: r["sourceUrl"] as String,
-          image: r["image"] as String,
-          imageType: r["imageType"] as String,
-          nutrition: nutritionObj,
-          summary: r["summary"] as String,
-          cuisines: r["cuisines"] as List<dynamic>,
-          dishTypes: r["dishTypes"] as List<dynamic>,
-          diets: r["diets"] as List<dynamic>,
-          occasions: r["occasions"] as List<dynamic>,
-          analyzedInstructions: analyzedInstructionList,
-          spoonacularSourceUrl: r["spoonacularSourceUrl"] as String);
-      resultsList.add(result);
+      resultsList.add(Result.fromJson(r));
     });
 
     results = resultsList;
@@ -140,42 +61,164 @@ class Result {
   List<dynamic> occasions;
   List<AnalyzedInstruction> analyzedInstructions;
   String spoonacularSourceUrl;
+  String firebaseID;
 
-  Result({
-    required this.vegetarian,
-    required this.vegan,
-    required this.glutenFree,
-    required this.dairyFree,
-    required this.veryHealthy,
-    required this.cheap,
-    required this.veryPopular,
-    required this.sustainable,
-    required this.lowFodmap,
-    required this.weightWatcherSmartPoints,
-    required this.gaps,
-    required this.preparationMinutes,
-    required this.cookingMinutes,
-    required this.aggregateLikes,
-    required this.healthScore,
-    required this.creditsText,
-    required this.sourceName,
-    required this.pricePerServing,
-    required this.id,
-    required this.title,
-    required this.readyInMinutes,
-    required this.servings,
-    required this.sourceUrl,
-    required this.image,
-    required this.imageType,
-    required this.nutrition,
-    required this.summary,
-    required this.cuisines,
-    required this.dishTypes,
-    required this.diets,
-    required this.occasions,
-    required this.analyzedInstructions,
-    required this.spoonacularSourceUrl,
-  });
+  Result(
+      {required this.vegetarian,
+      required this.vegan,
+      required this.glutenFree,
+      required this.dairyFree,
+      required this.veryHealthy,
+      required this.cheap,
+      required this.veryPopular,
+      required this.sustainable,
+      required this.lowFodmap,
+      required this.weightWatcherSmartPoints,
+      required this.gaps,
+      required this.preparationMinutes,
+      required this.cookingMinutes,
+      required this.aggregateLikes,
+      required this.healthScore,
+      required this.creditsText,
+      required this.sourceName,
+      required this.pricePerServing,
+      required this.id,
+      required this.title,
+      required this.readyInMinutes,
+      required this.servings,
+      required this.sourceUrl,
+      required this.image,
+      required this.imageType,
+      required this.nutrition,
+      required this.summary,
+      required this.cuisines,
+      required this.dishTypes,
+      required this.diets,
+      required this.occasions,
+      required this.analyzedInstructions,
+      required this.spoonacularSourceUrl,
+      this.firebaseID = ""});
+
+  factory Result.fromJson(Map<String, dynamic> json, {String id = ""}) {
+    //List of Nutrients mapped from API nutrients list
+    List<Nutrient> nutrientsList =
+        nutrientsListFromJson(json["nutrition"]["nutrients"]);
+
+    //List of properties mapped from API nutrients list
+    List<Property> propertiesList =
+        propertiesListFromJson(json["nutrition"]["properties"]);
+
+    //List of flavanoids mapped from API nutrients list
+    List<Flavanoid> flavanoidsList =
+        flavanoidsListFromJson(json["nutrition"]["flavonoids"]);
+
+    //List of flavanoids mapped from API nutrients list
+    List<Ingredient> ingredientsList =
+        ingredientListFromJson(json["nutrition"]["ingredients"]);
+
+    //Caloric Breakdown mapped from API
+    CaloricBreakdown caloricBreakdownObj = CaloricBreakdown(
+      percentProtein:
+          json["nutrition"]["caloricBreakdown"]["percentProtein"] as double,
+      percentFat: json["nutrition"]["caloricBreakdown"]["percentFat"] as double,
+      percentCarbs:
+          json["nutrition"]["caloricBreakdown"]["percentCarbs"] as double,
+    );
+
+    //Weight Per Serving data mapped from API
+    WeightPerServing weightPerServingObj = WeightPerServing(
+        amount: json["nutrition"]["weightPerServing"]["amount"] as int,
+        unit: json["nutrition"]["weightPerServing"]["unit"] as String);
+
+    //Object containing all of the nutrition data we mapped from the API
+    Nutrition nutritionObj = Nutrition(
+        nutrients: nutrientsList,
+        properties: propertiesList,
+        flavonoids: flavanoidsList,
+        ingredients: ingredientsList,
+        caloricBreakdown: caloricBreakdownObj,
+        weightPerServing: weightPerServingObj);
+
+    //List of recipe instructions mapped from the API
+    List<AnalyzedInstruction> analyzedInstructionList =
+        analyzedInstructionListFromJson(json["analyzedInstructions"]);
+
+    return Result(
+        vegetarian: json["vegetarian"] as bool,
+        vegan: json["vegan"] as bool,
+        glutenFree: json["glutenFree"] as bool,
+        dairyFree: json["dairyFree"] as bool,
+        veryHealthy: json["veryHealthy"] as bool,
+        cheap: json["cheap"] as bool,
+        veryPopular: json["veryPopular"] as bool,
+        sustainable: json["sustainable"] as bool,
+        lowFodmap: json["lowFodmap"] as bool,
+        weightWatcherSmartPoints: json["weightWatcherSmartPoints"] as int,
+        gaps: json["gaps"] as String,
+        preparationMinutes: json["preparationMinutes"] as int,
+        cookingMinutes: json["cookingMinutes"] as int,
+        aggregateLikes: json["aggregateLikes"] as int,
+        healthScore: json["healthScore"] as int,
+        creditsText: json["creditsText"] as String,
+        sourceName: json["sourceName"] as String,
+        pricePerServing: json["pricePerServing"] as double,
+        id: json["id"] as int,
+        title: json["title"] as String,
+        readyInMinutes: json["readyInMinutes"] as int,
+        servings: json["servings"] as int,
+        sourceUrl: json["sourceUrl"] as String,
+        image: json["image"] as String,
+        imageType: json["imageType"] as String,
+        nutrition: nutritionObj,
+        summary: json["summary"] as String,
+        cuisines: json["cuisines"] as List<dynamic>,
+        dishTypes: json["dishTypes"] as List<dynamic>,
+        diets: json["diets"] as List<dynamic>,
+        occasions: json["occasions"] as List<dynamic>,
+        analyzedInstructions: analyzedInstructionList,
+        spoonacularSourceUrl: json["spoonacularSourceUrl"] as String,
+        firebaseID: id);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'vegetarian': vegetarian,
+      'vegan': vegan,
+      'glutenFree': glutenFree,
+      'dairyFree': dairyFree,
+      'veryHealthy': veryHealthy,
+      'cheap': cheap,
+      'veryPopular': veryPopular,
+      'sustainable': sustainable,
+      'lowFodmap': lowFodmap,
+      'weightWatcherSmartPoints': weightWatcherSmartPoints,
+      'gaps': gaps,
+      'preparationMinutes': preparationMinutes,
+      'cookingMinutes': cookingMinutes,
+      'aggregateLikes': aggregateLikes,
+      'healthScore': healthScore,
+      'creditsText': creditsText,
+      'sourceName': sourceName,
+      'pricePerServing': pricePerServing,
+      'id': id,
+      'title': title,
+      'readyInMinutes': readyInMinutes,
+      'servings': servings,
+      'sourceUrl': sourceUrl,
+      'image': image,
+      'imageType': imageType,
+      'nutrition': nutrition.toMap(),
+      'summary': summary,
+      'cuisines': cuisines,
+      'dishTypes': dishTypes,
+      'diets': diets,
+      'occasions': occasions,
+      'analyzedInstructions': analyzedInstructions
+          .map((instruction) => instruction.toMap())
+          .toList(),
+      'spoonacularSourceUrl': spoonacularSourceUrl,
+    };
+  }
 }
 
 //Equipment data for cooking the recipes
@@ -191,6 +234,15 @@ class Equipment {
     required this.localizedName,
     required this.image,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'localizedName': localizedName,
+      'image': image,
+    };
+  }
 }
 
 //Recipe nutrition data
@@ -210,6 +262,18 @@ class Nutrition {
     required this.caloricBreakdown,
     required this.weightPerServing,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nutrients': nutrients.map((nutrient) => nutrient.toMap()).toList(),
+      'properties': properties.map((property) => property.toMap()).toList(),
+      'flavonoids': flavonoids.map((flavanoid) => flavanoid.toMap()).toList(),
+      'ingredients':
+          ingredients.map((ingredient) => ingredient.toMap()).toList(),
+      'caloricBreakdown': caloricBreakdown.toMap(),
+      'weightPerServing': weightPerServing.toMap(),
+    };
+  }
 }
 
 //Nutrition nutrients data
@@ -225,6 +289,15 @@ class Nutrient {
     required this.unit,
     this.percentOfDailyNeeds,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+      'percentOfDailyNeeds': percentOfDailyNeeds,
+    };
+  }
 }
 
 //Nutrition properties data
@@ -234,6 +307,14 @@ class Property {
   String unit;
 
   Property({required this.name, required this.amount, required this.unit});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+    };
+  }
 }
 
 //Nutrition flavanoid data
@@ -243,6 +324,14 @@ class Flavanoid {
   String unit;
 
   Flavanoid({required this.name, required this.amount, required this.unit});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+    };
+  }
 }
 
 //Ingredient Nutrition data
@@ -260,6 +349,16 @@ class Ingredient {
     required this.unit,
     required this.nutrients,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+      'nutrients': nutrients.map((nutrient) => nutrient.toMap()).toList(),
+    };
+  }
 }
 
 //Recipe Caloric Breakdown
@@ -273,6 +372,14 @@ class CaloricBreakdown {
     required this.percentFat,
     required this.percentCarbs,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'percentProtein': percentProtein,
+      'percentFat': percentFat,
+      'percentCarbs': percentCarbs,
+    };
+  }
 }
 
 //Recipe Weight per Serving
@@ -284,6 +391,13 @@ class WeightPerServing {
     required this.amount,
     required this.unit,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'amount': amount,
+      'unit': unit,
+    };
+  }
 }
 
 //Instructions for cooking a recipe
@@ -295,6 +409,13 @@ class AnalyzedInstruction {
     required this.name,
     required this.steps,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'steps': steps.map((step) => step.toMap()).toList(),
+    };
+  }
 }
 
 //Recipe instruction step
@@ -310,8 +431,16 @@ class Step {
     required this.ingredients,
     required this.equipment,
   });
-}
 
+  Map<String, dynamic> toMap() {
+    return {
+      'number': number,
+      'step': step,
+      'ingredients': ingredients.map((equipment) => equipment.toMap()).toList(),
+      'equipment': equipment.map((equipment) => equipment.toMap()).toList(),
+    };
+  }
+}
 
 //Converts API list of Nutrition nutrients to Nutrient List
 List<Nutrient> nutrientsListFromJson(List<dynamic> apiNutrientList) {
@@ -321,15 +450,15 @@ List<Nutrient> nutrientsListFromJson(List<dynamic> apiNutrientList) {
   apiNutrientList.forEach((n) {
     Nutrient nutrient = Nutrient(
         name: n["name"] as String,
-        //checks if this value is int, if it is, convert it to a double else return 
+        //checks if this value is int, if it is, convert it to a double else return
         //the value bc it is correct type (double)
         amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String,
-        //checks if this value is int, if it is return 0.0 else return 
+        //checks if this value is int, if it is return 0.0 else return
         //the value bc it is correct type (double)
         percentOfDailyNeeds: n["percentOfDailyNeeds"] is int
             ? 0.0
-            : n["percentOfDailyNeeds"] as double); 
+            : n["percentOfDailyNeeds"] as double);
 
     nutrientsList.add(nutrient);
   });
@@ -345,7 +474,7 @@ List<Property> propertiesListFromJson(List<dynamic> apiPropertyList) {
   apiPropertyList.forEach((n) {
     Property property = Property(
         name: n["name"] as String,
-        //checks if this value is int, if it is, convert it to a double else return 
+        //checks if this value is int, if it is, convert it to a double else return
         //the value bc it is correct type (double)
         amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String);
@@ -358,12 +487,12 @@ List<Property> propertiesListFromJson(List<dynamic> apiPropertyList) {
 //Converts API list of Nutrition flavanoids to Flavanoid List
 List<Flavanoid> flavanoidsListFromJson(List<dynamic> apiFlavanoidList) {
   List<Flavanoid> flavanoidsList = []; //List of Nutrients to be returned
-  //Loops through "flavanoid" list from API and maps each flavanoid to a 
+  //Loops through "flavanoid" list from API and maps each flavanoid to a
   //Flavanoid object and adds that to the flavanoid List
   apiFlavanoidList.forEach((n) {
     Flavanoid flavanoid = Flavanoid(
         name: n["name"] as String,
-        //checks if this value is int, if it is, convert it to a double else return 
+        //checks if this value is int, if it is, convert it to a double else return
         //the value bc it is correct type (double)
         amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String);
@@ -380,7 +509,7 @@ List<Ingredient> ingredientListFromJson(List<dynamic> json) {
     Ingredient ingredient = Ingredient(
         id: n["id"] as int,
         name: n["name"] as String,
-        //checks if this value is int, if it is, convert it to a double else return 
+        //checks if this value is int, if it is, convert it to a double else return
         //the value bc it is correct type (double)
         amount: n["amount"] is int ? 0.0 + n["amount"] : n["amount"] as double,
         unit: n["unit"] as String,

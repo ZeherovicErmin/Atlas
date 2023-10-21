@@ -45,47 +45,7 @@ class _FeedPostState extends State<FeedPost> {
       isLiked = !isLiked;
     });
 
-    // // add a comment
-    // void addComment(String commentText) {
-    //   // write the comment to firestore
-    //   FirebaseFirestore.instance
-    //       .collection("User Posts")
-    //       .doc(widget.postId)
-    //       .collection("Comments")
-    //       .add({
-    //     "CommentText": commentText,
-    //     "CommentedBy": currentUser.email,
-    //     "CommentTime": Timestamp.now() //format when displaying
-    //   });
-    // }
-
-    // // show a dialog box to add a comment
-    // void showCommentDialog() {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => AlertDialog(
-    //       title: const Text("Add Comment"),
-    //       content: TextField(
-    //         controller: _commentTextController,
-    //         decoration: const InputDecoration(hintText: "Write a comment..."),
-    //       ),
-    //       actions: [
-    //         //post button
-    //         TextButton(
-    //           onPressed: () => addComment(_commentTextController.text),
-    //           child: const Text("Post"),
-    //         ),
-
-    //         //cancel button
-    //         TextButton(
-    //           onPressed: () => Navigator.pop(context),
-    //           child: const Text("Cancel"),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
-
+    
     //Access the document in Firebase
     DocumentReference postRef =
         FirebaseFirestore.instance.collection('User Posts').doc(widget.postId);
@@ -107,7 +67,7 @@ class _FeedPostState extends State<FeedPost> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),

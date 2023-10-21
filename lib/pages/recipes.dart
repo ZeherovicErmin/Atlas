@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/saved_recipes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +13,6 @@ import 'package:atlas/pages/recipe-details.dart';
 //State Provider holds API Response data including list of Recipes
 final resultProvider = StateProvider<RecipeModel>((ref) {
   return RecipeModel();
-});
-
-//State Provider holds list of saved recipes
-final savedRecipesProvider = StateProvider<List<Result>>((ref) {
-  return [];
 });
 
 //Recipe Class that handles and displays the recipes is
@@ -35,12 +32,11 @@ class Recipes extends ConsumerWidget {
     //recipes provider state getter
     final recipes = ref.watch(resultProvider).results;
     //Saved recipes provider state getter
-    List<Result> savedRecipes = ref.watch(savedRecipesProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: myAppBar2(context, ref, "Recipes"),
-      body: gradient(recipes, savedRecipes, context, ref),
+      body: gradient(recipes, context, ref),
       //Recipe search bar submit button
       floatingActionButton: FloatingActionButton(
         //Use onSubmit to activate search, onSubmitTEST to deactivate search
@@ -51,9 +47,8 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-
   // bg gradient color
-  Widget gradient(List<Result>? recipes, List<Result>? savedRecipes,
+  Widget gradient(List<Result>? recipes,
       BuildContext context, WidgetRef ref) {
     return Container(
       //gradient decoration
@@ -70,10 +65,9 @@ class Recipes extends ConsumerWidget {
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
-      //Spacing between components
-      const Padding(
-        padding: EdgeInsets.all(15) //apply padding to all sides
-      ),
+        //Spacing between components
+        const Padding(padding: EdgeInsets.all(15) //apply padding to all sides
+            ),
         ElevatedButton(
             onPressed: () => navigateToSavedRecipesPage(context),
             child: Text('Saved Recipes')),
@@ -165,8 +159,7 @@ class Recipes extends ConsumerWidget {
                           hoverColor: Colors.blue.withOpacity(0.3),
                           splashRadius: 20,
                           splashColor: Colors.red,
-                        ))
-                );
+                        )));
               },
               //Used to put a divider line between recipes
               separatorBuilder: (context, index) {
@@ -194,9 +187,9 @@ class Recipes extends ConsumerWidget {
       //API Request URL with Parameters
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
-      //formats url   
+      //formats url
       final uri = Uri.parse(url);
-      //sends request to api 
+      //sends request to api
       final response = await http.get(uri);
       //converts response from json
       final data = jsonDecode(response.body);
@@ -245,27 +238,48 @@ class Recipes extends ConsumerWidget {
   }
 
   // Function to navigate to Saved Recipes Page
-  navigateToSavedRecipesPage(BuildContext context) {
+  navigateToSavedRecipesPage(BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SavedRecipes(savedRecipesProvider: savedRecipesProvider),
+        builder: (context) => SavedRecipes(),
       ),
     );
   }
 
-
   //Save Button Handler - Save New Recipe
   void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
-    //copy list of saved recipes
+   /* //copy list of saved recipes
     List<Result> recipes = [...ref.watch(savedRecipesProvider)];
     //add new recicpe
     recipes.add(recipe);
     //save new list of recipes
     ref.read(savedRecipesProvider.notifier).state = recipes;
+  */
+
+    //Save the recipe to the DB
+    saveRecipeToDB(recipe).whenComplete(() => ref.refresh(savedRecipesProvider));
+    
     //output recipe saved message
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Recipe Saved - ${recipe.title}'), duration: Duration(seconds: 1)));
+        content: Text('Recipe Saved - ${recipe.title}'),
+        duration: Duration(seconds: 1)));
   }
+
+  Future<void> saveRecipeToDB(Result recipe) async {
+    // Create an instance of FirebaseAuth
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
+    //reference to Saved_Recipes collection in firebase
+    final recipeCollection =
+        FirebaseFirestore.instance.collection("Saved_Recipes");
+
+    //send request to firebase to add recipe to the Saved_Recipes collection
+    await recipeCollection.add(
+        {"uid": userID, "recipe": recipe.toMap(), "saveDate": DateTime.now()});
+  }
+
 }

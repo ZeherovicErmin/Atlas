@@ -1,9 +1,9 @@
 //Atlas Fitness App CSC 4996
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flip_card/flip_card.dart';
 
 // Creating a list of target muscles
 const List<String> list = <String>[
@@ -77,18 +77,18 @@ class FitCenter extends ConsumerWidget {
         initialIndex: 1,
         length: 3,
         child: Scaffold(
-          backgroundColor: Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: const Color.fromARGB(255, 232, 229, 229),
           //Home page for when a user logs in
           appBar: AppBar(
-            title: Center(
+            title: const Center(
               child: Text(
                 "F i t n e s s C e n t e r",
                 style: TextStyle(
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 90, 86, 86),
-            bottom: TabBar(
+            backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+            bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
                 Tab(
@@ -119,15 +119,115 @@ class FitCenter extends ConsumerWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Scaffold(
                             appBar: AppBar(
-                              backgroundColor: Color.fromARGB(255, 90, 86, 86),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 90, 86, 86),
                               title: Text("Workouts for $muscle"),
                             ),
                             body: ListView.builder(
                               itemCount: exercisesData.length,
                               itemBuilder: (context, index) {
                                 final exercise = exercisesData[index];
-                                return ListTile(
-                                  title: Text(exercise['name']),
+                                return Container(
+                                  margin: const EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [Colors.blue, Colors.green],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+
+                                  /* The API will return the exercise data which will be stylized with the FlipCard widget to display Exercise name and parameters
+                                    while on the back it will present instructions for the workout.
+                                  */
+
+                                  // The Following widget tree stylizes the container and elements of the flippable card
+                                  child: FlipCard(
+                                    fill: Fill.fillBack,
+                                    direction: FlipDirection.VERTICAL,
+                                    speed: 400,
+                                    front: Card(
+                                      elevation: 4.0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        height: 150.0,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              exercise['name'],
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 32,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      exercise['type'],
+                                                      style: const TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      exercise['muscle'],
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      exercise['equipment'],
+                                                      style: const TextStyle(
+                                                        color: Colors.green,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      exercise['difficulty'],
+                                                      style: const TextStyle(
+                                                        color: Colors.purple,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    back: Card(
+                                      child: SingleChildScrollView(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Text(
+                                            exercise['instructions'],
+                                            style:
+                                                const TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                             ),
@@ -160,10 +260,10 @@ class FitCenter extends ConsumerWidget {
                             Text(
                               capitalizeFirstLetter(
                                   muscle.replaceAll('_', ' ')),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold),
                             ),
-                            Icon(Icons.arrow_forward_ios, size: 34),
+                            const Icon(Icons.arrow_forward_ios, size: 34),
                           ],
                         ),
                       ),
@@ -173,12 +273,12 @@ class FitCenter extends ConsumerWidget {
               ),
 
               Container(
-                color: Color.fromARGB(255, 232, 229, 229),
+                color: const Color.fromARGB(255, 232, 229, 229),
                 child: Center(
                   child: Text(muscle),
                 ),
               ),
-              Center(
+              const Center(
                 child: Text("Tab 3"),
               ),
             ],

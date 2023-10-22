@@ -48,9 +48,11 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.4.0
+  accordion: ^2.6.0
 
   image_picker: ^1.0.4
   dropdown_button2: ^2.3.9
+  flip_card: ^0.7.0
 
 dev_dependencies:
   flutter_test:

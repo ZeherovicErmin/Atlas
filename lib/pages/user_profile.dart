@@ -226,7 +226,7 @@ class UserProfile extends ConsumerWidget {
                   currentUser.email!,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: themeColor,
+                    color: Colors.black,
                   ),
                 ),
 
@@ -238,7 +238,7 @@ class UserProfile extends ConsumerWidget {
                   child: Text(
                     'My Details',
                     style: TextStyle(
-                      color: themeColor,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -266,7 +266,7 @@ class UserProfile extends ConsumerWidget {
                   child: Text(
                     'My Posts',
                     style: TextStyle(
-                      color: themeColor,
+                      color: Colors.black,
                     ),
                   ),
                 ),

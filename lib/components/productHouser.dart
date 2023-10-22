@@ -254,19 +254,19 @@ class BarcodeLookupComb extends ConsumerWidget {
             //const SizedBox(height: 20),
             // Button to navigate to barcode logs
 
-            Padding(
-              padding: const EdgeInsets.only(top: 200.0),
-              child: BarcodeLogPage(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  await _scanBarcode(context, ref);
-                },
-                child: const Text('Open Scanner'),
-              ),
-            ),
+            //Padding(
+              //padding: const EdgeInsets.only(top: 10.0),
+              BarcodeLogPage(),
+            //),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: ElevatedButton(
+            //     onPressed: () async {
+            //       await _scanBarcode(context, ref);
+            //     },
+            //     child: const Text('Open Scanner'),
+            //   ),
+            // ),
             NutrientsList(
               selectedFilters: selectedFilters,
               result: result,

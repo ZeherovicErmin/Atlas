@@ -85,6 +85,8 @@ flutter:
     - assets/spoonacularResult.json
     - assets/icons/chickenLeg.png
     - assets/icons/flameicon.png
+    - assets/icons/flameiconnameplate.png
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

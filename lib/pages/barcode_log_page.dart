@@ -8,6 +8,44 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+//paramaters to hold search, sort, filter
+class FilterState {
+  String? searchTerm;
+  String? sortBy;
+  String? filterBy;
+
+  FilterState({this.searchTerm, this.sortBy, this.filterBy});
+}
+
+// Create a provider to work with the data
+final filterStateProvider =
+    StateNotifierProvider<FilterStateController, FilterState>((ref) {
+  return FilterStateController();
+});
+
+// Filter State Controller
+class FilterStateController extends StateNotifier<FilterState> {
+  FilterStateController() : super(FilterState());
+
+  // Update search term
+  void updateSearchTerm(String term) {
+    state = FilterState(
+        searchTerm: term, sortBy: state.sortBy, filterBy: state.filterBy);
+  }
+
+  // Update sort by option
+  void updateSortBy(String sortBy) {
+    state = FilterState(
+        searchTerm: state.searchTerm, sortBy: sortBy, filterBy: state.filterBy);
+  }
+
+  // Update filter by option
+  void updateFilterBy(String filterBy) {
+    state = FilterState(
+        searchTerm: state.searchTerm, sortBy: state.sortBy, filterBy: filterBy);
+  }
+}
+
 class BarcodeLogPage extends ConsumerWidget {
   const BarcodeLogPage({Key? key});
 
@@ -18,7 +56,51 @@ class BarcodeLogPage extends ConsumerWidget {
     final uid = user?.uid;
     log("The user id is = $uid");
 
-    return _buildGradient(context, ref, uid);
+    return Scaffold(
+        body: CustomScrollView(slivers: <Widget>[
+      SliverAppBar(
+        floating: true,
+        title: TextField(
+          onChanged: (value) =>
+              ref.read(filterStateProvider.notifier).updateSearchTerm(value),
+          decoration: InputDecoration(hintText: 'Search'),
+          
+        ),
+        
+        
+        // Sorting Menu in the App Bar itself
+        actions: [
+          PopupMenuButton<String>(
+            // Sorting functionality
+            onSelected: (value) =>
+                ref.read(filterStateProvider.notifier).updateSortBy(value),
+            itemBuilder: (context) =>
+                ['Sort Alphabetical'].map((String choice) {
+              return PopupMenuItem<String>(
+                value: choice,
+                child: Text(choice),
+              );
+            }).toList(),
+          ),
+          
+          PopupMenuButton<String>(
+              onSelected: (value) =>
+                  // Filtering functionality
+                  ref.read(filterStateProvider.notifier).updateFilterBy(value),
+              itemBuilder: (context) =>
+                  ['Filter by Category', 'Filter by Type'].map((String choice) {
+                    return PopupMenuItem<String>(
+                        value: choice, child: Text(choice));
+                  }).toList())
+        
+        ],
+        
+        
+      ),
+      
+      SliverFillRemaining(child: _buildStreamBuilder(context, uid)),
+      
+    ],),);
   }
 
   Widget _buildGradient(BuildContext context, WidgetRef ref, String? uid) {
@@ -30,24 +112,43 @@ class BarcodeLogPage extends ConsumerWidget {
   }
 
   Widget _buildStreamBuilder(BuildContext context, String? uid) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('Barcode_Lookup')
-          .where('uid', isEqualTo: uid)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-        final logs = snapshot.data!.docs;
+    return Consumer(
+      builder: (context, ref, _) {
+        final filterState = ref.watch(filterStateProvider);
+        Query query = FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .where('uid', isEqualTo: uid);
 
-        if (logs.isEmpty) {
-          return Center(
-            child: Text('No barcode logs available.'),
-          );
+        // If Search bar is not empty or null then apply search term to query
+        if (filterState.searchTerm != null &&
+            filterState.searchTerm!.isNotEmpty) {
+          query = query.where('productName', isEqualTo: filterState.searchTerm);
         }
 
-        return _buildListView(logs);
+        //Determine sorting field
+        if (filterState.sortBy != null) {
+          String field = filterState.sortBy == 'Sort by Name'
+              ? 'productName'
+              : 'timestamp'; // Determine sort field.
+          query = query.orderBy(field);
+        }
+
+        return StreamBuilder(
+            stream: query.snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              final logs = snapshot.data!.docs;
+              //If no barcode logs are present
+              if (logs.isEmpty) {
+                return Center(
+                  child: Text('No barcode logs available'),
+                );
+              }
+              return _buildListView(logs);
+            });
+        
       },
     );
   }
@@ -82,7 +183,7 @@ class BarcodeLogPage extends ConsumerWidget {
               SlidableAction(
                 onPressed: (context) => deleteLog(context, data),
                 backgroundColor: const Color.fromARGB(2, 140, 215, 85),
-                foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                foregroundColor: Color.fromARGB(255, 143, 0, 0),
                 icon: Icons.delete,
                 label: 'Delete',
               )
@@ -96,6 +197,7 @@ class BarcodeLogPage extends ConsumerWidget {
             elevation: 7, // Card-like appearance
             margin: EdgeInsets.all(12), // Margin for spacing
             child: InkWell(
+              borderRadius: BorderRadius.circular(16),
               // Logic for showing a nutritional label
               onTap: () {},
               child: Padding(
@@ -111,16 +213,19 @@ class BarcodeLogPage extends ConsumerWidget {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
-                              child: Text('${data['productName']}'),
+                              child: Text(
+                                '${data['productName']}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                             Divider(
                               color: Color.fromARGB(255, 0, 0, 0),
-                              thickness: 5,
+                              thickness: 3,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
-                              child:
-                                  Text('Carbs Per Serving: $carbsPerServing'),
+                              child: Text(
+                                  'Carbs Per Serving: ${carbsPerServing}g'),
                             ),
                             Divider(
                               thickness: 1,
@@ -130,7 +235,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 16.0),
                                   child: Text(
-                                      'Protein Per Serving: $proteinPerServing'),
+                                      'Protein Per Serving: ${proteinPerServing}g'),
                                 ),
                               ],
                             ),
@@ -139,7 +244,8 @@ class BarcodeLogPage extends ConsumerWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
-                              child: Text('Fats Per Serving: $fatsPerServing'),
+                              child:
+                                  Text('Fats Per Serving: ${fatsPerServing}g'),
                             ),
                             Divider(
                               thickness: 1,
@@ -147,7 +253,7 @@ class BarcodeLogPage extends ConsumerWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Text(
-                                  'Cholesterol Per Serving: $cholesterolPerServing'),
+                                  'Cholesterol Per Serving: ${cholesterolPerServing}g'),
                             ),
                           ],
                         ),
@@ -156,21 +262,41 @@ class BarcodeLogPage extends ConsumerWidget {
                         width: 1,
                         height: 170,
                         child: VerticalDivider(
-                          //color: Color.fromARGB(255, 0, 0, 0),
-                          thickness: 1.0,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          thickness: 3.0,
                           width: 2.0,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: Container(
-                          height: 150,
+                          height: 125,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: Colors.blue,
                             image: DecorationImage(
-                                image:
-                                    AssetImage('icons/flameicon.png')),
+                                image: AssetImage(
+                                    'assets/icons/flameiconnameplate.png'),
+                                fit: BoxFit.contain),
+                          ),
+                          //Text over image
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 100,
+                                left: 0,
+                                right: 0,
+                                child: Center(
+                                  child: Text(
+                                    '${data['productCalories'].toInt()}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
 
                           //crossAxisAlignment: CrossAxisAlignment.start, de

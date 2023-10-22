@@ -1,25 +1,39 @@
+import 'dart:io';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
+import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
-import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
+final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
+  try {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get();
+    return doc['profilePicture'] as String?;
+  } catch (e) {
+    print('Error $e');
+    return null;
+  }
+});
 
 class UserProfile extends ConsumerWidget {
+  // ignore: use_key_in_widget_constructors
   const UserProfile({Key? key});
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,203 +41,159 @@ class UserProfile extends ConsumerWidget {
     final usersCollection = FirebaseFirestore.instance.collection("Users");
     final currentIndex = ref.watch(selectedIndexProvider);
     final image = ref.watch(profilePictureProvider.notifier);
+    final profilePictureUrl = ref.watch(profilePictureUrlProvider);
 
-    //Saves the state of dark mode being on or off
-    final lightDarkTheme = ref.watch(themeProvider);
+    void saveProfile(Uint8List imageBytes) async {
+      //holds the Uint8List of pfp provider
+      //final imageBytes = ref.watch(profilePictureProvider.notifier).state;
 
-    //Holds the opposite theme color for the text
-    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
-
-  //Signs the user out when called
-  void signOut() {
-    FirebaseAuth.instance.signOut();
-    runApp(
-      ProviderScope(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: LoginPage(),
-          routes: {
-            '/home': (context) => LoginPage(),
-          },
-        ),
-      ),
-    );
-  }
-
-  //Shows the settings page when called
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/settings');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-
-  //Shows the settings page when called
-  //Saving for later because it works
-  /*
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-    */
-
-  // Awaits for user input to select an Image
-  // Awaits for user input to select an Image
-  // Awaits user input to select an Image
-  void selectImage() async {
-    // Use the ImagePicker plugin to open the device's gallery to pick an image.
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    // Check if an image was picked.
-    if (pickedFile != null) {
-      // Read the image file as bytes.
-      final imageBytes = await pickedFile.readAsBytes();
-
-      // Update the profilePictureProvider state with the selected image as Uint8List.
-      ref.read(profilePictureProvider.notifier).state = Uint8List.fromList(imageBytes);
-    }
-  }
-
-  //Saves the profile
-  void saveProfile() async {
-    final imageBytes = image.state;
-    if (imageBytes != null) {
       try {
-        await FirebaseFirestore.instance
-            .collection("profilePictures")
-            .doc(currentUser.email)
-            .set({"profilePicture": imageBytes});
+        //initializing storing a picture to database
+        final FirebaseStorage storage = FirebaseStorage.instance;
+        // Stores filename in db
+        final String fileName =
+            "${FirebaseAuth.instance.currentUser!.email}_profilePicture.jpg";
+        print('test');
+        // uploads image of imageBytes to firebase storage
+        final UploadTask uploadTask = storage
+            .ref()
+            .child('profilePictures/$fileName')
+            .putData(imageBytes!);
+        // Waits for the Task of uploading profile picture to complete
+        final TaskSnapshot taskSnapshot =
+            await uploadTask.whenComplete(() => null);
+        final String downloadURL = await taskSnapshot.ref.getDownloadURL();
+
+        try {
+          //uploads DownloadURL to a firestore collection named profilePictures
+          await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(FirebaseAuth.instance.currentUser!.email)
+              .update({"profilePicture": downloadURL});
+          print('UploadTask Complete. Download URL: $downloadURL');
+        } catch (e) {
+          print("Error: $e");
+        }
       } catch (e) {
         print("Error: $e");
       }
     }
-  }
 
-  //App bar for the user profile page
-  PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
-    return PreferredSize (
-      preferredSize: const Size.fromHeight(70),
-      child: AppBar (
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 90, 86, 86),
-        actions: [
-          //Settings icon button
-          IconButton (
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-              Navigator.push (
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
+    void saveProfilePic() async {
+      final imageBytes = image.state;
+
+      if (imageBytes != null) {
+        try {
+          await usersCollection
+              .doc(currentUser.email)
+              .update({'profilePicture': imageBytes});
+        } catch (e) {
+          print("Error: $e");
+        }
+      }
+    }
+
+    void selectImage() async {
+      // Use the ImagePicker plugin to open the device's gallery to pick an image.
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      //Image.file(pickedFile as File,width: 400,height: 300,);
+      // Check if an image was picked.
+      if (pickedFile != null) {
+        // Read the image file as bytes.
+        final imageBytes = await pickedFile.readAsBytes();
+
+        // Update the profilePictureProvider state with the selected image as Uint8List.
+        ref.read(profilePictureProvider.notifier).state =
+            Uint8List.fromList(imageBytes);
+
+        saveProfilePic();
+      }
+    }
+
+    Widget buildProfilePicture(Uint8List? picBytes) {
+      return Stack(
+        children: [
+          Align(
+            alignment: Alignment.center, // Center the icon
+            child: image.state != null
+                ? CircleAvatar(
+                    radius: 64,
+                    backgroundImage: MemoryImage(image.state!),
+                  )
+                : const Icon(
+                    CupertinoIcons.profile_circled,
+                    size: 72,
+                  ),
+          ),
+          Positioned(
+            bottom: -10,
+            left: 80,
+            child: IconButton(
+              // onPressed, opens Image Picker
+              onPressed: selectImage,
+              icon: const Icon(Icons.add_a_photo),
+            ),
+          )
+        ],
+      );
+    }
+
+    // Edit field
+    Future<void> editField(String field) async {
+      String newValue = "";
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            "Edit $field",
+            style: const TextStyle(color: Colors.blue),
+          ),
+          content: TextField(
+            autofocus: true,
+            style: const TextStyle(
+                color:
+                    Color.fromARGB(255, 0, 0, 0)), // Change text color to white
+            decoration: InputDecoration(
+              hintText: "Enter new $field",
+              hintStyle: const TextStyle(color: Colors.black),
+            ),
+            onChanged: (value) {
+              newValue = value;
             },
           ),
-        ],
-          title: Text(
-            title,
-            style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-            )
-          )
+          actions: [
+            // Cancel button
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey[700]),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+
+            // Save button
+            TextButton(
+              child: Text(
+                'Save',
+                style: TextStyle(color: Colors.grey[700]),
+              ),
+              onPressed: () => Navigator.of(context).pop(newValue),
+            ),
+          ],
+        ),
       );
-  }
 
-  // Edit field
-  Future<void> editField(String field) async {
-    String newValue = "";
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          "Edit $field",
-          style: TextStyle(color: themeColor),
-        ),
-        content: TextField(
-          autofocus: true,
-          style: TextStyle(
-              color: themeColor), // Change text color to white
-          decoration: InputDecoration(
-            hintText: "Enter new $field",
-            hintStyle: TextStyle(color: themeColor),
-          ),
-          onChanged: (value) {
-            newValue = value;
-          },
-        ),
-        actions: [
-          // Cancel button
-          TextButton(
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: themeColor),
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-
-          // Save button
-          TextButton(
-            child: Text(
-              'Save',
-              style: TextStyle(color: themeColor),
-            ),
-            onPressed: () => Navigator.of(context).pop(newValue),
-          ),
-        ],
-      ),
-    );
-
-    // Update in Firestore
-    if (newValue.trim().isNotEmpty) {
-      // Only update if there is something in the text field
-      await usersCollection.doc(currentUser.email).update({field: newValue});
+      // Update in Firestore
+      if (newValue.trim().isNotEmpty) {
+        // Only update if there is something in the text field
+        await usersCollection.doc(currentUser.email).update({field: newValue});
+      }
     }
-  }
 
     return Scaffold(
-      backgroundColor: themeColor2,
-      appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
+      appBar: myAppBar2(context, ref, 'U s e r    P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -235,8 +205,8 @@ class UserProfile extends ConsumerWidget {
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: const Text('User data not found.'),
+            return const Center(
+              child: Text('User data not found.'),
             );
           }
 
@@ -247,33 +217,7 @@ class UserProfile extends ConsumerWidget {
               children: [
                 const SizedBox(height: 50),
 
-                //Profile pic
-                Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center, // Center the icon
-                      child: image.state != null
-                          ? CircleAvatar(
-                              radius: 64,
-                              backgroundImage: MemoryImage(image.state!),
-                            )
-                          : Icon(
-                              CupertinoIcons.profile_circled,
-                              color: themeColor,
-                              size: 72,
-                            ),
-                    ),
-                    Positioned(
-                      bottom: -10,
-                      left: 80,
-                      child: IconButton(
-                        // onPressed, opens Image Picker
-                        onPressed: selectImage,
-                        icon: const Icon(Icons.add_a_photo),
-                      ),
-                    )
-                  ],
-                ),
+                buildProfilePicture(image.state),
 
                 const SizedBox(height: 10),
 

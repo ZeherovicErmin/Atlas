@@ -29,9 +29,9 @@ class Recipes extends ConsumerWidget {
 
   //Text controller used to store value from recipe search bar
   final TextEditingController searchController = TextEditingController();
-  
+
   get themeColor => null;
-  
+
   get themeColor2 => null;
 
   @override
@@ -43,7 +43,8 @@ class Recipes extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
     //Saved recipes provider state getter
     List<Result> savedRecipes = ref.watch(savedRecipesProvider);
 
@@ -62,15 +63,16 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-
   // bg gradient color
-  Widget gradient(List<Result>? recipes, List<Result>? savedRecipes, BuildContext context, WidgetRef ref) {
+  Widget gradient(List<Result>? recipes, List<Result>? savedRecipes,
+      BuildContext context, WidgetRef ref) {
     //Saves the state of dark mode being on or off
     final lightDarkTheme = ref.watch(themeProvider);
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     return Container(
       //gradient decoration
@@ -91,13 +93,13 @@ class Recipes extends ConsumerWidget {
         recipeList(recipes, context, ref),
         Text(
           "SAVED RECIPES",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: themeColor),
+          style: TextStyle(
+              fontSize: 30, fontWeight: FontWeight.bold, color: themeColor),
         ),
         savedRecipeList(savedRecipes, context, ref),
       ]),
     );
   }
-
 
   //Recipe search form
   Widget form() {
@@ -108,9 +110,7 @@ class Recipes extends ConsumerWidget {
         //Page Title
         child: Text('Recipes',
             style: TextStyle(
-                color: themeColor2,
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                color: themeColor2, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       Container(
         margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
@@ -143,12 +143,11 @@ class Recipes extends ConsumerWidget {
           return null;
         },
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
-            border: InputBorder.none,
-            hintText: "Enter Recipe Search",
-            ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+          border: InputBorder.none,
+          hintText: "Enter Recipe Search",
+        ),
       ),
-
     );
   }
 
@@ -227,9 +226,9 @@ class Recipes extends ConsumerWidget {
       //API Request URL with Parameters
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
-      //formats url   
+      //formats url
       final uri = Uri.parse(url);
-      //sends request to api 
+      //sends request to api
       final response = await http.get(uri);
       //converts response from json
       final data = jsonDecode(response.body);
@@ -298,20 +297,18 @@ class Recipes extends ConsumerWidget {
                   Result recipe = recipes[index];
                   String recipeName = recipe.title;
                   return ListTile(
-                    onTap: () => navigateToRecipeDetails(context, recipe),
-                    title: Text(recipeName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    //Add remove button to end of tile
-                    trailing: ElevatedButton(
-                        child: const Text("Remove"),
-                        onPressed: () => onRemove(recipe, ref, context),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.red)
-                          )
-                        )
-                      );
-              },
+                      onTap: () => navigateToRecipeDetails(context, recipe),
+                      title: Text(recipeName,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      //Add remove button to end of tile
+                      trailing: ElevatedButton(
+                          child: const Text("Remove"),
+                          onPressed: () => onRemove(recipe, ref, context),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.red))));
+                },
                 //Used to put a divider line between recipes
                 separatorBuilder: (context, index) {
                   return const Divider();

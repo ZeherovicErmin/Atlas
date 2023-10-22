@@ -1,6 +1,7 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/components/bottom_bar.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+import 'package:atlas/components/productHouser.dart';
+
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/login_page.dart';
@@ -68,16 +69,15 @@ class MyApp extends ConsumerWidget {
     return user.when(
       data: (user) {
         return Directionality(
-          textDirection: TextDirection.ltr,
-          child: Consumer (
-            builder: (context, ref, _) {
-            final lightDarkTheme = ref.watch(themeProvider);
-            return MaterialApp (
-            debugShowCheckedModeBanner: false,
-              theme: ThemeData.light(),
-              darkTheme: ThemeData.dark(),
-              themeMode: lightDarkTheme ? ThemeMode.dark : ThemeMode.light,
-              home: const AuthPage(),
+            textDirection: TextDirection.ltr,
+            child: Consumer(builder: (context, ref, _) {
+              final lightDarkTheme = ref.watch(themeProvider);
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData.light(),
+                darkTheme: ThemeData.dark(),
+                themeMode: lightDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                home: const AuthPage(),
                 routes: {
                   '/home': (context) => HomePage(),
                   '/fitcenter': (context) => FitCenter(),
@@ -85,13 +85,11 @@ class MyApp extends ConsumerWidget {
                   '/register': (context) => RegisterPage(),
                   '/recipes': (context) => Recipes(),
                   '/userprof': (context) => UserProfile(),
-                  '/barcode': (context) => BarcodeLookupPage(),
+                  '/barcode': (context) => BarcodeLookupComb(),
                   '/start': (context) => BottomNav(),
                 },
               );
-            }
-          )
-        );
+            }));
       },
       error: (e, s) => Text('error'),
       loading: () {

@@ -1,5 +1,13 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/settings_page.dart';
+import 'package:atlas/components/feed_post.dart';
+import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/helper/helper_method.dart';
+import 'package:atlas/main.dart';
+import 'package:atlas/pages/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,6 +77,25 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final usersCollection = FirebaseFirestore.instance.collection("Users");
+    final textController = TextEditingController();
+
+    void postMessage() {
+      //only post if there is something in the textfield
+      if (textController.text.isNotEmpty) {
+        FirebaseFirestore.instance.collection("User Posts").add({
+          'UserEmail': currentUser.email,
+          'Message': textController.text,
+          'TimeStamp': Timestamp.now(),
+          'Likes': [],
+        });
+      }
+
+      //clear the textfield
+      textController.clear();
+    }
+
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
     //Saves the state of dark mode being on or off
@@ -76,13 +103,14 @@ class FitCenter extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     // Container for the gradient of the application
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
-        length: 3,
+        length: 4,
         child: Scaffold(
           backgroundColor: themeColor2,
           //Home page for when a user logs in
@@ -94,7 +122,7 @@ class FitCenter extends ConsumerWidget {
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 90, 86, 86),
+            backgroundColor: Color.fromARGB(255, 102, 102, 102),
             bottom: TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -103,6 +131,7 @@ class FitCenter extends ConsumerWidget {
                 ),
                 Tab(text: "My Workouts"),
                 Tab(text: "Progress"),
+                Tab(text: "Feed"),
               ],
             ),
           ),
@@ -126,7 +155,8 @@ class FitCenter extends ConsumerWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Scaffold(
                             appBar: AppBar(
-                              backgroundColor: Color.fromARGB(255, 90, 86, 86),
+                              backgroundColor:
+                                  Color.fromARGB(255, 102, 102, 102),
                               title: Text("Workouts for $muscle"),
                             ),
                             body: ListView.builder(
@@ -185,8 +215,82 @@ class FitCenter extends ConsumerWidget {
                   child: Text(muscle),
                 ),
               ),
-              Center(
+              const Center(
                 child: Text("Tab 3"),
+              ),
+              //ADDED USER POSTS TO THIS PAGE FOR TESTING
+              Column(
+                children: [
+                  //The Feed
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .orderBy(
+                            "TimeStamp",
+                            descending: false,
+                          )
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              //get the message
+                              final post = snapshot.data!.docs[index];
+                              return FeedPost(
+                                message: post['Message'],
+                                user: post['UserEmail'],
+                                postId: post.id,
+                                likes: List<String>.from(post['Likes'] ?? []),
+                                time: formatDate(post['TimeStamp']),
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error:${snapshot.error}'),
+                          );
+                        }
+
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  ),
+
+                  //post message
+                  Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Row(
+                      children: [
+                        //textfield
+                        Expanded(
+                            child: MyTextField(
+                          controller: textController,
+                          hintText: "Share your progress!",
+                          obscureText: false,
+                        )),
+                        //post button
+                        IconButton(
+                          onPressed: postMessage,
+                          icon: const Icon(Icons.arrow_circle_up),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  //logged in as
+                  Text(
+                    "Logged in as ${currentUser.email!}",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(
+                    height: 50,
+                  ),
+                ],
               ),
             ],
           ),

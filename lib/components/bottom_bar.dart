@@ -30,6 +30,7 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
+      extendBody: true,
       // Indexed Stack holds the index of the page
       // So the programmer knows what page you are on
       body: IndexedStack(
@@ -40,7 +41,7 @@ class BottomNav extends ConsumerWidget {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 238, 238, 238),
+        backgroundColor: Colors.transparent,
         color: const Color.fromARGB(255, 102, 102, 102),
         // Defines animation duration
         animationDuration: Duration(milliseconds: 300),

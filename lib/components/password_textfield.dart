@@ -62,6 +62,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
+        style: const TextStyle(color: Colors.black),
         controller: widget.controller,
         obscureText: widget.obscureText,
         onChanged: (_) {

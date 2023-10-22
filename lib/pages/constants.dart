@@ -6,7 +6,7 @@ import 'dart:developer';
 
 // A file for frequently used widgets to clean up code
 
-// App Bar for the homepage
+//App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: Color.fromARGB(255, 102, 102, 102),
@@ -20,7 +20,6 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
           onPressed: () async {
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
-
             Navigator.of(context).pushReplacementNamed('/login');
             //attempt to reset profile picture state to null after logout
             ref.read(profilePictureProvider.notifier).state = null;
@@ -30,7 +29,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
       ]);
 }
 
-// App Bar for the homepage
+//AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
     backgroundColor: Color.fromARGB(255, 102, 102, 102),

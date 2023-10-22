@@ -114,7 +114,7 @@ class BarcodeLogPage extends ConsumerWidget {
                               child: Text('${data['productName']}'),
                             ),
                             Divider(
-                              color: Colors.black,
+                              color: Color.fromARGB(255, 0, 0, 0),
                               thickness: 5,
                             ),
                             Padding(
@@ -122,17 +122,11 @@ class BarcodeLogPage extends ConsumerWidget {
                               child:
                                   Text('Carbs Per Serving: $carbsPerServing'),
                             ),
-                            Divider(),
+                            Divider(
+                              thickness: 1,
+                            ),
                             Row(
                               children: [
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Image.asset(
-                                  "assets/icons/chickenLeg.png",
-                                  width: 36,
-                                  height: 36,
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 16.0),
                                   child: Text(
@@ -140,12 +134,16 @@ class BarcodeLogPage extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            Divider(),
+                            Divider(
+                              thickness: 1,
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Text('Fats Per Serving: $fatsPerServing'),
                             ),
-                            Divider(),
+                            Divider(
+                              thickness: 1,
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Text(
@@ -155,22 +153,31 @@ class BarcodeLogPage extends ConsumerWidget {
                         ),
                       ),
                       Container(
-                        width: 5,
+                        width: 1,
                         height: 170,
                         child: VerticalDivider(
-                          color: Colors.black,
-                          thickness: 5.0,
-                          width: 1.0,
+                          //color: Color.fromARGB(255, 0, 0, 0),
+                          thickness: 1.0,
+                          width: 2.0,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Calories'),
-                            Text('${data['productCalories']}'),
-                          ],
+                        child: Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.blue,
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('icons/flameicon.png')),
+                          ),
+
+                          //crossAxisAlignment: CrossAxisAlignment.start, de
+                          // children: [
+                          //   Text('Calories'),
+                          //   Text('${data['productCalories']}'),
+                          // ],
                         ),
                       )
                     ],

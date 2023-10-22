@@ -1,3 +1,5 @@
+
+
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 
@@ -30,10 +32,15 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
+      //fixes NavBar transparency
+extendBody: true,
       // Indexed Stack holds the index of the page
       // So the programmer knows what page you are on
-      body: IndexedStack(
+      body: 
+      
+      IndexedStack(
         index: currentIndex,
+      
         // See 'pages' variable above
         // Passes in pages of the application
         children: pages,
@@ -41,7 +48,7 @@ class BottomNav extends ConsumerWidget {
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
         //backgroundColor: Colors.transparent,
-        backgroundColor: Color.fromARGB(255, 101, 51, 51),
+        backgroundColor: Colors.transparent,
         color: const Color.fromARGB(255, 102, 102, 102),
         // Defines animation duration
         animationDuration: Duration(milliseconds: 300),

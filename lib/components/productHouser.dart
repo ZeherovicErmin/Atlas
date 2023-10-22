@@ -398,8 +398,8 @@ class NutrientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .1,
-        minChildSize: .1,
+        initialChildSize: .15,
+        minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(

@@ -214,16 +214,15 @@ class UserProfile extends ConsumerWidget {
         builder: (context) => AlertDialog(
           title: Text(
             "Edit $field",
-            style: const TextStyle(color: Colors.blue),
+            style: TextStyle(color: themeColor),
           ),
           content: TextField(
             autofocus: true,
-            style: TextStyle(
-                color: const Color.fromARGB(
-                    255, 0, 0, 0)), // Change text color to white
+            style: const TextStyle(
+                color:  Color.fromARGB(255, 0, 0, 0)), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: TextStyle(color: Colors.black),
+              hintStyle: TextStyle(color: themeColor),
             ),
             onChanged: (value) {
               newValue = value;
@@ -234,7 +233,7 @@ class UserProfile extends ConsumerWidget {
             TextButton(
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: themeColor),
               ),
               onPressed: () => Navigator.pop(context),
             ),
@@ -243,7 +242,7 @@ class UserProfile extends ConsumerWidget {
             TextButton(
               child: Text(
                 'Save',
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: themeColor),
               ),
               onPressed: () => Navigator.of(context).pop(newValue),
             ),
@@ -259,7 +258,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -272,8 +271,8 @@ class UserProfile extends ConsumerWidget {
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: const Text('User data not found.'),
+            return const Center(
+              child: Text('User data not found.'),
             );
           }
 
@@ -333,20 +332,20 @@ class UserProfile extends ConsumerWidget {
                 Text(
                   currentUser.email!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
+                  style: TextStyle(
+                    color: themeColor,
                   ),
                 ),
 
                 const SizedBox(height: 50),
 
                 // User details
-                const Padding(
-                  padding: EdgeInsets.only(left: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
                   child: Text(
                     'My Details',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      color: themeColor,
                     ),
                   ),
                 ),
@@ -369,12 +368,12 @@ class UserProfile extends ConsumerWidget {
                 const SizedBox(height: 50),
 
                 // User posts
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 25.0),
                   child: Text(
                     'My Posts',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      color: themeColor,
                     ),
                   ),
                 ),
@@ -382,8 +381,8 @@ class UserProfile extends ConsumerWidget {
             );
           } else {
             // Handle the case where userData is null
-            return Center(
-              child: const Text('User data is null.'),
+            return const Center(
+              child: Text('User data is null.'),
             );
           }
         },

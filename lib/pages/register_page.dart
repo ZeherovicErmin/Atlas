@@ -137,20 +137,24 @@ class RegisterPage extends ConsumerWidget {
 
                 const SizedBox(height: 10),
 
-                // Password textfield
-                MyTextField(
+                //Password textfield
+                PasswordTextField(
                   controller: registrationState.passwordController,
                   hintText: 'Password',
                   obscureText: true,
+                  registrationState: registrationState,
+                  passwordTextField: true,
                 ),
 
                 const SizedBox(height: 10),
 
-                // Confirm password textfield
-                MyTextField(
+                //Confirm Password textfield
+                PasswordTextField(
                   controller: registrationState.confirmPasswordController,
                   hintText: 'Confirm Password',
                   obscureText: true,
+                  registrationState: registrationState,
+                  passwordTextField: false,
                 ),
 
                 const SizedBox(height: 25),

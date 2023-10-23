@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
@@ -283,48 +282,49 @@ class UserProfile extends ConsumerWidget {
               children: [
                 const SizedBox(height: 50),
 
-// Profile pic
-                Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center, // Center the icon
-                      child: profilePictureUrl.when(
-                        data: (url) {
-                          if (url != null && url.isNotEmpty) {
-                            return CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(url),
-                            );
-                          }
-                          return image.state != null
-                              ? CircleAvatar(
-                                  radius: 64,
-                                  backgroundImage: image.state != null
-                                      ? MemoryImage(image.state!)
-                                      : null,
-                                )
-                              : const Icon(
-                                  CupertinoIcons.profile_circled,
-                                  size: 72,
-                                );
-                        },
-                        loading: () => const CircularProgressIndicator(),
-                        error: (e, stack) => const Icon(
+          //Profile Picture
+          Stack(
+            children: [
+              Align(
+                alignment: Alignment.center, // Center the icon
+                child: profilePictureUrl.when(
+                  data: (url) {
+                    if (url != null && url.isNotEmpty) {
+                      return CircleAvatar(
+                        radius: 64,
+                        backgroundImage: NetworkImage(url),
+                      );
+                    }
+                    return image.state != null
+                        ? CircleAvatar(
+                            radius: 64,
+                            backgroundImage: image.state != null
+                                ? MemoryImage(image.state!)
+                                : null,
+                          )
+                        : const Icon(
                             CupertinoIcons.profile_circled,
-                            size: 72),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -10,
-                      left: 80,
-                      child: IconButton(
-                        // onPressed, opens Image Picker
-                        onPressed: selectImage,
-                        icon: const Icon(Icons.add_a_photo),
-                      ),
-                    )
-                  ],
+                            size: 72,
+                          );
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (e, stack) => const Icon(
+                      CupertinoIcons.profile_circled,
+                      size: 72),
                 ),
+              ),
+              Positioned(
+                bottom: -10,
+                left: 80,
+                child: IconButton(
+                  // onPressed, opens Image Picker
+                  onPressed: selectImage,
+                  icon: const Icon(Icons.add_a_photo),
+                ),
+              )
+            ],
+          ),
+
 
                 const SizedBox(height: 10),
 

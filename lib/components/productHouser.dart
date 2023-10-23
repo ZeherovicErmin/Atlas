@@ -15,6 +15,8 @@ import '../../util/test.dart' as testAPI;
 // Define state providers for various data
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
+final productNamelowercaseProvider = StateProvider<String>((ref) => '');
+
 final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 //amount of servings a container has provider
@@ -97,7 +99,7 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
-                
+
             ref.watch(carbsPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
@@ -168,6 +170,8 @@ class BarcodeLookupComb extends ConsumerWidget {
             DataItem('transfatsPserving',
                 ref.read(transfatsPservingProvider.notifier).state),
             DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
+            DataItem('productName_lowercase',
+                ref.read(productNameProvider).toLowerCase())
           ];
 
           // Send data to Firestore
@@ -227,6 +231,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
+    final productName_lowercase = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
     final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
     //fats
@@ -267,7 +272,6 @@ class BarcodeLookupComb extends ConsumerWidget {
                   CupertinoIcons.barcode_viewfinder,
                   size: 50,
                 ),
-                
               )),
           NutrientsList(
             selectedFilters: selectedFilters,
@@ -282,7 +286,6 @@ class BarcodeLookupComb extends ConsumerWidget {
             satfatsPserving: satfatsPserving,
             transfatsPserving: transfatsPserving,
           ),
-          
         ],
       ),
     );

@@ -119,18 +119,29 @@ class BarcodeLogPage extends ConsumerWidget {
             .collection('Barcode_Lookup')
             .where('uid', isEqualTo: uid);
 
-        // If Search bar is not empty or null then apply search term to query
-        if (filterState.searchTerm != null &&
-            filterState.searchTerm!.isNotEmpty) {
-          query = query.where('productName', isEqualTo: filterState.searchTerm);
+// Determine sorting field first
+        String? orderByField;
+        if (filterState.sortBy != null) {
+          orderByField = filterState.sortBy == 'Sort by Name'
+              ? 'productName'
+              : 'timestamp';
         }
 
-        //Determine sorting field
-        if (filterState.sortBy != null) {
-          String field = filterState.sortBy == 'Sort by Name'
-              ? 'productName'
-              : 'timestamp'; // Determine sort field.
-          query = query.orderBy(field);
+// If Search bar is not empty or null then apply search term to query
+        if (filterState.searchTerm != null &&
+            filterState.searchTerm!.isNotEmpty) {
+          String searchTermLower = filterState.searchTerm!.toLowerCase();
+          query = query
+              .orderBy('productName_lowercase')
+              .startAt([searchTermLower]).endAt(['$searchTermLower\uf8ff']);
+
+          // If we've already decided on an orderBy field, apply it here.
+          if (orderByField != null) {
+            query = query.orderBy(orderByField);
+          }
+        } else if (orderByField != null) {
+          // If there's no search term, just apply the orderBy
+          query = query.orderBy(orderByField);
         }
 
         return StreamBuilder(
@@ -166,10 +177,10 @@ class BarcodeLogPage extends ConsumerWidget {
           data['uid'] = ''; // Make the 'uid' row empty
         }
 
-        final fatsPerServing = data['fatsPerServing'].toInt();
-        final carbsPerServing = data['carbsPerServing'].toInt();
-        final proteinPerServing = data['proteinPerServing'].toInt();
-        final cholesterolPerServing = data['cholesterolPerServing'].toInt();
+        final fatsPerServing = data['fatsPerServing'];
+        final carbsPerServing = data['carbsPerServing'];
+        final proteinPerServing = data['proteinPerServing'];
+        final cholesterolPerServing = data['cholesterolPerServing'];
 
         return Slidable(
           // Allows logs to be deleted, Wraps entire list widget
@@ -180,9 +191,10 @@ class BarcodeLogPage extends ConsumerWidget {
             motion: ScrollMotion(),
             children: [
               SlidableAction(
+                autoClose: true,
                 onPressed: (context) => deleteLog(context, data),
                 backgroundColor: const Color.fromARGB(2, 140, 215, 85),
-                foregroundColor: Color.fromARGB(255, 143, 0, 0),
+                foregroundColor: Color.fromARGB(255, 255, 0, 0),
                 icon: Icons.delete,
                 label: 'Delete',
               )

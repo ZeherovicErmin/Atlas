@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
 import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:atlas/pages/settings_page.dart';
 //import 'image'
 
 // Riverpod Provider
@@ -96,6 +97,33 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
+      //App bar for the user profile page
+  PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
+    return PreferredSize (
+      preferredSize: const Size.fromHeight(70),
+      child: AppBar (
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+        actions: [
+          //Settings icon button
+          IconButton (
+          icon: const Icon(Icons.settings),
+          onPressed: () {
+              Navigator.push (
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+          ),
+        ],
+          title: Text(
+            title,
+            style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+            )
+          )
+      );
+  }
+
     // Edit field
     Future<void> editField(String field) async {
       String newValue = "";
@@ -150,7 +178,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
+      appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")

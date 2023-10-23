@@ -135,7 +135,7 @@ class BarcodeLogPage extends ConsumerWidget {
             .collection('Barcode_Lookup')
             .where('uid', isEqualTo: uid);
 
-// Determine sorting field first
+        // Determine sorting field first
         String? orderByField;
         bool ascendingOrder = true; // Default to ascending order
         if (filterState.sortBy != null) {
@@ -158,7 +158,6 @@ class BarcodeLogPage extends ConsumerWidget {
           }
         }
 
-// If Search bar is not empty or null then apply search term to query
         if (filterState.searchTerm != null &&
             filterState.searchTerm!.isNotEmpty) {
           String searchTermLower = filterState.searchTerm!.toLowerCase();
@@ -166,7 +165,7 @@ class BarcodeLogPage extends ConsumerWidget {
               .orderBy('productName_lowercase')
               .startAt([searchTermLower]).endAt(['$searchTermLower\uf8ff']);
 
-          // If we've already decided on an orderBy field, apply it here.
+          // If user already decided on an orderBy field, apply it here.
           if (orderByField != null) {
             query = query.orderBy(orderByField);
           }

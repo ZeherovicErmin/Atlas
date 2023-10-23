@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -42,6 +43,12 @@ class UserProfile extends ConsumerWidget {
     final currentIndex = ref.watch(selectedIndexProvider);
     final image = ref.watch(profilePictureProvider.notifier);
     final profilePictureUrl = ref.watch(profilePictureUrlProvider);
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -96,6 +103,81 @@ class UserProfile extends ConsumerWidget {
         saveProfile(Uint8List.fromList(imageBytes));
       }
     }
+
+  //Signs the user out when called
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    runApp(
+      ProviderScope(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: LoginPage(),
+          routes: {
+            '/home': (context) => LoginPage(),
+          },
+        ),
+      ),
+    );
+  }
+
+  //Shows the settings page when called
+  void showSettings(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Settings'),
+            content: Column (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                //Signout button
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref.read(signOutProvider);
+                    // After succesful logout redirect to logout page
+                    Navigator.of(context).pushReplacementNamed('/settings');
+                  },
+                  child: const Text (
+                    "Sign out Button"
+                  )
+                ),
+              ]
+            ),
+          );
+        }
+      );
+    }
+
+  //Shows the settings page when called
+  //Saving for later because it works
+  /*
+  void showSettings(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Settings'),
+            content: Column (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget> [
+                //Signout button
+                ElevatedButton(
+                  onPressed: () async {
+                    await ref.read(signOutProvider);
+                    // After succesful logout redirect to logout page
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  },
+                  child: const Text (
+                    "Sign out Button"
+                  )
+                ),
+              ]
+            ),
+          );
+        }
+      );
+    }
+    */
 
       //App bar for the user profile page
   PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {

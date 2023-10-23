@@ -1,6 +1,5 @@
-
 import 'dart:async';
-
+import 'package:flutter/cupertino.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -58,57 +57,57 @@ class BarcodeLogPage extends ConsumerWidget {
     log("The user id is = $uid");
 
     return Scaffold(
-        body: CustomScrollView(slivers: <Widget>[
-      SliverAppBar(
-        floating: true,
-        title: TextField(
-          onChanged: (value) =>
-              ref.read(filterStateProvider.notifier).updateSearchTerm(value),
-          decoration: InputDecoration(hintText: 'Search'),
-          
-        ),
-        
-        
-        // Sorting Menu in the App Bar itself
-        actions: [
-          PopupMenuButton<String>(
-            // Sorting functionality
-            onSelected: (value) =>
-                ref.read(filterStateProvider.notifier).updateSortBy(value),
-            itemBuilder: (context) =>
-                ['Sort Alphabetical'].map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList(),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            floating: true,
+            title: TextField(
+              onChanged: (value) => ref
+                  .read(filterStateProvider.notifier)
+                  .updateSearchTerm(value),
+              decoration: InputDecoration(hintText: 'Search'),
+            ),
+
+            // Sorting Menu in the App Bar itself
+            actions: [
+              PopupMenuButton<String>(
+                // Sorting functionality
+                onSelected: (value) =>
+                    ref.read(filterStateProvider.notifier).updateSortBy(value),
+                itemBuilder: (context) =>
+                    ['Sort Alphabetical'].map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList(),
+              ),
+              PopupMenuButton<String>(
+                  onSelected: (value) =>
+                      // Filtering functionality
+                      ref
+                          .read(filterStateProvider.notifier)
+                          .updateFilterBy(value),
+                  itemBuilder: (context) => [
+                        'Filter by Category',
+                        'Filter by Type'
+                      ].map((String choice) {
+                        return PopupMenuItem<String>(
+                            value: choice, child: Text(choice));
+                      }).toList())
+            ],
           ),
-          
-          PopupMenuButton<String>(
-              onSelected: (value) =>
-                  // Filtering functionality
-                  ref.read(filterStateProvider.notifier).updateFilterBy(value),
-              itemBuilder: (context) =>
-                  ['Filter by Category', 'Filter by Type'].map((String choice) {
-                    return PopupMenuItem<String>(
-                        value: choice, child: Text(choice));
-                  }).toList())
-        
+          SliverFillRemaining(child: _buildStreamBuilder(context, uid)),
         ],
-        
-        
       ),
-      
-      SliverFillRemaining(child: _buildStreamBuilder(context, uid)),
-      
-    ],),);
+    );
   }
 
   Widget _buildGradient(BuildContext context, WidgetRef ref, String? uid) {
     return Scaffold(
       extendBody: true,
       body: _buildStreamBuilder(context, uid),
-      backgroundColor: Color.fromARGB(0, 153, 57, 57),
+      backgroundColor: Colors.white,
     );
   }
 
@@ -149,7 +148,6 @@ class BarcodeLogPage extends ConsumerWidget {
               }
               return _buildListView(logs);
             });
-        
       },
     );
   }
@@ -198,7 +196,7 @@ class BarcodeLogPage extends ConsumerWidget {
             elevation: 7, // Card-like appearance
             margin: EdgeInsets.all(12), // Margin for spacing
             child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24),
               // Logic for showing a nutritional label
               onTap: () {},
               child: Padding(
@@ -291,8 +289,9 @@ class BarcodeLogPage extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '${data['productCalories'].toInt()}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),

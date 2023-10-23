@@ -1,5 +1,3 @@
-
-
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 
@@ -32,18 +30,14 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
-
       //fixes NavBar transparency
-extendBody: true,
-
+      extendBody: true,
 
       // Indexed Stack holds the index of the page
       // So the programmer knows what page you are on
-      body: 
-      
-      IndexedStack(
+      body: IndexedStack(
         index: currentIndex,
-      
+
         // See 'pages' variable above
         // Passes in pages of the application
         children: pages,

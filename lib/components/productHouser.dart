@@ -1,8 +1,10 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/util/custom_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,7 +69,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     var scannedBarcode = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SimpleBarcodeScannerPage(),
+        builder: (context) => const CustomScannerPage(),
       ),
     );
 
@@ -244,33 +246,44 @@ class BarcodeLookupComb extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-        appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-        backgroundColor: const Color.fromARGB(0, 231, 0, 0),
-        body: Stack(
-          children: [
-            //const SizedBox(height: 20),
-            // Button to open the barcode scanner
+      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          //const SizedBox(height: 20),
+          // Button to open the barcode scanner
 
-            //const SizedBox(height: 20),
-            // Button to navigate to barcode logs
-BarcodeLogPage(),
-            
-            
-            NutrientsList(
-              selectedFilters: selectedFilters,
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving,
-              cholesterolPerServing: cholesterolPerServing,
-              amtPerServing: amtPerServing,
-              satfatsPserving: satfatsPserving,
-              transfatsPserving: transfatsPserving,
-            ),
-          ],
-        ));
+          //const SizedBox(height: 20),
+          // Button to navigate to barcode logs
+
+          BarcodeLogPage(),
+          Positioned(
+              right: 16,
+              bottom: 100,
+              child: FloatingActionButton(
+                onPressed: () => _scanBarcode(context, ref),
+                child: Icon(
+                  CupertinoIcons.barcode_viewfinder,
+                  size: 50,
+                ),
+                backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+              )),
+          NutrientsList(
+            selectedFilters: selectedFilters,
+            result: result,
+            productName: productName,
+            productCalories: productCalories,
+            carbsPserving: carbsPserving,
+            proteinPserving: proteinPserving,
+            fatsPserving: fatsPserving,
+            cholesterolPerServing: cholesterolPerServing,
+            amtPerServing: amtPerServing,
+            satfatsPserving: satfatsPserving,
+            transfatsPserving: transfatsPserving,
+          ),
+        ],
+      ),
+    );
   }
 
   Wrap FilterChips(
@@ -388,7 +401,7 @@ class NutrientsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         initialChildSize: .15,
-        minChildSize: .15,
+        minChildSize: .05,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(

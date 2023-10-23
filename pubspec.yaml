@@ -53,6 +53,8 @@ dependencies:
   settings_ui: ^2.0.2
   flutter_slidable: ^3.0.0
   firebase_storage: ^11.2.8
+  mobile_scanner: ^3.5.0
+  visibility_detector: ^0.4.0
 
 dev_dependencies:
   flutter_test:

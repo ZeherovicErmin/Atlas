@@ -155,6 +155,12 @@ class RegisterPage extends ConsumerWidget {
 
                 const SizedBox(height: 25),
 
+                //Sign-in button
+                MyButton(
+                  text: 'Sign Up',
+                  onTap: signUserUp,
+                ),
+
                 const SizedBox(height: 10),
 
                 // Register now

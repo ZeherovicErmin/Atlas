@@ -12,12 +12,13 @@ class FeedPost extends StatefulWidget {
   final String user;
   final String time;
   final String postId;
+  final Color themeColors;
   final List<String> likes;
   const FeedPost({
     super.key,
     required this.message,
     required this.user,
-
+    required this.themeColors,
     required this.postId,
     required this.likes,
     required this.time,
@@ -46,7 +47,6 @@ class _FeedPostState extends State<FeedPost> {
       isLiked = !isLiked;
     });
 
-    
     //Access the document in Firebase
     DocumentReference postRef =
         FirebaseFirestore.instance.collection('User Posts').doc(widget.postId);
@@ -77,7 +77,7 @@ class _FeedPostState extends State<FeedPost> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // feed post
+          //feed post
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,

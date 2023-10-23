@@ -318,26 +318,30 @@ class BarcodeLookupComb extends ConsumerWidget {
         dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
-          print(dataMap);
         }
-        // Add data to Firestore
-        await FirebaseFirestore.instance
-            .collection('Barcode_Lookup')
-            .add(dataMap);
-        print("Data to Firestore sent!!!");
 
-        // Send a Snackbar when data is sent to database
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("$productName sent to Firestore"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else {
-        print("No data selected");
+        bool exists = await isBarcodeExists(dataMap['Barcode']);
+
+        if (!exists) {
+          // Add data to Firestore
+          await FirebaseFirestore.instance
+              .collection('Barcode_Lookup')
+              .add(dataMap);
+          print("Data to Firestore sent!!!");
+
+          // Send a Snackbar when data is sent to database
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Data added to Firestore!')));
+        } else {
+          print("Barcode already exists in Firestore.");
+
+          // Send a Snackbar indicating barcode already exists
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Barcode already exists!')));
+        }
       }
     } catch (e) {
-      print('Error sending data: Error: $e');
+      print('Error sending data to Firestore: $e');
     }
   }
 
@@ -371,6 +375,22 @@ class BarcodeLookupComb extends ConsumerWidget {
     ];
     print("Filters after removing: ${notifier.state}");
     notifier.state = notifier.state;
+  }
+
+  Future<bool> isBarcodeExists(String barcode) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Barcode_Lookup')
+          .where('Barcode', isEqualTo: barcode)
+          .limit(1) // Ma
+          .get();
+
+      // If the snapshot contains any documents, then a document with the provided barcode already exists
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking barcode existence in Firestore: $e');
+      return false; // Return false in case of any error
+    }
   }
 }
 

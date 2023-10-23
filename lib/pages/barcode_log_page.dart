@@ -13,8 +13,10 @@ class FilterState {
   String? searchTerm;
   String? sortBy;
   String? filterBy;
+  bool isAscending;
 
-  FilterState({this.searchTerm, this.sortBy, this.filterBy});
+  FilterState(
+      {this.searchTerm, this.sortBy, this.filterBy, this.isAscending = true});
 }
 
 // Create a provider to work with the data
@@ -67,34 +69,48 @@ class BarcodeLogPage extends ConsumerWidget {
                   .updateSearchTerm(value),
               decoration: InputDecoration(hintText: 'Search'),
             ),
-
             // Sorting Menu in the App Bar itself
             actions: [
               PopupMenuButton<String>(
-                // Sorting functionality
                 onSelected: (value) =>
                     ref.read(filterStateProvider.notifier).updateSortBy(value),
-                itemBuilder: (context) =>
-                    ['Sort Alphabetical'].map((String choice) {
+                itemBuilder: (context) => [
+                  'Sort Alphabetical',
+                  'Sort by Protein',
+                  'Sort by Carbs',
+                  'Sort by Fats'
+                ].map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(choice),
+                        if (ref.read(filterStateProvider).sortBy == choice)
+                          Icon(ref.read(filterStateProvider).isAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+              PopupMenuButton<String>(
+                onSelected: (value) =>
+                    // Filtering functionality
+                    ref
+                        .read(filterStateProvider.notifier)
+                        .updateFilterBy(value),
+                itemBuilder: (context) => [
+                  'Filter by Category',
+                  'Filter by Type'
+                ].map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice),
                   );
                 }).toList(),
-              ),
-              PopupMenuButton<String>(
-                  onSelected: (value) =>
-                      // Filtering functionality
-                      ref
-                          .read(filterStateProvider.notifier)
-                          .updateFilterBy(value),
-                  itemBuilder: (context) => [
-                        'Filter by Category',
-                        'Filter by Type'
-                      ].map((String choice) {
-                        return PopupMenuItem<String>(
-                            value: choice, child: Text(choice));
-                      }).toList())
+              )
             ],
           ),
           SliverFillRemaining(child: _buildStreamBuilder(context, uid)),
@@ -121,10 +137,25 @@ class BarcodeLogPage extends ConsumerWidget {
 
 // Determine sorting field first
         String? orderByField;
+        bool ascendingOrder = true; // Default to ascending order
         if (filterState.sortBy != null) {
-          orderByField = filterState.sortBy == 'Sort by Name'
-              ? 'productName'
-              : 'timestamp';
+          switch (filterState.sortBy) {
+            case 'Sort Alphabetical':
+              orderByField = 'productName';
+              break;
+            case 'Sort by Protein':
+              orderByField = 'proteinPerServing';
+              break;
+            case 'Sort by Carbs':
+              orderByField = 'carbsPerServing';
+              break;
+            case 'Sort by Fats':
+              orderByField = 'fatsPerServing';
+              break;
+            default:
+              orderByField = 'timestamp';
+              break;
+          }
         }
 
 // If Search bar is not empty or null then apply search term to query

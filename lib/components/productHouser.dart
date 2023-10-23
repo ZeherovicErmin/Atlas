@@ -69,7 +69,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     var scannedBarcode = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const CustomScannerPage(),
+        builder: (context) => const SimpleBarcodeScannerPage(),
       ),
     );
 
@@ -97,6 +97,7 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
+                
             ref.watch(carbsPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
@@ -260,13 +261,13 @@ class BarcodeLookupComb extends ConsumerWidget {
           Positioned(
               right: 16,
               bottom: 100,
-              child: FloatingActionButton(
+              child: ElevatedButton(
                 onPressed: () => _scanBarcode(context, ref),
                 child: Icon(
                   CupertinoIcons.barcode_viewfinder,
                   size: 50,
                 ),
-                backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+                
               )),
           NutrientsList(
             selectedFilters: selectedFilters,
@@ -281,6 +282,7 @@ class BarcodeLookupComb extends ConsumerWidget {
             satfatsPserving: satfatsPserving,
             transfatsPserving: transfatsPserving,
           ),
+          
         ],
       ),
     );
@@ -401,7 +403,7 @@ class NutrientsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         initialChildSize: .15,
-        minChildSize: .05,
+        minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(

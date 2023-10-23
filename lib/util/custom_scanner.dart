@@ -13,7 +13,9 @@ class _CustomScannerPageState extends State<CustomScannerPage> with WidgetsBindi
     facing: CameraFacing.back,
     returnImage: true,
   );
-
+  
+  Color _borderColor = Colors.white;  // Initial border color
+  
   @override
   void initState() {
     super.initState();
@@ -37,6 +39,47 @@ class _CustomScannerPageState extends State<CustomScannerPage> with WidgetsBindi
     }
   }
 
+  Future<void> _handleScan(BarcodeCapture capture) async {
+  final context = this.context;  // Store the BuildContext in a local variable
+  
+  final List<Barcode> barcodes = capture.barcodes;
+  if (barcodes.isNotEmpty) {
+    final bool isValid = await validateBarcode(barcodes.first.rawValue!);
+    if (mounted) {
+      if (isValid) {
+        setState(() {
+          _borderColor = Colors.green;
+        });
+        await Future.delayed(Duration(milliseconds: 500));
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context, barcodes.first.rawValue);
+        }
+      } else {
+        setState(() {
+          _borderColor = Colors.red;
+        });
+        await Future.delayed(Duration(milliseconds: 500));
+        if (mounted) {
+          setState(() {
+            _borderColor = Colors.white;
+          });
+        }
+      }
+    }
+    
+    // Show the barcode numbers using a SnackBar
+    final snackBar = SnackBar(content: Text('Barcode: ${barcodes.first.rawValue}'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}
+
+
+
+  Future<bool> validateBarcode(String barcode) async {
+    // Placeholder for validate Barcode logic
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,12 +91,7 @@ class _CustomScannerPageState extends State<CustomScannerPage> with WidgetsBindi
           MobileScanner(
             fit: BoxFit.contain,
             controller: _controller,
-            onDetect: (capture) {
-              final List<Barcode> barcodes = capture.barcodes;
-              if (barcodes.isNotEmpty) {
-                Navigator.pop(context, barcodes.first.rawValue);
-              }
-            },
+            onDetect: _handleScan,
           ),
           _buildViewfinderOverlay(),
         ],
@@ -65,8 +103,7 @@ class _CustomScannerPageState extends State<CustomScannerPage> with WidgetsBindi
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final double width = constraints.maxWidth;
-        final double height = constraints.maxHeight;
-        final double overlaySize = width * 0.65;  // Adjust size to your preference
+        final double overlaySize = width * 0.65;  // Size of viewfinder overlay
 
         return Stack(
           children: <Widget>[
@@ -79,7 +116,7 @@ class _CustomScannerPageState extends State<CustomScannerPage> with WidgetsBindi
                 height: overlaySize,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.white,
+                    color: _borderColor,  // Updated border color
                     width: 2.0,
                   ),
                 ),

@@ -36,6 +36,11 @@ final Map<String, IconData> muscleIcons = {
   "abdominals": Icons.star,
 };
 
+// Creating A map of icons for the exercise type i.e strength or cardio
+final Map<String, IconData> exerciseTypeIcons = {
+  "strength": Icons.fitness_center,
+};
+
 // Creating a state provider to return a string for selected muscle
 final selectedMuscleProvider = StateProvider<String>((ref) {
   String muscle = 'biceps';
@@ -127,22 +132,33 @@ class FitCenter extends ConsumerWidget {
                               itemCount: exercisesData.length,
                               itemBuilder: (context, index) {
                                 final exercise = exercisesData[index];
+                                final exerciseType = exercise['type'];
+
+                                // Finding the icon for each exercise type
+                                final exerciseTypeIcon =
+                                    exerciseTypeIcons[exerciseType];
+
                                 return Container(
                                   margin: const EdgeInsets.all(16.0),
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [Colors.blue, Colors.green],
-                                    ),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-
-                                  /* The API will return the exercise data which will be stylized with the FlipCard widget to display Exercise name and parameters
-                                    while on the back it will present instructions for the workout.
-                                  */
-
-                                  // The Following widget tree stylizes the container and elements of the flippable card
+                                      borderRadius: BorderRadius.circular(
+                                          12.0), // Add a border radius
+                                      border: Border.all(
+                                        width: .5,
+                                        style: BorderStyle.solid,
+                                        color: Colors.transparent,
+                                        // Set the border color and width
+                                      ),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.red,
+                                          Colors.blue,
+                                          Colors.green,
+                                          Colors.purple,
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      )),
                                   child: FlipCard(
                                     fill: Fill.fillBack,
                                     direction: FlipDirection.VERTICAL,
@@ -170,47 +186,70 @@ class FitCenter extends ConsumerWidget {
                                               ),
                                             ),
                                             const SizedBox(height: 8.0),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Text(
-                                                      exercise['type'],
-                                                      style: const TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      exercise['muscle'],
-                                                      style: const TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      exercise['equipment'],
-                                                      style: const TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      exercise['difficulty'],
-                                                      style: const TextStyle(
-                                                        color: Colors.purple,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                Text(
+                                                  exercise['type'],
+                                                  style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  exercise['muscle'],
+                                                  style: const TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  exercise['equipment'],
+                                                  style: const TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  exercise['difficulty'],
+                                                  style: const TextStyle(
+                                                    color: Colors.purple,
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
                                               ],
                                             ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Icon(
+                                                  exerciseTypeIcon ??
+                                                      Icons.category,
+                                                  color: Colors.red,
+                                                  size: 18,
+                                                ),
+                                                Icon(
+                                                  exerciseTypeIcon ??
+                                                      Icons.category,
+                                                  color: Colors.blue,
+                                                  size: 18,
+                                                ),
+                                                Icon(
+                                                  exerciseTypeIcon ??
+                                                      Icons.category,
+                                                  color: Colors.green,
+                                                  size: 18,
+                                                ),
+                                                Icon(
+                                                  exerciseTypeIcon ??
+                                                      Icons.category,
+                                                  color: Colors.purple,
+                                                  size: 18,
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         ),
                                       ),
@@ -246,8 +285,20 @@ class FitCenter extends ConsumerWidget {
                     // Styling elements for each specific muscle
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                      ),
+                          color: Colors.white,
+                          border: Border.all(
+                              color: const Color.fromARGB(255, 152, 25, 25)),
+                          borderRadius: BorderRadius.circular(16.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ]),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Row(

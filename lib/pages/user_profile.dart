@@ -32,7 +32,7 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 });
 
 class UserProfile extends ConsumerWidget {
-  const UserProfile({Key? key});
+  const UserProfile({Key? key}):super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,12 +108,12 @@ class UserProfile extends ConsumerWidget {
           ),
           content: TextField(
             autofocus: true,
-            style: TextStyle(
-                color: const Color.fromARGB(
+            style: const TextStyle(
+                color:  Color.fromARGB(
                     255, 0, 0, 0)), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: TextStyle(color: Colors.black),
+              hintStyle: const TextStyle(color: Colors.black),
             ),
             onChanged: (value) {
               newValue = value;
@@ -162,8 +162,8 @@ class UserProfile extends ConsumerWidget {
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: const Text('User data not found.'),
+            return const Center(
+              child:  Text('User data not found.'),
             );
           }
 
@@ -243,7 +243,7 @@ class UserProfile extends ConsumerWidget {
 
                 // Username
                 MyTextBox(
-                  text: userData?['username']?.toString() ??
+                  text: userData['username']?.toString() ??
                       '', // Safely access username
                   sectionName: 'Username',
                   onPressed: () => editField('username'),
@@ -251,7 +251,7 @@ class UserProfile extends ConsumerWidget {
 
                 // Bio
                 MyTextBox(
-                  text: userData?['bio']?.toString() ?? '', // Safely access bio
+                  text: userData['bio']?.toString() ?? '', // Safely access bio
                   sectionName: 'Bio',
                   onPressed: () => editField('bio'),
                 ),
@@ -272,8 +272,8 @@ class UserProfile extends ConsumerWidget {
             );
           } else {
             // Handle the case where userData is null
-            return Center(
-              child: const Text('User data is null.'),
+            return const Center(
+              child:  Text('User data is null.'),
             );
           }
         },

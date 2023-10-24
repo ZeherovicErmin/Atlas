@@ -45,7 +45,7 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: themeColor2,
-      appBar: myAppBar2(context, ref, 'HomePage'),
+      appBar: myAppBar2(context, ref, 'H o m e'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Number of columns in the grid

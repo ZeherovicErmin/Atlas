@@ -36,15 +36,9 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final habits = ref.watch(habitListNotifierProvider);
     //Saves the state of dark mode being on or off
-    final lightDarkTheme = ref.watch(themeProvider);
-
-    //Holds the opposite theme color for the text
-    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     return Scaffold(
-      backgroundColor: themeColor2,
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
       appBar: myAppBar2(context, ref, 'H o m e'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

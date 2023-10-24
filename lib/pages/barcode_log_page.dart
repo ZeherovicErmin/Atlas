@@ -59,9 +59,11 @@ class BarcodeLogPage extends ConsumerWidget {
     log("The user id is = $uid");
 
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            backgroundColor: Colors.transparent,
             floating: true,
             title: TextField(
               onChanged: (value) => ref

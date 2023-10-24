@@ -265,7 +265,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           BarcodeLogPage(),
           Positioned(
               right: 16,
-              bottom: 100,
+              bottom: 150,
               child: ElevatedButton(
                 onPressed: () => _scanBarcode(context, ref),
                 child: Icon(
@@ -431,7 +431,7 @@ class NutrientsList extends StatelessWidget {
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 151, 151, 151),
+              color: Color.fromARGB(255, 255, 252, 252),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),

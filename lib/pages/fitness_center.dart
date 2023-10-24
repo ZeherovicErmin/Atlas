@@ -1,37 +1,30 @@
 //Atlas Fitness App CSC 4996
-import 'package:atlas/pages/settings_page.dart';
-import 'package:atlas/components/feed_post.dart';
-import 'package:atlas/components/my_textfield.dart';
-import 'package:atlas/helper/helper_method.dart';
-import 'package:atlas/main.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flip_card/flip_card.dart';
 
 // Creating a list of target muscles
 const List<String> list = <String>[
-  "abdominals",
+  "biceps",
+  "forearms",
+  "triceps",
   "abductors",
   "adductors",
-  "biceps",
   "calves",
+  "quadriceps",
+  "abdominals",
   "chest",
-  "forearms",
-  "glutes",
-  "hamstrings",
   "lats",
   "lower_back",
   "middle_back",
   "neck",
-  "quadriceps",
   "traps",
-  "triceps",
+  "glutes",
+  "hamstrings",
 ];
 
 // Creating a method to capitalize the first letter of each muscle
@@ -41,8 +34,47 @@ String capitalizeFirstLetter(String text) {
 }
 
 // Creating A map of Icons for each specific muscles
-final Map<String, IconData> muscleIcons = {
-  "abdominals": Icons.star,
+final Map<String, Widget> muscleIcons = {
+  "biceps": Image.asset(
+    'lib/images/bicepicon.png',
+    height: 50,
+    width: 50,
+  ),
+  "forearms": Image.asset(
+    'lib/images/forearm.png',
+    height: 50,
+    width: 50,
+  ),
+  "triceps": Image.asset(
+    'lib/images/triceps.png',
+    height: 50,
+    width: 50,
+  ),
+};
+
+// Creating A map of icons for the exercise type i.e strength or cardio
+final Map<String, IconData> exerciseTypeIcons = {
+  "strength": Icons.fitness_center,
+};
+
+// Creating a map of colors to apply to each type of muscle
+const Map<String, Color> muscleColors = {
+  "abdominals": Colors.purple,
+  "abductors": Colors.blue,
+  "adductors": Colors.blue,
+  "biceps": Colors.green,
+  "calves": Colors.blue,
+  "chest": Colors.pink,
+  "forearms": Colors.green,
+  "glutes": Colors.brown,
+  "hamstrings": Colors.brown,
+  "lats": Colors.red,
+  "lower_back": Colors.red,
+  "middle_back": Colors.red,
+  "neck": Colors.red,
+  "quadriceps": Colors.blue,
+  "traps": Colors.red,
+  "triceps": Colors.green,
 };
 
 // Creating a state provider to return a string for selected muscle
@@ -77,53 +109,28 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-    final usersCollection = FirebaseFirestore.instance.collection("Users");
-    final textController = TextEditingController();
-
-    void postMessage() {
-      //only post if there is something in the textfield
-      if (textController.text.isNotEmpty) {
-        FirebaseFirestore.instance.collection("User Posts").add({
-          'UserEmail': currentUser.email,
-          'Message': textController.text,
-          'TimeStamp': Timestamp.now(),
-          'Likes': [],
-        });
-      }
-
-      //clear the textfield
-      textController.clear();
-    }
-
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
-    //Saves the state of dark mode being on or off
-    final lightDarkTheme = ref.watch(themeProvider);
 
-    //Holds the opposite theme color for the text
-    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
-
-    // Container for the gradient of the application
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
-        length: 4,
+        length: 3,
         child: Scaffold(
-          backgroundColor: themeColor2,
+          backgroundColor: const Color.fromARGB(255, 232, 229, 229),
           //Home page for when a user logs in
           appBar: AppBar(
-            title: Center(
+            title: const Center(
               child: Text(
-                "F i t n e s s C e n t e r",
+                "F i t n e s s   C e n t e r",
                 style: TextStyle(
-                    fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 102, 102, 102),
-            bottom: TabBar(
+            backgroundColor: Color.fromARGB(255, 0, 136, 204),
+            bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
                 Tab(
@@ -131,7 +138,6 @@ class FitCenter extends ConsumerWidget {
                 ),
                 Tab(text: "My Workouts"),
                 Tab(text: "Progress"),
-                Tab(text: "Feed"),
               ],
             ),
           ),
@@ -141,76 +147,10 @@ class FitCenter extends ConsumerWidget {
               // The Discover Tab Of the workouts page
 
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
-              ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  final muscle = list[index];
-                  final icon = muscleIcons[
-                      muscle]; // Initalize each entry of the list to the muscle
-                  return InkWell(
-                    onTap: () async {
-                      final exercisesData = await getExercises(muscle);
-
-                      if (exercisesData.isNotEmpty) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Scaffold(
-                            appBar: AppBar(
-                              backgroundColor:
-                                  Color.fromARGB(255, 102, 102, 102),
-                              title: Text("Workouts for $muscle"),
-                            ),
-                            body: ListView.builder(
-                              itemCount: exercisesData.length,
-                              itemBuilder: (context, index) {
-                                final exercise = exercisesData[index];
-                                return ListTile(
-                                  title: Text(exercise['name']),
-                                );
-                              },
-                            ),
-                          ),
-                        ));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                "No Workout Data is Available for $muscle."),
-                          ),
-                        );
-                      }
-                    },
-
-                    // Styling elements for each specific muscle
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: themeColor2),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Adding an icon to each specific muscle
-                            Icon(icon ?? Icons.fitness_center,
-                                size:
-                                    34), // Setting the default Icon if one does not exist
-                            Text(
-                              capitalizeFirstLetter(
-                                  muscle.replaceAll('_', ' ')),
-                              style: TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                            Icon(Icons.arrow_forward_ios, size: 34),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              musclesList(),
 
               Container(
-                color: themeColor2,
+                color: const Color.fromARGB(255, 232, 229, 229),
                 child: Center(
                   child: Text(muscle),
                 ),
@@ -218,84 +158,213 @@ class FitCenter extends ConsumerWidget {
               const Center(
                 child: Text("Tab 3"),
               ),
-              //ADDED USER POSTS TO THIS PAGE FOR TESTING
-              Column(
-                children: [
-                  //The Feed
-                  Expanded(
-                    child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .orderBy(
-                            "TimeStamp",
-                            descending: false,
-                          )
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, index) {
-                              //get the message
-                              final post = snapshot.data!.docs[index];
-                              return FeedPost(
-                                message: post['Message'],
-                                user: post['UserEmail'],
-                                postId: post.id,
-                                likes: List<String>.from(post['Likes'] ?? []),
-                                time: formatDate(post['TimeStamp']),
-                              );
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error:${snapshot.error}'),
-                          );
-                        }
-
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                  ),
-
-                  //post message
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: Row(
-                      children: [
-                        //textfield
-                        Expanded(
-                            child: MyTextField(
-                          controller: textController,
-                          hintText: "Share your progress!",
-                          obscureText: false,
-                        )),
-                        //post button
-                        IconButton(
-                          onPressed: postMessage,
-                          icon: const Icon(Icons.arrow_circle_up),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  //logged in as
-                  Text(
-                    "Logged in as ${currentUser.email!}",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  ListView musclesList() {
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        final muscle = list[index];
+        final muscleColor = muscleColors[muscle];
+        final icon = muscleIcons[
+            muscle]; // Initalize each entry of the list to the muscle
+        return GestureDetector(
+          onTap: () async {
+            final exercisesData = await getExercises(muscle);
+
+            if (exercisesData.isNotEmpty) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Scaffold(
+                  backgroundColor: Color.fromARGB(255, 232, 229, 229),
+                  appBar: AppBar(
+                    backgroundColor:
+
+                        //Workouts for each muscle group
+                        const Color.fromARGB(255, 0, 136, 204),
+                    title: Text("Workouts for $muscle"),
+                  ),
+                  body: exercisesList(exercisesData),
+                ),
+              ));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("No Workout Data is Available for $muscle."),
+                ),
+              );
+            }
+          },
+
+          // Styling elements for each specific muscle
+          child: Container(
+            decoration: BoxDecoration(
+              color: muscleColor,
+              borderRadius: BorderRadius.circular(24.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Adding an icon to each specific muscle
+                  muscleIcons[muscle] ??
+                      Icon(Icons.fitness_center,
+                          size:
+                              34), // Setting the default Icon if one does not exist
+                  Text(
+                    capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 34, color: Colors.white),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ListView exercisesList(List<dynamic> exercisesData) {
+    return ListView.builder(
+      itemCount: exercisesData.length,
+      itemBuilder: (context, index) {
+        final exercise = exercisesData[index];
+        final exerciseType = exercise['type'];
+
+        // Finding the icon for each exercise type
+        final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
+
+        return Container(
+          margin: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0), // Add a border radius
+            border: Border.all(
+              width: .5,
+              style: BorderStyle.solid,
+              color: Colors.transparent,
+              // Set the border color and width
+            ),
+          ),
+          child: FlipCard(
+            fill: Fill.fillBack,
+            direction: FlipDirection.VERTICAL,
+            speed: 400,
+            front: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 150.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      exercise['name'],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          exercise['type'],
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          exercise['muscle'],
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          exercise['equipment'],
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          exercise['difficulty'],
+                          style: const TextStyle(
+                            color: Colors.purple,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                          exerciseTypeIcon ?? Icons.category,
+                          color: Colors.red,
+                          size: 18,
+                        ),
+                        Icon(
+                          exerciseTypeIcon ?? Icons.category,
+                          color: Colors.blue,
+                          size: 18,
+                        ),
+                        Icon(
+                          exerciseTypeIcon ?? Icons.category,
+                          color: Colors.green,
+                          size: 18,
+                        ),
+                        Icon(
+                          exerciseTypeIcon ?? Icons.category,
+                          color: Colors.purple,
+                          size: 18,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            back: Card(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    exercise['instructions'],
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

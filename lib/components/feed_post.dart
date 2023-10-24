@@ -71,137 +71,160 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
       padding: const EdgeInsets.all(25),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // feed post
+        Wrap(
+          spacing: 8.0,
+          direction: Axis.horizontal,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.start,
+          children: [
+            // group of text (message + user email)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //message
+                Text(
+                  widget.message,
+                  style: const TextStyle(color: Colors.black),
+                  maxLines: null,
+                ),
 
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //feed post
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+                const SizedBox(height: 5),
 
-              // group of text (message + user email)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //message
-                  Text(widget.message),
+                //user + day
+                Row(
+                  children: [
+                    Text(
+                      widget.user,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                    Text(
+                      " • ",
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                    Text(
+                      widget.time,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
-                  const SizedBox(height: 5),
-
-                  //user
-                  Row(
-                    children: [
-                      Text(
-                        widget.user,
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                      Text(
-                        " • ",
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                      Text(
-                        widget.time,
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              // delete button
-              if (widget.user == currentUser.email)
+            // delete button
+            if (widget.user == currentUser.email)
               DeleteButton(onTap: deletePost),
+          ],
+        ),
 
+        const SizedBox(height: 20),
 
+        // buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //LIKE
+            Column(
+              children: [
+                //like button
+                LikeButton(
+                  isLiked: isLiked,
+                  onTap: toggleLike,
+                ),
 
-            ],
-          ),
+                const SizedBox(height: 5),
 
-          const SizedBox(height: 20),
+                //like count
+                Text(
+                  widget.likes.length.toString(),
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
 
-          // buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //LIKE
-              Column(
-                children: [
-                  //like button
-                  LikeButton(
-                    isLiked: isLiked,
-                    onTap: toggleLike,
-                  ),
+            const SizedBox(width: 10),
 
-                  const SizedBox(height: 5),
+            //COMMENT
+            Column(
+              children: [
+                //comment button
+                CommentButton(onTap: showCommentDialog),
 
-                  //like count
-                  Text(
-                    widget.likes.length.toString(),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 5),
 
-              const SizedBox(width: 10),
+                //comment count
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      //Calculate the comment count
+                      final commentCount = snapshot.data?.docs.length;
+                      return Text(
+                        commentCount.toString(),
+                        style: const TextStyle(color: Colors.grey),
+                      );
+                    } else {
+                      // show a loading indicator while fetching data
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
 
-              //COMMENT
-              Column(
-                children: [
-                  //comment button
-                  CommentButton(onTap: showCommentDialog),
+        const SizedBox(height: 20),
 
-                  const SizedBox(height: 5),
+        //comments under the post
+        Column(
+          children: [
+            ExpansionTile(
+              backgroundColor: Colors.grey[200],
+              title: Text('View Comments', style: TextStyle(color: Colors.grey[500])),
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("User Posts")
+                      .doc(widget.postId)
+                      .collection("Comments")
+                      .orderBy("CommentTime", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    //show loading circle if theres no data
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                  //comment count
-                  const Text(
-                    '0',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                    return ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: snapshot.data!.docs.map((doc) {
+                        //get the comment
+                        final commentData = doc.data() as Map<String, dynamic>;
 
-          const SizedBox(height: 20),
-
-          //comments under the post
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("User Posts")
-                .doc(widget.postId)
-                .collection("Comments")
-                .orderBy("CommentTime", descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              //show loading circle if theres no data
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              return ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: snapshot.data!.docs.map((doc) {
-                  //get the comment
-                  final commentData = doc.data() as Map<String, dynamic>;
-
-                  //return the comment
-                  return Comment(
-                    text: commentData["CommentText"],
-                    user: commentData["CommentedBy"],
-                    time: formatDate(commentData["CommentTime"]),
-                  );
-                }).toList(),
-              );
-            },
-
-          )
-        ],
-      ),
+                        //return the comment
+                        return Comment(
+                          text: commentData["CommentText"],
+                          user: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
+      ]),
     );
   }
 
@@ -247,56 +270,57 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
-  // delete a post 
+  // delete a post
   void deletePost() {
-    //show a dialog box for asking for confirmation before deleting the post 
-    showDialog(context: context, 
-    builder: (context) => AlertDialog(
-      title: const Text("Delete Post"),
-      content: const Text("Are you sure you want to delete this post?"),
-      actions: [
-        //CANCEL BUTTON
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
+    //show a dialog box for asking for confirmation before deleting the post
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Post"),
+        content: const Text("Are you sure you want to delete this post?"),
+        actions: [
+          //CANCEL BUTTON
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
 
-        //DELETE BUTTON
-        TextButton(
-          onPressed: () async {
-            //delete the comments from firestore first
-            //(if you only delete the post, the comments will still be stored in firestore)
-            final commentDocs = await FirebaseFirestore.instance
-              .collection("User Posts")
-              .doc(widget.postId)
-              .collection("Comments")
-              .get();
+          //DELETE BUTTON
+          TextButton(
+            onPressed: () async {
+              //delete the comments from firestore first
+              //(if you only delete the post, the comments will still be stored in firestore)
+              final commentDocs = await FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .get();
 
-            for (var doc in commentDocs.docs) {
-              await FirebaseFirestore.instance
-                .collection("User Posts")
-                .doc(widget.postId)
-                .collection("Comments")
-                .doc(doc.id)
-                .delete();
-            }
+              for (var doc in commentDocs.docs) {
+                await FirebaseFirestore.instance
+                    .collection("User Posts")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .doc(doc.id)
+                    .delete();
+              }
 
-            // delete the post 
-            FirebaseFirestore.instance
-              .collection("User Posts")
-              .doc(widget.postId)
-              .delete()
-              .then((value) => print("post deleted"))
-              .catchError(
-                (error) => print("failed to delete post: $error"));
+              // delete the post
+              FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .delete()
+                  .then((value) => print("post deleted"))
+                  .catchError(
+                      (error) => print("failed to delete post: $error"));
 
-            // dismiss the dialog 
-            Navigator.pop(context);
-          },
-          child: const Text("Delete"),
+              // dismiss the dialog
+              Navigator.pop(context);
+            },
+            child: const Text("Delete"),
           ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 

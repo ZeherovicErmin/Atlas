@@ -1,5 +1,6 @@
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/user_profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer';
@@ -9,7 +10,7 @@ import 'dart:developer';
 //App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: Color.fromARGB(255, 102, 102, 102),
+      backgroundColor: Color.fromARGB(255, 0, 136, 204),
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -24,7 +25,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
             //attempt to reset profile picture state to null after logout
             ref.read(profilePictureProvider.notifier).state = null;
           },
-          icon: Icon(Icons.logout),
+          icon: const Icon(Icons.logout),
         )
       ]);
 }
@@ -32,11 +33,25 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 //AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-    backgroundColor: Color.fromARGB(255, 102, 102, 102),
+    backgroundColor: Color.fromARGB(255, 0, 136, 204),
     title: Text(
       title,
-      style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      style:
+          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),
+    actions: [
+      IconButton(
+        icon: const Icon(CupertinoIcons.profile_circled),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const UserProfile(),
+            ),
+          );
+        },
+      )
+    ],
     centerTitle: true,
   );
 }
@@ -77,12 +92,3 @@ var myDrawer = const Drawer(
     ));
 
 // A gradient for our application
-
-var myGradient = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
-    Color.fromARGB(255, 90, 117, 255),
-    Color.fromARGB(255, 161, 195, 250),
-  ],
-);

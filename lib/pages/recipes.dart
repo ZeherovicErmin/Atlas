@@ -1,21 +1,20 @@
 import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/saved_recipes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:atlas/pages/recipe-details.dart';
+import 'package:image_card/image_card.dart';
 
 //State Provider holds API Response data including list of Recipes
 final resultProvider = StateProvider<RecipeModel>((ref) {
   return RecipeModel();
-});
-
-//State Provider holds list of saved recipes
-final savedRecipesProvider = StateProvider<List<Result>>((ref) {
-  return [];
 });
 
 //Recipe Class that handles and displays the recipes is
@@ -36,30 +35,33 @@ class Recipes extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //recipes provider state getter
+    //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
-    //Saves the state of dark mode being on or off
-    final lightDarkTheme = ref.watch(themeProvider);
-
-    //Holds the opposite theme color for the text
-    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
-    //Saved recipes provider state getter
-    List<Result> savedRecipes = ref.watch(savedRecipesProvider);
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: myAppBar2(context, ref, "Recipes"),
-      body: gradient(recipes, savedRecipes, context, ref),
-      backgroundColor: themeColor2,
-      //Recipe search bar submit button
-      floatingActionButton: FloatingActionButton(
-        //Use onSubmit to activate search, onSubmitTEST to deactivate search
-        //and use test data
-        onPressed: () => onSubmitTEST(context, ref),
-        child: Text('Submit'),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229), //- OFFWHITE
+      appBar: AppBar(
+        title: Text(
+          "R e c i p e s",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
+      body: Column(children: [
+        Padding(padding: EdgeInsets.only(top: 20)),
+        ElevatedButton(
+            onPressed: () => navigateToSavedRecipesPage(context),
+            child: Text('Saved Recipes'),
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.orange))),
+        form(context, ref),
+        //ingredientsList(),
+        recipeList(recipes, context, ref)
+      ]),
+      //gradient(recipes, savedRecipes, context, ref),
+      //Recipe search bar submit button
     );
   }
 
@@ -89,31 +91,30 @@ class Recipes extends ConsumerWidget {
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
-        form(),
-        recipeList(recipes, context, ref),
-        Text(
-          "SAVED RECIPES",
-          style: TextStyle(
-              fontSize: 30, fontWeight: FontWeight.bold, color: themeColor),
-        ),
-        savedRecipeList(savedRecipes, context, ref),
+        ElevatedButton(
+            onPressed: () => navigateToSavedRecipesPage(context),
+            child: Text('Saved Recipes')),
+        form(context, ref),
+        //ingredientsList(),
+        recipeList(recipes, context, ref)
       ]),
     );
   }
 
   //Recipe search form
-  Widget form() {
+  Widget form(BuildContext context, WidgetRef ref) {
     return Column(children: [
       //Spacing between components
-      Padding(
-        padding: EdgeInsets.all(15), //apply padding to all sides
-        //Page Title
-        child: Text('Recipes',
-            style: TextStyle(
-                color: themeColor2, fontSize: 18, fontWeight: FontWeight.bold)),
+
+      const Padding(
+        padding: EdgeInsets.only(
+            top: 5,
+            left: 15,
+            right: 15,
+            bottom: 5), //apply padding to all sides
       ),
       Container(
-        margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
+        margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.11))
@@ -121,33 +122,41 @@ class Recipes extends ConsumerWidget {
         ),
         child: Form(
           key: _formKey,
-          child: Column(children: [searchBar()]),
+          child: Column(children: [searchBar(context, ref)]),
         ),
       ),
     ]);
   }
 
 // Recipe search bar
-  Widget searchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: themeColor2,
-        borderRadius: BorderRadius.circular(25.0),
-      ),
-      child: TextFormField(
-        controller: searchController,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please Input A Value into Searchbar';
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
-          border: InputBorder.none,
+
+  Widget searchBar(BuildContext context, WidgetRef ref) {
+    return TextFormField(
+      //Controller stores value entered by user
+      controller: searchController,
+      //Checks if searchbar has a value, if not: show error message
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please Input A Value into Searchbar';
+        }
+        return null;
+      },
+      style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(top: 15),
+          prefixIcon: Icon(Icons.search),
+          prefixIconColor: Colors.orangeAccent,
+          suffixIcon: IconButton(
+              icon: Icon(Icons.send),
+              //Use onSubmit to activate search, onSubmitTEST to deactivate search
+              //and use test data
+              onPressed: () => onSubmitTEST(context, ref)),
+          suffixIconColor: Colors.orangeAccent,
+          filled: true,
+          fillColor: Color.fromARGB(255, 248, 237, 220),
+          //Placeholder message in search bar directing user
           hintText: "Enter Recipe Search",
-        ),
-      ),
+          hintStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
     );
   }
 
@@ -163,7 +172,7 @@ class Recipes extends ConsumerWidget {
     }
     return Expanded(
         child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             //ListView used to output recipe list element into individual components
             child: ListView.separated(
               shrinkWrap: true,
@@ -175,36 +184,67 @@ class Recipes extends ConsumerWidget {
               itemBuilder: (context, index) {
                 Result recipe = recipes[index];
                 String recipeName = recipe.title;
-                return ListTile(
-                    title: Text(recipeName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    //Function used to capture tap event for list items
-                    onTap: () => navigateToRecipeDetails(context, recipe),
-                    //Add Save button to end of tile
-                    trailing: ElevatedButton(
-                        child: const Text("Save"),
-                        onPressed: () => onSave(recipe, ref, context)));
+                return Container(
+                    alignment: Alignment.center,
+                    child: TransparentImageCard(
+                      width: 300,
+                      imageProvider: recipe.image != null || recipe.image != ""
+                          ? NetworkImage(recipe.image)
+                          : const AssetImage('assets/icons/recipe-notfound.svg')
+                              as ImageProvider,
+                      // tags: [
+                      //   _tag('Product', () {}),
+                      // ],
+                      title: Container(
+                          child: Text(
+                        "${recipe.title}",
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      )),
+                      description: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Color.fromARGB(255, 255, 162, 23))),
+                                onPressed: () =>
+                                    navigateToRecipeDetails(context, recipe),
+                                child: Text(
+                                  "View Details",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                )),
+                            Container(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.bottomRight,
+                                child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 255, 176, 58),
+                                    child: IconButton(
+                                      onPressed: () =>
+                                          onSave(recipe, ref, context),
+                                      icon: const Icon(
+                                          Icons.bookmark_add_rounded),
+                                      tooltip: "Save Recipe",
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      highlightColor: Colors.purpleAccent,
+                                      hoverColor: Colors.blue.withOpacity(0.3),
+                                      splashRadius: 20,
+                                      splashColor: Colors.red,
+                                    )))
+                          ]),
+                    ));
               },
               //Used to put a divider line between recipes
               separatorBuilder: (context, index) {
                 return const Divider();
               },
             )));
-  }
-
-  //Save Button Handler - Save New Recipe
-  void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
-    //copy list of saved recipes
-    List<Result> recipes = [...ref.watch(savedRecipesProvider)];
-    //add new recicpe
-    recipes.add(recipe);
-    //save new list of recipes
-    ref.read(savedRecipesProvider.notifier).state = recipes;
-    //output recipe saved message
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Recipe Saved'), duration: Duration(seconds: 1)));
-    print(ref.watch(savedRecipesProvider));
   }
 
   //Form Submission Handler - Submits recipe search to API
@@ -227,6 +267,7 @@ class Recipes extends ConsumerWidget {
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
       //formats url
+
       final uri = Uri.parse(url);
       //sends request to api
       final response = await http.get(uri);
@@ -276,59 +317,52 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-  Widget savedRecipeList(
-      //List<dynamic> recipes,
-      List<Result>? recipes,
-      BuildContext context,
-      WidgetRef ref) {
-    if (recipes != null) {
-      return Expanded(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              //ListView used to output recipe list element into individual components
-              child: ListView.separated(
-                shrinkWrap: true,
-                //Used to ensure list is scrollable
-                physics: const AlwaysScrollableScrollPhysics(),
-                //Number of recipes
-                itemCount: recipes.length,
-                //Used to build recipe list tiles
-                itemBuilder: (context, index) {
-                  Result recipe = recipes[index];
-                  String recipeName = recipe.title;
-                  return ListTile(
-                      onTap: () => navigateToRecipeDetails(context, recipe),
-                      title: Text(recipeName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      //Add remove button to end of tile
-                      trailing: ElevatedButton(
-                          child: const Text("Remove"),
-                          onPressed: () => onRemove(recipe, ref, context),
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.red))));
-                },
-                //Used to put a divider line between recipes
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              )));
-    }
-    return const Text("No Saved Recipes");
+  // Function to navigate to Saved Recipes Page
+  navigateToSavedRecipesPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SavedRecipes(),
+      ),
+    );
   }
 
-  //Remove Button Handler - Remove Saved Recipe
-  onRemove(Result recipe, WidgetRef ref, BuildContext context) {
-    //copy list of saved recipes
+  //Save Button Handler - Save New Recipe
+  void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
+    /* //copy list of saved recipes
     List<Result> recipes = [...ref.watch(savedRecipesProvider)];
-    //remove the selected recipe
-    recipes.remove(recipe);
-    //save new list without the removed recipe
+    //add new recicpe
+    recipes.add(recipe);
+    //save new list of recipes
     ref.read(savedRecipesProvider.notifier).state = recipes;
-    //Output removed message
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Recipe Removed'), duration: Duration(seconds: 1)));
-    //print(ref.watch(savedRecipesProvider));
+    */
+
+    //Save the recipe to the DB
+    saveRecipeToDB(recipe)
+        .whenComplete(() => ref.refresh(savedRecipesProvider));
+
+    //output recipe saved message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Recipe Saved - ${recipe.title}'),
+        duration: Duration(seconds: 1)));
+
+    // Map<String, dynamic> recipeMap = recipe.toMap();
+    // print(recipeMap);
+  }
+
+  Future<void> saveRecipeToDB(Result recipe) async {
+    // Create an instance of FirebaseAuth
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
+    //reference to Saved_Recipes collection in firebase
+    final recipeCollection =
+        FirebaseFirestore.instance.collection("Saved_Recipes");
+
+    //send request to firebase to add recipe to the Saved_Recipes collection
+    await recipeCollection.add(
+        {"uid": userID, "recipe": recipe.toMap(), "saveDate": DateTime.now()});
   }
 }

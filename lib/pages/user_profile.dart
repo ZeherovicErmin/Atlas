@@ -33,7 +33,7 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 });
 
 class UserProfile extends ConsumerWidget {
-  const UserProfile({Key? key});
+  const UserProfile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -352,7 +352,7 @@ class UserProfile extends ConsumerWidget {
 
                 // Username
                 MyTextBox(
-                  text: userData?['username']?.toString() ??
+                  text: userData['username']?.toString() ??
                       '', // Safely access username
                   sectionName: 'Username',
                   onPressed: () => editField('username'),
@@ -360,7 +360,7 @@ class UserProfile extends ConsumerWidget {
 
                 // Bio
                 MyTextBox(
-                  text: userData?['bio']?.toString() ?? '', // Safely access bio
+                  text: userData['bio']?.toString() ?? '', // Safely access bio
                   sectionName: 'Bio',
                   onPressed: () => editField('bio'),
                 ),

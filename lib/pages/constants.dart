@@ -1,14 +1,16 @@
 import 'package:atlas/main.dart';
+import 'package:atlas/pages/user_profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer';
 
 // A file for frequently used widgets to clean up code
 
-// App Bar for the homepage
+//App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+      backgroundColor: Color.fromARGB(255, 29, 74, 222),
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -19,22 +21,37 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
           onPressed: () async {
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
-
             Navigator.of(context).pushReplacementNamed('/login');
+            //attempt to reset profile picture state to null after logout
+            ref.read(profilePictureProvider.notifier).state = null;
           },
-          icon: Icon(Icons.logout),
+          icon: const Icon(Icons.logout),
         )
       ]);
 }
 
-// App Bar for the homepage
+//AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-    backgroundColor: const Color.fromARGB(255, 38, 97, 185),
+
+    backgroundColor: Color.fromARGB(255, 29, 74, 222),
     title: Text(
       title,
-      style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),
+    actions: [
+      IconButton(
+        icon: const Icon(CupertinoIcons.profile_circled),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const UserProfile(),
+            ),
+          );
+        },
+      )
+    ],
     centerTitle: true,
   );
 }
@@ -66,7 +83,7 @@ var myDrawer = const Drawer(
 
 // A gradient for our application
 
-var myGradient = LinearGradient(
+var myGradient = const LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
   colors: [
@@ -74,40 +91,3 @@ var myGradient = LinearGradient(
     Color.fromARGB(255, 161, 195, 250),
   ],
 );
-  
-/* Creating a bottom navigation bar
-class myBottomNavigationBar extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = ref.watch(selectedIndexProvider);
-
-    // Creating the pages we will redirect to
-    final List<Widget> pages = [
-      HomePage(),
-      HomePage2(),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Atlas'),
-      ),
-      body: pages[selectedIndex.state],
-      bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "Profile",
-            ),
-          ],
-          currentIndex: selectedIndex.state,
-          selectedItemColor: Colors.blue,
-          onTap: (index) {
-            selectedIndex.state = index;
-          }),
-    );
-  }
-} */

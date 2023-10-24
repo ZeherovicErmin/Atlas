@@ -33,6 +33,7 @@ class RecipeDetails extends ConsumerWidget {
       ]),
       backgroundColor: Color.fromARGB(255, 255, 253, 251),
     );
+
   }
 
   Widget gradient() {
@@ -42,8 +43,8 @@ class RecipeDetails extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250)
+              Color.fromARGB(255, 238, 238, 238),
+              Color.fromARGB(255, 238, 238, 238),
             ],
           ),
         ),

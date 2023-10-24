@@ -1,11 +1,13 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/components/bottom_bar.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+import 'package:atlas/components/productHouser.dart';
+
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/register_page.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,22 +69,26 @@ class MyApp extends ConsumerWidget {
     return user.when(
       data: (user) {
         return Directionality(
-          textDirection: TextDirection.ltr,
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: const AuthPage(),
-            routes: {
-              '/home': (context) => HomePage(),
-              '/fitcenter': (context) => FitCenter(),
-              '/login': (context) => LoginPage(),
-              '/register': (context) => RegisterPage(),
-              '/recipes': (context) => Recipes(),
-              '/userprof': (context) => UserProfile(),
-              '/barcode': (context) => BarcodeLookupPage(),
-              '/start': (context) => BottomNav(),
-            },
-          ),
-        );
+            textDirection: TextDirection.ltr,
+            child: Consumer(builder: (context, ref, _) {
+              final lightDarkTheme = ref.watch(themeProvider);
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData.light(),
+                themeMode: lightDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                home: const AuthPage(),
+                routes: {
+                  '/home': (context) => HomePage(),
+                  '/fitcenter': (context) => FitCenter(),
+                  '/login': (context) => LoginPage(),
+                  '/register': (context) => RegisterPage(),
+                  '/recipes': (context) => Recipes(),
+                  '/userprof': (context) => UserProfile(),
+                  '/barcode': (context) => BarcodeLookupComb(),
+                  '/start': (context) => BottomNav(),
+                },
+              );
+            }));
       },
       error: (e, s) => Text('error'),
       loading: () {

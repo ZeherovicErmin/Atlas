@@ -1,3 +1,4 @@
+import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/habit_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,9 +38,7 @@ class HabitCreationScreen extends ConsumerWidget {
     String _frequency = 'daily'; // Default frequency value
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create a New Habit'),
-      ),
+      appBar: myAppBar2(context, ref, "Create a New Habit"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

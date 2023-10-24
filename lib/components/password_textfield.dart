@@ -62,14 +62,15 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
+        style: const TextStyle(color: Colors.black),
         controller: widget.controller,
         obscureText: widget.obscureText,
         onChanged: (_) {
           confirmPassword();
         },
         decoration: InputDecoration(
-          enabledBorder:OutlineInputBorder(
-            borderSide: BorderSide(color: getColor(), width: 2),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey.shade400),
@@ -79,10 +80,6 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
             hintText: widget.hintText,
             hintStyle: TextStyle(color: Colors.grey[500]),
             errorText: errorMessage.isNotEmpty ? errorMessage : null,
-            errorStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );
@@ -93,14 +90,5 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   void dispose() {
     widget.controller.removeListener(confirmPassword);
     super.dispose();
-  }
-
-  //Stores the appropriate color based on whether there is an error or not
-  Color getColor() {
-  if (errorMessage.isNotEmpty) {
-      return Colors.red;
-    } else {
-      return Colors.white;
-    }
   }
 }

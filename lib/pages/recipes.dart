@@ -4,6 +4,7 @@ import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,16 +29,20 @@ class Recipes extends ConsumerWidget {
   //Text controller used to store value from recipe search bar
   final TextEditingController searchController = TextEditingController();
 
+  get themeColor => null;
+
+  get themeColor2 => null;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
       appBar: AppBar(
         backgroundColor: Colors.orange,
+
       ),
       body: Column(children: [
         Padding(padding: EdgeInsets.only(top: 20)),
@@ -59,21 +64,30 @@ class Recipes extends ConsumerWidget {
   // bg gradient color
   Widget gradient(List<Result>? recipes, List<Result>? savedRecipes,
       BuildContext context, WidgetRef ref) {
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+
     return Container(
       //gradient decoration
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
+            themeColor2,
+            themeColor2,
           ],
         ),
       ),
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
+
         ElevatedButton(
             onPressed: () => navigateToSavedRecipesPage(context),
             child: Text('Saved Recipes')),
@@ -88,19 +102,20 @@ class Recipes extends ConsumerWidget {
   Widget form(BuildContext context, WidgetRef ref) {
     return Column(children: [
       //Spacing between components
+
       const Padding(
         padding: EdgeInsets.only(
             top: 5,
             left: 15,
             right: 15,
             bottom: 5), //apply padding to all sides
+
       ),
       Container(
         margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
         decoration: BoxDecoration(
           boxShadow: [
-            BoxShadow(
-                color: const Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
+            BoxShadow(color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.11))
           ],
         ),
         child: Form(
@@ -112,6 +127,7 @@ class Recipes extends ConsumerWidget {
   }
 
 // Recipe search bar
+
   Widget searchBar(BuildContext context, WidgetRef ref) {
     return TextFormField(
       //Controller stores value entered by user
@@ -139,6 +155,7 @@ class Recipes extends ConsumerWidget {
           //Placeholder message in search bar directing user
           hintText: "Enter Recipe Search",
           hintStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+
     );
   }
 
@@ -248,6 +265,7 @@ class Recipes extends ConsumerWidget {
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
           //formats url
+
       final uri = Uri.parse(url);
       //sends request to api
       final response = await http.get(uri);
@@ -297,6 +315,7 @@ class Recipes extends ConsumerWidget {
     );
   }
 
+
  // Function to navigate to Saved Recipes Page
   navigateToSavedRecipesPage(BuildContext context) {
     Navigator.push(
@@ -305,6 +324,7 @@ class Recipes extends ConsumerWidget {
         builder: (context) => SavedRecipes(),
       ),
     );
+
   }
 
   //Save Button Handler - Save New Recipe

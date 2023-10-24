@@ -1,3 +1,4 @@
+import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -151,6 +152,18 @@ class HomePage extends StatelessWidget {
         leading: null,
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+          actions: [
+          //Settings icon button
+          IconButton (
+          icon: const Icon(Icons.person_rounded),
+          onPressed: () {
+              Navigator.push (
+                context,
+                MaterialPageRoute(builder: (context) => const UserProfile()),
+              );
+            },
+          ),
+        ],
         title: Text(
           title,
           style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -174,7 +187,7 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: homePageAppBar(context, uid2),
+        appBar: homePageAppBar(context, 'H o m e  P a g e'),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

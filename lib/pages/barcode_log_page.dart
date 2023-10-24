@@ -69,9 +69,11 @@ class BarcodeLogPage extends ConsumerWidget {
                   .updateSearchTerm(value),
               decoration: InputDecoration(hintText: 'Search'),
             ),
+
             // Sorting Menu in the App Bar itself
             actions: [
               PopupMenuButton<String>(
+                // Sorting functionality
                 onSelected: (value) =>
                     ref.read(filterStateProvider.notifier).updateSortBy(value),
                 itemBuilder: (context) => [
@@ -219,6 +221,7 @@ class BarcodeLogPage extends ConsumerWidget {
 
           startActionPane: ActionPane(
             motion: ScrollMotion(),
+            extentRatio: .25,
             children: [
               SlidableAction(
                 autoClose: true,

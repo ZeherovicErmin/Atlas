@@ -48,6 +48,11 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.4.0
+
+  accordion: ^2.6.0
+
+  flip_card: ^0.7.0
+
   image_picker: ^1.0.4
   dropdown_button2: ^2.3.9
   settings_ui: ^2.0.2
@@ -55,6 +60,7 @@ dependencies:
   firebase_storage: ^11.2.8
   mobile_scanner: ^3.5.0
   visibility_detector: ^0.4.0
+
 
 dev_dependencies:
   flutter_test:

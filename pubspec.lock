@@ -217,6 +217,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.8.0"
+
+  flip_card:
+    dependency: "direct main"
+    description:
+      name: flip_card
+      sha256: "5d4aa58f3983cced0782f4ce45826b7eea36e8e464964d9209dcbc7a87b2292f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
+
   firebase_storage:
     dependency: "direct main"
     description:
@@ -241,6 +251,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.8"
+
   flutter:
     dependency: "direct main"
     description: flutter
@@ -312,6 +323,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get:
+    dependency: transitive
+    description:
+      name: get
+      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.6"
   hooks_riverpod:
     dependency: "direct main"
     description:
@@ -552,6 +571,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+
+  scroll_to_index:
+    dependency: transitive
+    description:
+      name: scroll_to_index
+      sha256: b707546e7500d9f070d63e5acf74fd437ec7eeeb68d3412ef7b0afada0b4f176
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
+
   settings_ui:
     dependency: "direct main"
     description:
@@ -560,6 +589,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+
   simple_barcode_scanner:
     dependency: "direct main"
     description:
@@ -703,4 +733,4 @@ packages:
     version: "6.3.0"
 sdks:
   dart: ">=3.1.0 <4.0.0"
-  flutter: ">=3.7.0"
+  flutter: ">=3.13.0"

@@ -71,137 +71,160 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
       padding: const EdgeInsets.all(25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // feed post
-          Wrap(
-            spacing: 8.0,
-            direction: Axis.horizontal,
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.start,
-            children: [
-              // group of text (message + user email)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //message
-                  Text(
-                    widget.message,
-                    style: const TextStyle(color: Colors.black),
-                    maxLines: null,
-                  ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // feed post
+        Wrap(
+          spacing: 8.0,
+          direction: Axis.horizontal,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.start,
+          children: [
+            // group of text (message + user email)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //message
+                Text(
+                  widget.message,
+                  style: const TextStyle(color: Colors.black),
+                  maxLines: null,
+                ),
 
-                  const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-                  //user + day
-                  Row(
-                    children: [
-                      Text(
-                        widget.user,
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                      Text(
-                        " • ",
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                      Text(
-                        widget.time,
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                //user + day
+                Row(
+                  children: [
+                    Text(
+                      widget.user,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                    Text(
+                      " • ",
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                    Text(
+                      widget.time,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
-              // delete button
-              if (widget.user == currentUser.email)
-                DeleteButton(onTap: deletePost),
-            ],
-          ),
+            // delete button
+            if (widget.user == currentUser.email)
+              DeleteButton(onTap: deletePost),
+          ],
+        ),
 
-          const SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-          // buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //LIKE
-              Column(
-                children: [
-                  //like button
-                  LikeButton(
-                    isLiked: isLiked,
-                    onTap: toggleLike,
-                  ),
+        // buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //LIKE
+            Column(
+              children: [
+                //like button
+                LikeButton(
+                  isLiked: isLiked,
+                  onTap: toggleLike,
+                ),
 
-                  const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-                  //like count
-                  Text(
-                    widget.likes.length.toString(),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
+                //like count
+                Text(
+                  widget.likes.length.toString(),
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
 
-              const SizedBox(width: 10),
+            const SizedBox(width: 10),
 
-              //COMMENT
-              Column(
-                children: [
-                  //comment button
-                  CommentButton(onTap: showCommentDialog),
+            //COMMENT
+            Column(
+              children: [
+                //comment button
+                CommentButton(onTap: showCommentDialog),
 
-                  const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-                  //comment count
-                  const Text(
-                    '0',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                //comment count
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      //Calculate the comment count
+                      final commentCount = snapshot.data?.docs.length;
+                      return Text(
+                        commentCount.toString(),
+                        style: const TextStyle(color: Colors.grey),
+                      );
+                    } else {
+                      // show a loading indicator while fetching data
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
 
-          const SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-          //comments under the post
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("User Posts")
-                .doc(widget.postId)
-                .collection("Comments")
-                .orderBy("CommentTime", descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              //show loading circle if theres no data
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+        //comments under the post
+        Column(
+          children: [
+            ExpansionTile(
+              backgroundColor: Colors.grey[200],
+              title: Text('View Comments', style: TextStyle(color: Colors.grey[500])),
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("User Posts")
+                      .doc(widget.postId)
+                      .collection("Comments")
+                      .orderBy("CommentTime", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    //show loading circle if theres no data
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-              return ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: snapshot.data!.docs.map((doc) {
-                  //get the comment
-                  final commentData = doc.data() as Map<String, dynamic>;
+                    return ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: snapshot.data!.docs.map((doc) {
+                        //get the comment
+                        final commentData = doc.data() as Map<String, dynamic>;
 
-                  //return the comment
-                  return Comment(
-                    text: commentData["CommentText"],
-                    user: commentData["CommentedBy"],
-                    time: formatDate(commentData["CommentTime"]),
-                  );
-                }).toList(),
-              );
-            },
-          )
-        ],
-      ),
+                        //return the comment
+                        return Comment(
+                          text: commentData["CommentText"],
+                          user: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
+      ]),
     );
   }
 

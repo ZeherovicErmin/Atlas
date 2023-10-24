@@ -37,18 +37,63 @@ String capitalizeFirstLetter(String text) {
 final Map<String, Widget> muscleIcons = {
   "biceps": Image.asset(
     'lib/images/bicepicon.png',
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
   ),
   "forearms": Image.asset(
     'lib/images/forearm.png',
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
   ),
   "triceps": Image.asset(
     'lib/images/triceps.png',
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
+  ),
+  "abdominals": Image.asset(
+    'lib/images/abdominals.png',
+    height: 60,
+    width: 60,
+  ),
+  "calves": Image.asset(
+    'lib/images/calves.png',
+    height: 60,
+    width: 60,
+  ),
+  "chest": Image.asset(
+    'lib/images/chest.png',
+    height: 60,
+    width: 60,
+  ),
+  "neck": Image.asset(
+    'lib/images/neck.png',
+    height: 60,
+    width: 60,
+  ),
+  "abductors": Image.asset(
+    'lib/images/abductors.png',
+    height: 60,
+    width: 60,
+  ),
+  "adductors": Image.asset(
+    'lib/images/adductors.png',
+    height: 60,
+    width: 60,
+  ),
+  "lower_back": Image.asset(
+    'lib/images/lowerback.png',
+    height: 60,
+    width: 60,
+  ),
+  "middle_back": Image.asset(
+    'lib/images/middleback.png',
+    height: 60,
+    width: 60,
+  ),
+  "quadriceps": Image.asset(
+    'lib/images/quads.png',
+    height: 60,
+    width: 60,
   ),
 };
 
@@ -59,22 +104,22 @@ final Map<String, IconData> exerciseTypeIcons = {
 
 // Creating a map of colors to apply to each type of muscle
 const Map<String, Color> muscleColors = {
-  "abdominals": Colors.purple,
-  "abductors": Colors.blue,
-  "adductors": Colors.blue,
-  "biceps": Colors.green,
-  "calves": Colors.blue,
-  "chest": Colors.pink,
-  "forearms": Colors.green,
-  "glutes": Colors.brown,
-  "hamstrings": Colors.brown,
-  "lats": Colors.red,
-  "lower_back": Colors.red,
-  "middle_back": Colors.red,
-  "neck": Colors.red,
-  "quadriceps": Colors.blue,
-  "traps": Colors.red,
-  "triceps": Colors.green,
+  "abdominals": Color.fromARGB(255, 64, 224, 208),
+  "abductors": Color.fromARGB(255, 255, 107, 76),
+  "adductors": Color.fromARGB(255, 255, 107, 76),
+  "biceps": Color.fromARGB(255, 255, 230, 128),
+  "calves": Color.fromARGB(255, 255, 107, 76),
+  "chest": Color.fromARGB(255, 152, 251, 152),
+  "forearms": Color.fromARGB(255, 255, 230, 128),
+  "glutes": Color.fromARGB(255, 112, 128, 144),
+  "hamstrings": Color.fromARGB(255, 112, 128, 144),
+  "lats": Color.fromARGB(255, 147, 112, 219),
+  "lower_back": Color.fromARGB(255, 147, 112, 219),
+  "middle_back": Color.fromARGB(255, 147, 112, 219),
+  "neck": Color.fromARGB(255, 147, 112, 219),
+  "quadriceps": Color.fromARGB(255, 255, 107, 76),
+  "traps": Color.fromARGB(255, 147, 112, 219),
+  "triceps": Color.fromARGB(255, 255, 230, 128)
 };
 
 // Creating a state provider to return a string for selected muscle
@@ -88,7 +133,8 @@ class FitCenter extends ConsumerWidget {
 
   Future<List<dynamic>> getExercises(String muscle) async {
     // The Api key from API NINJAS
-    final String myApiKey = 'q48XgvLytBmNhVJHFzoZgg==QWOhrECybUKjiRR8';
+    final String myApiKey =
+        'q48XgvLytBmNhVJHFzoZgg==QWOhrECybUKjiRR8'; // Need to hide
 
     // THe url to Api ninjas site, the $muscle will be provided from the muscle variable
     final apiUrl = 'https://api.api-ninjas.com/v1/exercises?muscle=$muscle';
@@ -115,7 +161,7 @@ class FitCenter extends ConsumerWidget {
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
-        length: 3,
+        length: 2,
         child: Scaffold(
           backgroundColor: const Color.fromARGB(255, 232, 229, 229),
           //Home page for when a user logs in
@@ -137,7 +183,6 @@ class FitCenter extends ConsumerWidget {
                   text: "Discover",
                 ),
                 Tab(text: "My Workouts"),
-                Tab(text: "Progress"),
               ],
             ),
           ),
@@ -154,9 +199,6 @@ class FitCenter extends ConsumerWidget {
                 child: Center(
                   child: Text(muscle),
                 ),
-              ),
-              const Center(
-                child: Text("Tab 3"),
               ),
             ],
           ),
@@ -186,7 +228,7 @@ class FitCenter extends ConsumerWidget {
 
                         //Workouts for each muscle group
                         const Color.fromARGB(255, 0, 136, 204),
-                    title: Text("Workouts for $muscle"),
+                    title: Text("$muscle Exercises"),
                   ),
                   body: exercisesList(exercisesData),
                 ),

@@ -1,4 +1,6 @@
 //Atlas Fitness App CSC 4996
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -7,22 +9,22 @@ import 'package:flip_card/flip_card.dart';
 
 // Creating a list of target muscles
 const List<String> list = <String>[
-  "abdominals",
+  "biceps",
+  "forearms",
+  "triceps",
   "abductors",
   "adductors",
-  "biceps",
   "calves",
+  "quadriceps",
+  "abdominals",
   "chest",
-  "forearms",
-  "glutes",
-  "hamstrings",
   "lats",
   "lower_back",
   "middle_back",
   "neck",
-  "quadriceps",
   "traps",
-  "triceps",
+  "glutes",
+  "hamstrings",
 ];
 
 // Creating a method to capitalize the first letter of each muscle
@@ -39,6 +41,26 @@ final Map<String, IconData> muscleIcons = {
 // Creating A map of icons for the exercise type i.e strength or cardio
 final Map<String, IconData> exerciseTypeIcons = {
   "strength": Icons.fitness_center,
+};
+
+// Creating a map of colors to apply to each type of muscle
+const Map<String, Color> muscleColors = {
+  "abdominals": Colors.purple,
+  "abductors": Colors.blue,
+  "adductors": Colors.blue,
+  "biceps": Colors.green,
+  "calves": Colors.blue,
+  "chest": Colors.red,
+  "forearms": Colors.green,
+  "glutes": Colors.yellow,
+  "hamstrings": Colors.yellow,
+  "lats": Colors.orange,
+  "lower_back": Colors.orange,
+  "middle_back": Colors.orange,
+  "neck": Colors.orange,
+  "quadriceps": Colors.blue,
+  "traps": Colors.orange,
+  "triceps": Colors.green,
 };
 
 // Creating a state provider to return a string for selected muscle
@@ -76,7 +98,6 @@ class FitCenter extends ConsumerWidget {
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
 
-    // Container for the gradient of the application
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
@@ -114,6 +135,7 @@ class FitCenter extends ConsumerWidget {
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   final muscle = list[index];
+                  final muscleColor = muscleColors[muscle];
                   final icon = muscleIcons[
                       muscle]; // Initalize each entry of the list to the muscle
                   return InkWell(
@@ -141,24 +163,15 @@ class FitCenter extends ConsumerWidget {
                                 return Container(
                                   margin: const EdgeInsets.all(16.0),
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          12.0), // Add a border radius
-                                      border: Border.all(
-                                        width: .5,
-                                        style: BorderStyle.solid,
-                                        color: Colors.transparent,
-                                        // Set the border color and width
-                                      ),
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.red,
-                                          Colors.blue,
-                                          Colors.green,
-                                          Colors.purple,
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      )),
+                                    borderRadius: BorderRadius.circular(
+                                        12.0), // Add a border radius
+                                    border: Border.all(
+                                      width: .5,
+                                      style: BorderStyle.solid,
+                                      color: Colors.transparent,
+                                      // Set the border color and width
+                                    ),
+                                  ),
                                   child: FlipCard(
                                     fill: Fill.fillBack,
                                     direction: FlipDirection.VERTICAL,
@@ -285,18 +298,17 @@ class FitCenter extends ConsumerWidget {
                     // Styling elements for each specific muscle
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 152, 25, 25)),
-                          borderRadius: BorderRadius.circular(16.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ]),
+                        color: muscleColor,
+                        borderRadius: BorderRadius.circular(24.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       margin: const EdgeInsets.symmetric(
                           vertical: 8.0, horizontal: 8.0),
                       child: Padding(
@@ -312,7 +324,9 @@ class FitCenter extends ConsumerWidget {
                               capitalizeFirstLetter(
                                   muscle.replaceAll('_', ' ')),
                               style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const Icon(Icons.arrow_forward_ios, size: 34),
                           ],

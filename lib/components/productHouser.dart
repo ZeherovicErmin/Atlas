@@ -252,7 +252,14 @@ class BarcodeLookupComb extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      appBar: AppBar(
+        title: Text(
+          "B a r c o d e  L o o k u p",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
+      ),
       backgroundColor: Colors.white,
       body: Stack(
         children: [

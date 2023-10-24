@@ -40,6 +40,16 @@ final Map<String, Widget> muscleIcons = {
     height: 50,
     width: 50,
   ),
+  "forearms": Image.asset(
+    'lib/images/forearm.png',
+    height: 50,
+    width: 50,
+  ),
+  "triceps": Image.asset(
+    'lib/images/triceps.png',
+    height: 50,
+    width: 50,
+  ),
 };
 
 // Creating A map of icons for the exercise type i.e strength or cardio
@@ -114,7 +124,9 @@ class FitCenter extends ConsumerWidget {
               child: Text(
                 "F i t n e s s   C e n t e r",
                 style: TextStyle(
-                    fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             backgroundColor: Color.fromARGB(255, 0, 136, 204),
@@ -218,9 +230,11 @@ class FitCenter extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, size: 34),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 34, color: Colors.white),
                 ],
               ),
             ),

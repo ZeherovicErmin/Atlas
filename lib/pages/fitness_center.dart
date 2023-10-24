@@ -54,16 +54,16 @@ const Map<String, Color> muscleColors = {
   "adductors": Colors.blue,
   "biceps": Colors.green,
   "calves": Colors.blue,
-  "chest": Colors.red,
+  "chest": Colors.pink,
   "forearms": Colors.green,
-  "glutes": Colors.yellow,
-  "hamstrings": Colors.yellow,
-  "lats": Colors.orange,
-  "lower_back": Colors.orange,
-  "middle_back": Colors.orange,
-  "neck": Colors.orange,
+  "glutes": Colors.brown,
+  "hamstrings": Colors.brown,
+  "lats": Colors.red,
+  "lower_back": Colors.red,
+  "middle_back": Colors.red,
+  "neck": Colors.red,
   "quadriceps": Colors.blue,
-  "traps": Colors.orange,
+  "traps": Colors.red,
   "triceps": Colors.green,
 };
 
@@ -168,6 +168,7 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
+                  backgroundColor: Color.fromARGB(255, 232, 229, 229),
                   appBar: AppBar(
                     backgroundColor:
 

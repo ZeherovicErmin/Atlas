@@ -45,7 +45,7 @@ class BottomNav extends ConsumerWidget {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 232, 229, 229),
+        backgroundColor: Colors.transparent,
         color: Color.fromARGB(255, 29, 74, 222),
 
         // Defines animation duration
@@ -56,7 +56,7 @@ class BottomNav extends ConsumerWidget {
           print(ref.read(indexProvider.notifier).state);
         },
         index: ref.watch(indexProvider),
-        items: const[
+        items: const [
           Icon(
             Icons.fitness_center,
             color: Colors.white,

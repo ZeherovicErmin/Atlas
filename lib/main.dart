@@ -75,7 +75,6 @@ class MyApp extends ConsumerWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData.light(),
-                darkTheme: ThemeData.dark(),
                 themeMode: lightDarkTheme ? ThemeMode.dark : ThemeMode.light,
                 home: const AuthPage(),
                 routes: {

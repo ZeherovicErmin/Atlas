@@ -1,5 +1,6 @@
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/recipe-info.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,7 +11,29 @@ class RecipeDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        appBar: myAppBar2(context, ref, "Recipe Details"), body: gradient());
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+      ),
+      body: Column(children: [
+        Expanded(
+            child: ListView(
+                // ignore: prefer_const_constructors
+                children: [
+              recipeImage(),
+              recipeInformation(),
+              //margin for spacing
+              Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
+              // recipeIngredients(),
+              // //margin for spacing
+              // Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
+              // recipeInstructions(),
+              SizedBox(
+                  width: 200, height: 400, child: RecipeInfo(recipe: recipe))
+            ])),
+      ]),
+      backgroundColor: Color.fromARGB(255, 255, 253, 251),
+    );
+
   }
 
   Widget gradient() {
@@ -29,17 +52,17 @@ class RecipeDetails extends ConsumerWidget {
           children: [
             Expanded(
                 child: ListView(
-              children: [
-                recipeImage(),
-                recipeInformation(),
-                //margin for spacing
-                Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
-                recipeIngredients(),
-                //margin for spacing
-                Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
-                recipeInstructions(),
-              ],
-            ))
+                    // ignore: prefer_const_constructors
+                    children: [
+                  recipeImage(),
+                  recipeInformation(),
+                  //margin for spacing
+                  Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
+                  recipeIngredients(),
+                  //margin for spacing
+                  Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
+                  recipeInstructions(),
+                ]))
           ],
         ));
   }
@@ -57,8 +80,6 @@ class RecipeDetails extends ConsumerWidget {
         //Recipe Cuisine
         Text(
             "Cuisine: " +
-                //if cuisine list is empty, return N/A, else return first result
-                //in cuisine list
                 (recipe.cuisines.isNotEmpty ? recipe.cuisines[0] : "N/A"),
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
@@ -117,7 +138,7 @@ class RecipeDetails extends ConsumerWidget {
                   title: Text(ingredientFormatted,
                       textAlign: TextAlign.left,
                       style: const TextStyle(fontWeight: FontWeight.bold)));
-            }),
+            })
       ],
     );
   }
@@ -178,4 +199,5 @@ class RecipeDetails extends ConsumerWidget {
       );
     }
   }
+
 }

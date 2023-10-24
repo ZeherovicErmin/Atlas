@@ -54,12 +54,16 @@ dependencies:
   flip_card: ^0.7.0
 
   image_picker: ^1.0.4
+
+  image_card: ^0.0.4
+
   dropdown_button2: ^2.3.9
   settings_ui: ^2.0.2
   flutter_slidable: ^3.0.0
   firebase_storage: ^11.2.8
   mobile_scanner: ^3.5.0
   visibility_detector: ^0.4.0
+
 
 
 dev_dependencies:

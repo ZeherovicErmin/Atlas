@@ -1,4 +1,5 @@
 import 'package:atlas/Models/recipe-model.dart';
+import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/recipe-details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,9 +18,9 @@ class SavedRecipes extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final savedrecipes = ref.watch(savedRecipesProvider);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: myAppBar2(context, ref, "Saved Recipes"),
         body: savedrecipes.when(
-          //if successfull, output saved recipes
+            //if successfull, output saved recipes
             data: (recipes) => gradient(recipes, context, ref),
             //iff error, output error
             error: (error, stacktrace) => Text("error"),
@@ -132,7 +133,7 @@ class SavedRecipes extends ConsumerWidget {
         FirebaseFirestore.instance.collection("Saved_Recipes");
     await recipeCollection.doc(recipe.firebaseID).delete();
 
-    ref.refresh(savedRecipesProvider);
+    //ref.refresh(savedRecipesProvider);
     //Output removed message
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     //     content: Text('Recipe Removed - ${recipe.title}'),

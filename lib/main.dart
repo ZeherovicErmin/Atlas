@@ -10,6 +10,7 @@ import 'package:atlas/pages/settings_page.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'pages/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -20,7 +21,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  //This line gets rid of the normal UI at the top of the phone like the battery etc.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   runApp(
     ProviderScope(
       child: MyApp(),

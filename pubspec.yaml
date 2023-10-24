@@ -54,6 +54,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   firebase_storage: ^11.2.8
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

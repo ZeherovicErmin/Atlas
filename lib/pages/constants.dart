@@ -41,6 +41,16 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   );
 }
 
+AppBar myAppBar3(BuildContext context, String title) {
+  return AppBar(
+      backgroundColor: const Color.fromARGB(255, 102, 102, 102),
+      title: Text(
+        title,
+        style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      ),
+  );
+}
+
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color,
     IconData iconData, Color iconColor) {

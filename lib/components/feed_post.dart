@@ -12,13 +12,11 @@ class FeedPost extends StatefulWidget {
   final String user;
   final String time;
   final String postId;
-  final Color themeColors;
   final List<String> likes;
   const FeedPost({
     super.key,
     required this.message,
     required this.user,
-    required this.themeColors,
     required this.postId,
     required this.likes,
     required this.time,

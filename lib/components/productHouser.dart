@@ -1,7 +1,7 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/constants.dart';
-import 'package:atlas/util/custom_scanner.dart';
+//import 'package:atlas/util/custom_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,7 +66,7 @@ class BarcodeLookupComb extends ConsumerWidget {
 
   BarcodeLookupComb({Key? key}) : super(key: key);
   // Function to scan a barcode
-  Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
+  Future<void> scanBarcode(BuildContext context, WidgetRef ref) async {
     // Use the barcode scanner page from the simple_barcode_scanner library
     var scannedBarcode = await Navigator.push(
       context,
@@ -267,7 +267,7 @@ class BarcodeLookupComb extends ConsumerWidget {
               right: 16,
               bottom: 100,
               child: ElevatedButton(
-                onPressed: () => _scanBarcode(context, ref),
+                onPressed: () => scanBarcode(context, ref),
                 child: Icon(
                   CupertinoIcons.barcode_viewfinder,
                   size: 50,

@@ -58,7 +58,7 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
 
 AppBar myAppBar3(BuildContext context, String title) {
   return AppBar(
-      backgroundColor: const Color.fromARGB(255, 102, 102, 102),
+      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       title: Text(
         title,
         style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),

@@ -151,7 +151,7 @@ class HomePage extends StatelessWidget {
       child: AppBar(
         leading: null,
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+        backgroundColor: const Color.fromARGB(255, 0, 136, 204),
           actions: [
           //Settings icon button
           IconButton (

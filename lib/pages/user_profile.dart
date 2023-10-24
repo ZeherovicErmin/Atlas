@@ -184,7 +184,7 @@ class UserProfile extends ConsumerWidget {
       preferredSize: const Size.fromHeight(70),
       child: AppBar (
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+        backgroundColor: const Color.fromARGB(255, 0, 136, 204),
         actions: [
           //Settings icon button
           IconButton (

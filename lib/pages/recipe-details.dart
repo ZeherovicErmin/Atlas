@@ -12,7 +12,7 @@ class RecipeDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
       body: Column(children: [
         Expanded(
@@ -33,7 +33,6 @@ class RecipeDetails extends ConsumerWidget {
       ]),
       backgroundColor: Color.fromARGB(255, 255, 253, 251),
     );
-
   }
 
   Widget gradient() {
@@ -199,5 +198,4 @@ class RecipeDetails extends ConsumerWidget {
       );
     }
   }
-
 }

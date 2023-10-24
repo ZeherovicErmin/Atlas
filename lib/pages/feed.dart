@@ -48,7 +48,7 @@ class Feed extends ConsumerWidget {
                 TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
           ),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
 
       body: Center(
@@ -110,7 +110,7 @@ class Feed extends ConsumerWidget {
                     onPressed: postMessage,
                     icon: const Icon(
                       Icons.arrow_circle_up,
-                      color: Color.fromARGB(255, 29, 74, 222),
+                      color: Color.fromARGB(255, 0, 136, 204),
                     ),
                   )
                 ],
@@ -121,7 +121,7 @@ class Feed extends ConsumerWidget {
             Text(
               "Logged in as ${currentUser.email!}",
               style: const TextStyle(
-                color: Color.fromARGB(255, 29, 74, 222),
+                color: Color.fromARGB(255, 0, 136, 204),
               ),
             ),
 

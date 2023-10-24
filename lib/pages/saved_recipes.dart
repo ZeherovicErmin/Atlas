@@ -50,8 +50,8 @@ class SavedRecipes extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250)
+              Color.fromARGB(255, 232, 229, 229),
+              Color.fromARGB(255, 232, 229, 229),
             ],
           ),
         ),

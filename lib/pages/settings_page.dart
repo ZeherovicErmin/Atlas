@@ -33,7 +33,7 @@ class SettingsPage extends ConsumerWidget {
     final themeColor2 = lightDarkTheme ? Colors.black : Colors.white;
 
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'S e t t i n g s'),
+      appBar: myAppBar4(context, ref, 'S e t t i n g s'),
       backgroundColor: themeColor2,
       body: Column (
       children: [

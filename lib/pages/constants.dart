@@ -1,11 +1,13 @@
 import 'package:atlas/main.dart';
+import 'package:atlas/pages/user_profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer';
 
 // A file for frequently used widgets to clean up code
 
-// App Bar for the homepage
+//App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       backgroundColor: Color.fromARGB(255, 29, 74, 222),
@@ -19,22 +21,37 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
           onPressed: () async {
             await ref.read(signOutProvider);
             // After succesful logout redirect to logout page
-
             Navigator.of(context).pushReplacementNamed('/login');
+            //attempt to reset profile picture state to null after logout
+            ref.read(profilePictureProvider.notifier).state = null;
           },
-          icon: Icon(Icons.logout),
+          icon: const Icon(Icons.logout),
         )
       ]);
 }
 
-// App Bar for the homepage
+//AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
+
     backgroundColor: Color.fromARGB(255, 29, 74, 222),
     title: Text(
       title,
-      style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),
+    actions: [
+      IconButton(
+        icon: const Icon(CupertinoIcons.profile_circled),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const UserProfile(),
+            ),
+          );
+        },
+      )
+    ],
     centerTitle: true,
   );
 }
@@ -66,7 +83,7 @@ var myDrawer = const Drawer(
 
 // A gradient for our application
 
-var myGradient = LinearGradient(
+var myGradient = const LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
   colors: [

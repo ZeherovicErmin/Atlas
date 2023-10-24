@@ -1,8 +1,10 @@
+import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/util/custom_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,11 +15,24 @@ import '../../util/test.dart' as testAPI;
 // Define state providers for various data
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
+final productNamelowercaseProvider = StateProvider<String>((ref) => '');
+
 final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
+//amount of servings a container has provider
+final amtServingsProvider = StateProvider<double>((ref) => 0.0);
+
+// Defining fats
 final fatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final satfatsPservingProvider = StateProvider<double>((ref) => 0.0);
+final transfatsPservingProvider = StateProvider<double>((ref) => 0.0);
+// Carbs Per Serving
 final carbsPservingProvider = StateProvider<double>((ref) => 0.0);
 final proteinPservingProvider = StateProvider<double>((ref) => 0.0);
+final cholesterolProvider = StateProvider<double>((ref) => 0.0);
+
+// Sodium per serving
+final sodiumPservingProvider = StateProvider<double>((ref) => 0.0);
 final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
@@ -46,6 +61,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     'Product Name',
     'Calories',
     'Macros',
+    'Cholesterol'
   ];
 
   BarcodeLookupComb({Key? key}) : super(key: key);
@@ -74,30 +90,51 @@ class BarcodeLookupComb extends ConsumerWidget {
 
           if (productData != null) {
             // Set product name or 'Unknown product name' if not available
-            if (productData.productName != null) {
-              ref.watch(productNameProvider.notifier).state =
-                  productData.productName!;
-            } else {
-              ref.watch(productNameProvider.notifier).state =
-                  'Unknown product name';
-            }
-
+            ref.watch(productNameProvider.notifier).state =
+                productData.productName != null
+                    ? productData.productName!
+                    : "Unknown product name";
             // Set product calories, carbs, protein, and fats per serving
             ref.watch(productCaloriesProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
-            ref.watch(carbsPservingProvider.notifier).state =
-                productData.nutriments?.getValue(
-                        Nutrient.carbohydrates, PerSize.oneHundredGrams) ??
-                    0.0;
+
+            ref.watch(carbsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
+                0.0;
             ref.watch(proteinPservingProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.proteins, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.proteins, PerSize.serving) ??
                 0.0;
+            // Fats per serving
             ref.watch(fatsPservingProvider.notifier).state = productData
                     .nutriments
-                    ?.getValue(Nutrient.fat, PerSize.oneHundredGrams) ??
+                    ?.getValue(Nutrient.fat, PerSize.serving) ??
+                0.0;
+
+            ref.watch(satfatsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.saturatedFat, PerSize.serving) ??
+                0.0;
+
+            ref.watch(transfatsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.transFat, PerSize.serving) ??
+                0.0;
+
+            ref.watch(cholesterolProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.cholesterol, PerSize.serving) ??
+                0.0;
+            ref.watch(amtServingsProvider.notifier).state =
+                productData.servingQuantity != null
+                    ? productData.servingQuantity!
+                    : 0.0;
+            ref.watch(sodiumPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.sodium, PerSize.serving) ??
                 0.0;
 
             // Set the user's UID as a state
@@ -124,6 +161,17 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(proteinPservingProvider.notifier).state),
             DataItem('fatsPerServing',
                 ref.read(fatsPservingProvider.notifier).state),
+            DataItem('cholesterolPerServing',
+                ref.read(cholesterolProvider.notifier).state),
+            DataItem('amtServingsProvider',
+                ref.read(amtServingsProvider.notifier).state),
+            DataItem('satfatsPserving',
+                ref.read(satfatsPservingProvider.notifier).state),
+            DataItem('transfatsPserving',
+                ref.read(transfatsPservingProvider.notifier).state),
+            DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
+            DataItem('productName_lowercase',
+                ref.read(productNameProvider).toLowerCase())
           ];
 
           // Send data to Firestore
@@ -133,11 +181,16 @@ class BarcodeLookupComb extends ConsumerWidget {
           // Set error messages if an exception occurs
           ref.watch(resultProvider.notifier).state =
               'Product not found'; // Set an appropriate message
-          ref.watch(productNameProvider.notifier).state = 'Product not found';
+          ref.watch(productNameProvider.notifier).state = 'Please try again';
           ref.watch(productCaloriesProvider.notifier).state = 0.0;
           ref.watch(proteinPservingProvider.notifier).state = 0.0;
           ref.watch(carbsPservingProvider.notifier).state = 0.0;
           ref.watch(fatsPservingProvider.notifier).state = 0.0;
+          ref.watch(cholesterolProvider.notifier).state = 0.0;
+          ref.watch(amtServingsProvider.notifier).state = 0.0;
+          ref.watch(satfatsPservingProvider.notifier).state = 0.0;
+          ref.watch(transfatsPservingProvider.notifier).state = 0.0;
+          ref.watch(sodiumPservingProvider.notifier).state = 0.0;
         }
       } else {
         // Set error messages for an invalid barcode
@@ -147,6 +200,11 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(proteinPservingProvider.notifier).state = 0.0;
         ref.watch(carbsPservingProvider.notifier).state = 0.0;
         ref.watch(fatsPservingProvider.notifier).state = 0.0;
+        ref.watch(cholesterolProvider.notifier).state = 0.0;
+        ref.watch(amtServingsProvider.notifier).state = 0.0;
+        ref.watch(satfatsPservingProvider.notifier).state = 0.0;
+        ref.watch(transfatsPservingProvider.notifier).state = 0.0;
+        ref.watch(sodiumPservingProvider.notifier).state = 0.0;
       }
     }
   }
@@ -173,10 +231,17 @@ class BarcodeLookupComb extends ConsumerWidget {
     final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
+    final productName_lowercase = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
+    final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
+    //fats
     final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
+    final satfatsPserving = ref.watch(satfatsPservingProvider.notifier).state;
+    final transfatsPserving =
+        ref.watch(transfatsPservingProvider.notifier).state;
     final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
     final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
+    final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
     final uid = ref.watch(uidProvider.notifier).state;
@@ -188,53 +253,39 @@ class BarcodeLookupComb extends ConsumerWidget {
 
     return Scaffold(
       appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Container(
-            child: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Display filter chips for user selection
-                    FilterChips(selectedFilters, context, ref),
-                    const SizedBox(height: 20),
-                    // Button to open the barcode scanner
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _scanBarcode(context, ref);
-                      },
-                      child: const Text('Open Scanner'),
-                    ),
-                    const SizedBox(height: 20),
-                    // Button to navigate to barcode logs
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BarcodeLogPage(),
-                          ),
-                        );
-                      },
-                      child: const Text("Barcode logs"),
-                    ),
-                    // Display selected data based on filters in a grid
-                    //GridViewProductCards(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving),
-                  ],
+          //const SizedBox(height: 20),
+          // Button to open the barcode scanner
+
+          //const SizedBox(height: 20),
+          // Button to navigate to barcode logs
+
+          BarcodeLogPage(),
+          Positioned(
+              right: 16,
+              bottom: 100,
+              child: ElevatedButton(
+                onPressed: () => _scanBarcode(context, ref),
+                child: Icon(
+                  CupertinoIcons.barcode_viewfinder,
+                  size: 50,
                 ),
-              ),
-            ),
-          ),
+              )),
           NutrientsList(
-              selectedFilters: selectedFilters,
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving),
+            selectedFilters: selectedFilters,
+            result: result,
+            productName: productName,
+            productCalories: productCalories,
+            carbsPserving: carbsPserving,
+            proteinPserving: proteinPserving,
+            fatsPserving: fatsPserving,
+            cholesterolPerServing: cholesterolPerServing,
+            amtPerServing: amtPerServing,
+            satfatsPserving: satfatsPserving,
+            transfatsPserving: transfatsPserving,
+          ),
         ],
       ),
     );
@@ -267,26 +318,30 @@ class BarcodeLookupComb extends ConsumerWidget {
         dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
-          print(dataMap);
         }
-        // Add data to Firestore
-        await FirebaseFirestore.instance
-            .collection('Barcode_Lookup')
-            .add(dataMap);
-        print("Data to Firestore sent!!!");
 
-        // Send a Snackbar when data is sent to database
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("$productName sent to Firestore"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else {
-        print("No data selected");
+        bool exists = await isBarcodeExists(dataMap['Barcode']);
+
+        if (!exists) {
+          // Add data to Firestore
+          await FirebaseFirestore.instance
+              .collection('Barcode_Lookup')
+              .add(dataMap);
+          print("Data to Firestore sent!!!");
+
+          // Send a Snackbar when data is sent to database
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Data added to Firestore!')));
+        } else {
+          print("Barcode already exists in Firestore.");
+
+          // Send a Snackbar indicating barcode already exists
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Barcode already exists!')));
+        }
       }
     } catch (e) {
-      print('Error sending data: Error: $e');
+      print('Error sending data to Firestore: $e');
     }
   }
 
@@ -321,48 +376,21 @@ class BarcodeLookupComb extends ConsumerWidget {
     print("Filters after removing: ${notifier.state}");
     notifier.state = notifier.state;
   }
-}
 
-class GridViewProductCards extends StatelessWidget {
-  const GridViewProductCards({
-    super.key,
-    required this.selectedFilters,
-    required this.result,
-    required this.productName,
-    required this.productCalories,
-    required this.carbsPserving,
-    required this.proteinPserving,
-    required this.fatsPserving,
-  });
+  Future<bool> isBarcodeExists(String barcode) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Barcode_Lookup')
+          .where('Barcode', isEqualTo: barcode)
+          .limit(1) // Ma
+          .get();
 
-  final List<String> selectedFilters;
-  final String result;
-  final String productName;
-  final double productCalories;
-  final double carbsPserving;
-  final double proteinPserving;
-  final double fatsPserving;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      children: [
-        if (selectedFilters.isNotEmpty)
-          ...selectedFilters.map((filter) {
-            return GenerateTileCard(
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving,
-              filter: filter,
-            );
-          }),
-      ],
-    );
+      // If the snapshot contains any documents, then a document with the provided barcode already exists
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking barcode existence in Firestore: $e');
+      return false; // Return false in case of any error
+    }
   }
 }
 
@@ -376,26 +404,34 @@ class NutrientsList extends StatelessWidget {
     required this.carbsPserving,
     required this.proteinPserving,
     required this.fatsPserving,
+    required this.cholesterolPerServing,
+    required this.amtPerServing,
+    required this.satfatsPserving,
+    required this.transfatsPserving,
   });
 
   final List<String> selectedFilters;
   final String result;
   final String productName;
   final double productCalories;
+  final double amtPerServing;
   final double carbsPserving;
   final double proteinPserving;
   final double fatsPserving;
+  final double cholesterolPerServing;
+  final double satfatsPserving;
+  final double transfatsPserving;
 
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .05,
-        minChildSize: .05,
+        initialChildSize: .15,
+        minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 90, 86, 86),
+              color: Color.fromARGB(255, 151, 151, 151),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),
@@ -403,81 +439,187 @@ class NutrientsList extends StatelessWidget {
             ),
             child: SingleChildScrollView(
               controller: _controller,
-              child: Column(children: [
-                //Drag Handle
-                Center(
-                  child: Container(
-                      margin: EdgeInsets.all(8.0),
-                      width: 40,
-                      height: 5.0,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(12.0),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(children: [
+                  //Drag Handle
+                  Center(
+                    child: Container(
+                        margin: EdgeInsets.all(8.0),
+                        width: 40,
+                        height: 5.0,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 104, 104, 104),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(12.0),
+                          ),
+                        )),
+                  ),
+                  //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+                  //Nutritional Facts Column Sheet
+                  const Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Align(
+                        child: Text(
+                          'Nutrition Facts',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontFamily: 'Helvetica Black',
+                              fontSize: 44,
+                              fontWeight: FontWeight.w900),
                         ),
-                      )),
-                ),
-                NutriGridView(
-                    selectedFilters: selectedFilters,
-                    result: result,
-                    productName: productName,
-                    productCalories: productCalories,
-                    carbsPserving: carbsPserving,
-                    proteinPserving: proteinPserving,
-                    fatsPserving: fatsPserving,
-                    secondController: ScrollController()),
-              ]),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+                  Align(
+                    child: Container(
+                      height: 25,
+                      // Stack to hold the fats and the fats variable
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "${amtPerServing.toInt()} Servings per container",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                fontFamily: 'Helvetica Black',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  NutritionRow(
+                    title: "Calories",
+                    value: '$productCalories',
+                    fontSize: 24,
+                    dividerThickness: 5,
+                    showDivider: false,
+                  ),
+                  //Nutritional Column Dividers
+                  //End NUTRITION FACTS ROW
+                  Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+                  //Start of Nutrition rows
+                  //
+                  NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
+                  //saturated Fats
+                  NutritionRow(
+                    title: 'Saturated Fat',
+                    value: '$satfatsPserving',
+                    isSubcategory: true,
+                    hideIfZero: true,
+                  ),
+                  NutritionRow(
+                    title: 'Trans Fat',
+                    value: '$transfatsPserving',
+                    isSubcategory: true,
+                    hideIfZero: true,
+                  ),
+                  //end fats
+
+                  NutritionRow(
+                      title: "Total Carbohydrates", value: '$carbsPserving'),
+                  //end Protein
+
+                  //protein per serving
+                  NutritionRow(title: "Protein", value: "$proteinPserving"),
+
+                  NutritionRow(
+                      title: "Cholesterol", value: '$cholesterolPerServing'),
+                  //end Protein
+                ]),
+              ),
             ),
           );
         });
   }
 }
 
-class NutriGridView extends StatelessWidget {
-  final ScrollController secondController;
-  const NutriGridView(
-      {super.key,
-      required this.selectedFilters,
-      required this.result,
-      required this.productName,
-      required this.productCalories,
-      required this.carbsPserving,
-      required this.proteinPserving,
-      required this.fatsPserving,
-      required this.secondController});
+class NutritionDivider extends StatelessWidget {
+  final double thickness;
+// constructor/ Default Value
+  NutritionDivider({this.thickness = 1.0});
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      thickness: thickness,
+      color: Color.fromARGB(255, 118, 117, 117),
+    );
+  }
+}
 
-  final List<String> selectedFilters;
-  final String result;
-  final String productName;
-  final double productCalories;
-  final double carbsPserving;
-  final double proteinPserving;
-  final double fatsPserving;
+class NutritionRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final bool isSubcategory;
+  final bool hideIfZero;
+  final double fontSize;
+  final FontWeight titleFontWeight;
+  final FontWeight valueFontWeight;
+  final double dividerThickness;
+  final bool showDivider;
+
+  const NutritionRow(
+      {Key? key,
+      required this.title,
+      required this.value,
+      this.isSubcategory = false,
+      this.hideIfZero = false,
+      this.fontSize = 20, // default font size value
+      this.titleFontWeight = FontWeight.w900, // default Title weight
+      this.valueFontWeight = FontWeight.bold, // default textWeight
+      this.showDivider = true,
+      this.dividerThickness = 1.0 //default Divider thickmess
+      })
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: GridView.count(
-        controller: secondController,
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        children: [
-          if (selectedFilters.isNotEmpty)
-            ...selectedFilters.map(
-              (filter) {
-                return GenerateTileCard(
-                  result: result,
-                  productName: productName,
-                  productCalories: productCalories,
-                  carbsPserving: carbsPserving,
-                  proteinPserving: proteinPserving,
-                  fatsPserving: fatsPserving,
-                  filter: filter,
-                );
-              },
-            )
-        ],
-      ),
+    if (hideIfZero && value == '0.0') {
+      return SizedBox.shrink(); // returns an empty widgetif value is 0
+    }
+
+    return Column(
+      children: [
+        Container(
+          height: fontSize * 1.25, // roughly aligns with text height
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: isSubcategory ? 30.0 : 0.0),
+                child: Text(
+                  title,
+                  textAlign: isSubcategory ? TextAlign.start : TextAlign.end,
+                  style: TextStyle(
+                    // if SubCategory (sat fats) then use different font
+                    fontFamily: isSubcategory ? 'Arial' : 'Helvetica Black',
+                    fontSize: fontSize,
+                    fontWeight:
+                        isSubcategory ? valueFontWeight : titleFontWeight,
+                  ),
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: 'Helvetica Black',
+                  fontSize: fontSize,
+                  fontWeight: valueFontWeight,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (showDivider)
+          NutritionDivider(
+            thickness: dividerThickness,
+          )
+      ],
     );
   }
 }
@@ -494,7 +636,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[900],
+        backgroundColor: const Color.fromARGB(255, 104, 104, 104),
         title: Text('Draggable Scrollable Sheet'),
         centerTitle: true,
       ),
@@ -509,7 +651,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
       builder: (BuildContext context, ScrollController _controller) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.purple[900],
+            color: Color.fromARGB(255, 238, 238, 238),
           ),
           child: GridView.builder(
             controller: _controller,
@@ -526,66 +668,6 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
           ),
         );
       },
-    );
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  final String title;
-  final String data;
-  final bool isVisible; // New property to control visibility
-
-  ProductCard({
-    required this.title,
-    required this.data,
-    this.isVisible = true, // Default is visible
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isVisible) {
-      // Return an empty container if it shouldn't be displayed
-      return Container();
-    }
-
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: AutoSizeText(
-                title,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-                maxLines: 1,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Expanded(
-              child: AutoSizeText(
-                data,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                ),
-                maxLines:
-                    10, // Specify the maximum number of lines before text ellipsis
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

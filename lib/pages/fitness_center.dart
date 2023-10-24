@@ -1,6 +1,19 @@
 //Atlas Fitness App CSC 4996
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:atlas/pages/settings_page.dart';
+import 'package:atlas/components/feed_post.dart';
+import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/helper/helper_method.dart';
+import 'package:atlas/main.dart';
+import 'package:atlas/pages/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -99,15 +112,25 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
+    //Saves the state of dark mode being on or off
+    final lightDarkTheme = ref.watch(themeProvider);
+
+    //Holds the opposite theme color for the text
+    final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 =
+        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
         length: 3,
         child: Scaffold(
+
           backgroundColor: const Color.fromARGB(255, 232, 229, 229),
+
           //Home page for when a user logs in
           appBar: AppBar(
             title: const Center(
@@ -117,7 +140,9 @@ class FitCenter extends ConsumerWidget {
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
+
             backgroundColor: const Color.fromARGB(255, 29, 74, 222),
+
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -135,17 +160,90 @@ class FitCenter extends ConsumerWidget {
               // The Discover Tab Of the workouts page
 
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
+
               musclesList(),
 
               Container(
                 color: const Color.fromARGB(255, 232, 229, 229),
+
+              ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final muscle = list[index];
+                  final icon = muscleIcons[
+                      muscle]; // Initalize each entry of the list to the muscle
+                  return InkWell(
+                    onTap: () async {
+                      final exercisesData = await getExercises(muscle);
+
+                      if (exercisesData.isNotEmpty) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Scaffold(
+                            extendBody: true,
+                            appBar: AppBar(
+                              backgroundColor:
+                                  Color.fromARGB(255, 102, 102, 102),
+                              title: Text("Workouts for $muscle"),
+                            ),
+                            body: ListView.builder(
+                              itemCount: exercisesData.length,
+                              itemBuilder: (context, index) {
+                                final exercise = exercisesData[index];
+                                return ListTile(
+                                  title: Text(exercise['name']),
+                                );
+                              },
+                            ),
+                          ),
+                        ));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                "No Workout Data is Available for $muscle."),
+                          ),
+                        );
+                      }
+                    },
+
+                    // Styling elements for each specific muscle
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: themeColor2),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Adding an icon to each specific muscle
+                            Icon(icon ?? Icons.fitness_center,
+                                size:
+                                    34), // Setting the default Icon if one does not exist
+                            Text(
+                              capitalizeFirstLetter(
+                                  muscle.replaceAll('_', ' ')),
+                              style: TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            ),
+                            Icon(Icons.arrow_forward_ios, size: 34),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              Container(
+                color: themeColor2,
                 child: Center(
                   child: Text(muscle),
                 ),
               ),
               const Center(
                 child: Text("Tab 3"),
-              ),
+              ),              
             ],
           ),
         ),

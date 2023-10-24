@@ -17,7 +17,6 @@ class FeedPost extends StatefulWidget {
     super.key,
     required this.message,
     required this.user,
-
     required this.postId,
     required this.likes,
     required this.time,
@@ -46,7 +45,6 @@ class _FeedPostState extends State<FeedPost> {
       isLiked = !isLiked;
     });
 
-    
     //Access the document in Firebase
     DocumentReference postRef =
         FirebaseFirestore.instance.collection('User Posts').doc(widget.postId);
@@ -73,26 +71,30 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
       padding: const EdgeInsets.all(25),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // feed post
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Wrap(
+            spacing: 8.0,
+            direction: Axis.horizontal,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.start,
             children: [
-
               // group of text (message + user email)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //message
-                  Text(widget.message),
+                  Text(
+                    widget.message,
+                    style: const TextStyle(color: Colors.black),
+                    maxLines: null,
+                  ),
 
                   const SizedBox(height: 5),
 
-                  //user
+                  //user + day
                   Row(
                     children: [
                       Text(
@@ -114,10 +116,7 @@ class _FeedPostState extends State<FeedPost> {
 
               // delete button
               if (widget.user == currentUser.email)
-              DeleteButton(onTap: deletePost),
-
-
-
+                DeleteButton(onTap: deletePost),
             ],
           ),
 
@@ -200,7 +199,6 @@ class _FeedPostState extends State<FeedPost> {
                 }).toList(),
               );
             },
-
           )
         ],
       ),
@@ -249,56 +247,57 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
-  // delete a post 
+  // delete a post
   void deletePost() {
-    //show a dialog box for asking for confirmation before deleting the post 
-    showDialog(context: context, 
-    builder: (context) => AlertDialog(
-      title: const Text("Delete Post"),
-      content: const Text("Are you sure you want to delete this post?"),
-      actions: [
-        //CANCEL BUTTON
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
+    //show a dialog box for asking for confirmation before deleting the post
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Post"),
+        content: const Text("Are you sure you want to delete this post?"),
+        actions: [
+          //CANCEL BUTTON
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
 
-        //DELETE BUTTON
-        TextButton(
-          onPressed: () async {
-            //delete the comments from firestore first
-            //(if you only delete the post, the comments will still be stored in firestore)
-            final commentDocs = await FirebaseFirestore.instance
-              .collection("User Posts")
-              .doc(widget.postId)
-              .collection("Comments")
-              .get();
+          //DELETE BUTTON
+          TextButton(
+            onPressed: () async {
+              //delete the comments from firestore first
+              //(if you only delete the post, the comments will still be stored in firestore)
+              final commentDocs = await FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .collection("Comments")
+                  .get();
 
-            for (var doc in commentDocs.docs) {
-              await FirebaseFirestore.instance
-                .collection("User Posts")
-                .doc(widget.postId)
-                .collection("Comments")
-                .doc(doc.id)
-                .delete();
-            }
+              for (var doc in commentDocs.docs) {
+                await FirebaseFirestore.instance
+                    .collection("User Posts")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .doc(doc.id)
+                    .delete();
+              }
 
-            // delete the post 
-            FirebaseFirestore.instance
-              .collection("User Posts")
-              .doc(widget.postId)
-              .delete()
-              .then((value) => print("post deleted"))
-              .catchError(
-                (error) => print("failed to delete post: $error"));
+              // delete the post
+              FirebaseFirestore.instance
+                  .collection("User Posts")
+                  .doc(widget.postId)
+                  .delete()
+                  .then((value) => print("post deleted"))
+                  .catchError(
+                      (error) => print("failed to delete post: $error"));
 
-            // dismiss the dialog 
-            Navigator.pop(context);
-          },
-          child: const Text("Delete"),
+              // dismiss the dialog
+              Navigator.pop(context);
+            },
+            child: const Text("Delete"),
           ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 

@@ -77,25 +77,7 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-    final usersCollection = FirebaseFirestore.instance.collection("Users");
-    final textController = TextEditingController();
-
-    void postMessage() {
-      //only post if there is something in the textfield
-      if (textController.text.isNotEmpty) {
-        FirebaseFirestore.instance.collection("User Posts").add({
-          'UserEmail': currentUser.email,
-          'Message': textController.text,
-          'TimeStamp': Timestamp.now(),
-          'Likes': [],
-        });
-      }
-
-      //clear the textfield
-      textController.clear();
-    }
-
+    
     // Setting the muscle variable to watch whatever the user selects in the drop down
     var muscle = ref.watch(selectedMuscleProvider);
     //Saves the state of dark mode being on or off
@@ -104,26 +86,26 @@ class FitCenter extends ConsumerWidget {
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
     final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     // Container for the gradient of the application
     return Container(
       child: DefaultTabController(
         initialIndex: 1,
-        length: 4,
+        length: 3,
         child: Scaffold(
           backgroundColor: themeColor2,
           //Home page for when a user logs in
           appBar: AppBar(
-            title: Center(
+            title: const Center(
               child: Text(
                 "F i t n e s s C e n t e r",
                 style: TextStyle(
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 102, 102, 102),
-            bottom: TabBar(
+            backgroundColor: const Color.fromARGB(255, 102, 102, 102),
+            bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
                 Tab(
@@ -131,7 +113,6 @@ class FitCenter extends ConsumerWidget {
                 ),
                 Tab(text: "My Workouts"),
                 Tab(text: "Progress"),
-                Tab(text: "Feed"),
               ],
             ),
           ),
@@ -217,81 +198,7 @@ class FitCenter extends ConsumerWidget {
               ),
               const Center(
                 child: Text("Tab 3"),
-              ),
-              //ADDED USER POSTS TO THIS PAGE FOR TESTING
-              Column(
-                children: [
-                  //The Feed
-                  Expanded(
-                    child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .orderBy(
-                            "TimeStamp",
-                            descending: false,
-                          )
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, index) {
-                              //get the message
-                              final post = snapshot.data!.docs[index];
-                              return FeedPost(
-                                message: post['Message'],
-                                user: post['UserEmail'],
-                                postId: post.id,
-                                likes: List<String>.from(post['Likes'] ?? []),
-                                time: formatDate(post['TimeStamp']),
-                              );
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error:${snapshot.error}'),
-                          );
-                        }
-
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                  ),
-
-                  //post message
-                  Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: Row(
-                      children: [
-                        //textfield
-                        Expanded(
-                            child: MyTextField(
-                          controller: textController,
-                          hintText: "Share your progress!",
-                          obscureText: false,
-                        )),
-                        //post button
-                        IconButton(
-                          onPressed: postMessage,
-                          icon: const Icon(Icons.arrow_circle_up),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  //logged in as
-                  Text(
-                    "Logged in as ${currentUser.email!}",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              ),
+              ),              
             ],
           ),
         ),

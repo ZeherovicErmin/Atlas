@@ -71,9 +71,11 @@ class BarcodeLogPage extends ConsumerWidget {
                   .updateSearchTerm(value),
               decoration: InputDecoration(hintText: 'Search'),
             ),
+
             // Sorting Menu in the App Bar itself
             actions: [
               PopupMenuButton<String>(
+                // Sorting functionality
                 onSelected: (value) =>
                     ref.read(filterStateProvider.notifier).updateSortBy(value),
                 itemBuilder: (context) => [
@@ -185,13 +187,113 @@ class BarcodeLogPage extends ConsumerWidget {
               final logs = snapshot.data!.docs;
               //If no barcode logs are present
               if (logs.isEmpty) {
-                return Center(
-                  child: Text('No barcode logs available'),
-                );
+                return _buildEmptyCard(context, ref);
               }
               return _buildListView(logs);
             });
       },
+    );
+  }
+
+  Widget _buildEmptyCard(BuildContext context, WidgetRef ref) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        margin: EdgeInsets.only(top: 10.0),
+        height: 175.0,
+        width: 380.0,
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.black, width: 5),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: InkWell(
+            onTap: () {
+              // Add the logic you want when the card is tapped
+              print("Card tapped!");
+              BarcodeLookupComb().scanBarcode(context, ref);
+            },
+            borderRadius:
+                BorderRadius.circular(24), // Match with the card's shape
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                          child: Text(
+                            'Instructions:',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          child: Text(
+                            '1. Click this card',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          child: Text(
+                            '2. Open your camera',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          child: Text(
+                            '3. Scan the barcode',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 140,
+                  child: VerticalDivider(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    thickness: 3.0,
+                    width: 2.0,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Container(
+                    height: 125,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.blue,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.camera_alt, // Camera icon
+                        size: 48.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -221,6 +323,7 @@ class BarcodeLogPage extends ConsumerWidget {
 
           startActionPane: ActionPane(
             motion: ScrollMotion(),
+            extentRatio: .25,
             children: [
               SlidableAction(
                 autoClose: true,

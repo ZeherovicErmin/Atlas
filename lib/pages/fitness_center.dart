@@ -113,7 +113,7 @@ class FitCenter extends ConsumerWidget {
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: const Color.fromARGB(255, 90, 86, 86),
+            backgroundColor: const Color.fromARGB(255, 29, 74, 222),
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -147,7 +147,7 @@ class FitCenter extends ConsumerWidget {
                           builder: (context) => Scaffold(
                             appBar: AppBar(
                               backgroundColor:
-                                  const Color.fromARGB(255, 90, 86, 86),
+                                  const Color.fromARGB(255, 29, 74, 222),
                               title: Text("Workouts for $muscle"),
                             ),
                             body: ListView.builder(

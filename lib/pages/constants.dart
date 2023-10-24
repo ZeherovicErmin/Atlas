@@ -10,7 +10,7 @@ import 'dart:developer';
 //App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-      backgroundColor: Color.fromARGB(255, 29, 74, 222),
+      backgroundColor: Colors.orange,
       title: Text(
         title,
         style: TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
@@ -33,11 +33,11 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 //AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
-
-    backgroundColor: Color.fromARGB(255, 29, 74, 222),
+    backgroundColor: Colors.orange,
     title: Text(
       title,
-      style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      style:
+          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),
     actions: [
       IconButton(
@@ -82,12 +82,3 @@ var myDrawer = const Drawer(
     ));
 
 // A gradient for our application
-
-var myGradient = const LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
-    Color.fromARGB(255, 90, 117, 255),
-    Color.fromARGB(255, 161, 195, 250),
-  ],
-);

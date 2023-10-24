@@ -48,7 +48,7 @@ class Feed extends ConsumerWidget {
                 TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 29, 74, 222),
+        backgroundColor: Colors.orange,
       ),
 
       body: Center(

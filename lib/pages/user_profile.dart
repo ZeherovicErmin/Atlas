@@ -32,7 +32,7 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 });
 
 class UserProfile extends ConsumerWidget {
-  const UserProfile({Key? key}):super(key: key);
+  const UserProfile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -109,8 +109,8 @@ class UserProfile extends ConsumerWidget {
           content: TextField(
             autofocus: true,
             style: const TextStyle(
-                color:  Color.fromARGB(
-                    255, 0, 0, 0)), // Change text color to white
+                color:
+                    Color.fromARGB(255, 0, 0, 0)), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: const TextStyle(color: Colors.black),
@@ -150,7 +150,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 232, 229, 229),
-      appBar: myAppBar2(context, ref, 'U s e r  P r o f i l e'),
+      appBar: myAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -163,7 +163,7 @@ class UserProfile extends ConsumerWidget {
 
           if (!snapshot.hasData || snapshot.data == null) {
             return const Center(
-              child:  Text('User data not found.'),
+              child: Text('User data not found.'),
             );
           }
 
@@ -273,7 +273,7 @@ class UserProfile extends ConsumerWidget {
           } else {
             // Handle the case where userData is null
             return const Center(
-              child:  Text('User data is null.'),
+              child: Text('User data is null.'),
             );
           }
         },

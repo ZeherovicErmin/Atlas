@@ -16,7 +16,7 @@ class MyTextBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 102, 102, 102),
+        color: Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.only(left: 15, bottom: 15),
@@ -30,8 +30,9 @@ class MyTextBox extends StatelessWidget {
               // section name
               Text(
                 sectionName,
-                style:
-                    const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                style: TextStyle(
+                  color: Colors.grey[700],
+                ),
               ),
 
               //edit button
@@ -39,7 +40,7 @@ class MyTextBox extends StatelessWidget {
                 onPressed: onPressed,
                 icon: const Icon(
                   Icons.edit,
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: Colors.orange,
                 ),
               ),
             ],

@@ -41,8 +41,8 @@ class Recipes extends ConsumerWidget {
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
       appBar: AppBar(
+        title: Text("R e c i p e s"),
         backgroundColor: Colors.orange,
-
       ),
       body: Column(children: [
         Padding(padding: EdgeInsets.only(top: 20)),
@@ -87,7 +87,6 @@ class Recipes extends ConsumerWidget {
       //Rest of page material including search form and list
       //recipes returned from API
       child: Column(children: [
-
         ElevatedButton(
             onPressed: () => navigateToSavedRecipesPage(context),
             child: Text('Saved Recipes')),
@@ -109,7 +108,6 @@ class Recipes extends ConsumerWidget {
             left: 15,
             right: 15,
             bottom: 5), //apply padding to all sides
-
       ),
       Container(
         margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
@@ -155,7 +153,6 @@ class Recipes extends ConsumerWidget {
           //Placeholder message in search bar directing user
           hintText: "Enter Recipe Search",
           hintStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-
     );
   }
 
@@ -229,7 +226,8 @@ class Recipes extends ConsumerWidget {
                                       icon: const Icon(
                                           Icons.bookmark_add_rounded),
                                       tooltip: "Save Recipe",
-                                      color: const Color.fromARGB(255, 255, 255, 255),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
                                       highlightColor: Colors.purpleAccent,
                                       hoverColor: Colors.blue.withOpacity(0.3),
                                       splashRadius: 20,
@@ -264,7 +262,7 @@ class Recipes extends ConsumerWidget {
       //API Request URL with Parameters
       String url =
           'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
-          //formats url
+      //formats url
 
       final uri = Uri.parse(url);
       //sends request to api
@@ -315,8 +313,7 @@ class Recipes extends ConsumerWidget {
     );
   }
 
-
- // Function to navigate to Saved Recipes Page
+  // Function to navigate to Saved Recipes Page
   navigateToSavedRecipesPage(BuildContext context) {
     Navigator.push(
       context,
@@ -324,7 +321,6 @@ class Recipes extends ConsumerWidget {
         builder: (context) => SavedRecipes(),
       ),
     );
-
   }
 
   //Save Button Handler - Save New Recipe
@@ -338,7 +334,8 @@ class Recipes extends ConsumerWidget {
     */
 
     //Save the recipe to the DB
-    saveRecipeToDB(recipe).whenComplete(() => ref.refresh(savedRecipesProvider));
+    saveRecipeToDB(recipe)
+        .whenComplete(() => ref.refresh(savedRecipesProvider));
 
     //output recipe saved message
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -364,6 +361,4 @@ class Recipes extends ConsumerWidget {
     await recipeCollection.add(
         {"uid": userID, "recipe": recipe.toMap(), "saveDate": DateTime.now()});
   }
-
-
 }

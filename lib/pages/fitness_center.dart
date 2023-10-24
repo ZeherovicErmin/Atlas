@@ -112,12 +112,12 @@ class FitCenter extends ConsumerWidget {
           appBar: AppBar(
             title: const Center(
               child: Text(
-                "F i t n e s s C e n t e r",
+                "F i t n e s s   C e n t e r",
                 style: TextStyle(
                     fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
               ),
             ),
-            backgroundColor: const Color.fromARGB(255, 29, 74, 222),
+            backgroundColor: Colors.orange,
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [

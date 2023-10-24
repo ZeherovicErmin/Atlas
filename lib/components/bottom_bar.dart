@@ -30,17 +30,21 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
+      //fixes NavBar transparency
       extendBody: true,
+
       // Indexed Stack holds the index of the page
       // So the programmer knows what page you are on
       body: IndexedStack(
         index: currentIndex,
+
         // See 'pages' variable above
         // Passes in pages of the application
         children: pages,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
+
         backgroundColor: Colors.transparent,
         color: const Color.fromARGB(255, 102, 102, 102),
         // Defines animation duration

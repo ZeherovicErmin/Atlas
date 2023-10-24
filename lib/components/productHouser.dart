@@ -1,9 +1,10 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/util/custom_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,8 @@ import '../../util/test.dart' as testAPI;
 // Define state providers for various data
 final barcodeProvider = StateProvider<String?>((ref) => null);
 final productNameProvider = StateProvider<String>((ref) => '');
+final productNamelowercaseProvider = StateProvider<String>((ref) => '');
+
 final resultProvider = StateProvider<String>((ref) => '');
 final productCaloriesProvider = StateProvider<double>((ref) => 0.0);
 //amount of servings a container has provider
@@ -96,6 +99,7 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.energyKCal, PerSize.serving) ??
                 0.0;
+
             ref.watch(carbsPservingProvider.notifier).state = productData
                     .nutriments
                     ?.getValue(Nutrient.carbohydrates, PerSize.serving) ??
@@ -166,6 +170,8 @@ class BarcodeLookupComb extends ConsumerWidget {
             DataItem('transfatsPserving',
                 ref.read(transfatsPservingProvider.notifier).state),
             DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
+            DataItem('productName_lowercase',
+                ref.read(productNameProvider).toLowerCase())
           ];
 
           // Send data to Firestore
@@ -225,6 +231,7 @@ class BarcodeLookupComb extends ConsumerWidget {
     final barcode = ref.watch(barcodeProvider.notifier).state;
     final result = ref.watch(resultProvider.notifier).state;
     final productName = ref.watch(productNameProvider.notifier).state;
+    final productName_lowercase = ref.watch(productNameProvider.notifier).state;
     final productCalories = ref.watch(productCaloriesProvider.notifier).state;
     final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
     //fats
@@ -245,33 +252,43 @@ class BarcodeLookupComb extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-        appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
-        backgroundColor: const Color.fromARGB(0, 231, 0, 0),
-        body: Stack(
-          children: [
-            //const SizedBox(height: 20),
-            // Button to open the barcode scanner
+      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          //const SizedBox(height: 20),
+          // Button to open the barcode scanner
 
-            //const SizedBox(height: 20),
-            // Button to navigate to barcode logs
-BarcodeLogPage(),
-            
-            
-            NutrientsList(
-              selectedFilters: selectedFilters,
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving,
-              cholesterolPerServing: cholesterolPerServing,
-              amtPerServing: amtPerServing,
-              satfatsPserving: satfatsPserving,
-              transfatsPserving: transfatsPserving,
-            ),
-          ],
-        ));
+          //const SizedBox(height: 20),
+          // Button to navigate to barcode logs
+
+          BarcodeLogPage(),
+          Positioned(
+              right: 16,
+              bottom: 100,
+              child: ElevatedButton(
+                onPressed: () => _scanBarcode(context, ref),
+                child: Icon(
+                  CupertinoIcons.barcode_viewfinder,
+                  size: 50,
+                ),
+              )),
+          NutrientsList(
+            selectedFilters: selectedFilters,
+            result: result,
+            productName: productName,
+            productCalories: productCalories,
+            carbsPserving: carbsPserving,
+            proteinPserving: proteinPserving,
+            fatsPserving: fatsPserving,
+            cholesterolPerServing: cholesterolPerServing,
+            amtPerServing: amtPerServing,
+            satfatsPserving: satfatsPserving,
+            transfatsPserving: transfatsPserving,
+          ),
+        ],
+      ),
+    );
   }
 
   Wrap FilterChips(
@@ -301,26 +318,30 @@ BarcodeLogPage(),
         dataMap['uid'] = uid;
         for (final item in selectedData) {
           dataMap[item.category] = item.value;
-          print(dataMap);
         }
-        // Add data to Firestore
-        await FirebaseFirestore.instance
-            .collection('Barcode_Lookup')
-            .add(dataMap);
-        print("Data to Firestore sent!!!");
 
-        // Send a Snackbar when data is sent to database
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("$productName sent to Firestore"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else {
-        print("No data selected");
+        bool exists = await isBarcodeExists(dataMap['Barcode']);
+
+        if (!exists) {
+          // Add data to Firestore
+          await FirebaseFirestore.instance
+              .collection('Barcode_Lookup')
+              .add(dataMap);
+          print("Data to Firestore sent!!!");
+
+          // Send a Snackbar when data is sent to database
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Data added to Firestore!')));
+        } else {
+          print("Barcode already exists in Firestore.");
+
+          // Send a Snackbar indicating barcode already exists
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Barcode already exists!')));
+        }
       }
     } catch (e) {
-      print('Error sending data: Error: $e');
+      print('Error sending data to Firestore: $e');
     }
   }
 
@@ -355,6 +376,22 @@ BarcodeLogPage(),
     print("Filters after removing: ${notifier.state}");
     notifier.state = notifier.state;
   }
+
+  Future<bool> isBarcodeExists(String barcode) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Barcode_Lookup')
+          .where('Barcode', isEqualTo: barcode)
+          .limit(1) // Ma
+          .get();
+
+      // If the snapshot contains any documents, then a document with the provided barcode already exists
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking barcode existence in Firestore: $e');
+      return false; // Return false in case of any error
+    }
+  }
 }
 
 class NutrientsList extends StatelessWidget {
@@ -388,8 +425,8 @@ class NutrientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .1,
-        minChildSize: .1,
+        initialChildSize: .15,
+        minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(

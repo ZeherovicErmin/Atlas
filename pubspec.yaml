@@ -53,6 +53,8 @@ dependencies:
   settings_ui: ^2.0.2
   flutter_slidable: ^3.0.0
   firebase_storage: ^11.2.8
+  mobile_scanner: ^3.5.0
+  visibility_detector: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -81,7 +83,12 @@ flutter:
     - lib/icons/
     - assets/icons/burger-menu.svg
     - assets/spoonacularResult.json
+
+    - assets/icons/chickenLeg.png
+    - assets/icons/flameicon.png
     - assets/icons/flameiconnameplate.png
+
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -154,6 +154,7 @@ class FitCenter extends ConsumerWidget {
                       if (exercisesData.isNotEmpty) {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Scaffold(
+                            extendBody: true,
                             appBar: AppBar(
                               backgroundColor:
                                   Color.fromARGB(255, 102, 102, 102),

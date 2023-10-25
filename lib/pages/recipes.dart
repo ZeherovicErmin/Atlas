@@ -39,10 +39,14 @@ class Recipes extends ConsumerWidget {
     final recipes = ref.watch(resultProvider).results;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
+      backgroundColor: Color.fromARGB(255, 232, 229, 229), //- OFFWHITE
       appBar: AppBar(
-        title: Text("R e c i p e s"),
-        backgroundColor: Colors.orange,
+        title: Text(
+          "R e c i p e s",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
       body: Column(children: [
         Padding(padding: EdgeInsets.only(top: 20)),

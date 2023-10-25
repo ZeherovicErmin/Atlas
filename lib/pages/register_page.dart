@@ -20,7 +20,6 @@ class RegistrationState {
   // Variable for initial profile image data
   final Uint8List initialProfileImageData =
       Uint8List.fromList(List<int>.generate(1024, (index) => index % 256));
-
   RegistrationState();
 }
 
@@ -88,7 +87,22 @@ class RegisterPage extends ConsumerWidget {
           'bio': 'Empty Bio...', // initially empty bio
           'profilePicture':
               registrationState.initialProfileImageData, // profile pic
+          // add additional fields as needed
+        });
 
+        var currentDate = DateTime.now();
+        var formattedDate = "${currentDate.month}/${currentDate.day}";
+        final FirebaseAuth auth = FirebaseAuth.instance;
+        final User? user = auth.currentUser;
+        final uid = user?.uid;
+
+        //Uploads a collection containing all user's email addresses when they register with Atlas
+        FirebaseFirestore.instance
+            .collection("Habits")
+            .doc(uid)
+            .set({
+              'uid': uid,
+              'date': formattedDate,
           // add additional fields as needed
         });
 
@@ -137,23 +151,33 @@ class RegisterPage extends ConsumerWidget {
 
                 const SizedBox(height: 10),
 
-                // Password textfield
-                MyTextField(
+                //Password textfield
+                PasswordTextField(
                   controller: registrationState.passwordController,
                   hintText: 'Password',
                   obscureText: true,
+                  registrationState: registrationState,
+                  passwordTextField: true,
                 ),
 
                 const SizedBox(height: 10),
 
-                // Confirm password textfield
-                MyTextField(
+                //Confirm Password textfield
+                PasswordTextField(
                   controller: registrationState.confirmPasswordController,
                   hintText: 'Confirm Password',
                   obscureText: true,
+                  registrationState: registrationState,
+                  passwordTextField: false,
                 ),
 
                 const SizedBox(height: 25),
+
+                //Sign-in button
+                MyButton(
+                  text: 'Sign Up',
+                  onTap: signUserUp,
+                ),
 
                 const SizedBox(height: 10),
 

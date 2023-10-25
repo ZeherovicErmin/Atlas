@@ -18,7 +18,14 @@ class SavedRecipes extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final savedrecipes = ref.watch(savedRecipesProvider);
     return Scaffold(
-        appBar: myAppBar2(context, ref, "Saved Recipes"),
+        appBar: AppBar(
+          title: Text(
+            "S a v e d  R e c i p e s",
+            style:
+                TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color.fromARGB(255, 0, 136, 204),
+        ),
         body: savedrecipes.when(
             //if successfull, output saved recipes
             data: (recipes) => gradient(recipes, context, ref),
@@ -50,8 +57,8 @@ class SavedRecipes extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 90, 117, 255),
-              Color.fromARGB(255, 161, 195, 250)
+              Color.fromARGB(255, 232, 229, 229),
+              Color.fromARGB(255, 232, 229, 229),
             ],
           ),
         ),

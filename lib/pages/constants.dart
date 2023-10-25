@@ -72,13 +72,103 @@ Container myWidgCont(double width, double height, Color color,
       ));
 }
 
-// Creating A Drawer
-var myDrawer = const Drawer(
-    backgroundColor: Color.fromARGB(255, 169, 183, 255),
-    child: Column(
-      children: [
-        DrawerHeader(child: Icon(Icons.fitness_center)),
-      ],
-    ));
-
-// A gradient for our application
+// Creating a list of target muscles
+const List<String> list = <String>[
+  "biceps",
+  "forearms",
+  "triceps",
+  "abductors",
+  "adductors",
+  "calves",
+  "quadriceps",
+  "abdominals",
+  "chest",
+  "lats",
+  "lower_back",
+  "middle_back",
+  "neck",
+  "traps",
+  "glutes",
+  "hamstrings",
+];
+// Creating A map of Icons for each specific muscles
+final Map<String, Widget> muscleIcons = {
+  "biceps": Image.asset(
+    'lib/images/bicepicon.png',
+    height: 60,
+    width: 60,
+  ),
+  "forearms": Image.asset(
+    'lib/images/forearm.png',
+    height: 60,
+    width: 60,
+  ),
+  "triceps": Image.asset(
+    'lib/images/triceps.png',
+    height: 60,
+    width: 60,
+  ),
+  "abdominals": Image.asset(
+    'lib/images/abdominals.png',
+    height: 60,
+    width: 60,
+  ),
+  "calves": Image.asset(
+    'lib/images/calves.png',
+    height: 60,
+    width: 60,
+  ),
+  "chest": Image.asset(
+    'lib/images/chest.png',
+    height: 60,
+    width: 60,
+  ),
+  "neck": Image.asset(
+    'lib/images/neck.png',
+    height: 60,
+    width: 60,
+  ),
+  "abductors": Image.asset(
+    'lib/images/abductors.png',
+    height: 60,
+    width: 60,
+  ),
+  "adductors": Image.asset(
+    'lib/images/adductors.png',
+    height: 60,
+    width: 60,
+  ),
+  "lower_back": Image.asset(
+    'lib/images/lowerback.png',
+    height: 60,
+    width: 60,
+  ),
+  "middle_back": Image.asset(
+    'lib/images/middleback.png',
+    height: 60,
+    width: 60,
+  ),
+};
+// Creating A map of icons for the exercise type i.e strength or cardio
+final Map<String, IconData> exerciseTypeIcons = {
+  "strength": Icons.fitness_center,
+};
+// Creating a map of colors to apply to each type of muscle
+const Map<String, Color> muscleColors = {
+  "abdominals": Color.fromARGB(255, 64, 224, 208),
+  "abductors": Color.fromARGB(255, 255, 107, 76),
+  "adductors": Color.fromARGB(255, 255, 107, 76),
+  "biceps": Color.fromARGB(255, 255, 230, 128),
+  "calves": Color.fromARGB(255, 255, 107, 76),
+  "chest": Color.fromARGB(255, 152, 251, 152),
+  "forearms": Color.fromARGB(255, 255, 230, 128),
+  "glutes": Color.fromARGB(255, 112, 128, 144),
+  "hamstrings": Color.fromARGB(255, 112, 128, 144),
+  "lats": Color.fromARGB(255, 147, 112, 219),
+  "lower_back": Color.fromARGB(255, 147, 112, 219),
+  "middle_back": Color.fromARGB(255, 147, 112, 219),
+  "neck": Color.fromARGB(255, 147, 112, 219),
+  "quadriceps": Color.fromARGB(255, 255, 107, 76),
+  "traps": Color.fromARGB(255, 147, 112, 219),
+  "triceps": Color.fromARGB(255, 255, 230, 128)
+};

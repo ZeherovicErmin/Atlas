@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
 
-final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null)
+//final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null);
 
 // Creating a list of target muscles
 const List<String> list = <String>[
@@ -125,19 +126,19 @@ final selectedMuscleProvider = StateProvider<String>((ref) {
   return muscle;
 });
 
-class SavedExercisesNotifier extends Notifier<List<String>>{
+class SavedExercisesNotifier extends Notifier<List<String>> {
   SavedExercisesNotifier() : super();
-  
-  
+
   @override
   List<String> build() {
     return state;
   }
-  void toggleExercise(String exerciseName){
-    if (state.contains(exerciseName)){
+
+  void toggleExercise(String exerciseName) {
+    if (state.contains(exerciseName)) {
       state = [...state]..remove(exerciseName);
-    } else{
-      state = [...state,exerciseName];
+    } else {
+      state = [...state, exerciseName];
     }
   }
 }
@@ -343,92 +344,99 @@ class FitCenter extends ConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 150.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Text(
-                      exercise['name'],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 32,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        AutoSizeText(
+                          exercise['name'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 32,
+                          ),
+                          maxLines: 1,
+                          minFontSize: 20,
+                          overflow: TextOverflow.clip,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              exercise['type'],
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['muscle'],
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['equipment'],
+                              style: const TextStyle(
+                                color: Colors.green,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['difficulty'],
+                              style: const TextStyle(
+                                color: Colors.purple,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.green,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.purple,
+                              size: 18,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    //Heart icon that saves to database
+                    Positioned(
+                      top: 0.0,
+                      right: 0.0,
+                      child: //Save To FireStore button
+                          IconButton(
+                        onPressed: () {
+                          saveExerciseToFirestore(exerciseData);
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 30,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          exercise['type'],
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['muscle'],
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['equipment'],
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['difficulty'],
-                          style: const TextStyle(
-                            color: Colors.purple,
-                            fontSize: 18,
-                          ),
-                        ),
-                        //Save To FireStore button
-                        IconButton(
-                            onPressed: () {
-                              setState((){
-                                if (saved)
-                                {
-
-                                }
-                              })
-                              //saveExerciseToFirestore(exerciseData);
-                            },
-                            icon: Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                              size: 30,
-                            ))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.red,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.blue,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.green,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.purple,
-                          size: 18,
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),

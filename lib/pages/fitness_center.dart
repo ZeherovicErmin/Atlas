@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
 
+final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null)
+
 // Creating a list of target muscles
 const List<String> list = <String>[
   "biceps",
@@ -123,9 +125,27 @@ final selectedMuscleProvider = StateProvider<String>((ref) {
   return muscle;
 });
 
+class SavedExercisesNotifier extends Notifier<List<String>>{
+  SavedExercisesNotifier() : super();
+  
+  
+  @override
+  List<String> build() {
+    return state;
+  }
+  void toggleExercise(String exerciseName){
+    if (state.contains(exerciseName)){
+      state = [...state]..remove(exerciseName);
+    } else{
+      state = [...state,exerciseName];
+    }
+  }
+}
+
 class FitCenter extends ConsumerWidget {
   const FitCenter({Key? key}) : super(key: key);
-
+  //for saving to database
+  final bool saved = false;
   Future<List<dynamic>> getExercises(String muscle) async {
     // The Api key from API NINJAS
     final String myApiKey =
@@ -291,6 +311,15 @@ class FitCenter extends ConsumerWidget {
         // Finding the icon for each exercise type
         final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
 
+        // Map of exercises to be saved in FireStore
+        final exerciseData = {
+          'name': exercise['name'],
+          'type': exercise['type'],
+          'equipment': exercise['muscle'],
+          'difficulty': exercise['difficulty'],
+          'instructions': exercise['instructions']
+        };
+
         return Container(
           margin: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
@@ -357,6 +386,22 @@ class FitCenter extends ConsumerWidget {
                             fontSize: 18,
                           ),
                         ),
+                        //Save To FireStore button
+                        IconButton(
+                            onPressed: () {
+                              setState((){
+                                if (saved)
+                                {
+
+                                }
+                              })
+                              //saveExerciseToFirestore(exerciseData);
+                            },
+                            icon: Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 30,
+                            ))
                       ],
                     ),
                     Row(
@@ -403,5 +448,30 @@ class FitCenter extends ConsumerWidget {
         );
       },
     );
+  }
+
+//save exercise
+  void saveExerciseToFirestore(Map<String, dynamic> exercisesData) async {
+    //await addExerciseToFirestore(exercisesData);
+    try {
+      //Create an instance of FirebaseAuth
+      final FirebaseAuth auth = FirebaseAuth.instance;
+
+      // Get current uid
+      final userID = auth.currentUser?.uid;
+
+      // Make Reference to Exercise collection in Firebase
+      final exerciseCollection =
+          FirebaseFirestore.instance.collection("Exercises");
+
+      // Add the exercise data to the Exercises collection
+      await exerciseCollection.add({
+        "uid": userID,
+        "exercise": exercisesData,
+        "saveDate": DateTime.now()
+      });
+    } catch (e) {
+      print('Error adding exercise to FireStore: $e');
+    }
   }
 }

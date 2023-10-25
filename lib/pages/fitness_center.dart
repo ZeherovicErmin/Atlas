@@ -289,9 +289,16 @@ class FitCenter extends ConsumerWidget {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    exercise['instructions'],
-                    style: const TextStyle(fontSize: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for(var sentence
+                          in exercise['instructions'].split('.'))
+                      Text(
+                        '\u2022 $sentence',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
                   ),
                 ),
               ),

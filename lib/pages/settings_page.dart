@@ -30,9 +30,11 @@ class SettingsPage extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
+    final themeColor2 = lightDarkTheme ? Colors.black : Colors.white;
 
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'S e t t i n g s'),
+      appBar: myAppBar4(context, ref, 'S e t t i n g s'),
+      backgroundColor: themeColor2,
       body: Column (
       children: [
         Expanded (
@@ -44,7 +46,7 @@ class SettingsPage extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: themeColor,
+                      color: themeColor2,
                     ),
                   ),
                 tiles: [
@@ -53,12 +55,12 @@ class SettingsPage extends ConsumerWidget {
                       'Change Password',
                       style: TextStyle(
                         fontSize: 16,
-                        color: themeColor,
+                        color: themeColor2,
                       ),
                     ),
                     leading: Icon(
                       Icons.lock,
-                      color: themeColor,
+                      color: themeColor2,
                       ),
                     onPressed: (BuildContext context) {
                       Navigator.push(
@@ -75,7 +77,7 @@ class SettingsPage extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: themeColor,
+                        color: themeColor2,
                     ),
                   ),
                 tiles: [
@@ -84,12 +86,12 @@ class SettingsPage extends ConsumerWidget {
                       'Dark Mode',
                         style: TextStyle(
                           fontSize: 16,
-                          color: themeColor,
+                          color: themeColor2,
                     ),
                       ),
                     leading: Icon(
                       Icons.flashlight_on_outlined,
-                      color: themeColor,
+                      color: themeColor2,
                       ),
                     initialValue: lightDarkTheme,
                     onToggle: (bool lightDarkTheme) {

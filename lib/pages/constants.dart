@@ -56,6 +56,29 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   );
 }
 
+AppBar myAppBar3(BuildContext context, String title) {
+  return AppBar(
+      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+      title: Text(
+        title,
+        style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      ),
+  );
+}
+
+//AppBar without the login button
+AppBar myAppBar4(BuildContext context, WidgetRef ref, String title) {
+  return AppBar(
+    backgroundColor: Color.fromARGB(255, 0, 136, 204),
+    title: Text(
+      title,
+      style:
+          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+    ),
+    centerTitle: true,
+  );
+}
+
 // Function to Create containers
 Container myWidgCont(double width, double height, Color color,
     IconData iconData, Color iconColor) {

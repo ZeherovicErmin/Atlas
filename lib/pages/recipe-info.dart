@@ -70,11 +70,9 @@ class _RecipeInfoState extends State<RecipeInfo> with TickerProviderStateMixin {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
     } else {
       return Padding(
-          padding: EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: 1),
           child: ListView.builder(
               shrinkWrap: true,
-              //Used to ensure list is scrollable
-              physics: const NeverScrollableScrollPhysics(),
               //Number of instructions
               itemCount: recipe.analyzedInstructions[0].steps.length,
               //Used to build instruction list tiles

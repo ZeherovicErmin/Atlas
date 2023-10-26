@@ -87,7 +87,6 @@ class RegisterPage extends ConsumerWidget {
           'bio': 'Empty Bio...', // initially empty bio
           'profilePicture':
               registrationState.initialProfileImageData, // profile pic
-          // add additional fields as needed
         });
 
         var currentDate = DateTime.now();
@@ -100,9 +99,9 @@ class RegisterPage extends ConsumerWidget {
         FirebaseFirestore.instance
             .collection("Habits")
             .doc(uid)
-            .set({
+            .collection(formattedDate)
+            .add({
               'uid': uid,
-              'date': formattedDate,
           // add additional fields as needed
         });
 

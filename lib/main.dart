@@ -22,7 +22,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   //This line gets rid of the normal UI at the top of the phone like the battery etc.
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   runApp(
     ProviderScope(
       child: MyApp(),

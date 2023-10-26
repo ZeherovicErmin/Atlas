@@ -135,7 +135,6 @@ class FitCenter extends ConsumerWidget {
                     })
               ]),
 
-
           body: TabBarView(
             children: [
               // The Discover Tab Of the workouts page
@@ -330,31 +329,6 @@ class FitCenter extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.red,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.blue,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.green,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.purple,
-                              size: 18,
-                            ),
-                          ],
-                        )
                       ],
                     ),
                     //Plus icon that saves to database

@@ -58,11 +58,12 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
 
 AppBar myAppBar3(BuildContext context, String title) {
   return AppBar(
-      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-      title: Text(
-        title,
-        style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-      ),
+    backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+    title: Text(
+      title,
+      style:
+          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+    ),
   );
 }
 
@@ -186,6 +187,16 @@ final Map<String, Widget> muscleIcons = {
     height: 60,
     width: 60,
   ),
+  "hamstrings": Image.asset(
+    'lib/images/hams.png',
+    height: 60,
+    width: 60,
+  ),
+  "glutes": Image.asset(
+    'lib/images/glutes.png',
+    height: 60,
+    width: 60,
+  ),
 };
 // Creating A map of icons for the exercise type i.e strength or cardio
 final Map<String, IconData> exerciseTypeIcons = {
@@ -196,10 +207,10 @@ const Map<String, Color> muscleColors = {
   "abdominals": Color.fromARGB(255, 64, 224, 208),
   "abductors": Color.fromARGB(255, 255, 107, 76),
   "adductors": Color.fromARGB(255, 255, 107, 76),
-  "biceps": Color.fromARGB(255, 255, 230, 128),
+  "biceps": Color.fromARGB(255, 235, 211, 117),
   "calves": Color.fromARGB(255, 255, 107, 76),
   "chest": Color.fromARGB(255, 152, 251, 152),
-  "forearms": Color.fromARGB(255, 255, 230, 128),
+  "forearms": Color.fromARGB(255, 235, 211, 117),
   "glutes": Color.fromARGB(255, 112, 128, 144),
   "hamstrings": Color.fromARGB(255, 112, 128, 144),
   "lats": Color.fromARGB(255, 147, 112, 219),
@@ -208,5 +219,5 @@ const Map<String, Color> muscleColors = {
   "neck": Color.fromARGB(255, 147, 112, 219),
   "quadriceps": Color.fromARGB(255, 255, 107, 76),
   "traps": Color.fromARGB(255, 147, 112, 219),
-  "triceps": Color.fromARGB(255, 255, 230, 128)
+  "triceps": Color.fromARGB(255, 235, 211, 117),
 };

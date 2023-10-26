@@ -25,11 +25,6 @@ class _SavedRecipesState extends State<SavedRecipes> {
     final userID = auth.currentUser?.uid;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Saved Recipes",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.orange,
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream:
             savedRecipesCollection.where("uid", isEqualTo: userID).snapshots(),

@@ -53,7 +53,7 @@ class _RecipeInfoState extends State<RecipeInfo> with TickerProviderStateMixin {
               var ingredientAmount = ingredient.amount;
               //Formatted ingredient string with amount and unit
               String ingredientFormatted =
-                  "${ingredient.name} - $ingredientAmount ${ingredient.unit}";
+                  "• ${ingredient.name} - $ingredientAmount ${ingredient.unit}";
 
               return ListTile(
                   title: Text(ingredientFormatted,
@@ -85,7 +85,7 @@ class _RecipeInfoState extends State<RecipeInfo> with TickerProviderStateMixin {
                 String instructionTitle = "$stepCount.) $step ";
                 return ListTile(
                     title: Text(instructionTitle,
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.left,
                         style: const TextStyle(fontWeight: FontWeight.bold)));
               }));
     }

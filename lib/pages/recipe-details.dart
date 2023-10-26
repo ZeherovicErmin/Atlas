@@ -12,6 +12,10 @@ class RecipeDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
+        title: const Padding(
+            padding: EdgeInsets.only(left: 35),
+            child: Text("Recipes Details",
+            style: TextStyle(fontWeight: FontWeight.bold))),
         backgroundColor: Colors.orange,
       ),
       body: Column(children: [
@@ -50,25 +54,49 @@ class RecipeDetails extends ConsumerWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         //Recipe Calories, Servings, and Ready Time
+        Padding(padding: EdgeInsets.all(7)),
         Row(
             //Centers row content
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Recipe Calories
-              Text("Calories: $calories",
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: Colors.orangeAccent,
+                  borderRadius: BorderRadius.all(Radius.circular(25))),
+                child: Text("Calories: $calories",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15)),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 15))),
               //Recipe Servings
-              Text("   Servings: ${recipe.servings}",
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: Colors.orangeAccent,
+                  borderRadius: BorderRadius.all(Radius.circular(25))),
+                child: Text("Servings: ${recipe.servings}",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15)),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 15))),
               //Recipe Ready Time
-              Text("   Ready Time: ${recipe.readyInMinutes} min",
+              Container(
+                padding: EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: Colors.orangeAccent,
+                  borderRadius: BorderRadius.all(Radius.circular(25))),
+                child: Text("Ready Time: ${recipe.readyInMinutes} min",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15)),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 15))),
             ]),
       ],
     );

@@ -217,8 +217,9 @@ class UserProfile extends ConsumerWidget {
           ),
           content: TextField(
             autofocus: true,
-            style: const TextStyle(
-                color:  Color.fromARGB(255, 0, 0, 0)), // Change text color to white
+            style: TextStyle(
+                color:  themeColor2
+                ), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),
@@ -257,7 +258,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: themeColor2,
+      backgroundColor: themeColor,
       appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance

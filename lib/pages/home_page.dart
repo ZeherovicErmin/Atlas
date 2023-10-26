@@ -1,5 +1,3 @@
-import 'package:atlas/components/my_button2.dart';
-import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

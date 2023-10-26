@@ -95,16 +95,6 @@ class RegisterPage extends ConsumerWidget {
         final User? user = auth.currentUser;
         final uid = user?.uid;
 
-        //Uploads a collection containing all user's email addresses when they register with Atlas
-        FirebaseFirestore.instance
-            .collection("Habits")
-            .doc(uid)
-            .collection(formattedDate)
-            .add({
-              'uid': uid,
-          // add additional fields as needed
-        });
-
         //Error handling for registering for Atlas
         Navigator.pop(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/start');

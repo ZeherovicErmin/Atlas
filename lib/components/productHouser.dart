@@ -212,17 +212,25 @@ class BarcodeLookupComb extends ConsumerWidget {
   // Function to check if a barcode is valid
   bool isValidBarcode(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{13}$');
-    return barcodePattern.hasMatch(barcode);
+    //UPC -E
+    final RegExp upcE = RegExp(r'^\d{8}$');
+    return barcodePattern.hasMatch(barcode) || upcE.hasMatch(barcode);
   }
 
   // Function to normalize UPC code
   String isValidUPC(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{12}$');
+    //UPC -E
+    final RegExp upcE = RegExp(r'^\d{8}$');
+
     if (barcodePattern.hasMatch(barcode)) {
       final modifiedBarcode = '0$barcode';
       return modifiedBarcode;
+    } else if (upcE.hasMatch(barcode)) {
+      return barcode;
+    } else {
+      return barcode;
     }
-    return barcode;
   }
 
   @override

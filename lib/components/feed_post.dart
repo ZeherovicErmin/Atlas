@@ -156,10 +156,10 @@ class _FeedPostState extends State<FeedPost> {
                 //comment count
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
-                  .collection("User Posts")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .snapshots(),
+                      .collection("User Posts")
+                      .doc(widget.postId)
+                      .collection("Comments")
+                      .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       //Calculate the comment count
@@ -186,7 +186,8 @@ class _FeedPostState extends State<FeedPost> {
           children: [
             ExpansionTile(
               backgroundColor: Colors.grey[200],
-              title: Text('View Comments', style: TextStyle(color: Colors.grey[500])),
+              title: Text('View Comments',
+                  style: TextStyle(color: Colors.grey[500])),
               children: [
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance

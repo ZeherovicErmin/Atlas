@@ -145,6 +145,7 @@ class SavedExercisesNotifier extends Notifier<List<String>> {
 
 class FitCenter extends ConsumerWidget {
   const FitCenter({Key? key}) : super(key: key);
+
   //for saving to database
   final bool saved = false;
   Future<List<dynamic>> getExercises(String muscle) async {
@@ -428,7 +429,7 @@ class FitCenter extends ConsumerWidget {
                       child: //Save To FireStore button
                           IconButton(
                         onPressed: () {
-                          saveExerciseToFirestore(exerciseData);
+                          saveExerciseToFirestore(exerciseData, context);
                         },
                         icon: Icon(
                           Icons.favorite,
@@ -459,27 +460,68 @@ class FitCenter extends ConsumerWidget {
   }
 
 //save exercise
-  void saveExerciseToFirestore(Map<String, dynamic> exercisesData) async {
-    //await addExerciseToFirestore(exercisesData);
+  void saveExerciseToFirestore(
+      Map<String, dynamic> exercisesData, BuildContext context) async {
     try {
-      //Create an instance of FirebaseAuth
+      // Create an instance of FirebaseAuth
       final FirebaseAuth auth = FirebaseAuth.instance;
 
-      // Get current uid
-      final userID = auth.currentUser?.uid;
+      // Get the current user
+      final User? user = auth.currentUser;
 
-      // Make Reference to Exercise collection in Firebase
+      if (user == null) {
+        print('User not logged in.');
+        return;
+      }
+
+      // Get the current user's UID
+      final userID = user.uid;
+
+      // Make a reference to the Exercises collection in Firebase
       final exerciseCollection =
           FirebaseFirestore.instance.collection("Exercises");
 
-      // Add the exercise data to the Exercises collection
-      await exerciseCollection.add({
-        "uid": userID,
-        "exercise": exercisesData,
-        "saveDate": DateTime.now()
-      });
+      // Check if the exercise with the same name is already saved by the user
+      final existingExerciseQuery = await exerciseCollection
+          .where("uid", isEqualTo: userID)
+          .where("exercise.name", isEqualTo: exercisesData["name"])
+          .limit(1)
+          .get();
+
+      if (existingExerciseQuery.docs.isNotEmpty) {
+        print('Exercise already saved.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Exercise already saved.'),
+          ),
+        );
+        return;
+      }
+
+      // If the exercise is not already saved, add it to the Exercises collection
+      await exerciseCollection.add(
+        {
+          "uid": userID,
+          "exercise": exercisesData,
+          "saveDate": DateTime.now(),
+        },
+      );
+
+      print('Exercise saved to Firestore.');
+      // Save workout to FireStore
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Exercise saved to Firestore.'),
+        ),
+      );
     } catch (e) {
-      print('Error adding exercise to FireStore: $e');
+      print('Error adding exercise to Firestore: $e');
+      // if there is an error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding exercise to Firestore.'),
+        ),
+      );
     }
   }
 }

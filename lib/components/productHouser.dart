@@ -83,7 +83,7 @@ class BarcodeLookupComb extends ConsumerWidget {
       if (isValidBarcode(scannedBarcode)) {
         try {
           // Retrieve product data using the openfoodfacts library
-          final productData = await testAPI.getProduct(scannedBarcode);
+          final productData = await testAPI.getProduct(scannedBarcode, context);
 
           // Set the scanned barcode as the result
           ref.watch(resultProvider.notifier).state = scannedBarcode;
@@ -212,17 +212,25 @@ class BarcodeLookupComb extends ConsumerWidget {
   // Function to check if a barcode is valid
   bool isValidBarcode(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{13}$');
-    return barcodePattern.hasMatch(barcode);
+    //UPC -E
+    final RegExp upcE = RegExp(r'^\d{8}$');
+    return barcodePattern.hasMatch(barcode) || upcE.hasMatch(barcode);
   }
 
   // Function to normalize UPC code
   String isValidUPC(String barcode) {
     final RegExp barcodePattern = RegExp(r'^\d{12}$');
+    //UPC -E
+    final RegExp upcE = RegExp(r'^\d{8}$');
+
     if (barcodePattern.hasMatch(barcode)) {
       final modifiedBarcode = '0$barcode';
       return modifiedBarcode;
+    } else if (upcE.hasMatch(barcode)) {
+      return barcode;
+    } else {
+      return barcode;
     }
-    return barcode;
   }
 
   @override
@@ -272,7 +280,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           BarcodeLogPage(),
           Positioned(
               right: 16,
-              bottom: 150,
+              bottom: 200,
               child: ElevatedButton(
                 onPressed: () => scanBarcode(context, ref),
                 child: Icon(
@@ -432,8 +440,8 @@ class NutrientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .15,
-        minChildSize: .15,
+        initialChildSize: .20,
+        minChildSize: .20,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
@@ -646,6 +654,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
         backgroundColor: const Color.fromARGB(255, 104, 104, 104),
         title: Text('Draggable Scrollable Sheet'),
         centerTitle: true,
+        shadowColor: Colors.amber,
       ),
       body: Center(
         child: productHouserSheet(),

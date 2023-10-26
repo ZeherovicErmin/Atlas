@@ -64,8 +64,7 @@ dependencies:
   mobile_scanner: ^3.5.0
   visibility_detector: ^0.4.0
   fl_chart: ^0.64.0
-
-
+  liquid_pull_to_refresh: ^3.0.0
 
 
 dev_dependencies:

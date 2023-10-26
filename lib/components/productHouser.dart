@@ -83,7 +83,7 @@ class BarcodeLookupComb extends ConsumerWidget {
       if (isValidBarcode(scannedBarcode)) {
         try {
           // Retrieve product data using the openfoodfacts library
-          final productData = await testAPI.getProduct(scannedBarcode);
+          final productData = await testAPI.getProduct(scannedBarcode, context);
 
           // Set the scanned barcode as the result
           ref.watch(resultProvider.notifier).state = scannedBarcode;
@@ -145,6 +145,7 @@ class BarcodeLookupComb extends ConsumerWidget {
             ref.watch(productCaloriesProvider.notifier).state = 0.0;
             throw Exception(
                 'Product not found, please insert data for $scannedBarcode');
+                _showErrorDialog()
           }
 
           // Create a list of data items and set it as a state

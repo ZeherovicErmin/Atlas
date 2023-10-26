@@ -28,6 +28,9 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to utilize this feature.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your gallery to update your profile picture</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

@@ -272,7 +272,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           BarcodeLogPage(),
           Positioned(
               right: 16,
-              bottom: 150,
+              bottom: 200,
               child: ElevatedButton(
                 onPressed: () => scanBarcode(context, ref),
                 child: Icon(
@@ -432,8 +432,8 @@ class NutrientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: .15,
-        minChildSize: .15,
+        initialChildSize: .20,
+        minChildSize: .20,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
@@ -646,6 +646,7 @@ class _DraggableScrollCardState extends State<DraggableScrollCard> {
         backgroundColor: const Color.fromARGB(255, 104, 104, 104),
         title: Text('Draggable Scrollable Sheet'),
         centerTitle: true,
+        shadowColor: Colors.amber,
       ),
       body: Center(
         child: productHouserSheet(),

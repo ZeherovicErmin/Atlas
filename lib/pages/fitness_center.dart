@@ -1,5 +1,6 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/constants.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
+
+//final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null);
 
 // Creating a method to capitalize the first letter of each muscle
 String capitalizeFirstLetter(String text) {
@@ -20,9 +23,28 @@ final selectedMuscleProvider = StateProvider<String>((ref) {
   return muscle;
 });
 
+class SavedExercisesNotifier extends Notifier<List<String>> {
+  SavedExercisesNotifier() : super();
+
+  @override
+  List<String> build() {
+    return state;
+  }
+
+  void toggleExercise(String exerciseName) {
+    if (state.contains(exerciseName)) {
+      state = [...state]..remove(exerciseName);
+    } else {
+      state = [...state, exerciseName];
+    }
+  }
+}
+
 class FitCenter extends ConsumerWidget {
   const FitCenter({Key? key}) : super(key: key);
 
+  //for saving to database
+  final bool saved = false;
   Future<List<dynamic>> getExercises(String muscle) async {
     // The Api key from API NINJAS
     final String myApiKey =
@@ -188,6 +210,14 @@ class FitCenter extends ConsumerWidget {
         // Finding the icon for each exercise type
         final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
 
+        final exerciseData = {
+          'name': exercise['name'],
+          'type': exercise['type'],
+          'equipment': exercise['equipment'],
+          'difficulty': exercise['difficulty'],
+          'instructions': exercise['instructions'],
+        };
+
         return Container(
           margin: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
@@ -211,76 +241,99 @@ class FitCenter extends ConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 150.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Text(
-                      exercise['name'],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 32,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        AutoSizeText(
+                          exercise['name'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 32,
+                          ),
+                          maxLines: 1,
+                          minFontSize: 20,
+                          overflow: TextOverflow.clip,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              exercise['type'],
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['muscle'],
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['equipment'],
+                              style: const TextStyle(
+                                color: Colors.green,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['difficulty'],
+                              style: const TextStyle(
+                                color: Colors.purple,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.green,
+                              size: 18,
+                            ),
+                            Icon(
+                              exerciseTypeIcon ?? Icons.category,
+                              color: Colors.purple,
+                              size: 18,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    //Heart icon that saves to database
+                    Positioned(
+                      top: 0.0,
+                      right: 0.0,
+                      child: //Save To FireStore button
+                          IconButton(
+                        onPressed: () {
+                          saveExerciseToFirestore(exerciseData, context);
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 30,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          exercise['type'],
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['muscle'],
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['equipment'],
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['difficulty'],
-                          style: const TextStyle(
-                            color: Colors.purple,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.red,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.blue,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.green,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.purple,
-                          size: 18,
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),
@@ -292,12 +345,11 @@ class FitCenter extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for(var sentence
-                          in exercise['instructions'].split('.'))
-                      Text(
-                        '\u2022 $sentence',
-                        style: const TextStyle(fontSize: 18),
-                      ),
+                      for (var sentence in exercise['instructions'].split('.'))
+                        Text(
+                          '\u2022 $sentence',
+                          style: const TextStyle(fontSize: 18),
+                        ),
                     ],
                   ),
                 ),
@@ -307,5 +359,71 @@ class FitCenter extends ConsumerWidget {
         );
       },
     );
+  }
+
+//save exercise
+  void saveExerciseToFirestore(
+      Map<String, dynamic> exercisesData, BuildContext context) async {
+    try {
+      // Create an instance of FirebaseAuth
+      final FirebaseAuth auth = FirebaseAuth.instance;
+
+      // Get the current user
+      final User? user = auth.currentUser;
+
+      if (user == null) {
+        print('User not logged in.');
+        return;
+      }
+
+      // Get the current user's UID
+      final userID = user.uid;
+
+      // Make a reference to the Exercises collection in Firebase
+      final exerciseCollection =
+          FirebaseFirestore.instance.collection("Exercises");
+
+      // Check if the exercise with the same name is already saved by the user
+      final existingExerciseQuery = await exerciseCollection
+          .where("uid", isEqualTo: userID)
+          .where("exercise.name", isEqualTo: exercisesData["name"])
+          .limit(1)
+          .get();
+
+      if (existingExerciseQuery.docs.isNotEmpty) {
+        print('Exercise already saved.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Exercise already saved.'),
+          ),
+        );
+        return;
+      }
+
+      // If the exercise is not already saved, add it to the Exercises collection
+      await exerciseCollection.add(
+        {
+          "uid": userID,
+          "exercise": exercisesData,
+          "saveDate": DateTime.now(),
+        },
+      );
+
+      print('Exercise saved to Firestore.');
+      // Save workout to FireStore
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Exercise saved to Firestore.'),
+        ),
+      );
+    } catch (e) {
+      print('Error adding exercise to Firestore: $e');
+      // if there is an error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding exercise to Firestore.'),
+        ),
+      );
+    }
   }
 }

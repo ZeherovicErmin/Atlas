@@ -63,62 +63,62 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.blue,
-      elevation: 0,
-    ),
-    body: Container (
-    decoration: const BoxDecoration (
-    ),
-    child: SafeArea (
-      child: Center (
-        child: SingleChildScrollView (
-          child: Column (
-            mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              //White Space above logo
-              const SizedBox (height: 5),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        elevation: 0,
+      ),
+      body: Container (
+      decoration: const BoxDecoration (
+      ),
+      child: SafeArea (
+        child: Center (
+          child: SingleChildScrollView (
+            child: Column (
+              mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                //White Space above logo
+                const SizedBox (height: 5),
 
-              //Logo
-              SizedBox (
-                height: 220,
-                width: 220,
-                child: Image.asset('lib/images/atlas.png')),
-                    //Atlas title
-                      const Text(
-                        'Atlas',
-                        style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
+                //Logo
+                SizedBox (
+                  height: 220,
+                  width: 220,
+                  child: Image.asset('lib/images/atlas.png')),
+                      //Atlas title
+                        const Text(
+                          'Atlas',
+                          style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    //Email textfield
-                    MyTextField(
-                    controller: emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    ),
+                      //Email textfield
+                      MyTextField(
+                      controller: emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      ),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    //Reset password button
-                    MyButton (
-                      text: ('Reset Password'),
-                      onTap: passwordReset,
-                ),
-              ],
+                      //Reset password button
+                      MyButton (
+                        text: ('Reset Password'),
+                        onTap: passwordReset,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

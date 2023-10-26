@@ -1,3 +1,5 @@
+import 'package:atlas/components/my_button2.dart';
+import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -157,8 +159,44 @@ class HabitCardState extends State<HabitCard> {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late String selectedDate;
+  late String formattedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    var currentDate = DateTime.now();
+    selectedDate = "${currentDate.month}/${currentDate.day}";
+    formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+  }
+
+  //Function for choosing a date
+  Future<void> chooseDate(BuildContext context) async {
+    DateTime currentDate = DateTime.now();
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime(2023, 10),
+      lastDate: DateTime(2026),
+    );
+  if (picked != null) {
+      setState(() {
+        currentDate = picked;
+        var month = picked.month.toString().padLeft(2, '0');
+        var day = picked.day.toString().padLeft(2, '0');
+        formattedDate = "${currentDate.year}-$month-$day";
+        selectedDate = "$month/$day";
+      });
+    }
+  }
 
   //App Bar
   PreferredSize homePageAppBar(BuildContext context, String title) {
@@ -207,19 +245,24 @@ Widget build(BuildContext context) {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Container(
+              Container (
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: const Color.fromARGB(255, 255, 149, 1),
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(30),
               ),
-              child: TabBar(
-                unselectedLabelColor: const Color.fromARGB(255, 255, 149, 1),
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: const Color.fromARGB(255, 255, 149, 1),
-                ),
-                tabs: [
-                  Tab(text: formattedDate),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      chooseDate(context);
+                    },
+                    child: Text(
+                      selectedDate,
+                      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 20),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -275,7 +318,6 @@ Widget build(BuildContext context) {
     ),
   );
 }
-
   //Function to save habit data in Firebase
   void saveHabitData(String uid, String formattedDate, String habit, String value) async {
     CollectionReference habitCollectionRef = FirebaseFirestore.instance

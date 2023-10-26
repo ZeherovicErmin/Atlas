@@ -148,6 +148,21 @@ final Map<String, Widget> muscleIcons = {
     height: 60,
     width: 60,
   ),
+  "lats": Image.asset(
+    'lib/images/lats.png',
+    height: 60,
+    width: 60,
+  ),
+  "traps": Image.asset(
+    'lib/images/traps.png',
+    height: 60,
+    width: 60,
+  ),
+  "quadriceps": Image.asset(
+    'lib/images/quads.png',
+    height: 60,
+    width: 60,
+  ),
 };
 // Creating A map of icons for the exercise type i.e strength or cardio
 final Map<String, IconData> exerciseTypeIcons = {

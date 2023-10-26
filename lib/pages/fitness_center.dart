@@ -3,6 +3,7 @@ import 'package:atlas/pages/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -40,7 +41,11 @@ class SavedExercisesNotifier extends Notifier<List<String>> {
   }
 }
 
+// Adding an info button
+final infoDialogProvider = StateProvider<bool>((ref) => false);
+
 class FitCenter extends ConsumerWidget {
+  // A bool to prevent multiple clicks of a button
   const FitCenter({Key? key}) : super(key: key);
 
   //for saving to database
@@ -80,26 +85,55 @@ class FitCenter extends ConsumerWidget {
           backgroundColor: const Color.fromARGB(255, 232, 229, 229),
           //Home page for when a user logs in
           appBar: AppBar(
-            title: const Center(
-              child: Text(
-                "F i t n e s s   C e n t e r",
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontWeight: FontWeight.bold,
+              title: const Center(
+                child: Text(
+                  "F i t n e s s   C e n t e r",
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            backgroundColor: Color.fromARGB(255, 0, 136, 204),
-            bottom: const TabBar(
-              indicatorColor: Color.fromARGB(255, 90, 86, 86),
-              tabs: [
-                Tab(
-                  text: "Discover",
-                ),
-                Tab(text: "My Workouts"),
-              ],
-            ),
-          ),
+              backgroundColor: Color.fromARGB(255, 0, 136, 204),
+              bottom: const TabBar(
+                indicatorColor: Color.fromARGB(255, 90, 86, 86),
+                tabs: [
+                  Tab(
+                    text: "Discover",
+                  ),
+                  Tab(text: "My Workouts"),
+                ],
+              ),
+              actions: [
+                IconButton(
+                    icon: Icon(Icons.info),
+                    onPressed: () {
+                      final isInfoDialogOpen = ref.read(infoDialogProvider);
+
+                      if (!isInfoDialogOpen) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Center(child: Text('Discover Page Guide')),
+                              content: Text(
+                                  "Displayed is a list of muscles with icons depicting the muscle.\n"
+                                  "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
+                                  "The muscles are color coded by general muscle group they belong to.\n"),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    })
+              ]),
 
           body: TabBarView(
             children: [
@@ -127,8 +161,9 @@ class FitCenter extends ConsumerWidget {
       itemBuilder: (context, index) {
         final muscle = list[index];
         final muscleColor = muscleColors[muscle];
-        final icon = muscleIcons[
-            muscle]; // Initalize each entry of the list to the muscle
+        final icon = muscleIcons[muscle];
+
+        // Initalize each entry of the list to the muscle
         return GestureDetector(
           onTap: () async {
             final exercisesData = await getExercises(muscle);
@@ -142,7 +177,9 @@ class FitCenter extends ConsumerWidget {
 
                         //Workouts for each muscle group
                         const Color.fromARGB(255, 0, 136, 204),
-                    title: Text("$muscle Exercises"),
+                    title: Text(
+                      "${capitalizeFirstLetter(muscle)} Exercises",
+                    ),
                   ),
                   body: exercisesList(exercisesData),
                 ),
@@ -210,6 +247,7 @@ class FitCenter extends ConsumerWidget {
         // Finding the icon for each exercise type
         final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
 
+        // Map of exercises to be saved in firestore
         final exerciseData = {
           'name': exercise['name'],
           'type': exercise['type'],
@@ -318,18 +356,44 @@ class FitCenter extends ConsumerWidget {
                         )
                       ],
                     ),
-                    //Heart icon that saves to database
+                    //Plus icon that saves to database
                     Positioned(
                       top: 0.0,
                       right: 0.0,
                       child: //Save To FireStore button
                           IconButton(
                         onPressed: () {
-                          saveExerciseToFirestore(exerciseData, context);
+                          // Display a pop up first to ask if the user would like to save the workout
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Save Exercise?'),
+                                content:
+                                    Text('Do you want to save this execise?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Save'),
+                                    onPressed: () {
+                                      // This command saves to the Firestore
+                                      saveExerciseToFirestore(
+                                          exerciseData, context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                         icon: Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+                          CupertinoIcons.add_circled,
                           size: 30,
                         ),
                       ),
@@ -397,6 +461,7 @@ class FitCenter extends ConsumerWidget {
             content: Text('Exercise already saved.'),
           ),
         );
+        Navigator.of(context).pop();
         return;
       }
 
@@ -416,6 +481,7 @@ class FitCenter extends ConsumerWidget {
           content: Text('Exercise saved to Firestore.'),
         ),
       );
+      Navigator.of(context).pop();
     } catch (e) {
       print('Error adding exercise to Firestore: $e');
       // if there is an error

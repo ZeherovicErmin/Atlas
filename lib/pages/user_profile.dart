@@ -378,6 +378,7 @@ class UserProfile extends ConsumerWidget {
                   const SizedBox(height: 50),
 
                   // User posts
+                  /*
                   const Padding(
                     padding: EdgeInsets.only(left: 25.0),
                     child: Text(
@@ -387,6 +388,7 @@ class UserProfile extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  */
                 ],
               ),
             );

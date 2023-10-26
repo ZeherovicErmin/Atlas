@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
+import 'package:stroke_text/stroke_text.dart';
 
 //final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null);
 
@@ -79,10 +80,10 @@ class FitCenter extends ConsumerWidget {
 
     return Container(
       child: DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: const Color(0xFFFAF9F6),
           //Home page for when a user logs in
           appBar: AppBar(
               title: const Center(
@@ -171,7 +172,7 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
-                  backgroundColor: Color.fromARGB(255, 232, 229, 229),
+                  backgroundColor: Color(0xFFFAF9F6),
                   appBar: AppBar(
                     backgroundColor:
 
@@ -218,13 +219,14 @@ class FitCenter extends ConsumerWidget {
                       Icon(Icons.fitness_center,
                           size:
                               34), // Setting the default Icon if one does not exist
-                  Text(
-                    capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
-                    style: const TextStyle(
+                  StrokeText(
+                    text: capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
+                    textStyle: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    strokeColor: Colors.black12,
                   ),
                   const Icon(Icons.arrow_forward_ios,
                       size: 34, color: Colors.white),

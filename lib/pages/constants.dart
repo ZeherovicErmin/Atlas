@@ -204,13 +204,13 @@ final Map<String, IconData> exerciseTypeIcons = {
 };
 // Creating a map of colors to apply to each type of muscle
 const Map<String, Color> muscleColors = {
-  "abdominals": Color.fromARGB(255, 64, 224, 208),
+  "abdominals": Color.fromARGB(255, 40, 84, 206),
   "abductors": Color.fromARGB(255, 255, 107, 76),
   "adductors": Color.fromARGB(255, 255, 107, 76),
-  "biceps": Color.fromARGB(255, 235, 211, 117),
+  "biceps": Color.fromARGB(255, 63, 199, 202),
   "calves": Color.fromARGB(255, 255, 107, 76),
-  "chest": Color.fromARGB(255, 152, 251, 152),
-  "forearms": Color.fromARGB(255, 235, 211, 117),
+  "chest": Color.fromARGB(255, 131, 217, 131),
+  "forearms": Color.fromARGB(255, 63, 199, 202),
   "glutes": Color.fromARGB(255, 112, 128, 144),
   "hamstrings": Color.fromARGB(255, 112, 128, 144),
   "lats": Color.fromARGB(255, 147, 112, 219),
@@ -219,5 +219,5 @@ const Map<String, Color> muscleColors = {
   "neck": Color.fromARGB(255, 147, 112, 219),
   "quadriceps": Color.fromARGB(255, 255, 107, 76),
   "traps": Color.fromARGB(255, 147, 112, 219),
-  "triceps": Color.fromARGB(255, 235, 211, 117),
+  "triceps": Color.fromARGB(255, 63, 199, 202),
 };

@@ -29,6 +29,7 @@ class RecipeDetails extends ConsumerWidget {
       ]),
       backgroundColor: Color.fromARGB(255, 255, 253, 251),
     );
+
   }
 
 

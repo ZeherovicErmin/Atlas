@@ -4,6 +4,7 @@ import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,11 +34,14 @@ class Recipes extends ConsumerWidget {
   //Text controller used to store value from recipe search bar
   final TextEditingController searchController = TextEditingController();
 
+  get themeColor => null;
+
+  get themeColor2 => null;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
@@ -45,6 +49,7 @@ class Recipes extends ConsumerWidget {
         title: const Text("Recipes",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.orange,
+
       ),
       body: Column(children: [
         Padding(padding: EdgeInsets.only(top: 20)),
@@ -67,19 +72,20 @@ class Recipes extends ConsumerWidget {
   Widget form(BuildContext context, WidgetRef ref) {
     return Column(children: [
       //Spacing between components
+
       const Padding(
         padding: EdgeInsets.only(
             top: 5,
             left: 15,
             right: 15,
             bottom: 5), //apply padding to all sides
+
       ),
       Container(
         margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
         decoration: BoxDecoration(
           boxShadow: [
-            BoxShadow(
-                color: const Color.fromARGB(255, 88, 34, 194).withOpacity(0.11))
+            BoxShadow(color: Color.fromARGB(255, 0, 0, 0).withOpacity(0.11))
           ],
         ),
         child: Form(
@@ -91,6 +97,7 @@ class Recipes extends ConsumerWidget {
   }
 
 // Recipe search bar
+
   Widget searchBar(BuildContext context, WidgetRef ref) {
     return TextFormField(
       //Controller stores value entered by user
@@ -118,6 +125,7 @@ class Recipes extends ConsumerWidget {
           //Placeholder message in search bar directing user
           hintText: "Enter Recipe Search",
           hintStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+
     );
   }
 
@@ -306,6 +314,7 @@ class Recipes extends ConsumerWidget {
       context,
       MaterialPageRoute(builder: (context) => SavedRecipes()),
     );
+
   }
 
   //Save Button Handler - Save New Recipe

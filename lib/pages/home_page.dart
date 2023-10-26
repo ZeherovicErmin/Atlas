@@ -1,5 +1,6 @@
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/habit_tracker.dart';
+import 'package:atlas/pages/settings_page.dart';
 import 'package:atlas/util/habit_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,10 +20,10 @@ class HabitTileWidget extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
-            // Implement habit deletion logic here using Riverpod
+            // Habit deletion goes here
           },
         ),
-        // You can add more actions like marking habit as completed here
+        // Habit marking goes here
       ),
     );
   }
@@ -34,9 +35,11 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final habits = ref.watch(habitListNotifierProvider);
+    //Saves the state of dark mode being on or off
 
     return Scaffold(
-      appBar: myAppBar(context, ref, 'HomePage'),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      appBar: myAppBar2(context, ref, 'H o m e'),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Number of columns in the grid
@@ -50,7 +53,7 @@ class HomePage extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         heroTag: "addHabit",
         onPressed: () {
-          // Navigate to the habit creation screen
+          // Navigate to habit creation screen
           Navigator.push(
             context,
             MaterialPageRoute(

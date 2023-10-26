@@ -1,6 +1,7 @@
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
-import 'package:atlas/pages/barcode_lookup_page.dart';
+import 'package:atlas/pages/feed.dart';
+
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/recipes.dart';
@@ -26,31 +27,36 @@ class BottomNav extends ConsumerWidget {
       Recipes(),
       HomePage(),
       BarcodeLookupComb(),
-      const UserProfile(),
+      const Feed(),
     ];
 
     return Scaffold(
+      //fixes NavBar transparency
+      extendBody: true,
+
       // Indexed Stack holds the index of the page
       // So the programmer knows what page you are on
       body: IndexedStack(
         index: currentIndex,
+
         // See 'pages' variable above
         // Passes in pages of the application
         children: pages,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         // Colors of the nav
-        backgroundColor: Color.fromARGB(255, 161, 195, 250),
-        color: const Color.fromARGB(255, 38, 97, 185),
+        backgroundColor: Colors.transparent,
+        color: Color.fromARGB(255, 29, 74, 222),
+
         // Defines animation duration
-        animationDuration: Duration(milliseconds: 300),
+        animationDuration: const Duration(milliseconds: 300),
         onTap: (index) {
           // Watches for any changes to the index provider
           ref.read(indexProvider.notifier).state = index;
           print(ref.read(indexProvider.notifier).state);
         },
         index: ref.watch(indexProvider),
-        items: [
+        items: const [
           Icon(
             Icons.fitness_center,
             color: Colors.white,
@@ -68,7 +74,7 @@ class BottomNav extends ConsumerWidget {
             color: Colors.white,
           ),
           Icon(
-            CupertinoIcons.profile_circled,
+            CupertinoIcons.chat_bubble,
             color: Colors.white,
           ),
         ],

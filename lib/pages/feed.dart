@@ -1,5 +1,4 @@
 import 'package:atlas/components/feed_post.dart';
-import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,7 +37,7 @@ class Feed extends ConsumerWidget {
     */
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(
+      backgroundColor: const Color.fromARGB(
           255, 232, 229, 229), //Home page for when a user logs in
       appBar: AppBar(
         title: const Center(
@@ -48,7 +47,7 @@ class Feed extends ConsumerWidget {
                 TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 29, 74, 222),
+        backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       ),
 
       body: Center(
@@ -94,15 +93,22 @@ class Feed extends ConsumerWidget {
             ),
 
             //post message
-            Padding(
-              padding: const EdgeInsets.all(25.0),
+            Container(
+              padding: const EdgeInsets.all(15.0),
+              margin: const EdgeInsets.all(15.0),
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color
+                borderRadius: BorderRadius.circular(8), // Rounded corners
+              ),
               child: Row(
                 children: [
                   //textfield
                   Expanded(
-                      child: MyTextField(
+                      child: TextField(
+                    maxLength: 150,
                     controller: textController,
-                    hintText: "Share your progress!",
+                    decoration:
+                        const InputDecoration(hintText: "Share your progress!"),
                     obscureText: false,
                   )),
                   //post button
@@ -110,7 +116,7 @@ class Feed extends ConsumerWidget {
                     onPressed: postMessage,
                     icon: const Icon(
                       Icons.arrow_circle_up,
-                      color: Color.fromARGB(255, 29, 74, 222),
+                      color: Color.fromARGB(255, 0, 136, 204),
                     ),
                   )
                 ],
@@ -121,7 +127,7 @@ class Feed extends ConsumerWidget {
             Text(
               "Logged in as ${currentUser.email!}",
               style: const TextStyle(
-                color: Color.fromARGB(255, 29, 74, 222),
+                color: Color.fromARGB(255, 0, 136, 204),
               ),
             ),
 

@@ -1,7 +1,7 @@
 import 'package:atlas/components/product_card.dart';
 import 'package:atlas/pages/barcode_log_page.dart';
 import 'package:atlas/pages/constants.dart';
-import 'package:atlas/util/custom_scanner.dart';
+//import 'package:atlas/util/custom_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,7 +66,7 @@ class BarcodeLookupComb extends ConsumerWidget {
 
   BarcodeLookupComb({Key? key}) : super(key: key);
   // Function to scan a barcode
-  Future<void> _scanBarcode(BuildContext context, WidgetRef ref) async {
+  Future<void> scanBarcode(BuildContext context, WidgetRef ref) async {
     // Use the barcode scanner page from the simple_barcode_scanner library
     var scannedBarcode = await Navigator.push(
       context,
@@ -252,7 +252,14 @@ class BarcodeLookupComb extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-      appBar: myAppBar2(context, ref, 'B a r c o d e   L o o k u p'),
+      appBar: AppBar(
+        title: Text(
+          "B a r c o d e  L o o k u p",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
+      ),
       backgroundColor: Colors.white,
       body: Stack(
         children: [
@@ -267,7 +274,7 @@ class BarcodeLookupComb extends ConsumerWidget {
               right: 16,
               bottom: 150,
               child: ElevatedButton(
-                onPressed: () => _scanBarcode(context, ref),
+                onPressed: () => scanBarcode(context, ref),
                 child: Icon(
                   CupertinoIcons.barcode_viewfinder,
                   size: 50,

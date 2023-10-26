@@ -350,6 +350,7 @@ class Recipes extends ConsumerWidget {
   }
 
   // Function to navigate to Saved Recipes Page
+  // Function to navigate to Saved Recipes Page
   navigateToSavedRecipesPage(BuildContext context) {
     Navigator.push(
       context,

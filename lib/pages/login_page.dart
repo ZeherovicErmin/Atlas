@@ -80,16 +80,6 @@ class LoginPage extends ConsumerWidget {
 
                     //const SizedBox(height: 5),
 
-                    //Atlas title
-                    const Text(
-                      'Atlas',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
                     const SizedBox(height: 10),
 
                     //Username textfield

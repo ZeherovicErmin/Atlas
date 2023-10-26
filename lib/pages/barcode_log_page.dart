@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 //paramaters to hold search, sort, filter
 class FilterState {
@@ -50,6 +51,10 @@ class FilterStateController extends StateNotifier<FilterState> {
 
 class BarcodeLogPage extends ConsumerWidget {
   const BarcodeLogPage({Key? key});
+  String formatDecimal(double value) {
+    // Round to one decimal place and format as a string
+    return value.toStringAsFixed(1);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,17 +64,20 @@ class BarcodeLogPage extends ConsumerWidget {
     log("The user id is = $uid");
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: const Color.fromARGB(255, 232, 229, 229),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color.fromARGB(255, 0, 136, 204),
             floating: true,
             title: TextField(
               onChanged: (value) => ref
                   .read(filterStateProvider.notifier)
                   .updateSearchTerm(value),
-              decoration: InputDecoration(hintText: 'Search'),
+              decoration: const InputDecoration(
+                hintText: 'Search',
+                hintStyle: TextStyle(color: Colors.white),
+              ),
             ),
 
             // Sorting Menu in the App Bar itself
@@ -99,22 +107,6 @@ class BarcodeLogPage extends ConsumerWidget {
                   );
                 }).toList(),
               ),
-              PopupMenuButton<String>(
-                onSelected: (value) =>
-                    // Filtering functionality
-                    ref
-                        .read(filterStateProvider.notifier)
-                        .updateFilterBy(value),
-                itemBuilder: (context) => [
-                  'Filter by Category',
-                  'Filter by Type'
-                ].map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList(),
-              )
             ],
           ),
           SliverFillRemaining(child: _buildStreamBuilder(context, uid)),
@@ -182,7 +174,7 @@ class BarcodeLogPage extends ConsumerWidget {
             stream: query.snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
               final logs = snapshot.data!.docs;
               //If no barcode logs are present
@@ -199,35 +191,35 @@ class BarcodeLogPage extends ConsumerWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
-        margin: EdgeInsets.only(top: 10.0),
+        margin: const EdgeInsets.only(top: 10.0),
         height: 175.0,
         width: 380.0,
         child: Card(
           elevation: 5,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black, width: 5),
+            side: const BorderSide(color: Colors.black, width: 5),
             borderRadius: BorderRadius.circular(24),
           ),
           child: InkWell(
             onTap: () {
               // Add the logic you want when the card is tapped
               print("Card tapped!");
+
               BarcodeLookupComb().scanBarcode(context, ref);
             },
             borderRadius:
                 BorderRadius.circular(24), // Match with the card's shape
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: EdgeInsets.all(12.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding:
-                              const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                          padding: EdgeInsets.only(left: 16.0, bottom: 8.0),
                           child: Text(
                             'Instructions:',
                             style: TextStyle(
@@ -235,24 +227,21 @@ class BarcodeLogPage extends ConsumerWidget {
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          padding: EdgeInsets.only(left: 16.0, bottom: 4.0),
                           child: Text(
                             '1. Click this card',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          padding: EdgeInsets.only(left: 16.0, bottom: 4.0),
                           child: Text(
                             '2. Open your camera',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.only(left: 16.0, bottom: 4.0),
+                          padding: EdgeInsets.only(left: 16.0, bottom: 4.0),
                           child: Text(
                             '3. Scan the barcode',
                             style: TextStyle(fontSize: 14),
@@ -265,14 +254,14 @@ class BarcodeLogPage extends ConsumerWidget {
                 Container(
                   width: 1,
                   height: 140,
-                  child: VerticalDivider(
+                  child: const VerticalDivider(
                     color: Color.fromARGB(255, 0, 0, 0),
                     thickness: 3.0,
                     width: 2.0,
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Container(
                     height: 125,
                     width: 100,
@@ -280,7 +269,7 @@ class BarcodeLogPage extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.blue,
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Icon(
                         Icons.camera_alt, // Camera icon
                         size: 48.0,
@@ -311,10 +300,11 @@ class BarcodeLogPage extends ConsumerWidget {
           data['uid'] = ''; // Make the 'uid' row empty
         }
 
-        final fatsPerServing = data['fatsPerServing'];
-        final carbsPerServing = data['carbsPerServing'];
-        final proteinPerServing = data['proteinPerServing'];
-        final cholesterolPerServing = data['cholesterolPerServing'];
+        final fatsPerServing = formatDecimal(data['fatsPerServing']);
+        final carbsPerServing = formatDecimal(data['carbsPerServing']);
+        final proteinPerServing = formatDecimal(data['proteinPerServing']);
+        final cholesterolPerServing =
+            formatDecimal(data['cholesterolPerServing']);
 
         return Slidable(
           // Allows logs to be deleted, Wraps entire list widget
@@ -322,14 +312,14 @@ class BarcodeLogPage extends ConsumerWidget {
           key: ValueKey(logs[index].id),
 
           startActionPane: ActionPane(
-            motion: ScrollMotion(),
+            motion: const ScrollMotion(),
             extentRatio: .25,
             children: [
               SlidableAction(
                 autoClose: true,
                 onPressed: (context) => deleteLog(context, data),
                 backgroundColor: const Color.fromARGB(2, 140, 215, 85),
-                foregroundColor: Color.fromARGB(255, 255, 0, 0),
+                foregroundColor: const Color.fromARGB(255, 255, 0, 0),
                 icon: Icons.delete,
                 label: 'Delete',
               )
@@ -337,19 +327,21 @@ class BarcodeLogPage extends ConsumerWidget {
           ),
           child: Card(
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black, width: 5),
+              side: const BorderSide(color: Colors.black, width: 3.8),
               borderRadius: BorderRadius.circular(20),
             ),
             elevation: 7, // Card-like appearance
-            margin: EdgeInsets.all(12), // Margin for spacing
+            margin: const EdgeInsets.all(12), // Margin for spacing
             child: InkWell(
               borderRadius: BorderRadius.circular(24),
               // Logic for showing a nutritional label
-              onTap: () {},
+              onTap: () {
+                deleteLog(context, data);
+              },
               child: Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 0),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(0),
+                  contentPadding: const EdgeInsets.all(0),
                   title: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -359,12 +351,15 @@ class BarcodeLogPage extends ConsumerWidget {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
-                              child: Text(
+                              child: AutoSizeText(
                                 '${data['productName']}',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                minFontSize: 12,
                               ),
                             ),
-                            Divider(
+                            const Divider(
                               color: Color.fromARGB(255, 0, 0, 0),
                               thickness: 3,
                             ),
@@ -373,7 +368,7 @@ class BarcodeLogPage extends ConsumerWidget {
                               child: Text(
                                   'Carbs Per Serving: ${carbsPerServing}g'),
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 1,
                             ),
                             Row(
@@ -385,7 +380,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 1,
                             ),
                             Padding(
@@ -393,7 +388,7 @@ class BarcodeLogPage extends ConsumerWidget {
                               child:
                                   Text('Fats Per Serving: ${fatsPerServing}g'),
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 1,
                             ),
                             Padding(
@@ -407,21 +402,21 @@ class BarcodeLogPage extends ConsumerWidget {
                       Container(
                         width: 1,
                         height: 170,
-                        child: VerticalDivider(
+                        child: const VerticalDivider(
                           color: Color.fromARGB(255, 0, 0, 0),
                           thickness: 3.0,
                           width: 2.0,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Container(
                           height: 125,
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: Colors.blue,
-                            image: DecorationImage(
+                            image: const DecorationImage(
                                 image: AssetImage(
                                     'assets/icons/flameiconnameplate.png'),
                                 fit: BoxFit.contain),
@@ -436,7 +431,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '${data['productCalories'].toInt()}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),
                                     textAlign: TextAlign.center,
@@ -465,26 +460,55 @@ class BarcodeLogPage extends ConsumerWidget {
   }
 
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {
-    //Deletes the barcode log
-    try {
-      //stores documentID into variable
-      String? docId = data['docId'];
+    //Confirmation dialog
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text("Are you sure you want to delete this log?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                // Cancels dialog box if cancel is pressed
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+                // True if confirmed
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
 
-      if (docId != null) {
-        await FirebaseFirestore.instance
-            .collection('Barcode_Lookup')
-            .doc(docId)
-            .delete();
+    //Deletes the barcode log
+    if (confirmDelete == true) {
+      try {
+        //stores documentID into variable
+        String? docId = data['docId'];
+
+        if (docId != null) {
+          await FirebaseFirestore.instance
+              .collection('Barcode_Lookup')
+              .doc(docId)
+              .delete();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Barcode log deleted successfully')),
+          );
+        }
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Barcode log deleted successfully')),
+          SnackBar(
+            content: Text('Error deleting barcode log: $e'),
+          ),
         );
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error deleting barcode log: $e'),
-        ),
-      );
     }
   }
 }

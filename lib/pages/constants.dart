@@ -10,6 +10,7 @@ import 'dart:developer';
 //App Bar for the homepage with the log out button
 AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Color.fromARGB(255, 0, 136, 204),
       title: Text(
         title,
@@ -33,6 +34,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
 //AppBar without the login button
 AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
+    automaticallyImplyLeading: false,
     backgroundColor: Color.fromARGB(255, 0, 136, 204),
     title: Text(
       title,
@@ -58,12 +60,13 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
 
 AppBar myAppBar3(BuildContext context, String title) {
   return AppBar(
-    backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-    title: Text(
-      title,
-      style:
-          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-    ),
+
+      automaticallyImplyLeading: false,
+      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+      title: Text(
+        title,
+        style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+      ),
   );
 }
 

@@ -87,7 +87,6 @@ class RegisterPage extends ConsumerWidget {
           'bio': 'Empty Bio...', // initially empty bio
           'profilePicture':
               registrationState.initialProfileImageData, // profile pic
-          // add additional fields as needed
         });
 
         var currentDate = DateTime.now();
@@ -95,16 +94,6 @@ class RegisterPage extends ConsumerWidget {
         final FirebaseAuth auth = FirebaseAuth.instance;
         final User? user = auth.currentUser;
         final uid = user?.uid;
-
-        //Uploads a collection containing all user's email addresses when they register with Atlas
-        FirebaseFirestore.instance
-            .collection("Habits")
-            .doc(uid)
-            .set({
-              'uid': uid,
-              'date': formattedDate,
-          // add additional fields as needed
-        });
 
         //Error handling for registering for Atlas
         Navigator.pop(context); // Closes the loading circle

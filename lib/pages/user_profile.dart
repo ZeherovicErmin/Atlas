@@ -214,16 +214,16 @@ class UserProfile extends ConsumerWidget {
         builder: (context) => AlertDialog(
           title: Text(
             "Edit $field",
-            style: TextStyle(color: themeColor),
+            style: const TextStyle(color: Colors.black),
           ),
           content: TextField(
             autofocus: true,
-            style: TextStyle(
-                color:  themeColor2
+            style: const TextStyle(
+                color:  Colors.black
                 ), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: TextStyle(color: themeColor),
+              hintStyle: const TextStyle(color: Colors.black),
             ),
             onChanged: (value) {
               newValue = value;
@@ -232,18 +232,18 @@ class UserProfile extends ConsumerWidget {
           actions: [
             // Cancel button
             TextButton(
-              child: Text(
+              child: const Text(
                 'Cancel',
-                style: TextStyle(color: themeColor),
+                style: TextStyle(color: Colors.black),
               ),
               onPressed: () => Navigator.pop(context),
             ),
 
             // Save button
             TextButton(
-              child: Text(
+              child: const Text(
                 'Save',
-                style: TextStyle(color: themeColor),
+                style: TextStyle(color: Colors.black),
               ),
               onPressed: () => Navigator.of(context).pop(newValue),
             ),
@@ -341,20 +341,20 @@ class UserProfile extends ConsumerWidget {
                   Text(
                     currentUser.email!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: themeColor,
+                    style: const TextStyle(
+                      color: Colors.black,
                     ),
                   ),
 
                   const SizedBox(height: 50),
 
                   // User details
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 25.0),
                     child: Text(
                       'My Details',
                       style: TextStyle(
-                        color: themeColor,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -378,12 +378,12 @@ class UserProfile extends ConsumerWidget {
                   const SizedBox(height: 50),
 
                   // User posts
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(left: 25.0),
                     child: Text(
                       'My Posts',
                       style: TextStyle(
-                        color: themeColor,
+                        color: Colors.black,
                       ),
                     ),
                   ),

@@ -214,6 +214,7 @@ class _HomePageState extends State<HomePage> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(70),
       child: AppBar(
+        automaticallyImplyLeading: false,
         leading: null,
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),

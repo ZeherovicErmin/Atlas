@@ -239,7 +239,7 @@ Widget build(BuildContext context) {
   return DefaultTabController(
     length: 3,
     child: Scaffold(
-      appBar: homePageAppBar(context, uid2),
+      appBar: homePageAppBar(context, 'H o m e  P a g e'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

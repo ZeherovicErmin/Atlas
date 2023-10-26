@@ -441,7 +441,7 @@ class NutrientsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         initialChildSize: .20,
-        minChildSize: .20,
+        minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
           return Container(
@@ -497,7 +497,7 @@ class NutrientsList extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "${amtPerServing.toInt()} Servings per container",
+                            "${amtPerServing.toInt()}g per container",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 fontFamily: 'Helvetica Black',
@@ -544,7 +544,7 @@ class NutrientsList extends StatelessWidget {
                   NutritionRow(title: "Protein", value: "$proteinPserving"),
 
                   NutritionRow(
-                      title: "Cholesterol", value: '$cholesterolPerServing'),
+                      title: "Cholesterol", value: '${cholesterolPerServing.toStringAsFixed(1)}'),
                   //end Protein
                 ]),
               ),

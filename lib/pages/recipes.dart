@@ -47,7 +47,7 @@ class Recipes extends ConsumerWidget {
     //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
     return DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
           resizeToAvoidBottomInset: false,

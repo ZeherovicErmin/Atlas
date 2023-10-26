@@ -145,7 +145,6 @@ class BarcodeLookupComb extends ConsumerWidget {
             ref.watch(productCaloriesProvider.notifier).state = 0.0;
             throw Exception(
                 'Product not found, please insert data for $scannedBarcode');
-                _showErrorDialog()
           }
 
           // Create a list of data items and set it as a state

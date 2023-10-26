@@ -28,6 +28,10 @@ void _showErrorDialog(BuildContext context, String title, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      //Timer to close dialog
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+      });
       return AlertDialog(
         title: Text(title),
         content: Text(message),

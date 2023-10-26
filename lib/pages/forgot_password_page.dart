@@ -70,20 +70,8 @@ Widget build(BuildContext context) {
       backgroundColor: Colors.blue,
       elevation: 0,
     ),
-    body: gradient(context), // Use the gradient function here
-  );
-}
-Widget gradient (BuildContext context) {
-  return Container (
+    body: Container (
     decoration: const BoxDecoration (
-      gradient: LinearGradient (
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color.fromARGB(255, 90, 117, 255),
-            Color.fromARGB(255, 161, 195, 250),
-        ],
-      ),
     ),
     child: SafeArea (
       child: Center (
@@ -130,6 +118,7 @@ Widget gradient (BuildContext context) {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

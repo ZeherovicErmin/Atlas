@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
+import 'package:stroke_text/stroke_text.dart';
 
 //final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null);
 
@@ -218,13 +219,14 @@ class FitCenter extends ConsumerWidget {
                       Icon(Icons.fitness_center,
                           size:
                               34), // Setting the default Icon if one does not exist
-                  Text(
-                    capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
-                    style: const TextStyle(
+                  StrokeText(
+                    text: capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
+                    textStyle: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    strokeColor: Colors.black12,
                   ),
                   const Icon(Icons.arrow_forward_ios,
                       size: 34, color: Colors.white),
@@ -329,31 +331,6 @@ class FitCenter extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.red,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.blue,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.green,
-                              size: 18,
-                            ),
-                            Icon(
-                              exerciseTypeIcon ?? Icons.category,
-                              color: Colors.purple,
-                              size: 18,
-                            ),
-                          ],
-                        )
                       ],
                     ),
                     //Plus icon that saves to database

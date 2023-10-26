@@ -40,7 +40,7 @@ class SettingsPage extends ConsumerWidget {
             child: SettingsList(
               sections: [
                 SettingsSection(
-                  title: Text(
+                  title: const Text(
                     'Account',
                     style: TextStyle(
                       fontSize: 16,
@@ -50,14 +50,14 @@ class SettingsPage extends ConsumerWidget {
                   ),
                   tiles: [
                     SettingsTile(
-                      title: Text(
+                      title: const Text(
                         'Change Password',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                         ),
                       ),
-                      leading: Icon(
+                      leading: const Icon(
                         Icons.lock,
                         color: Colors.black,
                       ),
@@ -71,7 +71,7 @@ class SettingsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsSection(
-                  title: Text(
+                  title: const Text(
                     'Appearance',
                     style: TextStyle(
                       fontSize: 16,
@@ -81,14 +81,14 @@ class SettingsPage extends ConsumerWidget {
                   ),
                   tiles: [
                     SettingsTile.switchTile(
-                      title: Text(
+                      title: const Text(
                         'Dark Mode',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                         ),
                       ),
-                      leading: Icon(
+                      leading: const Icon(
                         Icons.flashlight_on_outlined,
                         color: Colors.black,
                       ),

@@ -16,6 +16,11 @@ final resultProvider = StateProvider<RecipeModel>((ref) {
   return RecipeModel();
 });
 
+//State Provider holds List of users saved recipe Ids
+final savedRecipeIdsProvider = StateProvider<List<int>>((ref) {
+  return [];
+});
+
 //Recipe Class that handles and displays the recipes is
 //child of class Consumer Widget
 class Recipes extends ConsumerWidget {
@@ -140,6 +145,22 @@ class Recipes extends ConsumerWidget {
               itemBuilder: (context, index) {
                 Result recipe = recipes[index];
                 String recipeName = recipe.title;
+
+                //Function called when saved button is pressed
+                var onPressedFunction;
+
+                List<int> savedRecipeIds = ref.watch(savedRecipeIdsProvider);
+                //If recipe is already saved, set the onPressedFunction to null
+                //which will disable the save button - preventing duplicates
+                if (savedRecipeIds.contains(recipe.id)) {
+                  onPressedFunction = null;
+                }
+                //If the recipe is not already saved, set the onPressedFunction
+                //To the onSave function which will save it to the database
+                else {
+                  onPressedFunction = () => onSave(recipe, ref, context);
+                }
+
                 return Container(
                     alignment: Alignment.center,
                     child: TransparentImageCard(
@@ -181,13 +202,14 @@ class Recipes extends ConsumerWidget {
                                     backgroundColor:
                                         const Color.fromARGB(255, 255, 176, 58),
                                     child: IconButton(
-                                      onPressed: () =>
-                                          onSave(recipe, ref, context),
+                                      onPressed: onPressedFunction,
                                       icon: const Icon(
                                           Icons.bookmark_add_rounded),
                                       tooltip: "Save Recipe",
                                       color: const Color.fromARGB(
                                           255, 255, 255, 255),
+                                      disabledColor:
+                                          Color.fromARGB(102, 255, 255, 255),
                                       highlightColor: Colors.purpleAccent,
                                       hoverColor: Colors.blue.withOpacity(0.3),
                                       splashRadius: 20,
@@ -234,6 +256,9 @@ class Recipes extends ConsumerWidget {
       //to set the result equal to the mapped RecipeModel containing
       //All of the API response data
       if (mappedData.results != null) {
+        //Update list of saved recipe Ids
+        ref.read(savedRecipeIdsProvider.notifier).state = await getSavedRecipeIds();
+        //Update list of searched recipes
         ref.read(resultProvider.notifier).state = mappedData;
       } else {
         mappedData = RecipeModel();
@@ -255,6 +280,9 @@ class Recipes extends ConsumerWidget {
       //print(data);
       RecipeModel mappedData = RecipeModel.fromJson(data);
       if (mappedData.results != null) {
+        //Update list of saved recipe Ids
+        ref.read(savedRecipeIdsProvider.notifier).state = await getSavedRecipeIds();
+        //Update list of searched recipes
         ref.read(resultProvider.notifier).state = mappedData;
       } else {
         mappedData = RecipeModel();
@@ -276,17 +304,21 @@ class Recipes extends ConsumerWidget {
   navigateToSavedRecipesPage(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => SavedRecipes()
-          ),
+      MaterialPageRoute(builder: (context) => SavedRecipes()),
     );
   }
 
   //Save Button Handler - Save New Recipe
   void onSave(Result recipe, WidgetRef ref, BuildContext context) async {
-
     //Save the recipe to the DB
     saveRecipeToDB(recipe);
+
+    //copy list of Ids
+    List<int> savedRecipeIds = [...ref.watch(savedRecipeIdsProvider)];
+    //add new Id
+    savedRecipeIds.add(recipe.id);
+    //save new list of recipes
+    ref.read(savedRecipeIdsProvider.notifier).state = savedRecipeIds;
 
     //output recipe saved message
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -311,5 +343,27 @@ class Recipes extends ConsumerWidget {
     //send request to firebase to add recipe to the Saved_Recipes collection
     await recipeCollection.add(
         {"uid": userID, "recipe": recipe.toMap(), "saveDate": DateTime.now()});
+  }
+
+  Future<List<int>> getSavedRecipeIds() async {
+    // Create an instance of FirebaseAuth
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
+    //reference to Saved_Recipes collection in firebase
+    final recipesCollection =
+        FirebaseFirestore.instance.collection("Saved_Recipes");
+
+    final savedRecipes =
+        await recipesCollection.where("uid", isEqualTo: userID).get();
+
+    List<int> recipeIDList = [];
+    savedRecipes.docs.forEach((doc) {
+      recipeIDList.add(doc["recipe"]["id"]);
+    });
+
+    return recipeIDList;
   }
 }

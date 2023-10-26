@@ -5,169 +5,153 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_card/image_card.dart';
 
-//State Provider holds list of saved recipes
-final savedRecipesProvider = FutureProvider<List<Result>>((ref) async {
-  return await getSavedRecipes();
-});
-
-class SavedRecipes extends ConsumerWidget {
-  const SavedRecipes({Key? key}) : super(key: key);
+class SavedRecipes extends StatefulWidget {
+  const SavedRecipes({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final savedrecipes = ref.watch(savedRecipesProvider);
+  State<SavedRecipes> createState() => _SavedRecipesState();
+}
+
+class _SavedRecipesState extends State<SavedRecipes> {
+  final CollectionReference savedRecipesCollection =
+      FirebaseFirestore.instance.collection("Saved_Recipes");
+
+  @override
+  Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "S a v e d  R e c i p e s",
-            style:
-                TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Color.fromARGB(255, 0, 136, 204),
-        ),
-        body: savedrecipes.when(
-            //if successfull, output saved recipes
-            data: (recipes) => gradient(recipes, context, ref),
-            //iff error, output error
-            error: (error, stacktrace) => Text("error"),
-            //while loading, show progress indicator
-            loading: () => CircularProgressIndicator()));
-    // body: FutureBuilder<List<Result>>(
-    //         future: ref.watch(savedRecipesProvider),
-    //         builder: (context, snapshot) {
-    //           List<Widget> children;
-    //           if (snapshot.connectionState == ConnectionState.waiting) {
-    //             return CircularProgressIndicator();
-    //           } else if (snapshot.hasError) {
-    //             return Text('$snapshot.error}');
-    //           }
-    //           {
-    //             List<Result>? savedRecipes = snapshot.data;
-    //             return gradient(savedRecipes!, context, ref);
-    //           }
-    //         }));
-  }
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            savedRecipesCollection.where("uid", isEqualTo: userID).snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container(
+                padding: EdgeInsets.all(50),
+                alignment: Alignment.center,
+                child: CircularProgressIndicator());
+          }
 
-  Widget gradient(
-      List<Result> savedRecipes, BuildContext context, WidgetRef ref) {
-    return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 232, 229, 229),
-              Color.fromARGB(255, 232, 229, 229),
-            ],
-          ),
-        ),
-        child: Column(children: [savedRecipeList(savedRecipes, context, ref)]));
-  }
+          List<Result> savedRecipes = [];
+          snapshot.data!.docs.forEach((doc) {
+            savedRecipes.add(Result.fromJson(doc["recipe"], id: doc.id));
+          });
 
-  Widget savedRecipeList(
-      List<Result> savedRecipes, BuildContext context, WidgetRef ref) {
-    //List<Result>? savedRecipes = ref.watch(savedRecipesProvider);
-    if (savedRecipes != null) {
-      return Expanded(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              //ListView used to output recipe list element into individual components
-              child: ListView.separated(
-                shrinkWrap: true,
-                //Used to ensure list is scrollable
-                physics: const AlwaysScrollableScrollPhysics(),
-                //Number of recipes
-                itemCount: savedRecipes.length,
-                //Used to build recipe list tiles
-                itemBuilder: (context, index) {
-                  Result recipe = savedRecipes[index];
-                  String recipeName = recipe.title;
-                  return ListTile(
-                      onTap: () => navigateToRecipeDetails(context, recipe),
-                      title: Text(recipeName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      //Add remove button to end of tile
-                      trailing: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.redAccent,
-                          child: Material(
-                              color: const Color.fromARGB(0, 255, 255, 255),
-                              child: IconButton(
-                                onPressed: () => onRemove(recipe, ref, context),
-                                icon: const Icon(Icons.delete_forever),
-                                tooltip: "Remove Recipe",
-                                color: Colors.black,
-                                highlightColor: Colors.black,
-                                hoverColor: Colors.red.withOpacity(0.3),
-                                splashRadius: 20,
-                                splashColor: Colors.blue,
-                              ))));
-                },
-                //Used to put a divider line between recipes
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              )));
-    }
-    return const Text("No Saved Recipes");
-  }
-
-  // Function to navigate to recipe details page
-  void navigateToRecipeDetails(BuildContext context, Result recipe) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RecipeDetails(recipe: recipe),
+          return Column(children: [
+            Expanded(
+                child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    //ListView used to output recipe list element into individual components
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      //Used to ensure list is scrollable
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      //Number of recipes
+                      itemCount: savedRecipes.length,
+                      //Used to build recipe list tiles
+                      itemBuilder: (context, index) {
+                        Result recipe = savedRecipes[index];
+                        String recipeName = recipe.title;
+                        return Container(
+                            alignment: Alignment.center,
+                            child: TransparentImageCard(
+                              width: 300,
+                              imageProvider: recipe.image != null ||
+                                      recipe.image != ""
+                                  ? NetworkImage(recipe.image)
+                                  : const AssetImage(
+                                          'assets/icons/recipe-notfound.svg')
+                                      as ImageProvider,
+                              // tags: [
+                              //   _tag('Product', () {}),
+                              // ],
+                              title: Container(
+                                  child: Text(
+                                "${recipe.title}",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                              description: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty
+                                                    .all<Color>(Color.fromARGB(
+                                                        255, 255, 162, 23))),
+                                        onPressed: () =>
+                                            navigateToRecipeDetails(
+                                                context, recipe),
+                                        child: Text(
+                                          "View Details",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    Container(
+                                        padding: EdgeInsets.all(0),
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 255, 176, 58),
+                                            child: Material(
+                                                color: const Color.fromARGB(
+                                                    0, 255, 255, 255),
+                                                child: IconButton(
+                                                  onPressed: () => onRemove(
+                                                      recipe,
+                                                      context,
+                                                      savedRecipesCollection),
+                                                  icon: const Icon(
+                                                      Icons.delete_forever),
+                                                  tooltip: "Remove Recipe",
+                                                  color: Colors.white,
+                                                  highlightColor: Colors.black,
+                                                  hoverColor: Colors.red
+                                                      .withOpacity(0.3),
+                                                  splashRadius: 20,
+                                                  splashColor: Colors.blue,
+                                                ))))
+                                  ]),
+                            ));
+                      },
+                      //Used to put a divider line between recipes
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                    )))
+          ]);
+        },
       ),
     );
   }
-
-  //Remove Button Handler - Remove Saved Recipe
-  onRemove(Result recipe, WidgetRef ref, BuildContext context) async {
-    /*
-    //copy list of saved recipes
-    List<Result>? recipes = [
-      ...ref.watch(savedRecipesProvider as ProviderListenable<Iterable<Result>>)
-    ];
-    //remove the selected recipe
-    recipes.remove(recipe);
-    //save new list without the removed recipe
-    ref.read(savedRecipesProvider.notifier).state = recipes;
-  */
-    final recipeCollection =
-        FirebaseFirestore.instance.collection("Saved_Recipes");
-    await recipeCollection.doc(recipe.firebaseID).delete();
-
-    //ref.refresh(savedRecipesProvider);
-    //Output removed message
-    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //     content: Text('Recipe Removed - ${recipe.title}'),
-    //     duration: Duration(seconds: 1)));
-  }
 }
 
-Future<List<Result>> getSavedRecipes() async {
-  //list of recipe objects to be returned
-  List<Result> savedRecipes = [];
+// Function to navigate to recipe details page
+void navigateToRecipeDetails(BuildContext context, Result recipe) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => RecipeDetails(recipe: recipe),
+    ),
+  );
+}
 
-  // Create an instance of FirebaseAuth
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  // Get the current user's uid
-  final userID = auth.currentUser?.uid;
-  //variable used to manage the Saved Recipes collection on firebase
-  final collection = FirebaseFirestore.instance.collection("Saved_Recipes");
+//Remove Button Handler - Remove Saved Recipe
+onRemove(Result recipe, BuildContext context,
+    CollectionReference<Object?> savedRecipesCollection) async {
+  await savedRecipesCollection.doc(recipe.firebaseID).delete();
 
-  //List of saved recipes that have uids that match the current users
-  //(List of this users saved recipes)
-  collection.where("uid", isEqualTo: userID).get().then((recipes) {
-    for (var recipeRecord in recipes.docs) {
-      //Converting recipe from firebase to Result object
-      var recipe = Result.fromJson(recipeRecord["recipe"], id: recipeRecord.id);
-      savedRecipes.add(recipe);
-    }
-  });
-  return savedRecipes;
-  //ref.read(savedRecipesProvider.notifier).state = savedRecipes;
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Recipe Removed - ${recipe.title}'),
+      duration: Duration(seconds: 1)));
 }

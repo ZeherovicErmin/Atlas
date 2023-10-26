@@ -30,7 +30,7 @@ class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
-
+  final _postTextController = TextEditingController();
   final _commentTextController = TextEditingController();
 
   @override
@@ -236,6 +236,7 @@ class _FeedPostState extends State<FeedPost> {
       builder: (context) => AlertDialog(
         title: const Text("Add Comment"),
         content: TextField(
+          maxLength: 100,
           controller: _commentTextController,
           decoration: const InputDecoration(hintText: "Write a comment..."),
         ),

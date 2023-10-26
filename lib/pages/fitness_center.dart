@@ -135,6 +135,7 @@ class FitCenter extends ConsumerWidget {
                     })
               ]),
 
+
           body: TabBarView(
             children: [
               // The Discover Tab Of the workouts page

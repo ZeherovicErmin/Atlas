@@ -54,7 +54,7 @@ class Recipes extends ConsumerWidget {
           backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
               title: const Center(
-                  child: Text("Recipes",
+                  child: Text("R e c i p e s",
                       style: TextStyle(fontWeight: FontWeight.bold))),
               backgroundColor: Colors.orange,
               bottom: const TabBar(tabs: [

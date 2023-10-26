@@ -79,10 +79,10 @@ class FitCenter extends ConsumerWidget {
 
     return Container(
       child: DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: const Color(0xFFFAF9F6),
           //Home page for when a user logs in
           appBar: AppBar(
               title: const Center(
@@ -135,7 +135,6 @@ class FitCenter extends ConsumerWidget {
                     })
               ]),
 
-
           body: TabBarView(
             children: [
               // The Discover Tab Of the workouts page
@@ -172,7 +171,7 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
-                  backgroundColor: Color.fromARGB(255, 232, 229, 229),
+                  backgroundColor: Color(0xFFFAF9F6),
                   appBar: AppBar(
                     backgroundColor:
 

@@ -36,14 +36,20 @@ class HabitCardState extends State<HabitCard> {
   //Fetches the habit cards from firebase to display to the user
   Stream<DocumentSnapshot> fetchData() {
     var currentDate = DateTime.now();
-    var formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    var formattedDate =
+        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user?.uid;
     //For debugging purposes, change the testdate to any date to test the
     //fetching of the correct data for the correct date.
     var testDate = '2023-10-25';
-    return FirebaseFirestore.instance.collection('Habits').doc(uid).collection(formattedDate).doc('habits').snapshots();
+    return FirebaseFirestore.instance
+        .collection('Habits')
+        .doc(uid)
+        .collection(formattedDate)
+        .doc('habits')
+        .snapshots();
   }
 
   //Opens the habit card for editing & habit card build
@@ -101,14 +107,17 @@ class HabitCardState extends State<HabitCard> {
       },
     );
   }
+
   //Function for editing a habit card
   //Sends the data to firebase
   void editDialog(BuildContext context, String title) async {
     //Variables
     var currentDate = DateTime.now();
-    TextEditingController textController = TextEditingController(text: currentSubtitle);
+    TextEditingController textController =
+        TextEditingController(text: currentSubtitle);
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    var formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    var formattedDate =
+        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
     //Habit card popup for editing data
     showDialog(
       context: context,
@@ -131,8 +140,11 @@ class HabitCardState extends State<HabitCard> {
                   child: const Text('Save'),
                   onPressed: () async {
                     widget.onTap(currentSubtitle);
-                    DocumentReference userDocRef = FirebaseFirestore.instance.collection('Habits').doc(uid);
-                    CollectionReference dateSubcollectionRef = userDocRef.collection(formattedDate);
+                    DocumentReference userDocRef = FirebaseFirestore.instance
+                        .collection('Habits')
+                        .doc(uid);
+                    CollectionReference dateSubcollectionRef =
+                        userDocRef.collection(formattedDate);
                     await dateSubcollectionRef.doc('habits').set({
                       title.toLowerCase(): currentSubtitle,
                     }, SetOptions(merge: true));
@@ -173,7 +185,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     var currentDate = DateTime.now();
     selectedDate = "${currentDate.month}/${currentDate.day}";
-    formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    formattedDate =
+        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
   }
 
   //Function for choosing a date
@@ -185,7 +198,7 @@ class _HomePageState extends State<HomePage> {
       firstDate: DateTime(2023, 10),
       lastDate: DateTime(2026),
     );
-  if (picked != null) {
+    if (picked != null) {
       setState(() {
         currentDate = picked;
         var month = picked.month.toString().padLeft(2, '0');
@@ -204,11 +217,11 @@ class _HomePageState extends State<HomePage> {
         leading: null,
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-          actions: [
-          IconButton (
-          icon: const Icon(Icons.person_rounded),
-          onPressed: () {
-              Navigator.push (
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_rounded),
+            onPressed: () {
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const UserProfile()),
               );
@@ -217,107 +230,113 @@ class _HomePageState extends State<HomePage> {
         ],
         title: Text(
           title,
-          style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-@override
-Widget build(BuildContext context) {
-  //Variables
-  var currentDate = DateTime.now();
-  var formattedDate = "${currentDate.month}/${currentDate.day}";
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final User? user = auth.currentUser;
-  final uid = user?.uid;
-  String uid2 = uid.toString();
+  @override
+  Widget build(BuildContext context) {
+    //Variables
+    var currentDate = DateTime.now();
+    var formattedDate = "${currentDate.month}/${currentDate.day}";
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+    String uid2 = uid.toString();
 
-  //Returns the app bar & habit cards
-  return DefaultTabController(
-    length: 3,
-    child: Scaffold(
-      appBar: homePageAppBar(context, 'H o m e  P a g e'),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-              Container (
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      chooseDate(context);
-                    },
-                    child: Text(
-                      selectedDate,
-                      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 20),
+    //Returns the app bar & habit cards
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        backgroundColor: Color(0xFFFAF9F6),
+        appBar: homePageAppBar(context, 'H o m e  P a g e'),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        chooseDate(context);
+                      },
+                      child: Text(
+                        selectedDate,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 20),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
-                children: [
-                  HabitCard(
-                    title: 'Calories',
-                    iconData: Icons.fastfood,
-                    backgroundColor: Colors.red,
-                    onTap: (value) {
-                      saveHabitData(uid2, formattedDate, 'calories', value);
-                    },
-                    selectedDate: formattedDate,
-                  ),
-                  HabitCard(
-                    title: 'Sleep',
-                    iconData: Icons.nightlight_round,
-                    backgroundColor: Colors.purple,
-                    onTap: (value) {
-                      saveHabitData(uid2, formattedDate, 'sleep', value);
-                    },
-                    selectedDate: formattedDate,
-                  ),
-                  HabitCard(
-                    title: 'Water',
-                    iconData: Icons.water_drop,
-                    backgroundColor: Colors.blue,
-                    onTap: (value) {
-                      saveHabitData(uid2, formattedDate, 'water', value);
-                    },
-                    selectedDate: formattedDate,
-                  ),
-                  HabitCard(
-                    title: 'Running',
-                    iconData: Icons.directions_run,
-                    backgroundColor: Colors.green,
-                    onTap: (value) {
-                      saveHabitData(uid2, formattedDate, 'running', value);
-                    },
-                    selectedDate: formattedDate,
-                  ),
-                ],
-              ),
-            )
-          ],
+              const SizedBox(height: 20),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 20,
+                  children: [
+                    HabitCard(
+                      title: 'Calories',
+                      iconData: Icons.fastfood,
+                      backgroundColor: Colors.red,
+                      onTap: (value) {
+                        saveHabitData(uid2, formattedDate, 'calories', value);
+                      },
+                      selectedDate: formattedDate,
+                    ),
+                    HabitCard(
+                      title: 'Sleep',
+                      iconData: Icons.nightlight_round,
+                      backgroundColor: Colors.purple,
+                      onTap: (value) {
+                        saveHabitData(uid2, formattedDate, 'sleep', value);
+                      },
+                      selectedDate: formattedDate,
+                    ),
+                    HabitCard(
+                      title: 'Water',
+                      iconData: Icons.water_drop,
+                      backgroundColor: Colors.blue,
+                      onTap: (value) {
+                        saveHabitData(uid2, formattedDate, 'water', value);
+                      },
+                      selectedDate: formattedDate,
+                    ),
+                    HabitCard(
+                      title: 'Running',
+                      iconData: Icons.directions_run,
+                      backgroundColor: Colors.green,
+                      onTap: (value) {
+                        saveHabitData(uid2, formattedDate, 'running', value);
+                      },
+                      selectedDate: formattedDate,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   //Function to save habit data in Firebase
-  void saveHabitData(String uid, String formattedDate, String habit, String value) async {
+  void saveHabitData(
+      String uid, String formattedDate, String habit, String value) async {
     CollectionReference habitCollectionRef = FirebaseFirestore.instance
         .collection('Habits')
         .doc(uid)

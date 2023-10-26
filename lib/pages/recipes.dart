@@ -22,6 +22,10 @@ final savedRecipeIdsProvider = StateProvider<List<int>>((ref) {
   return [];
 });
 
+final calorieRangesProvider = StateProvider<RangeValues>((ref) {
+  return const RangeValues(0, 2000);
+});
+
 //Recipe Class that handles and displays the recipes is
 //child of class Consumer Widget
 class Recipes extends ConsumerWidget {
@@ -42,34 +46,36 @@ class Recipes extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
-      appBar: AppBar(
-        title: const Text("Recipes",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.orange,
-
-      ),
-      body: Column(children: [
-        Padding(padding: EdgeInsets.only(top: 20)),
-        ElevatedButton(
-            onPressed: () => navigateToSavedRecipesPage(context),
-            child: Text('Saved Recipes'),
-            style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.orange))),
-        form(context, ref),
-        //ingredientsList(),
-        recipeList(recipes, context, ref)
-      ]),
-      //gradient(recipes, savedRecipes, context, ref),
-      //Recipe search bar submit button
-    );
+    return DefaultTabController(
+        initialIndex: 1,
+        length: 2,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
+          appBar: AppBar(
+              title: const Center(
+                  child: Text("Recipes",
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+              backgroundColor: Colors.orange,
+              bottom: const TabBar(tabs: [
+                Tab(icon: Icon(Icons.search), text: "Search"),
+                Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
+              ])),
+          body: TabBarView(children: [
+            Column(children: [
+              Padding(padding: EdgeInsets.only(top: 20)),
+              form(context, ref),
+              //ingredientsList(),
+              recipeList(recipes, context, ref)
+            ]),
+            const SavedRecipes()
+          ]),
+        ));
   }
 
   //Recipe search form
   Widget form(BuildContext context, WidgetRef ref) {
+    RangeValues calorieRange = ref.watch(calorieRangesProvider);
     return Column(children: [
       //Spacing between components
 
@@ -79,7 +85,6 @@ class Recipes extends ConsumerWidget {
             left: 15,
             right: 15,
             bottom: 5), //apply padding to all sides
-
       ),
       Container(
         margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
@@ -90,7 +95,34 @@ class Recipes extends ConsumerWidget {
         ),
         child: Form(
           key: _formKey,
-          child: Column(children: [searchBar(context, ref)]),
+          child: Column(children: [
+            searchBar(context, ref),
+            Container(
+                color: Color(0xFFFAF9F6),
+                padding: EdgeInsets.only(top: 15),
+                alignment: Alignment.topLeft,
+                child: Text("Calorie Filter",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ))),
+            Container(
+                color: Color(0xFFFAF9F6),
+                child: RangeSlider(
+                    values: calorieRange,
+                    max: 5000,
+                    divisions: 50,
+                    activeColor: Colors.orange,
+                    inactiveColor: const Color.fromARGB(155, 255, 153, 0),
+                    overlayColor: MaterialStatePropertyAll(
+                        const Color.fromARGB(255, 255, 190, 104)),
+                    labels: RangeLabels(calorieRange.start.round().toString(),
+                        calorieRange.end.round().toString()),
+                    onChanged: (RangeValues range) {
+                      ref.read(calorieRangesProvider.notifier).state = range;
+                    }))
+          ]),
         ),
       ),
     ]);
@@ -125,7 +157,6 @@ class Recipes extends ConsumerWidget {
           //Placeholder message in search bar directing user
           hintText: "Enter Recipe Search",
           hintStyle: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-
     );
   }
 
@@ -249,9 +280,17 @@ class Recipes extends ConsumerWidget {
       bool addNutrition = true;
       //Parameter: AddRecipeInformation - true to add recipe info such as instructions, false to not
       bool addRecipeInfo = true;
+
+      //Calorie Filter Range
+      RangeValues calorieRange = ref.watch(calorieRangesProvider);
+
+      //Parameter: minCalories -minimum number of calories allowed for recipe results
+      int minCalories = calorieRange.start.round();
+      //Parameter: maxCalories -maximum number of calories allowed for recipe results
+      int maxCalories = calorieRange.end.round();
       //API Request URL with Parameters
       String url =
-          'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
+          'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo&minCalories=$minCalories&maxCalories=$maxCalories';
       //formats url
       final uri = Uri.parse(url);
       //sends request to api
@@ -265,7 +304,8 @@ class Recipes extends ConsumerWidget {
       //All of the API response data
       if (mappedData.results != null) {
         //Update list of saved recipe Ids
-        ref.read(savedRecipeIdsProvider.notifier).state = await getSavedRecipeIds();
+        ref.read(savedRecipeIdsProvider.notifier).state =
+            await getSavedRecipeIds();
         //Update list of searched recipes
         ref.read(resultProvider.notifier).state = mappedData;
       } else {
@@ -289,7 +329,8 @@ class Recipes extends ConsumerWidget {
       RecipeModel mappedData = RecipeModel.fromJson(data);
       if (mappedData.results != null) {
         //Update list of saved recipe Ids
-        ref.read(savedRecipeIdsProvider.notifier).state = await getSavedRecipeIds();
+        ref.read(savedRecipeIdsProvider.notifier).state =
+            await getSavedRecipeIds();
         //Update list of searched recipes
         ref.read(resultProvider.notifier).state = mappedData;
       } else {
@@ -314,7 +355,6 @@ class Recipes extends ConsumerWidget {
       context,
       MaterialPageRoute(builder: (context) => SavedRecipes()),
     );
-
   }
 
   //Save Button Handler - Save New Recipe

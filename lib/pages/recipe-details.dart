@@ -15,8 +15,8 @@ class RecipeDetails extends ConsumerWidget {
         title: const Padding(
             padding: EdgeInsets.only(left: 35),
             child: Text("Recipes Details",
-            style: TextStyle(fontWeight: FontWeight.bold))),
-        backgroundColor: Colors.orange,
+                style: TextStyle(fontWeight: FontWeight.bold))),
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
       body: Column(children: [
         Expanded(
@@ -34,7 +34,6 @@ class RecipeDetails extends ConsumerWidget {
       backgroundColor: Color.fromARGB(255, 255, 253, 251),
     );
   }
-
 
   Widget recipeInformation() {
     //Recipe calories
@@ -60,47 +59,46 @@ class RecipeDetails extends ConsumerWidget {
             children: [
               //Recipe Calories
               Container(
-                margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(25))),
-                child: Text("Calories: $calories",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 15))),
+                  margin: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Text("Calories: $calories",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15))),
               //Recipe Servings
               Container(
-                margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(25))),
-                child: Text("Servings: ${recipe.servings}",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 15))),
+                  margin: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Text("Servings: ${recipe.servings}",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15))),
               //Recipe Ready Time
               Container(
-                padding: EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(25))),
-                child: Text("Ready Time: ${recipe.readyInMinutes} min",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 15))),
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Text("Ready Time: ${recipe.readyInMinutes} min",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15))),
             ]),
       ],
     );
   }
-
 
   Widget recipeImage() {
     return Card(
@@ -118,7 +116,4 @@ class RecipeDetails extends ConsumerWidget {
               fit: BoxFit.fill,
             )));
   }
-
-  
-
 }

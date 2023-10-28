@@ -1,5 +1,6 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/my_workouts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -75,9 +76,6 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Setting the muscle variable to watch whatever the user selects in the drop down
-    var muscle = ref.watch(selectedMuscleProvider);
-
     return Container(
       child: DefaultTabController(
         initialIndex: 0,
@@ -143,12 +141,7 @@ class FitCenter extends ConsumerWidget {
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
               musclesList(),
 
-              Container(
-                color: const Color.fromARGB(255, 232, 229, 229),
-                child: Center(
-                  child: Text(muscle),
-                ),
-              ),
+              DiscoverPage(),
             ],
           ),
         ),
@@ -162,7 +155,6 @@ class FitCenter extends ConsumerWidget {
       itemBuilder: (context, index) {
         final muscle = list[index];
         final muscleColor = muscleColors[muscle];
-        final icon = muscleIcons[muscle];
 
         // Initalize each entry of the list to the muscle
         return GestureDetector(
@@ -244,10 +236,6 @@ class FitCenter extends ConsumerWidget {
       itemCount: exercisesData.length,
       itemBuilder: (context, index) {
         final exercise = exercisesData[index];
-        final exerciseType = exercise['type'];
-
-        // Finding the icon for each exercise type
-        final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
 
         // Map of exercises to be saved in firestore
         final exerciseData = {
@@ -386,11 +374,22 @@ class FitCenter extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (var sentence in exercise['instructions'].split('.'))
-                        Text(
-                          '\u2022 $sentence',
-                          style: const TextStyle(fontSize: 18),
-                        ),
+                      // Returning a numbered list for the instructions of the workout
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount:
+                            exercise['instructions'].split('.').length - 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              '${index + 1}. ${exercise['instructions'].split('.')[index]}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

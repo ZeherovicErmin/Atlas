@@ -1,0 +1,136 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// The My Workouts tab which will hold users saved exercises in a digestible workout format
+
+class DiscoverPage extends ConsumerWidget {
+  const DiscoverPage({Key? key}) : super(key: key);
+
+  // Creating a list of COntainers for the days of the week
+  static const List<String> items = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+
+// Creating a map of colors to apply to each day
+  static const Map<String, Color> dayContColors = {
+    "Monday": Color.fromARGB(255, 63, 199, 202),
+    "Tuesday": Color.fromARGB(255, 255, 107, 76),
+    "Wednesday": Color.fromARGB(255, 131, 217, 131),
+    "Thursday": Color.fromARGB(255, 112, 128, 144),
+    "Friday": Color.fromARGB(255, 147, 112, 219),
+    "Saturday": Color.fromARGB(255, 63, 199, 202),
+    "Sunday": Color.fromARGB(255, 202, 63, 160),
+  };
+
+  // Creating A map of Icons for each specific day
+  static const Map<String, Widget> dayIcons = {
+    "Monday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Tuesday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Wednesday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Thursday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Friday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Saturday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+    "Sunday": const Image(
+      image: AssetImage(
+        'lib/images/monday_icon.png',
+      ),
+      height: 50,
+      width: 50,
+    ),
+  };
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+        child: Scaffold(
+            backgroundColor: const Color(0xFFFAF9F6),
+            body: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  final dayColors = dayContColors[item];
+                  final dayIcon = dayIcons[item];
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: dayColors,
+                      borderRadius: BorderRadius.circular(24.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Adding an icon to each specific Day
+                          dayIcon ?? Icon(Icons.fitness_center),
+
+                          Text(
+                            item,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 34,
+                                fontWeight: FontWeight.bold),
+                          ),
+
+                          // Adding the icon to indicate the container is clickable
+                          Icon(Icons.arrow_forward_ios,
+                              size: 40, color: Colors.white),
+                        ],
+                      ),
+                    ),
+                  );
+                })));
+  }
+}

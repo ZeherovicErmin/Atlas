@@ -1,18 +1,13 @@
-import 'dart:io';
-import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
-import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -37,7 +32,7 @@ class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key}) : super(key: key);
 
   Future<void> _handleReresh() async {
-    return await Future.delayed(Duration(seconds: 1));
+    return await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -53,7 +48,7 @@ class UserProfile extends ConsumerWidget {
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
     final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider

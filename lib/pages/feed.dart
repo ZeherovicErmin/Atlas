@@ -1,4 +1,5 @@
 import 'package:atlas/components/feed_post.dart';
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,7 @@ class Feed extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final textController = TextEditingController();
+    final usersCollection = FirebaseFirestore.instance.collection("Users");
 
     void postMessage() {
       //only post if there is something in the textfield
@@ -27,6 +29,30 @@ class Feed extends ConsumerWidget {
       //clear the textfield
       textController.clear();
     }
+
+    /*
+    // Function to get the username based on the user's email
+    Future<String> getUsername(String email) async {
+      try {
+        final userDoc = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .get();
+
+        if (userDoc.exists) {
+          final username = userDoc.data()?['username']?.toString() ?? '';
+          print("Retrieved username for $email: $username");
+          return username;
+        } else {
+          print("User doc not found for email: $email");
+          return 'Unknown user';
+        }
+      } catch (e) {
+        print("Error fetching username: $e");
+        return 'Error';
+      }
+    }
+    */
 
     /*
     //Holds the opposite theme color for the text
@@ -60,7 +86,7 @@ class Feed extends ConsumerWidget {
                     .collection("User Posts")
                     .orderBy(
                       "TimeStamp",
-                      descending: false,
+                      descending: true,
                     )
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -70,6 +96,7 @@ class Feed extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         //get the message
                         final post = snapshot.data!.docs[index];
+
                         return FeedPost(
                           message: post['Message'],
                           user: post['UserEmail'],

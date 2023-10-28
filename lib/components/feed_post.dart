@@ -6,6 +6,7 @@ import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -30,13 +31,37 @@ class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
-  final _postTextController = TextEditingController();
   final _commentTextController = TextEditingController();
+  String username = '';
+
+  // Method to fetch the username based on the email
+  Future<String> getUsername(String email) async {
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection("Users").doc(email).get();
+
+      if (userDoc.exists) {
+        final username = userDoc.data()?['username']?.toString() ?? '';
+        return username;
+      } else {
+        return 'Unknown user';
+      }
+    } catch (e) {
+      return 'Error';
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+
+    //FETCH USERNAME
+    getUsername(widget.user).then((value) {
+      setState(() {
+        username = value;
+      });
+    });
   }
 
   //toggle like
@@ -96,7 +121,7 @@ class _FeedPostState extends State<FeedPost> {
                 Row(
                   children: [
                     Text(
-                      widget.user,
+                      username,
                       style: TextStyle(color: Colors.grey[500]),
                     ),
                     Text(

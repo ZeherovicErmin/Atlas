@@ -65,7 +65,7 @@ class Recipes extends ConsumerWidget {
             Column(children: [
               Padding(padding: EdgeInsets.only(top: 20)),
               form(context, ref),
-              //ingredientsList(),
+              ingredientsList(context, ref),
               recipeList(recipes, context, ref)
             ]),
             const SavedRecipes()
@@ -150,7 +150,7 @@ class Recipes extends ConsumerWidget {
               icon: Icon(Icons.send),
               //Use onSubmit to activate search, onSubmitTEST to deactivate search
               //and use test data
-              onPressed: () => onSubmitTEST(context, ref)),
+              onPressed: () => onSubmit(context, ref)),
           suffixIconColor: Colors.orangeAccent,
           filled: true,
           fillColor: Color.fromARGB(255, 248, 237, 220),
@@ -165,7 +165,7 @@ class Recipes extends ConsumerWidget {
       //List<dynamic> recipes,
       List<Result>? recipes,
       BuildContext context,
-      WidgetRef ref) {
+      WidgetRef ref) { 
     //Expanded takes up entire container space
     if (recipes == null) {
       return const Text("INVALID API RESPONSE");
@@ -275,7 +275,7 @@ class Recipes extends ConsumerWidget {
       //Parameter: API Key - Used to gain access to the API
       String apiKey = "cd2573f729714ab5bba24521e30d23ec";
       //Parameter: Number - number of results to be returned from API
-      int number = 5;
+      int number = 10;
       //Parameter: AddRecipeNutrition - true to add nutrition info, false to not
       bool addNutrition = true;
       //Parameter: AddRecipeInformation - true to add recipe info such as instructions, false to not
@@ -415,5 +415,75 @@ class Recipes extends ConsumerWidget {
     });
 
     return recipeIDList;
+  }
+
+  //list of quick-search ingredients 
+  Widget ingredientsList(BuildContext context, WidgetRef ref) {
+    List<String> ingredients = [
+      "beef",
+      "chicken",
+      "cheese",
+      "eggs",
+      "fish",
+      "milk",
+      "pasta",
+      "potato"
+    ];
+    return Padding(
+        padding: EdgeInsets.all(15),
+        child: SizedBox(
+            height: 75,
+            child: Expanded(
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    //Used to ensure list is scrollable
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    //Number of ingredients
+                    itemCount: ingredients.length,
+                    //Used to output ingredient buttons
+                    itemBuilder: (context, index) {
+                      String ingredient = ingredients[index];
+                      return Container(
+                          width: 120,
+                          padding: EdgeInsets.all(5),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.orange)),
+                            child: Text(ingredient,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            //Function used to capture tap event for list items
+                            onPressed: () =>
+                                searchIngredient(context, ref, ingredient)
+                          ));
+                    }))));
+  }
+
+  void searchIngredient(
+      BuildContext context, WidgetRef ref, String ingredient) async {
+    //Parameter: Query - User- Selected Search Query
+    String query = ingredient;
+    //Parameter: API Key - Used to gain access to the API
+    String apiKey = "cd2573f729714ab5bba24521e30d23ec";
+    //Parameter: Number - number of results to be returned from API
+    int number = 10;
+    //Parameter: AddRecipeNutrition - true to add nutrition info, false to not
+    bool addNutrition = true;
+    //Parameter: AddRecipeInformation - true to add recipe info such as instructions, false to not
+    bool addRecipeInfo = true;
+    //API Request URL with Parameters
+    String url =
+        'https://api.spoonacular.com/recipes/complexSearch?apiKey=$apiKey&query=$query&number=$number&addRecipeNutrition=$addNutrition&addRecipeInformation=$addRecipeInfo';
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
+    final data = jsonDecode(response.body);
+    RecipeModel mappedData = RecipeModel.fromJson(data);
+    if (mappedData.results != null) {
+      ref.read(resultProvider.notifier).state = mappedData;
+    } else {
+      mappedData = RecipeModel();
+    }
   }
 }

@@ -41,8 +41,6 @@ class _RecipeInfoState extends State<RecipeInfo> with TickerProviderStateMixin {
         //Outputs each ingredient in the ingredients list
         ListView.builder(
             shrinkWrap: true,
-            //Used to ensure list is scrollable
-            physics: const NeverScrollableScrollPhysics(),
             //Number of ingredients
             itemCount: recipe.nutrition.ingredients.length,
             //Used to build instruction list tiles

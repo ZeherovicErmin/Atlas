@@ -37,6 +37,9 @@ final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
 
+//sugar
+final sugarsPservingProvider = StateProvider<double>((ref) => 0.0);
+
 // Create an instance of FirebaseAuth
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -136,6 +139,11 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.sodium, PerSize.serving) ??
                 0.0;
+            // Sugar per serving
+            ref.watch(sugarsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.sugars, PerSize.serving) ??
+                0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
@@ -171,7 +179,11 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(transfatsPservingProvider.notifier).state),
             DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
             DataItem('productName_lowercase',
-                ref.read(productNameProvider).toLowerCase())
+                ref.read(productNameProvider).toLowerCase()),
+            DataItem(
+              'sugarsPerServing',
+              ref.read(sugarsPservingProvider),
+            )
           ];
 
           // Send data to Firestore
@@ -191,6 +203,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           ref.watch(satfatsPservingProvider.notifier).state = 0.0;
           ref.watch(transfatsPservingProvider.notifier).state = 0.0;
           ref.watch(sodiumPservingProvider.notifier).state = 0.0;
+          ref.watch(sugarsPservingProvider.notifier).state = 0.0;
         }
       } else {
         // Set error messages for an invalid barcode
@@ -205,6 +218,7 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(satfatsPservingProvider.notifier).state = 0.0;
         ref.watch(transfatsPservingProvider.notifier).state = 0.0;
         ref.watch(sodiumPservingProvider.notifier).state = 0.0;
+        ref.watch(sugarsPservingProvider.notifier).state = 0.0;
       }
     }
   }
@@ -252,6 +266,8 @@ class BarcodeLookupComb extends ConsumerWidget {
     final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
+    final sugarsPerServing = ref.watch(sugarsPservingProvider);
+    final sodiumPerServing = ref.watch(sodiumPservingProvider);
     final uid = ref.watch(uidProvider.notifier).state;
 
     // Filter data based on selected filters
@@ -289,18 +305,19 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ),
               )),
           NutrientsList(
-            selectedFilters: selectedFilters,
-            result: result,
-            productName: productName,
-            productCalories: productCalories,
-            carbsPserving: carbsPserving,
-            proteinPserving: proteinPserving,
-            fatsPserving: fatsPserving,
-            cholesterolPerServing: cholesterolPerServing,
-            amtPerServing: amtPerServing,
-            satfatsPserving: satfatsPserving,
-            transfatsPserving: transfatsPserving,
-          ),
+              selectedFilters: selectedFilters,
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving,
+              cholesterolPerServing: cholesterolPerServing,
+              amtPerServing: amtPerServing,
+              satfatsPserving: satfatsPserving,
+              transfatsPserving: transfatsPserving,
+              sodiumPerServing: sodiumPerServing,
+              sugarsPerServing: sugarsPerServing),
         ],
       ),
     );
@@ -423,6 +440,8 @@ class NutrientsList extends StatelessWidget {
     required this.amtPerServing,
     required this.satfatsPserving,
     required this.transfatsPserving,
+    required this.sodiumPerServing,
+    required this.sugarsPerServing,
   });
 
   final List<String> selectedFilters;
@@ -436,6 +455,8 @@ class NutrientsList extends StatelessWidget {
   final double cholesterolPerServing;
   final double satfatsPserving;
   final double transfatsPserving;
+  final double sodiumPerServing;
+  final double sugarsPerServing;
 
   @override
   Widget build(BuildContext context) {
@@ -526,25 +547,34 @@ class NutrientsList extends StatelessWidget {
                     title: 'Saturated Fat',
                     value: '$satfatsPserving',
                     isSubcategory: true,
-                    hideIfZero: true,
+                    hideIfZero: false,
                   ),
                   NutritionRow(
                     title: 'Trans Fat',
                     value: '$transfatsPserving',
                     isSubcategory: true,
-                    hideIfZero: true,
+                    hideIfZero: false,
                   ),
                   //end fats
 
                   NutritionRow(
                       title: "Total Carbohydrates", value: '$carbsPserving'),
+                  //Sugars
+                  NutritionRow(
+                      title: "Total Sugars",
+                      isSubcategory: true,
+                      value: '$sugarsPerServing'),
                   //end Protein
 
                   //protein per serving
                   NutritionRow(title: "Protein", value: "$proteinPserving"),
 
+                  //sodium
+                  NutritionRow(title: "Sodium", value: "$sodiumPerServing"),
+
                   NutritionRow(
-                      title: "Cholesterol", value: '${cholesterolPerServing.toStringAsFixed(1)}'),
+                      title: "Cholesterol",
+                      value: '${cholesterolPerServing.toStringAsFixed(1)}'),
                   //end Protein
                 ]),
               ),

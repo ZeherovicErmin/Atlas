@@ -52,8 +52,7 @@ class UserProfile extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -72,8 +71,7 @@ class UserProfile extends ConsumerWidget {
             .child('profilePictures/$fileName')
             .putData(imageBytes!);
         // Waits for the Task of uploading profile picture to complete
-        final TaskSnapshot taskSnapshot =
-            await uploadTask.whenComplete(() => null);
+        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
         final String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
         try {
@@ -94,8 +92,7 @@ class UserProfile extends ConsumerWidget {
 // Awaits user input to select an Image
     void selectImage() async {
       // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
       //Image.file(pickedFile as File,width: 400,height: 300,);
       // Check if an image was picked.
       if (pickedFile != null) {
@@ -147,37 +144,6 @@ class UserProfile extends ConsumerWidget {
           });
     }
 
-    //Shows the settings page when called
-    //Saving for later because it works
-    /*
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-    */
-
     //App bar for the user profile page
     PreferredSize userProfileAppBar(
         BuildContext context, WidgetRef ref, String title) {
@@ -212,18 +178,19 @@ class UserProfile extends ConsumerWidget {
       await showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: themeColor2,
           title: Text(
             "Edit $field",
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: themeColor),
           ),
           content: TextField(
             autofocus: true,
-            style: const TextStyle(
-                color:  Colors.black
+            style: TextStyle(
+                color:  themeColor
                 ), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: const TextStyle(color: Colors.black),
+              hintStyle: TextStyle(color: themeColor),
             ),
             onChanged: (value) {
               newValue = value;
@@ -232,18 +199,18 @@ class UserProfile extends ConsumerWidget {
           actions: [
             // Cancel button
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: themeColor),
               ),
               onPressed: () => Navigator.pop(context),
             ),
 
             // Save button
             TextButton(
-              child: const Text(
+              child: Text(
                 'Save',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: themeColor),
               ),
               onPressed: () => Navigator.of(context).pop(newValue),
             ),
@@ -259,7 +226,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: themeColor,
+      backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -312,7 +279,8 @@ class UserProfile extends ConsumerWidget {
                                         ? MemoryImage(image.state!)
                                         : null,
                                   )
-                                : const Icon(
+                                : Icon(
+                                    color: themeColor,
                                     CupertinoIcons.profile_circled,
                                     size: 72,
                                   );
@@ -320,13 +288,15 @@ class UserProfile extends ConsumerWidget {
                           loading: () => const CircularProgressIndicator(),
                           error: (e, stack) => const Icon(
                               CupertinoIcons.profile_circled,
-                              size: 72),
+                              size: 72
+                              ),
                         ),
                       ),
                       Positioned(
                         bottom: -10,
                         left: 240,
                         child: IconButton(
+                          color: themeColor,
                           // onPressed, opens Image Picker
                           onPressed: selectImage,
                           icon: const Icon(Icons.add_a_photo),
@@ -341,28 +311,27 @@ class UserProfile extends ConsumerWidget {
                   Text(
                     currentUser.email!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.black,
+                    style: TextStyle(
+                      color: themeColor,
                     ),
                   ),
 
                   const SizedBox(height: 50),
 
                   // User details
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 25.0),
                     child: Text(
                       'My Details',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: themeColor,
                       ),
                     ),
                   ),
 
                   // Username
                   MyTextBox(
-                    text: userData['username']?.toString() ??
-                        '', // Safely access username
+                    text: userData['username']?.toString() ?? '', // Safely access username
                     sectionName: 'Username',
                     onPressed: () => editField('username'),
                   ),
@@ -370,25 +339,13 @@ class UserProfile extends ConsumerWidget {
                   // Bio
                   MyTextBox(
                     text:
-                        userData['bio']?.toString() ?? '', // Safely access bio
+                    userData['bio']?.toString() ?? '', // Safely access bio
                     sectionName: 'Bio',
                     onPressed: () => editField('bio'),
                   ),
 
                   const SizedBox(height: 50),
 
-                  // User posts
-                  /*
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
-                      'My Posts',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  */
                 ],
               ),
             );

@@ -2,7 +2,6 @@ import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 class HabitCard extends StatefulWidget {
   final String title;
   final IconData iconData;
@@ -253,7 +252,7 @@ class _HomePageState extends State<HomePage> {
       length: 3,
       child: Scaffold(
         backgroundColor: Color(0xFFFAF9F6),
-        appBar: homePageAppBar(context, 'H o m e  P a g e'),
+        appBar: homePageAppBar(context, 'H o m e'),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

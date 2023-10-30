@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+//import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 //paramaters to hold search, sort, filter
 class FilterState {
@@ -50,7 +51,11 @@ class FilterStateController extends StateNotifier<FilterState> {
 }
 
 class BarcodeLogPage extends ConsumerWidget {
-  const BarcodeLogPage({Key? key});
+  BarcodeLogPage({Key? key});
+  final content = NutritionalModalClass(
+      //productName: ''
+      );
+
   String formatDecimal(double value) {
     // Round to one decimal place and format as a string
     return value.toStringAsFixed(1);
@@ -336,7 +341,13 @@ class BarcodeLogPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(24),
               // Logic for showing a nutritional label
               onTap: () {
-                deleteLog(context, data);
+                Widget modalContent = Container();
+
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => modalContent,
+                );
+                //deleteLog(context, data);
               },
               child: Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 0),

@@ -597,6 +597,21 @@ class NutritionDivider extends StatelessWidget {
   }
 }
 
+//NutritionalModalClass
+// This is the class that will pop up a sheet of nutritional information
+
+class NutritionalModalClass {
+  static void show(BuildContext context, Widget content) {
+    //Function that will pop a modal sheet to the middle of the screen
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return content;
+        });
+  }
+}
+
+
 class NutritionRow extends StatelessWidget {
   final String title;
   final String value;
@@ -665,55 +680,6 @@ class NutritionRow extends StatelessWidget {
             thickness: dividerThickness,
           )
       ],
-    );
-  }
-}
-
-class DraggableScrollCard extends StatefulWidget {
-  const DraggableScrollCard({Key? key});
-
-  @override
-  State<DraggableScrollCard> createState() => _DraggableScrollCardState();
-}
-
-class _DraggableScrollCardState extends State<DraggableScrollCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 104, 104, 104),
-        title: Text('Draggable Scrollable Sheet'),
-        centerTitle: true,
-        shadowColor: Colors.amber,
-      ),
-      body: Center(
-        child: productHouserSheet(),
-      ),
-    );
-  }
-
-  DraggableScrollableSheet productHouserSheet() {
-    return DraggableScrollableSheet(
-      builder: (BuildContext context, ScrollController _controller) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 238, 238, 238),
-          ),
-          child: GridView.builder(
-            controller: _controller,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Number of columns in the grid
-            ),
-            itemCount: 50, // Adjust the number of items as needed
-            itemBuilder: (BuildContext context, int index) {
-              return ProductCard(
-                title: 'Item $index',
-                data: 'Some sample text for item $index.', // Sample data text
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }

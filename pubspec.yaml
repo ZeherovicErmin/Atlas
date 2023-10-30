@@ -70,6 +70,7 @@ dependencies:
 
   fl_chart: ^0.64.0
   liquid_pull_to_refresh: ^3.0.0
+  modal_bottom_sheet: ^2.1.2
 
 
 

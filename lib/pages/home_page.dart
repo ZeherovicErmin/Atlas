@@ -1,5 +1,6 @@
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class HabitCard extends StatefulWidget {
@@ -115,8 +116,7 @@ class HabitCardState extends State<HabitCard> {
     TextEditingController textController =
         TextEditingController(text: currentSubtitle);
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    var formattedDate =
-        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    var formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
     //Habit card popup for editing data
     showDialog(
       context: context,
@@ -178,14 +178,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late String selectedDate;
   late String formattedDate;
+  late Stream<String> usernameStream;
 
   @override
   void initState() {
-    super.initState();
     var currentDate = DateTime.now();
     selectedDate = "${currentDate.month}/${currentDate.day}";
-    formattedDate =
-        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    usernameStream = fetchUsernameStream();
   }
 
   //Function for choosing a date
@@ -208,18 +208,69 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  //Gets the user's username
+  Stream<String> fetchUsernameStream() {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email)
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
+      }
+      return Stream.value('');
+    }
+
   //App Bar
-  PreferredSize homePageAppBar(BuildContext context, String title) {
+  PreferredSize homePageAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(70),
+      preferredSize: const Size.fromHeight(60),
       child: AppBar(
-        automaticallyImplyLeading: false,
-        leading: null,
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+        toolbarHeight: 60,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Home',
+              style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            const SizedBox(height: 8),
+            StreamBuilder<String>(
+              stream: usernameStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError || !snapshot.hasData) {
+                  return const Text('Username not found');
+                }
+                final username = snapshot.data!;
+                return Text(
+                  'Welcome back, $username',
+                  style: const TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_rounded),
+            icon: const Icon(
+              CupertinoIcons.profile_circled
+              ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -228,11 +279,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-        title: Text(
-          title,
-          style: const TextStyle(
-              fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }
@@ -252,7 +298,7 @@ class _HomePageState extends State<HomePage> {
       length: 3,
       child: Scaffold(
         backgroundColor: Color(0xFFFAF9F6),
-        appBar: homePageAppBar(context, 'H o m e'),
+        appBar: homePageAppBar(context),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

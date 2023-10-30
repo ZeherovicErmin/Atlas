@@ -225,6 +225,10 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
     return Scaffold(
       backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, ref, 'U s e r'),
@@ -338,8 +342,7 @@ class UserProfile extends ConsumerWidget {
 
                   // Bio
                   MyTextBox(
-                    text:
-                    userData['bio']?.toString() ?? '', // Safely access bio
+                    text: userData['bio']?.toString() ?? '', // Safely access bio
                     sectionName: 'Bio',
                     onPressed: () => editField('bio'),
                   ),

@@ -52,6 +52,7 @@ class RegisterPage extends ConsumerWidget {
       );
     }
 
+    //Makes the collection for storing user habits
     void makeHabitCollection() async {
       var currentDate = DateTime.now();
       var formattedDate = "${currentDate.month}/${currentDate.day}";
@@ -66,6 +67,19 @@ class RegisterPage extends ConsumerWidget {
           .add({
             'uid': uid,
       });
+    }
+
+    //Makes the collection for storing user habits
+    void makeUsernameCollection() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection("Users2").doc(uid).set({
+          'username': registrationState.emailController.text,
+        });
+      }
     }
 
     //Attempts to sign the user up for Atlas
@@ -92,7 +106,9 @@ class RegisterPage extends ConsumerWidget {
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
-
+        final FirebaseAuth auth = FirebaseAuth.instance;
+        final User? user = auth.currentUser;
+        final uid = user?.uid;
         //Uploads a collection containing all user's email addresses when they register with Atlas
         await FirebaseFirestore.instance
             .collection("Users")
@@ -106,6 +122,7 @@ class RegisterPage extends ConsumerWidget {
         });
 
         makeHabitCollection();
+        makeUsernameCollection();
 
         //Error handling for registering for Atlas
         Navigator.of(context); // Closes the loading circle

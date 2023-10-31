@@ -465,122 +465,162 @@ class NutrientsList extends StatelessWidget {
         minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 252, 252),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12.0),
-                topRight: Radius.circular(12.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _controller,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(children: [
-                  //Drag Handle
-                  Center(
-                    child: Container(
-                        margin: EdgeInsets.all(8.0),
-                        width: 40,
-                        height: 5.0,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 104, 104, 104),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(12.0),
-                          ),
-                        )),
-                  ),
-                  //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
-                  //Nutritional Facts Column Sheet
-                  const Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Align(
-                        child: Text(
-                          'Nutrition Facts',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontFamily: 'Helvetica Black',
-                              fontSize: 44,
-                              fontWeight: FontWeight.w900),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${amtPerServing.toInt()}g per container",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontFamily: 'Helvetica Black',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  NutritionRow(
-                    title: "Calories",
-                    value: '$productCalories',
-                    fontSize: 24,
-                    dividerThickness: 5,
-                    showDivider: false,
-                  ),
-                  //Nutritional Column Dividers
-                  //End NUTRITION FACTS ROW
-                  Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
-                  //Start of Nutrition rows
-                  //
-                  NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
-                  //saturated Fats
-                  NutritionRow(
-                    title: 'Saturated Fat',
-                    value: '$satfatsPserving',
-                    isSubcategory: true,
-                    hideIfZero: false,
-                  ),
-                  NutritionRow(
-                    title: 'Trans Fat',
-                    value: '$transfatsPserving',
-                    isSubcategory: true,
-                    hideIfZero: false,
-                  ),
-                  //end fats
-
-                  NutritionRow(
-                      title: "Total Carbohydrates", value: '$carbsPserving'),
-                  //Sugars
-                  NutritionRow(
-                      title: "Total Sugars",
-                      isSubcategory: true,
-                      value: '$sugarsPerServing'),
-                  //end Protein
-
-                  //protein per serving
-                  NutritionRow(title: "Protein", value: "$proteinPserving"),
-
-                  //sodium
-                  NutritionRow(title: "Sodium", value: "$sodiumPerServing"),
-
-                  NutritionRow(
-                      title: "Cholesterol",
-                      value: '${cholesterolPerServing.toStringAsFixed(1)}'),
-                  //end Protein
-                ]),
-              ),
-            ),
-          );
+          return NutritionContainer(
+              amtPerServing: amtPerServing,
+              productCalories: productCalories,
+              fatsPserving: fatsPserving,
+              satfatsPserving: satfatsPserving,
+              transfatsPserving: transfatsPserving,
+              carbsPserving: carbsPserving,
+              sugarsPerServing: sugarsPerServing,
+              proteinPserving: proteinPserving,
+              sodiumPerServing: sodiumPerServing,
+              cholesterolPerServing: cholesterolPerServing);
         });
+  }
+}
+
+class NutritionContainer extends StatelessWidget {
+  const NutritionContainer({
+    super.key,
+    required this.amtPerServing,
+    required this.productCalories,
+    required this.fatsPserving,
+    required this.satfatsPserving,
+    required this.transfatsPserving,
+    required this.carbsPserving,
+    required this.sugarsPerServing,
+    required this.proteinPserving,
+    required this.sodiumPerServing,
+    required this.cholesterolPerServing,
+  });
+
+  final double amtPerServing;
+  final double productCalories;
+  final double fatsPserving;
+  final double satfatsPserving;
+  final double transfatsPserving;
+  final double carbsPserving;
+  final double sugarsPerServing;
+  final double proteinPserving;
+  final double sodiumPerServing;
+  final double cholesterolPerServing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 255, 252, 252),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.0),
+          topRight: Radius.circular(12.0),
+        ),
+      ),
+      child: SingleChildScrollView(
+        //controller: _controller,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            //Drag Handle
+            Center(
+              child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  width: 40,
+                  height: 5.0,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 104, 104, 104),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  )),
+            ),
+            //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+            //Nutritional Facts Column Sheet
+            const Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Align(
+                  child: Text(
+                    'Nutrition Facts',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontFamily: 'Helvetica Black',
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ],
+            ),
+            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            Align(
+              child: Container(
+                height: 25,
+                // Stack to hold the fats and the fats variable
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${amtPerServing.toInt()}g per container",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: 'Helvetica Black',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            NutritionRow(
+              title: "Calories",
+              value: '$productCalories',
+              fontSize: 24,
+              dividerThickness: 5,
+              showDivider: false,
+            ),
+            //Nutritional Column Dividers
+            //End NUTRITION FACTS ROW
+            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            //Start of Nutrition rows
+            //
+            NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
+            //saturated Fats
+            NutritionRow(
+              title: 'Saturated Fat',
+              value: '$satfatsPserving',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            NutritionRow(
+              title: 'Trans Fat',
+              value: '$transfatsPserving',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            //end fats
+
+            NutritionRow(title: "Total Carbohydrates", value: '$carbsPserving'),
+            //Sugars
+            NutritionRow(
+                title: "Total Sugars",
+                isSubcategory: true,
+                value: '$sugarsPerServing'),
+            //end Protein
+
+            //protein per serving
+            NutritionRow(title: "Protein", value: "$proteinPserving"),
+
+            //sodium
+            NutritionRow(title: "Sodium", value: "$sodiumPerServing"),
+
+            NutritionRow(
+                title: "Cholesterol",
+                value: '${cholesterolPerServing.toStringAsFixed(1)}'),
+            //end Protein
+          ]),
+        ),
+      ),
+    );
   }
 }
 
@@ -610,7 +650,6 @@ class NutritionalModalClass {
         });
   }
 }
-
 
 class NutritionRow extends StatelessWidget {
   final String title;

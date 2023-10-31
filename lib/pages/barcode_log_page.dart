@@ -310,7 +310,11 @@ class BarcodeLogPage extends ConsumerWidget {
         final proteinPerServing = formatDecimal(data['proteinPerServing']);
         final cholesterolPerServing =
             formatDecimal(data['cholesterolPerServing']);
-
+        final caloriesPerServing = formatDecimal(data['productCalories']);
+        final satfatsPserving = formatDecimal(data["satfatsPserving"]);
+        final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
+        final transfatsPserving = formatDecimal(data["transfatsPserving"]);
+        final amtServings = formatDecimal(data["amtServingsProvider"]);
         return Slidable(
           // Allows logs to be deleted, Wraps entire list widget
 
@@ -341,7 +345,16 @@ class BarcodeLogPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(24),
               // Logic for showing a nutritional label
               onTap: () {
-                Widget modalContent = Container();
+                Widget modalContent = NutritionContainer(
+                    carbsPerServing,
+                    proteinPerServing,
+                    fatsPerServing,
+                    caloriesPerServing,
+                    satfatsPserving,
+                    sodiumPerServing,
+                    transfatsPserving,
+                    cholesterolPerServing,
+                    amtServings);
 
                 showModalBottomSheet(
                   context: context,
@@ -469,6 +482,128 @@ class BarcodeLogPage extends ConsumerWidget {
       },
     );
   }
+
+  Container NutritionContainer(
+          String carbsPerServing,
+          String proteinPerServing,
+          String fatsPerServing,
+          String calories,
+          String satfatsPserving,
+          String sodiumPerServing,
+          String transfatsPserving,
+          String cholesterolPerServing,
+          String amtServings) =>
+      Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 255, 252, 252),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.0),
+            topRight: Radius.circular(12.0),
+          ),
+        ),
+        child: SingleChildScrollView(
+          //controller: _controller,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(children: [
+              //Drag Handle
+              Center(
+                child: Container(
+                    margin: EdgeInsets.all(8.0),
+                    width: 40,
+                    height: 5.0,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 104, 104, 104),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12.0),
+                      ),
+                    )),
+              ),
+              //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+              //Nutritional Facts Column Sheet
+              const Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Align(
+                    child: Text(
+                      'Nutrition Facts',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: 'Helvetica Black',
+                          fontSize: 44,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+              Align(
+                child: Container(
+                  height: 25,
+                  // Stack to hold the fats and the fats variable
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${amtServings}g per container",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontFamily: 'Helvetica Black',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              NutritionRow(
+                title: "Calories",
+                value: '${calories}',
+                fontSize: 24,
+                dividerThickness: 5,
+                showDivider: false,
+              ),
+              //Nutritional Column Dividers
+              //End NUTRITION FACTS ROW
+              Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+              //Start of Nutrition rows
+              //
+              NutritionRow(title: 'Total Fats', value: '${fatsPerServing}'),
+              //saturated Fats
+              NutritionRow(
+                title: 'Saturated Fat',
+                value: '${satfatsPserving}',
+                isSubcategory: true,
+                hideIfZero: false,
+              ),
+              NutritionRow(
+                title: 'Trans Fat',
+                value: '${transfatsPserving}',
+                isSubcategory: true,
+                hideIfZero: false,
+              ),
+              //end fats
+
+              NutritionRow(
+                  title: "Total Carbohydrates", value: '${carbsPerServing}'),
+              //Sugars
+              NutritionRow(
+                  title: "Total Sugars", isSubcategory: true, value: '${0}'),
+              //end Protein
+
+              //protein per serving
+              NutritionRow(title: "Protein", value: "${proteinPerServing}"),
+
+              //sodium
+              NutritionRow(title: "Sodium", value: "${sodiumPerServing}"),
+
+              NutritionRow(
+                  title: "Cholesterol", value: '${cholesterolPerServing}'),
+              //end Protein
+            ]),
+          ),
+        ),
+      );
 
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {
     //Confirmation dialog

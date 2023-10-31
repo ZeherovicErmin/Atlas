@@ -85,7 +85,7 @@ class HabitCardState extends State<HabitCard> {
                 Text(
                   widget.title,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -94,7 +94,8 @@ class HabitCardState extends State<HabitCard> {
                 Text(
                   currentSubtitle,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
@@ -296,7 +297,12 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Container(
+              GestureDetector(
+                onTap: () {
+                  chooseDate(context);
+                },
+              child: Container(
+                height: 46,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.orange,
@@ -305,18 +311,17 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        chooseDate(context);
-                      },
-                      child: Text(
+                      Text(
                         selectedDate,
                         style: const TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 20),
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 24,
+                          fontFamily: 'Open Sans',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

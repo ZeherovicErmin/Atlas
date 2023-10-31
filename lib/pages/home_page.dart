@@ -201,6 +201,7 @@ class _HomePageState extends State<HomePage> {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
+      //The earilest date a user can select and the latest date
       firstDate: DateTime(2023, 10),
       lastDate: DateTime(2026),
     );

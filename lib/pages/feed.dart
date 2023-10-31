@@ -1,9 +1,11 @@
 import 'package:atlas/components/feed_post.dart';
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class Feed extends ConsumerWidget {
   const Feed({Key? key}) : super(key: key);
@@ -26,6 +28,22 @@ class Feed extends ConsumerWidget {
 
       //clear the textfield
       textController.clear();
+    }
+
+    //Gets the user's username
+    Stream<String> fetchUsername({String? email}) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
+      }
+      return Stream.value('');
     }
 
     /*
@@ -53,29 +71,27 @@ class Feed extends ConsumerWidget {
           children: [
             //The Feed
             Expanded(
-              child: StreamBuilder(
+              child: StreamBuilder (
                 stream: FirebaseFirestore.instance
-                    .collection("User Posts")
-                    .orderBy(
-                      "TimeStamp",
-                      descending: false,
-                    )
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        //get the message
-                        final post = snapshot.data!.docs[index];
-                        return FeedPost(
-                          message: post['Message'],
-                          user: post['UserEmail'],
-                          postId: post.id,
-                          likes: List<String>.from(post['Likes'] ?? []),
-                          time: formatDate(post['TimeStamp']),
-                        );
-                      },
+                  .collection("User Posts")
+                  .orderBy("TimeStamp", descending: true)
+                  .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final post = snapshot.data!.docs[index];
+              return StreamBuilder<String> (
+                stream: fetchUsername(email: post['UserEmail']),
+                builder: (context, usernameSnapshot) {
+                  if (usernameSnapshot.hasData) {
+                    return FeedPost(
+                      message: post ['Message'],
+                      user: usernameSnapshot.data!,
+                      postId: post.id,
+                      likes: List<String>.from(post['Likes'] ?? []),
+                      time: formatDate(post['TimeStamp']),
                     );
                   } else if (snapshot.hasError) {
                     return Center(
@@ -87,7 +103,18 @@ class Feed extends ConsumerWidget {
                     child: CircularProgressIndicator(),
                   );
                 },
-              ),
+              );
+            }
+          );
+                    } else if (snapshot.hasError) {
+                      return Center (
+                        child: Text('Error:${snapshot.error}'),
+                      );
+                    }
+                    return const Center (child: CircularProgressIndicator(),
+                    );
+  },
+  ),
             ),
 
             //post message
@@ -121,14 +148,31 @@ class Feed extends ConsumerWidget {
               ),
             ),
 
+/*
             //logged in as
             Text(
-              "Logged in as ${currentUser.email!}",
+              "Logged in as ${usernameSnapshot.data}",
               style: const TextStyle(
                 color: Color.fromARGB(255, 0, 136, 204),
               ),
             ),
+*/
 
+            StreamBuilder<String> (
+              stream: fetchUsername(email: currentUser.email),
+              builder: (context, usernameSnapshot) {
+                if (usernameSnapshot.hasData) {
+                  return Text (
+                    "Logged in as ${usernameSnapshot.data}",
+                    style: const TextStyle (
+                      color: Color.fromARGB(255, 0, 136, 204),
+                    ),
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }
+            ),
             const SizedBox(
               height: 100,
             ),

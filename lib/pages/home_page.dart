@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HabitCard extends StatefulWidget {
   final String title;
   final IconData iconData;
@@ -30,14 +31,11 @@ class HabitCardState extends State<HabitCard> {
   void initState() {
     super.initState();
     currentSubtitle = '';
-    habitStream = fetchData();
+    habitStream = fetchHabits();
   }
 
   //Fetches the habit cards from firebase to display to the user
-  Stream<DocumentSnapshot> fetchData() {
-    var currentDate = DateTime.now();
-    var formattedDate =
-        "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+  Stream<DocumentSnapshot> fetchHabits() {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user?.uid;
@@ -45,11 +43,11 @@ class HabitCardState extends State<HabitCard> {
     //fetching of the correct data for the correct date.
     var testDate = '2023-10-25';
     return FirebaseFirestore.instance
-        .collection('Habits')
-        .doc(uid)
-        .collection(formattedDate)
-        .doc('habits')
-        .snapshots();
+      .collection('Habits')
+      .doc(uid)
+      .collection(widget.selectedDate)
+      .doc('habits')
+      .snapshots();
   }
 
   //Opens the habit card for editing & habit card build
@@ -59,7 +57,7 @@ class HabitCardState extends State<HabitCard> {
       stream: habitStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -112,11 +110,8 @@ class HabitCardState extends State<HabitCard> {
   //Sends the data to firebase
   void editDialog(BuildContext context, String title) async {
     //Variables
-    var currentDate = DateTime.now();
-    TextEditingController textController =
-        TextEditingController(text: currentSubtitle);
+    TextEditingController textController = TextEditingController(text: currentSubtitle);
     String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    var formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
     //Habit card popup for editing data
     showDialog(
       context: context,
@@ -140,11 +135,13 @@ class HabitCardState extends State<HabitCard> {
                   onPressed: () async {
                     widget.onTap(currentSubtitle);
                     DocumentReference userDocRef = FirebaseFirestore.instance
-                        .collection('Habits')
-                        .doc(uid);
+                      .collection('Habits')
+                      .doc(uid);
                     CollectionReference dateSubcollectionRef =
-                        userDocRef.collection(formattedDate);
-                    await dateSubcollectionRef.doc('habits').set({
+                        userDocRef.collection(widget.selectedDate);
+                    await dateSubcollectionRef
+                      .doc('habits')
+                      .set({
                       title.toLowerCase(): currentSubtitle,
                     }, SetOptions(merge: true));
                     Navigator.of(context).pop();
@@ -185,7 +182,8 @@ class _HomePageState extends State<HomePage> {
     var currentDate = DateTime.now();
     selectedDate = "${currentDate.month}/${currentDate.day}";
     formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
-    usernameStream = fetchUsernameStream();
+    usernameStream = fetchUsername();
+    super.initState();
   }
 
   //Function for choosing a date
@@ -199,30 +197,29 @@ class _HomePageState extends State<HomePage> {
     );
     if (picked != null) {
       setState(() {
-        currentDate = picked;
         var month = picked.month.toString().padLeft(2, '0');
         var day = picked.day.toString().padLeft(2, '0');
-        formattedDate = "${currentDate.year}-$month-$day";
+        formattedDate = "${picked.year}-$month-$day";
         selectedDate = "$month/$day";
       });
     }
   }
 
   //Gets the user's username
-  Stream<String> fetchUsernameStream() {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        return FirebaseFirestore.instance
-            .collection("Users")
-            .doc(currentUser.email)
-            .snapshots()
-            .map((snapshot) {
-          final userData = snapshot.data() as Map<String, dynamic>;
-          return userData['username']?.toString() ?? '';
-        });
-      }
-      return Stream.value('');
+  Stream<String> fetchUsername() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      return FirebaseFirestore.instance
+          .collection("Users")
+          .doc(currentUser.email)
+          .snapshots()
+          .map((snapshot) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        return userData['username']?.toString() ?? '';
+      });
     }
+    return Stream.value('');
+  }
 
   //App Bar
   PreferredSize homePageAppBar(BuildContext context) {
@@ -243,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                 fontSize: 24,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             StreamBuilder<String>(
               stream: usernameStream,
               builder: (context, snapshot) {
@@ -255,10 +252,10 @@ class _HomePageState extends State<HomePage> {
                 }
                 final username = snapshot.data!;
                 return Text(
-                  'Welcome back, $username',
+                  'Welcome, $username',
                   style: const TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 );
@@ -268,9 +265,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              CupertinoIcons.profile_circled
-              ),
+            icon: const Icon(CupertinoIcons.profile_circled),
             onPressed: () {
               Navigator.push(
                 context,
@@ -285,25 +280,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //Variables
-    var currentDate = DateTime.now();
-    var formattedDate = "${currentDate.month}/${currentDate.day}";
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final uid = user?.uid;
-    String uid2 = uid.toString();
+  //Variables
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final User? user = auth.currentUser;
+  final uid = user?.uid;
+  String uid2 = uid.toString();
 
-    //Returns the app bar & habit cards
-    return DefaultTabController(
-      length: 3,
+  //Returns the app bar & habit cards
+  return DefaultTabController(
+      length: 2,
       child: Scaffold(
-        backgroundColor: Color(0xFFFAF9F6),
+        backgroundColor: const Color(0xFFFAF9F6),
         appBar: homePageAppBar(context),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
@@ -381,14 +373,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   //Function to save habit data in Firebase
-  void saveHabitData(
-      String uid, String formattedDate, String habit, String value) async {
+  void saveHabitData(String uid, String formattedDate, String habit, String value) async {
     CollectionReference habitCollectionRef = FirebaseFirestore.instance
-        .collection('Habits')
-        .doc(uid)
-        .collection(formattedDate)
-        .doc('habits')
-        .collection('habits');
+      .collection('Habits')
+      .doc(uid)
+      .collection(formattedDate)
+      .doc('habits')
+      .collection('habits');
     await habitCollectionRef.doc(habit).set({'data': value});
   }
 }

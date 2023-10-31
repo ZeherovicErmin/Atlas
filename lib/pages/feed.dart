@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class Feed extends ConsumerWidget {
   const Feed({Key? key}) : super(key: key);
@@ -30,29 +31,21 @@ class Feed extends ConsumerWidget {
       textController.clear();
     }
 
-    /*
-    // Function to get the username based on the user's email
-    Future<String> getUsername(String email) async {
-      try {
-        final userDoc = await FirebaseFirestore.instance
+    //Gets the user's username
+    Stream<String> fetchUsername({String? email}) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
             .collection("Users")
             .doc(email)
-            .get();
-
-        if (userDoc.exists) {
-          final username = userDoc.data()?['username']?.toString() ?? '';
-          print("Retrieved username for $email: $username");
-          return username;
-        } else {
-          print("User doc not found for email: $email");
-          return 'Unknown user';
-        }
-      } catch (e) {
-        print("Error fetching username: $e");
-        return 'Error';
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
       }
+      return Stream.value('');
     }
-    */
 
     /*
     //Holds the opposite theme color for the text
@@ -82,34 +75,42 @@ class Feed extends ConsumerWidget {
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("User Posts")
-                    .orderBy(
-                      "TimeStamp",
-                      descending: true,
-                    )
+                    .orderBy("TimeStamp", descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        //get the message
-                        final post = snapshot.data!.docs[index];
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final post = snapshot.data!.docs[index];
+                          return StreamBuilder<String>(
+                            stream: fetchUsername(email: post['UserEmail']),
+                            builder: (context, usernameSnapshot) {
+                              if (usernameSnapshot.hasData) {
+                                return FeedPost(
+                                  message: post['Message'],
+                                  user: usernameSnapshot.data!,
+                                  postId: post.id,
+                                  likes: List<String>.from(post['Likes'] ?? []),
+                                  time: formatDate(post['TimeStamp']),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error:${snapshot.error}'),
+                                );
+                              }
 
-                        return FeedPost(
-                          message: post['Message'],
-                          user: post['UserEmail'],
-                          postId: post.id,
-                          likes: List<String>.from(post['Likes'] ?? []),
-                          time: formatDate(post['TimeStamp']),
-                        );
-                      },
-                    );
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+                        });
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text('Error:${snapshot.error}'),
                     );
                   }
-
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
@@ -148,14 +149,30 @@ class Feed extends ConsumerWidget {
               ),
             ),
 
+/*
             //logged in as
             Text(
-              "Logged in as ${currentUser.email!}",
+              "Logged in as ${usernameSnapshot.data}",
               style: const TextStyle(
                 color: Color.fromARGB(255, 0, 136, 204),
               ),
             ),
+*/
 
+            StreamBuilder<String>(
+                stream: fetchUsername(email: currentUser.email),
+                builder: (context, usernameSnapshot) {
+                  if (usernameSnapshot.hasData) {
+                    return Text(
+                      "Logged in as ${usernameSnapshot.data}",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 136, 204),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
             const SizedBox(
               height: 100,
             ),

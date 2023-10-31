@@ -34,6 +34,14 @@ class HabitCardState extends State<HabitCard> {
     habitStream = fetchHabits();
   }
 
+  @override
+  void didUpdateWidget(covariant HabitCard oldHabitData) {
+    super.didUpdateWidget(oldHabitData);
+    if (oldHabitData.selectedDate != widget.selectedDate) {
+      habitStream = fetchHabits();
+    }
+  }
+
   //Fetches the habit cards from firebase to display to the user
   Stream<DocumentSnapshot> fetchHabits() {
     final FirebaseAuth auth = FirebaseAuth.instance;

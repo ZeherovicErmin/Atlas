@@ -57,9 +57,7 @@ class Feed extends ConsumerWidget {
     /*
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
-
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
     */
 
     return Scaffold(

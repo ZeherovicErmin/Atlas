@@ -52,6 +52,36 @@ class RegisterPage extends ConsumerWidget {
       );
     }
 
+    //Makes the collection for storing user habits
+    void makeHabitCollection() async {
+      var currentDate = DateTime.now();
+      var formattedDate = "${currentDate.month}/${currentDate.day}";
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+
+      await FirebaseFirestore.instance
+          .collection("Habits")
+          .doc(uid)
+          .collection(formattedDate)
+          .add({
+            'uid': uid,
+      });
+    }
+
+    //Makes the collection for storing user habits
+    void makeUsernameCollection() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection("Users2").doc(uid).set({
+          'username': registrationState.emailController.text,
+        });
+      }
+    }
+
     //Attempts to sign the user up for Atlas
     void signUserUp() async {
       showDialog(
@@ -72,31 +102,30 @@ class RegisterPage extends ConsumerWidget {
       //Attempts to create an account for a user with their email address and password
       try {
         UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
-
+        final FirebaseAuth auth = FirebaseAuth.instance;
+        final User? user = auth.currentUser;
+        final uid = user?.uid;
         //Uploads a collection containing all user's email addresses when they register with Atlas
-        FirebaseFirestore.instance
+        await FirebaseFirestore.instance
             .collection("Users")
             .doc(userCredential.user!.email)
             .set({
           'username': registrationState.emailController.text
-              .split('@')[0], // initial username
+            .split('@')[0], // initial username
           'bio': 'Empty Bio...', // initially empty bio
           'profilePicture':
-              registrationState.initialProfileImageData, // profile pic
+            registrationState.initialProfileImageData, // profile pic
         });
 
-        var currentDate = DateTime.now();
-        var formattedDate = "${currentDate.month}/${currentDate.day}";
-        final FirebaseAuth auth = FirebaseAuth.instance;
-        final User? user = auth.currentUser;
-        final uid = user?.uid;
+        makeHabitCollection();
+        makeUsernameCollection();
 
         //Error handling for registering for Atlas
-        Navigator.pop(context); // Closes the loading circle
+        Navigator.of(context); // Closes the loading circle
         Navigator.of(context).pushReplacementNamed('/start');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);

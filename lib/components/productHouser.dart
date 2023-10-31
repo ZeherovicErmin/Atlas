@@ -224,16 +224,18 @@ class BarcodeLookupComb extends ConsumerWidget {
     showModalBottomSheet(
         context: context,
         builder: (context) => NutritionContainer(
-            amtPerServing: 0,
-            productCalories: 0,
-            fatsPserving: 0,
-            satfatsPserving: 0,
-            transfatsPserving: 0,
-            carbsPserving: 0,
-            sugarsPerServing: 0,
-            proteinPserving: 0,
-            sodiumPerServing: 0,
-            cholesterolPerServing: 0));
+            amtPerServing: ref.read(amtServingsProvider.notifier).state,
+            productCalories: ref.read(productCaloriesProvider.notifier).state,
+            fatsPserving: ref.read(fatsPservingProvider.notifier).state,
+            satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
+            transfatsPserving:
+                ref.read(transfatsPservingProvider.notifier).state,
+            carbsPserving: ref.read(carbsPservingProvider.notifier).state,
+            sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
+            proteinPserving: ref.read(proteinPservingProvider.notifier).state,
+            sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
+            cholesterolPerServing:
+                ref.read(cholesterolProvider.notifier).state));
   }
 
   // Function to check if a barcode is valid

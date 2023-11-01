@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,49 +33,49 @@ class DiscoverPage extends ConsumerWidget {
 
   // Creating A map of Icons for each specific day
   static const Map<String, Widget> dayIcons = {
-    "Monday": const Image(
+    "Monday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Tuesday": const Image(
+    "Tuesday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Wednesday": const Image(
+    "Wednesday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Thursday": const Image(
+    "Thursday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Friday": const Image(
+    "Friday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Saturday": const Image(
+    "Saturday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),
       height: 50,
       width: 50,
     ),
-    "Sunday": const Image(
+    "Sunday": Image(
       image: AssetImage(
         'lib/images/monday_icon.png',
       ),

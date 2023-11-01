@@ -33,14 +33,6 @@ class SavedExercisesNotifier extends Notifier<List<String>> {
   List<String> build() {
     return state;
   }
-
-  void toggleExercise(String exerciseName) {
-    if (state.contains(exerciseName)) {
-      state = [...state]..remove(exerciseName);
-    } else {
-      state = [...state, exerciseName];
-    }
-  }
 }
 
 // Adding an info button
@@ -104,6 +96,7 @@ class FitCenter extends ConsumerWidget {
                 ],
               ),
               actions: [
+                // Creating a button that will display information on how to use the page to the user
                 IconButton(
                     icon: Icon(Icons.info),
                     onPressed: () {
@@ -149,6 +142,7 @@ class FitCenter extends ConsumerWidget {
     );
   }
 
+  // A
   ListView musclesList() {
     return ListView.builder(
       itemCount: list.length,
@@ -231,6 +225,7 @@ class FitCenter extends ConsumerWidget {
     );
   }
 
+  // The function that returns the list view of exercises based on the muscle that the user classes
   ListView exercisesList(List<dynamic> exercisesData) {
     return ListView.builder(
       itemCount: exercisesData.length,

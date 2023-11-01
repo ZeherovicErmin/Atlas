@@ -169,8 +169,9 @@ class UserProfile extends ConsumerWidget {
 
     // Edit field
     Future<void> editField(String field) async {
-      String newValue = "";
-      await showDialog(
+      TextEditingController username = TextEditingController();
+
+      String? newValue = await showDialog<String> (
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: themeColor2,
@@ -179,6 +180,7 @@ class UserProfile extends ConsumerWidget {
             style: TextStyle(color: themeColor),
           ),
           content: TextField(
+            controller: username,
             autofocus: true,
             style: TextStyle(
                 color:  themeColor
@@ -187,9 +189,6 @@ class UserProfile extends ConsumerWidget {
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),
             ),
-            onChanged: (value) {
-              newValue = value;
-            },
           ),
           actions: [
             // Cancel button
@@ -207,14 +206,14 @@ class UserProfile extends ConsumerWidget {
                 'Save',
                 style: TextStyle(color: themeColor),
               ),
-              onPressed: () => Navigator.of(context).pop(newValue),
+              onPressed: () => Navigator.of(context).pop(username.text),
             ),
           ],
         ),
       );
 
       // Update in Firestore
-      if (newValue.trim().isNotEmpty) {
+      if (newValue != null && newValue.trim().isNotEmpty) {
         // Only update if there is something in the text field
         await usersCollection.doc(currentUser.email).update({field: newValue});
       }

@@ -151,22 +151,12 @@ class Feed extends ConsumerWidget {
               ),
             ),
 
-/*
-            //logged in as
-            Text(
-              "Logged in as ${usernameSnapshot.data}",
-              style: const TextStyle(
-                color: Color.fromARGB(255, 0, 136, 204),
-              ),
-            ),
-*/
-
             StreamBuilder<String>(
                 stream: fetchUsername(email: currentUser.email),
                 builder: (context, usernameSnapshot) {
                   if (usernameSnapshot.hasData) {
                     return Text(
-                      "Logged in as ${usernameSnapshot.data}",
+                      "Logged in as " + usernameSnapshot.data.toString().trim(),
                       style: const TextStyle(
                         color: Color.fromARGB(255, 0, 136, 204),
                       ),

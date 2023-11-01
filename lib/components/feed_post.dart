@@ -35,7 +35,6 @@ class _FeedPostState extends State<FeedPost> {
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
-  
 
   @override
   void initState() {
@@ -86,7 +85,15 @@ class _FeedPostState extends State<FeedPost> {
             // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                children: [
+                  Column (
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // delete button
+                        if (currentUser.email == widget.email)
+                        DeleteButton(onTap: deletePost),
+                    ],
+                  ),
                 //message
                 Text(
                   widget.message,
@@ -100,7 +107,7 @@ class _FeedPostState extends State<FeedPost> {
                 Row(
                   children: [
                     Text(
-                      widget.user,
+                      widget.user.trim(),
                       style: TextStyle(color: Colors.grey[500]),
                     ),
                     Text(

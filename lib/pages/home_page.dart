@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                 if (snapshot.hasError || !snapshot.hasData) {
                   return const Text('Username not found');
                 }
-                final username = snapshot.data!;
+                final username = snapshot.data!.trim();
                 return Text(
                   'Welcome, $username',
                   style: const TextStyle(

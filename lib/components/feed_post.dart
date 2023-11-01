@@ -116,9 +116,16 @@ class _FeedPostState extends State<FeedPost> {
               ],
             ),
 
-            // delete button
-            if (currentUser.email == widget.email)
-              DeleteButton(onTap: deletePost),
+            //delete button
+            //  if (currentUser.email == widget.email)
+            //    DeleteButton(onTap: deletePost),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: currentUser.email == widget.email
+                  ? DeleteButton(onTap: deletePost)
+                  : const SizedBox(),
+            ),
           ],
         ),
 
@@ -147,7 +154,7 @@ class _FeedPostState extends State<FeedPost> {
               ],
             ),
 
-            const SizedBox(width: 10),
+            const SizedBox(width: 15),
 
             //COMMENT
             Column(

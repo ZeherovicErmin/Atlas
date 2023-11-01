@@ -26,10 +26,7 @@ class _SavedExercisesState extends State<SavedExercises> {
     final userID = auth.currentUser?.uid;
 
     return Scaffold(
-      // The
-      appBar: AppBar(
-        title: Text("Saved  Exercises"),
-      ),
+      
 
       body: StreamBuilder<QuerySnapshot>(
         stream: exercisesCollection.where("uid", isEqualTo: userID).snapshots(),

@@ -86,8 +86,9 @@ class DiscoverPage extends ConsumerWidget {
   };
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-        child: Scaffold(
+    // Using gesture detector to navigate to each specific day of the week page which will house the saved collection of exercises for each day
+    
+        return Scaffold(
             backgroundColor: const Color(0xFFFAF9F6),
             body: ListView.builder(
                 itemCount: items.length,
@@ -96,7 +97,32 @@ class DiscoverPage extends ConsumerWidget {
                   final dayColors = dayContColors[item];
                   final dayIcon = dayIcons[item];
 
-                  return Container(
+
+                  //Creating the gesture detector functionality for each page to navigate to another page
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+
+                        switch(item){
+                          case "Monday":
+                          return MondaySavedExercises();
+                        
+
+                        default:
+                        return Scaffold(
+                          body: Center(
+                            child: Text("Page not found."),
+                          ),
+                        );
+                        }
+                      },
+                      ),
+                      );
+                    },
+                          
+                  
+                     
+                  child: Container(
                     decoration: BoxDecoration(
                       color: dayColors,
                       borderRadius: BorderRadius.circular(24.0),
@@ -130,10 +156,30 @@ class DiscoverPage extends ConsumerWidget {
                           // Adding the icon to indicate the container is clickable
                           Icon(Icons.arrow_forward_ios,
                               size: 40, color: Colors.white),
-                        ],
-                      ),
+                      
+                      ],
                     ),
-                  );
-                })));
+                  ),
+                  ),
+            );
+  },
+  ),
+  );
+}
+}
+                  
+
+
+// Creating a class for Monday that will display the Monday saved workouts and be used as a baseline for other days of the week
+class MondaySavedExercises extends StatelessWidget{
+  
+  @override
+  Widget build(BuildContext context){
+
+    return Scaffold(
+      appBar: AppBar(title: Text("Monday Workout"),
+      ),
+      body: SavedExercises(),
+      );
   }
 }

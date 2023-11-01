@@ -2,11 +2,20 @@ import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/recipe-info.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final servingsProvider = StateProvider<double>((ref) {
+  return 1.0;
+});
+
 class RecipeDetails extends ConsumerWidget {
-  const RecipeDetails({Key? key, required this.recipe}) : super(key: key);
+  RecipeDetails({Key? key, required this.recipe}) : super(key: key);
   final Result recipe; //recipe object
+
+  //Text controller used to store value from recipe search bar
+  final TextEditingController servingsController =
+      TextEditingController(text: '1');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +33,7 @@ class RecipeDetails extends ConsumerWidget {
                 // ignore: prefer_const_constructors
                 children: [
               recipeImage(),
-              recipeInformation(),
+              recipeInformation(ref),
               //margin for spacing
               Container(margin: const EdgeInsets.only(top: 10, bottom: 10)),
               SizedBox(
@@ -36,9 +45,12 @@ class RecipeDetails extends ConsumerWidget {
   }
 
 
-  Widget recipeInformation() {
+  Widget recipeInformation(WidgetRef ref) {
     //Recipe calories
-    int calories = recipe.nutrition.nutrients[0].amount.ceil();
+    double servings = ref.watch(servingsProvider);
+    int calories =
+        ((recipe.nutrition.nutrients[0].amount / recipe.servings) * servings)
+            .ceil();
 
     return Column(
       children: [
@@ -60,7 +72,7 @@ class RecipeDetails extends ConsumerWidget {
             children: [
               //Recipe Calories
               Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: EdgeInsets.only(right: 3),
                 padding: EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
@@ -78,12 +90,32 @@ class RecipeDetails extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
                   borderRadius: BorderRadius.all(Radius.circular(25))),
-                child: Text("Servings: ${recipe.servings}",
+                child:  Text("Servings: ",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 15))),
+                  style: const TextStyle( color: Colors.white,
+                      fontWeight: FontWeight.bold, fontSize: 15, height: 2.0))),
+              SizedBox(
+                  width: 30,
+                  child: TextFormField(
+                    //Controller stores value entered by user
+                    controller: servingsController,
+                    //Checks if searchbar has a value, if not: show error message
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty ||
+                          int.parse(value) <= 0) {
+                        return 'Please Enter A Valid Number';
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value) => {
+                      ref.read(servingsProvider.notifier).state =
+                          double.parse(value)
+                    },
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.number,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  )),
               //Recipe Ready Time
               Container(
                 padding: EdgeInsets.all(7),

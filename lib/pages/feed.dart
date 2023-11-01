@@ -14,6 +14,7 @@ class Feed extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final textController = TextEditingController();
+    final usersCollection = FirebaseFirestore.instance.collection("Users");
 
     void postMessage() {
       //only post if there is something in the textfield
@@ -71,50 +72,52 @@ class Feed extends ConsumerWidget {
           children: [
             //The Feed
             Expanded(
-              child: StreamBuilder (
+              child: StreamBuilder(
                 stream: FirebaseFirestore.instance
-                  .collection("User Posts")
-                  .orderBy("TimeStamp", descending: true)
-                  .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
+                    .collection("User Posts")
+                    .orderBy("TimeStamp", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
+                          //get the message
                           final post = snapshot.data!.docs[index];
-              return StreamBuilder<String> (
-                stream: fetchUsername(email: post['UserEmail']),
-                builder: (context, usernameSnapshot) {
-                  if (usernameSnapshot.hasData) {
-                    return FeedPost(
-                      message: post ['Message'],
-                      user: usernameSnapshot.data!,
-                      postId: post.id,
-                      likes: List<String>.from(post['Likes'] ?? []),
-                      time: formatDate(post['TimeStamp']),
-                    );
+                          return StreamBuilder<String>(
+                            stream: fetchUsername(email: post['UserEmail']),
+                            builder: (context, usernameSnapshot) {
+                              if (usernameSnapshot.hasData) {
+                                return FeedPost(
+                                  message: post['Message'],
+                                  user: usernameSnapshot.data!,
+                                  postId: post.id,
+                                  likes: List<String>.from(post['Likes'] ?? []),
+                                  time: formatDate(post['TimeStamp']),
+                                  email: post['UserEmail'],
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error:${snapshot.error}'),
+                                );
+                              }
+
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+                        });
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text('Error:${snapshot.error}'),
                     );
                   }
-
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 },
-              );
-            }
-          );
-                    } else if (snapshot.hasError) {
-                      return Center (
-                        child: Text('Error:${snapshot.error}'),
-                      );
-                    }
-                    return const Center (child: CircularProgressIndicator(),
-                    );
-  },
-  ),
+              ),
             ),
 
             //post message
@@ -158,21 +161,20 @@ class Feed extends ConsumerWidget {
             ),
 */
 
-            StreamBuilder<String> (
-              stream: fetchUsername(email: currentUser.email),
-              builder: (context, usernameSnapshot) {
-                if (usernameSnapshot.hasData) {
-                  return Text (
-                    "Logged in as ${usernameSnapshot.data}",
-                    style: const TextStyle (
-                      color: Color.fromARGB(255, 0, 136, 204),
-                    ),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              }
-            ),
+            StreamBuilder<String>(
+                stream: fetchUsername(email: currentUser.email),
+                builder: (context, usernameSnapshot) {
+                  if (usernameSnapshot.hasData) {
+                    return Text(
+                      "Logged in as ${usernameSnapshot.data}",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 136, 204),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
             const SizedBox(
               height: 100,
             ),

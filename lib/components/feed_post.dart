@@ -2,6 +2,7 @@ import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/like_button.dart';
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
+  final String email;
   const FeedPost({
     super.key,
     required this.message,
@@ -20,6 +22,7 @@ class FeedPost extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.time,
+    required this.email,
   });
 
   @override
@@ -29,9 +32,10 @@ class FeedPost extends StatefulWidget {
 class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
+
   bool isLiked = false;
-  final _postTextController = TextEditingController();
   final _commentTextController = TextEditingController();
+  
 
   @override
   void initState() {
@@ -79,7 +83,7 @@ class _FeedPostState extends State<FeedPost> {
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            // group of text (message + user email)
+            // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -113,7 +117,7 @@ class _FeedPostState extends State<FeedPost> {
             ),
 
             // delete button
-            if (widget.user == currentUser.email)
+            if (currentUser.email == widget.email)
               DeleteButton(onTap: deletePost),
           ],
         ),
@@ -234,11 +238,11 @@ class _FeedPostState extends State<FeedPost> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Comment"),
+        //title: const Text("Add Comment"),
         content: TextField(
           maxLength: 100,
           controller: _commentTextController,
-          decoration: const InputDecoration(hintText: "Write a comment..."),
+          decoration: const InputDecoration(hintText: "Add a comment..."),
         ),
         actions: [
           //cancel button

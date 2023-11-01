@@ -1,3 +1,4 @@
+import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -351,7 +352,7 @@ class UserProfile extends ConsumerWidget {
                         color: themeColor,
                       ),
                     ),
-                    children: [
+                    children: const [
                      
                     ],
                   ),

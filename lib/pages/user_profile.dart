@@ -223,6 +223,22 @@ class UserProfile extends ConsumerWidget {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
+    //Gets the user's username
+    Stream<String> fetchUsername({String? email}) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
+      }
+      return Stream.value('');
+    }
+
     return Scaffold(
       backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, ref, 'U s e r'),
@@ -305,14 +321,24 @@ class UserProfile extends ConsumerWidget {
 
                   const SizedBox(height: 10),
 
-                  // User email
-                  Text(
-                    currentUser.email!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: themeColor,
-                    ),
-                  ),
+                  //Username
+                  StreamBuilder<String>(
+                      stream: fetchUsername(email: currentUser.email),
+                      builder: (context, usernameSnapshot) {
+                        if (usernameSnapshot.hasData) {
+                          return Text(
+                            usernameSnapshot.data.toString().trim(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: themeColor,
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      }),
 
                   const SizedBox(height: 50),
 
@@ -340,9 +366,6 @@ class UserProfile extends ConsumerWidget {
                     sectionName: 'Bio',
                     onPressed: () => editField('bio'),
                   ),
-
-                  const SizedBox(height: 50),
-
                 ],
               ),
             );

@@ -86,14 +86,6 @@ class _FeedPostState extends State<FeedPost> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column (
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // delete button
-                        if (currentUser.email == widget.email)
-                        DeleteButton(onTap: deletePost),
-                    ],
-                  ),
                 //message
                 Text(
                   widget.message,
@@ -121,6 +113,17 @@ class _FeedPostState extends State<FeedPost> {
                   ],
                 ),
               ],
+            ),
+
+            //delete button
+            //  if (currentUser.email == widget.email)
+            //    DeleteButton(onTap: deletePost),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: currentUser.email == widget.email
+                  ? DeleteButton(onTap: deletePost)
+                  : const SizedBox(),
             ),
           ],
         ),
@@ -150,7 +153,7 @@ class _FeedPostState extends State<FeedPost> {
               ],
             ),
 
-            const SizedBox(width: 10),
+            const SizedBox(width: 15),
 
             //COMMENT
             Column(

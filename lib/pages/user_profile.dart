@@ -340,31 +340,46 @@ class UserProfile extends ConsumerWidget {
                         }
                       }),
 
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 30),
 
                   // User details
-                  Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
+                  ExpansionTile(
+                    title: Text(
                       'My Details',
                       style: TextStyle(
                         color: themeColor,
                       ),
                     ),
+                    children: [
+                      // Username
+                      MyTextBox(
+                        text: userData['username']?.toString() ??
+                            '', // Safely access username
+                        sectionName: 'Username',
+                        onPressed: () => editField('username'),
+                      ),
+
+                      // Bio
+                      MyTextBox(
+                        text: userData['bio']?.toString() ??
+                            '', // Safely access bio
+                        sectionName: 'Bio',
+                        onPressed: () => editField('bio'),
+                      ),
+                    ],
                   ),
 
-                  // Username
-                  MyTextBox(
-                    text: userData['username']?.toString() ?? '', // Safely access username
-                    sectionName: 'Username',
-                    onPressed: () => editField('username'),
-                  ),
-
-                  // Bio
-                  MyTextBox(
-                    text: userData['bio']?.toString() ?? '', // Safely access bio
-                    sectionName: 'Bio',
-                    onPressed: () => editField('bio'),
+                  //posts
+                  ExpansionTile(
+                    title: Text(
+                      'My Posts',
+                      style: TextStyle(
+                        color: themeColor,
+                      ),
+                    ),
+                    children: [
+                     
+                    ],
                   ),
                 ],
               ),

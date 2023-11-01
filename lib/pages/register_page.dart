@@ -120,7 +120,6 @@ class RegisterPage extends ConsumerWidget {
           'profilePicture':
             registrationState.initialProfileImageData, // profile pic
         });
-
         makeHabitCollection();
         makeUsernameCollection();
 

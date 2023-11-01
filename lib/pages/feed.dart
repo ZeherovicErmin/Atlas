@@ -82,6 +82,7 @@ class Feed extends ConsumerWidget {
                     return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
+                          //get the message
                           final post = snapshot.data!.docs[index];
                           return StreamBuilder<String>(
                             stream: fetchUsername(email: post['UserEmail']),
@@ -93,6 +94,7 @@ class Feed extends ConsumerWidget {
                                   postId: post.id,
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
+                                  email: post['UserEmail'],
                                 );
                               } else if (snapshot.hasError) {
                                 return Center(

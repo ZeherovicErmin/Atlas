@@ -47,12 +47,7 @@ class UserProfile extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-<<<<<<< HEAD
-    final themeColor2 =
-        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
-=======
     final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
->>>>>>> origin/prototypeThree
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider

@@ -2,11 +2,11 @@ import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/like_button.dart';
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -14,6 +14,7 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
+  final String email;
   const FeedPost({
     super.key,
     required this.message,
@@ -21,6 +22,7 @@ class FeedPost extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.time,
+    required this.email,
   });
 
   @override
@@ -30,38 +32,15 @@ class FeedPost extends StatefulWidget {
 class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
+
   bool isLiked = false;
   final _commentTextController = TextEditingController();
-  String username = '';
-
-  // Method to fetch the username based on the email
-  Future<String> getUsername(String email) async {
-    try {
-      final userDoc =
-          await FirebaseFirestore.instance.collection("Users").doc(email).get();
-
-      if (userDoc.exists) {
-        final username = userDoc.data()?['username']?.toString() ?? '';
-        return username;
-      } else {
-        return 'Unknown user';
-      }
-    } catch (e) {
-      return 'Error';
-    }
-  }
+  
 
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
-
-    //FETCH USERNAME
-    getUsername(widget.user).then((value) {
-      setState(() {
-        username = value;
-      });
-    });
   }
 
   //toggle like
@@ -104,7 +83,7 @@ class _FeedPostState extends State<FeedPost> {
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            // group of text (message + user email)
+            // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,7 +100,7 @@ class _FeedPostState extends State<FeedPost> {
                 Row(
                   children: [
                     Text(
-                      username,
+                      widget.user,
                       style: TextStyle(color: Colors.grey[500]),
                     ),
                     Text(
@@ -138,7 +117,7 @@ class _FeedPostState extends State<FeedPost> {
             ),
 
             // delete button
-            if (widget.user == currentUser.email)
+            if (currentUser.email == widget.email)
               DeleteButton(onTap: deletePost),
           ],
         ),
@@ -259,11 +238,11 @@ class _FeedPostState extends State<FeedPost> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Comment"),
+        //title: const Text("Add Comment"),
         content: TextField(
           maxLength: 100,
           controller: _commentTextController,
-          decoration: const InputDecoration(hintText: "Write a comment..."),
+          decoration: const InputDecoration(hintText: "Add a comment..."),
         ),
         actions: [
           //cancel button

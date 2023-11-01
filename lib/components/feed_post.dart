@@ -86,14 +86,6 @@ class _FeedPostState extends State<FeedPost> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column (
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // delete button
-                        if (currentUser.email == widget.email)
-                        DeleteButton(onTap: deletePost),
-                    ],
-                  ),
                 //message
                 Text(
                   widget.message,

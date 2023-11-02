@@ -26,8 +26,6 @@ class _SavedExercisesState extends State<SavedExercises> {
     final userID = auth.currentUser?.uid;
 
     return Scaffold(
-      
-
       body: StreamBuilder<QuerySnapshot>(
         stream: exercisesCollection.where("uid", isEqualTo: userID).snapshots(),
         builder: (context, snapshot) {
@@ -47,7 +45,7 @@ class _SavedExercisesState extends State<SavedExercises> {
                   exercisesSnapshot.data() as Map<String, dynamic>;
 
               return ListTile(
-                title: Text(exerciseData['name'] ?? ''),
+                title: Text(exerciseData['exercise']['name'] ?? ''),
 
                 // Add other exercise details here
                 trailing: IconButton(

@@ -12,7 +12,8 @@ import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
 import 'package:stroke_text/stroke_text.dart';
 
-//final SavedExercisesProvider = NotifierProvider<SavedExercisesNotifier,List<String>>((ref) => null);
+// Creating a global variable to store the selected day
+int selectedDay = 1;
 
 // Creating a method to capitalize the first letter of each muscle
 String capitalizeFirstLetter(String text) {
@@ -85,7 +86,7 @@ class FitCenter extends ConsumerWidget {
                   ),
                 ),
               ),
-              backgroundColor: Color.fromARGB(255, 0, 136, 204),
+              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
               bottom: const TabBar(
                 indicatorColor: Color.fromARGB(255, 90, 86, 86),
                 tabs: [
@@ -98,7 +99,7 @@ class FitCenter extends ConsumerWidget {
               actions: [
                 // Creating a button that will display information on how to use the page to the user
                 IconButton(
-                    icon: Icon(Icons.info),
+                    icon: const Icon(Icons.info),
                     onPressed: () {
                       final isInfoDialogOpen = ref.read(infoDialogProvider);
 
@@ -107,14 +108,15 @@ class FitCenter extends ConsumerWidget {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Center(child: Text('Discover Page Guide')),
-                              content: Text(
+                              title: const Center(
+                                  child: Text('Discover Page Guide')),
+                              content: const Text(
                                   "Displayed is a list of muscles with icons depicting the muscle.\n"
                                   "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
                                   "The muscles are color coded by general muscle group they belong to.\n"),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('Close'),
+                                  child: const Text('Close'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -134,7 +136,7 @@ class FitCenter extends ConsumerWidget {
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
               musclesList(),
 
-              DiscoverPage(),
+              const DiscoverPage(),
             ],
           ),
         ),
@@ -158,7 +160,7 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
-                  backgroundColor: Color(0xFFFAF9F6),
+                  backgroundColor: const Color(0xFFFAF9F6),
                   appBar: AppBar(
                     backgroundColor:
 
@@ -190,7 +192,7 @@ class FitCenter extends ConsumerWidget {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 4,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -202,7 +204,7 @@ class FitCenter extends ConsumerWidget {
                 children: [
                   // Adding an icon to each specific muscle
                   muscleIcons[muscle] ??
-                      Icon(Icons.fitness_center,
+                      const Icon(Icons.fitness_center,
                           size:
                               34), // Setting the default Icon if one does not exist
                   StrokeText(
@@ -325,34 +327,39 @@ class FitCenter extends ConsumerWidget {
                         onPressed: () {
                           // Display a pop up first to ask if the user would like to save the workout
 
+                          // Returning a List that the user will be able to select which specific day to save an exercise to which will then pass the exercise
+                          // to the corresponding collection on FireStore
+
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Save Exercise?'),
-                                content:
-                                    Text('Do you want to save this execise?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('Cancel'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
+                                title: const Text(
+                                    'What day would you like to save this exercise to?'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(
+                                    7,
+                                    (day) {
+                                      return RadioListTile(
+                                        title: Text(getDayName(day)),
+                                        value: day,
+                                        groupValue: selectedDay,
+                                        onChanged: (value) {
+                                          selectedDay = value!;
+                                          Navigator.of(context).pop();
+                                          saveExerciseToFirestore(exerciseData,
+                                              context, selectedDay);
+                                        },
+                                      );
                                     },
                                   ),
-                                  TextButton(
-                                    child: Text('Save'),
-                                    onPressed: () {
-                                      // This command saves to the Firestore
-                                      saveExerciseToFirestore(
-                                          exerciseData, context);
-                                    },
-                                  ),
-                                ],
+                                ),
                               );
                             },
                           );
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           CupertinoIcons.add_circled,
                           size: 30,
                         ),
@@ -372,7 +379,7 @@ class FitCenter extends ConsumerWidget {
                       // Returning a numbered list for the instructions of the workout
                       ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount:
                             exercise['instructions'].split('.').length - 1,
                         itemBuilder: (BuildContext context, int index) {
@@ -396,9 +403,30 @@ class FitCenter extends ConsumerWidget {
     );
   }
 
+  String getDayName(int day) {
+    switch (day) {
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      case 6:
+        return "Saturday";
+      case 7:
+        return "Sunday";
+      default:
+        return "Cancel";
+    }
+  }
+
 //save exercise
-  void saveExerciseToFirestore(
-      Map<String, dynamic> exercisesData, BuildContext context) async {
+  void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
+      BuildContext context, int selectedDay) async {
     try {
       // Create an instance of FirebaseAuth
       final FirebaseAuth auth = FirebaseAuth.instance;
@@ -414,9 +442,12 @@ class FitCenter extends ConsumerWidget {
       // Get the current user's UID
       final userID = user.uid;
 
-      // Make a reference to the Exercises collection in Firebase
+      // Creating a name for the FIrestore collection based on the day the user selects
+      final collectionName = getDayName(selectedDay) + "_exercises";
+
+      // Make a reference to the Exercises collection in Firebase based on the day selected
       final exerciseCollection =
-          FirebaseFirestore.instance.collection("Exercises");
+          FirebaseFirestore.instance.collection(collectionName);
 
       // Check if the exercise with the same name is already saved by the user
       final existingExerciseQuery = await exerciseCollection
@@ -428,7 +459,7 @@ class FitCenter extends ConsumerWidget {
       if (existingExerciseQuery.docs.isNotEmpty) {
         print('Exercise already saved.');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Exercise already saved.'),
           ),
         );
@@ -442,13 +473,14 @@ class FitCenter extends ConsumerWidget {
           "uid": userID,
           "exercise": exercisesData,
           "saveDate": DateTime.now(),
+          "selectedDay": getDayName(selectedDay),
         },
       );
 
       print('Exercise saved to Firestore.');
       // Save workout to FireStore
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Exercise saved to Firestore.'),
         ),
       );
@@ -457,7 +489,7 @@ class FitCenter extends ConsumerWidget {
       print('Error adding exercise to Firestore: $e');
       // if there is an error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Error adding exercise to Firestore.'),
         ),
       );

@@ -87,99 +87,92 @@ class DiscoverPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Using gesture detector to navigate to each specific day of the week page which will house the saved collection of exercises for each day
-    
-        return Scaffold(
-            backgroundColor: const Color(0xFFFAF9F6),
-            body: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  final dayColors = dayContColors[item];
-                  final dayIcon = dayIcons[item];
 
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAF9F6),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final dayColors = dayContColors[item];
+          final dayIcon = dayIcons[item];
 
-                  //Creating the gesture detector functionality for each page to navigate to another page
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context){
+          //Creating the gesture detector functionality for each page to navigate to another page
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    switch (item) {
+                      case "Monday":
+                        return MondaySavedExercises();
 
-                        switch(item){
-                          case "Monday":
-                          return MondaySavedExercises();
-                        
-
-                        default:
+                      default:
                         return Scaffold(
                           body: Center(
                             child: Text("Page not found."),
                           ),
                         );
-                        }
-                      },
-                      ),
-                      );
-                    },
-                          
-                  
-                     
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: dayColors,
-                      borderRadius: BorderRadius.circular(24.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Adding an icon to each specific Day
-                          dayIcon ?? Icon(Icons.fitness_center),
-
-                          Text(
-                            item,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 34,
-                                fontWeight: FontWeight.bold),
-                          ),
-
-                          // Adding the icon to indicate the container is clickable
-                          Icon(Icons.arrow_forward_ios,
-                              size: 40, color: Colors.white),
-                      
-                      ],
-                    ),
+                    }
+                  },
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: dayColors,
+                borderRadius: BorderRadius.circular(24.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
-                  ),
-            );
-  },
-  ),
-  );
-}
-}
-                  
+                ],
+              ),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+              child: Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Adding an icon to each specific Day
+                    dayIcon ?? Icon(Icons.fitness_center),
 
+                    Text(
+                      item,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold),
+                    ),
+
+                    // Adding the icon to indicate the container is clickable
+                    Icon(Icons.arrow_forward_ios,
+                        size: 40, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
 // Creating a class for Monday that will display the Monday saved workouts and be used as a baseline for other days of the week
-class MondaySavedExercises extends StatelessWidget{
-  
+class MondaySavedExercises extends StatelessWidget {
   @override
-  Widget build(BuildContext context){
-
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Monday Workout"),
+      appBar: AppBar(
+        title: Text("Monday Workout"),
       ),
       body: SavedExercises(),
-      );
+    );
   }
 }

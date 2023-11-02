@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:atlas/components/feed_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -52,6 +53,7 @@ class FilterStateController extends StateNotifier<FilterState> {
 
 class BarcodeLogPage extends ConsumerWidget {
   BarcodeLogPage({Key? key});
+  final currentUser = FirebaseAuth.instance.currentUser!;
   final content = NutritionalModalClass(
       //productName: ''
       );
@@ -334,6 +336,21 @@ class BarcodeLogPage extends ConsumerWidget {
               )
             ],
           ),
+          //Sliding to the rihgt activates sharing a post
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            extentRatio: .25,
+            children: [
+              SlidableAction(
+                autoClose: true,
+                onPressed: (context) => shareBarcodeToFeed(),
+                backgroundColor: const Color.fromARGB(2, 140, 215, 85),
+                foregroundColor: Color.fromARGB(255, 0, 78, 12),
+                icon: Icons.share,
+                label: 'Share',
+              )
+            ],
+          ),
           child: Card(
             shape: RoundedRectangleBorder(
               side: const BorderSide(color: Colors.black, width: 3.8),
@@ -605,6 +622,16 @@ class BarcodeLogPage extends ConsumerWidget {
         ),
       );
 
+  //sharing posts
+  void shareBarcodeToFeed(){
+    FirebaseFirestore.instance.collection('BarPosts').add({
+                        'Message': 'barcode',
+                'UserEmail': currentUser.email,
+                  'TimeStamp': Timestamp.now(),
+                  'Likes': [],
+                  
+    });
+  }
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {
     //Confirmation dialog
     bool confirmDelete = await showDialog(

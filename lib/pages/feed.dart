@@ -21,6 +21,7 @@ class Feed extends ConsumerWidget {
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
           'Likes': [],
+          
         });
       }
 
@@ -57,7 +58,7 @@ class Feed extends ConsumerWidget {
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection("User Posts")
+                    .collection("BarPosts")
                     .orderBy(
                       "TimeStamp",
                       descending: false,
@@ -74,6 +75,7 @@ class Feed extends ConsumerWidget {
                           message: post['Message'],
                           user: post['UserEmail'],
                           postId: post.id,
+                          //barcodeData: post['barcodeData'],
                           likes: List<String>.from(post['Likes'] ?? []),
                           time: formatDate(post['TimeStamp']),
                         );

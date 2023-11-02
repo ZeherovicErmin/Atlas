@@ -13,14 +13,15 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
-  const FeedPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-  });
+  final String? barcodeData;
+  const FeedPost(
+      {super.key,
+      required this.message,
+      required this.user,
+      required this.postId,
+      required this.likes,
+      required this.time,
+      this.barcodeData});
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -293,14 +294,16 @@ class _FeedPostState extends State<FeedPost> {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
               final commentDocs = await FirebaseFirestore.instance
-                  .collection("User Posts")
+              //Change back to User Posts
+                  .collection("BarPosts")
                   .doc(widget.postId)
                   .collection("Comments")
                   .get();
 
               for (var doc in commentDocs.docs) {
                 await FirebaseFirestore.instance
-                    .collection("User Posts")
+                //Change back to User Posts
+                    .collection("BarPosts")
                     .doc(widget.postId)
                     .collection("Comments")
                     .doc(doc.id)
@@ -309,7 +312,8 @@ class _FeedPostState extends State<FeedPost> {
 
               // delete the post
               FirebaseFirestore.instance
-                  .collection("User Posts")
+              ///Change back to User Posts
+                  .collection("BarPosts")
                   .doc(widget.postId)
                   .delete()
                   .then((value) => print("post deleted"))

@@ -7,7 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SavedExercises extends StatefulWidget {
-  const SavedExercises({Key? key}) : super(key: key);
+  // Creating a variable to pass a collection name as a parameter
+  final String collectionName;
+
+  const SavedExercises({Key? key, required this.collectionName})
+      : super(key: key);
 
   @override
   State<SavedExercises> createState() => _SavedExercisesState();
@@ -15,8 +19,17 @@ class SavedExercises extends StatefulWidget {
 
 // Creating the class that will manage the state of saved exercises and pull from the firestore collection Exercises
 class _SavedExercisesState extends State<SavedExercises> {
-  final CollectionReference exercisesCollection =
-      FirebaseFirestore.instance.collection("Exercises");
+  // Taking the collection name to pass into the function
+  late final CollectionReference exercisesCollection;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initializing the firestore collection
+    exercisesCollection =
+        FirebaseFirestore.instance.collection(widget.collectionName);
+  }
 
   @override
   Widget build(BuildContext context) {

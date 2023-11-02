@@ -107,6 +107,18 @@ class DiscoverPage extends ConsumerWidget {
                     switch (item) {
                       case "Monday":
                         return MondaySavedExercises();
+                      case "Tuesday":
+                        return TuesdaySavedExercises();
+                      case "Wednesday":
+                        return WednesdaySavedExercises();
+                      case "Thursday":
+                        return ThursdaySavedExercises();
+                      case "Friday":
+                        return FridaySavedExercises();
+                      case "Saturday":
+                        return SaturdaySavedExercises();
+                      case "Sunday":
+                        return SundaySavedExercises();
 
                       default:
                         return Scaffold(
@@ -172,7 +184,81 @@ class MondaySavedExercises extends StatelessWidget {
       appBar: AppBar(
         title: Text("Monday Workout"),
       ),
-      body: SavedExercises(),
+      body: SavedExercises(collectionName: "Monday_exercises"),
+    );
+  }
+}
+
+// Tuesday Exercises
+class TuesdaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Tuesday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Tuesday_exercises"),
+    );
+  }
+}
+
+// Wednesday - Sunday below, same format as previous two
+class WednesdaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Wednesday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Wednesday_exercises"),
+    );
+  }
+}
+
+class ThursdaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Thursday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Thursday_exercises"),
+    );
+  }
+}
+
+class FridaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Friday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Friday_exercises"),
+    );
+  }
+}
+
+class SaturdaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Saturday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Saturday_exercises"),
+    );
+  }
+}
+
+class SundaySavedExercises extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Sunday Workout"),
+      ),
+      body: SavedExercises(collectionName: "Sunday_exercises"),
     );
   }
 }

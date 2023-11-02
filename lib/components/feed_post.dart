@@ -13,7 +13,7 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
-  final String? barcodeData;
+  final List<String>? barcodeData;
   const FeedPost(
       {super.key,
       required this.message,
@@ -90,7 +90,10 @@ class _FeedPostState extends State<FeedPost> {
                   style: const TextStyle(color: Colors.black),
                   maxLines: null,
                 ),
-
+                if (widget.barcodeData != null && widget.barcodeData!.isNotEmpty)
+                ...widget.barcodeData!.map((barcode){
+                  return Text(barcode);
+                }).toList(),
                 const SizedBox(height: 5),
 
                 //user + day

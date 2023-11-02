@@ -343,7 +343,7 @@ class BarcodeLogPage extends ConsumerWidget {
             children: [
               SlidableAction(
                 autoClose: true,
-                onPressed: (context) => shareBarcodeToFeed(),
+                onPressed: (context) => shareBarcodeToFeed(data),
                 backgroundColor: const Color.fromARGB(2, 140, 215, 85),
                 foregroundColor: Color.fromARGB(255, 0, 78, 12),
                 icon: Icons.share,
@@ -623,11 +623,13 @@ class BarcodeLogPage extends ConsumerWidget {
       );
 
   //sharing posts
-  void shareBarcodeToFeed(){
+  void shareBarcodeToFeed(Map<String, dynamic> data){
     FirebaseFirestore.instance.collection('BarPosts').add({
                         'Message': 'barcode',
                 'UserEmail': currentUser.email,
                   'TimeStamp': Timestamp.now(),
+                  'barcodeData': [data['productCalories'].toString()],
+                  
                   'Likes': [],
                   
     });

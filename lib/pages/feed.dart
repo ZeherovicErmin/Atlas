@@ -21,6 +21,7 @@ class Feed extends ConsumerWidget {
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
           'Likes': [],
+          'barcodeData': []
           
         });
       }
@@ -75,8 +76,9 @@ class Feed extends ConsumerWidget {
                           message: post['Message'],
                           user: post['UserEmail'],
                           postId: post.id,
-                          //barcodeData: post['barcodeData'],
+                          barcodeData: List<String>.from(post['barcodeData']?? ['']),
                           likes: List<String>.from(post['Likes'] ?? []),
+                          
                           time: formatDate(post['TimeStamp']),
                         );
                       },

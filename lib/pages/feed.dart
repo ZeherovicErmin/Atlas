@@ -21,7 +21,7 @@ class Feed extends ConsumerWidget {
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
           'Likes': [],
-          'barcodeData': []
+          'barcodeData': {}
           
         });
       }
@@ -72,11 +72,20 @@ class Feed extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         //get the message
                         final post = snapshot.data!.docs[index];
+                        //Mao for barcodeData
+                          // Handle barcodeData with type checking
+  final barcodeDataDynamic = post['barcodeData'];
+  Map<String, dynamic> barcodeDataMap = {};
+  if (barcodeDataDynamic is Map<String, dynamic>) {
+    barcodeDataMap = barcodeDataDynamic;
+  } else {
+        print('Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+  }
                         return FeedPost(
                           message: post['Message'],
                           user: post['UserEmail'],
                           postId: post.id,
-                          barcodeData: List<String>.from(post['barcodeData']?? ['']),
+                          barcodeData: barcodeDataMap,
                           likes: List<String>.from(post['Likes'] ?? []),
                           
                           time: formatDate(post['TimeStamp']),

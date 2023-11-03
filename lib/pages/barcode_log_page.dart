@@ -630,7 +630,7 @@ class BarcodeLogPage extends ConsumerWidget {
                   'Message': 'barcode',
                   'UserEmail': currentUser.email,
                   'TimeStamp': Timestamp.now(),
-                  'barcodeData': [data['productName'].toString()],
+                  'barcodeData': data,
                   
                   'Likes': [],
                   

@@ -13,7 +13,7 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
-  final List<String>? barcodeData;
+  final Map<String, dynamic>? barcodeData;
   const FeedPost(
       {super.key,
       required this.message,
@@ -91,10 +91,10 @@ class _FeedPostState extends State<FeedPost> {
                   maxLines: null,
                 ),
                 if (widget.barcodeData != null && widget.barcodeData!.isNotEmpty)
-                ...widget.barcodeData!.map((barcode){
-                  //holding the social media card
-                  return socialBarcode(barcode);
-                }).toList(),
+  ...widget.barcodeData!.entries.map((entry) {
+    //holding the social media card
+    return socialBarcode(entry);
+  }).toList(),
                 const SizedBox(height: 5),
 
                 //user + day
@@ -234,7 +234,7 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
-  Card socialBarcode(String barcode) {
+  Card socialBarcode(MapEntry<String, dynamic> entry) {
     return Card(
                   child: InkWell(
                     //tapping on the card will
@@ -242,7 +242,7 @@ class _FeedPostState extends State<FeedPost> {
                       print("object");
                     },
                     
-                    child: Text(barcode)
+                    child: Text(entry.value.toString())
                   ),
                 );
   }

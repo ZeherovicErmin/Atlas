@@ -146,7 +146,7 @@ class _SavedExercisesState extends State<SavedExercises> {
                                 onRemove(exercisesSnapshot);
                               },
                               icon: const Icon(
-                                CupertinoIcons.add_circled,
+                                CupertinoIcons.delete,
                                 size: 30,
                               ),
                             ),

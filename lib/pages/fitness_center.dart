@@ -238,6 +238,7 @@ class FitCenter extends ConsumerWidget {
         final exerciseData = {
           'name': exercise['name'],
           'type': exercise['type'],
+          'muscle': exercise['muscle'],
           'equipment': exercise['equipment'],
           'difficulty': exercise['difficulty'],
           'instructions': exercise['instructions'],
@@ -405,6 +406,8 @@ class FitCenter extends ConsumerWidget {
 
   String getDayName(int day) {
     switch (day) {
+      case 0:
+        return "Sunday";
       case 1:
         return "Monday";
       case 2:
@@ -417,10 +420,8 @@ class FitCenter extends ConsumerWidget {
         return "Friday";
       case 6:
         return "Saturday";
-      case 7:
-        return "Sunday";
       default:
-        return "Cancel";
+        throw ArgumentError("Invalid day: $day");
     }
   }
 

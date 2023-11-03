@@ -182,6 +182,7 @@ class MondaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Monday Workout"),
       ),
       body: SavedExercises(collectionName: "Monday_exercises"),
@@ -195,6 +196,7 @@ class TuesdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Tuesday Workout"),
       ),
       body: SavedExercises(collectionName: "Tuesday_exercises"),
@@ -208,6 +210,7 @@ class WednesdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Wednesday Workout"),
       ),
       body: SavedExercises(collectionName: "Wednesday_exercises"),
@@ -220,6 +223,7 @@ class ThursdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Thursday Workout"),
       ),
       body: SavedExercises(collectionName: "Thursday_exercises"),
@@ -232,6 +236,7 @@ class FridaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Friday Workout"),
       ),
       body: SavedExercises(collectionName: "Friday_exercises"),
@@ -244,6 +249,7 @@ class SaturdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Saturday Workout"),
       ),
       body: SavedExercises(collectionName: "Saturday_exercises"),
@@ -256,6 +262,7 @@ class SundaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Sunday Workout"),
       ),
       body: SavedExercises(collectionName: "Sunday_exercises"),

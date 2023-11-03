@@ -351,6 +351,8 @@ class BarcodeLogPage extends ConsumerWidget {
               )
             ],
           ),
+          //card for the barcode logs
+          // This shows in the list of logs
           child: Card(
             shape: RoundedRectangleBorder(
               side: const BorderSide(color: Colors.black, width: 3.8),
@@ -625,10 +627,10 @@ class BarcodeLogPage extends ConsumerWidget {
   //sharing posts
   void shareBarcodeToFeed(Map<String, dynamic> data){
     FirebaseFirestore.instance.collection('BarPosts').add({
-                        'Message': 'barcode',
-                'UserEmail': currentUser.email,
+                  'Message': 'barcode',
+                  'UserEmail': currentUser.email,
                   'TimeStamp': Timestamp.now(),
-                  'barcodeData': [data['productCalories'].toString()],
+                  'barcodeData': [data['productName'].toString()],
                   
                   'Likes': [],
                   

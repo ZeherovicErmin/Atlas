@@ -92,7 +92,8 @@ class _FeedPostState extends State<FeedPost> {
                 ),
                 if (widget.barcodeData != null && widget.barcodeData!.isNotEmpty)
                 ...widget.barcodeData!.map((barcode){
-                  return Text(barcode);
+                  //holding the social media card
+                  return socialBarcode(barcode);
                 }).toList(),
                 const SizedBox(height: 5),
 
@@ -231,6 +232,19 @@ class _FeedPostState extends State<FeedPost> {
         ),
       ]),
     );
+  }
+
+  Card socialBarcode(String barcode) {
+    return Card(
+                  child: InkWell(
+                    //tapping on the card will
+                    onTap: () {
+                      print("object");
+                    },
+                    
+                    child: Text(barcode)
+                  ),
+                );
   }
 
   //show dialog box to add a comment

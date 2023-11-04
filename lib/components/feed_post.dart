@@ -1,6 +1,7 @@
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
+import 'package:atlas/components/editPostButton.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
@@ -8,6 +9,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -34,6 +36,8 @@ class FeedPost extends StatefulWidget {
 class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
+  final userPostsCollection =
+      FirebaseFirestore.instance.collection("User Posts");
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
@@ -88,7 +92,9 @@ class _FeedPostState extends State<FeedPost> {
             // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: <Widget>[
+
                 //message
                 Text(
                   widget.message,
@@ -152,6 +158,18 @@ class _FeedPostState extends State<FeedPost> {
               alignment: Alignment.topRight,
               child: currentUser.email == widget.email
                   ? DeleteButton(onTap: deletePost)
+                  : const SizedBox(),
+            ),
+
+            //edit post button
+            Align(
+              alignment: Alignment.topRight,
+              child: currentUser.email == widget.email
+                  ? editButton(
+                      onTap: () {
+                        editPost("Message");
+                      },
+                    )
                   : const SizedBox(),
             ),
           ],
@@ -411,5 +429,60 @@ class _FeedPostState extends State<FeedPost> {
       "CommentedBy": currentUser.email,
       "CommentTime": Timestamp.now() //format when displaying
     });
+  }
+
+  Future<void> editPost(String field) async {
+    TextEditingController post = TextEditingController();
+    //show a dialog box for ediitng the post
+    String? newValue = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Edit $field",
+          style: const TextStyle(color: Colors.black),
+        ),
+        content: TextField(
+          controller: post,
+          autofocus: true,
+          style: const TextStyle(
+              color: Colors.black), // Change text color to white
+          decoration: InputDecoration(
+            hintText: "Enter new $field",
+            hintStyle: const TextStyle(color: Colors.black),
+          ),
+        ),
+        actions: [
+          // Cancel button
+          TextButton(
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+
+          // Confirm button
+          TextButton(
+            child: const Text(
+              'Confirm',
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () => Navigator.of(context).pop(post.text),
+          ),
+        ],
+      ),
+    );
+
+    // Update in Firestore
+    if (newValue != null && newValue.trim().isNotEmpty) {
+      try {
+        // Only update if there is something in the text field
+        await userPostsCollection.doc(widget.postId).update({field: newValue});
+        print("Post updated successfully");
+      } catch (error) {
+        print("Error updating post: $error");
+      }
+    }
   }
 }

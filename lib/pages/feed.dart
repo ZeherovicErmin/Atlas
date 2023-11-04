@@ -169,7 +169,7 @@ class Feed extends ConsumerWidget {
                 builder: (context, usernameSnapshot) {
                   if (usernameSnapshot.hasData) {
                     return Text(
-                      "Logged in as " + usernameSnapshot.data.toString().trim(),
+                      "Logged in as ${usernameSnapshot.data.toString().trim()}",
                       style: const TextStyle(
                         color: Color.fromARGB(255, 0, 136, 204),
                       ),

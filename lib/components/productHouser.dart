@@ -37,6 +37,9 @@ final selectedFiltersProvider = StateProvider<List<String>>((ref) => []);
 final selectedDataProvider = StateProvider<List<DataItem>>((ref) => []);
 final uidProvider = StateProvider<String>((ref) => '');
 
+//sugar
+final sugarsPservingProvider = StateProvider<double>((ref) => 0.0);
+
 // Create an instance of FirebaseAuth
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -136,6 +139,11 @@ class BarcodeLookupComb extends ConsumerWidget {
                     .nutriments
                     ?.getValue(Nutrient.sodium, PerSize.serving) ??
                 0.0;
+            // Sugar per serving
+            ref.watch(sugarsPservingProvider.notifier).state = productData
+                    .nutriments
+                    ?.getValue(Nutrient.sugars, PerSize.serving) ??
+                0.0;
 
             // Set the user's UID as a state
             ref.watch(uidProvider.notifier).state = uid.toString();
@@ -171,7 +179,11 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(transfatsPservingProvider.notifier).state),
             DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
             DataItem('productName_lowercase',
-                ref.read(productNameProvider).toLowerCase())
+                ref.read(productNameProvider).toLowerCase()),
+            DataItem(
+              'sugarsPerServing',
+              ref.read(sugarsPservingProvider),
+            )
           ];
 
           // Send data to Firestore
@@ -191,6 +203,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           ref.watch(satfatsPservingProvider.notifier).state = 0.0;
           ref.watch(transfatsPservingProvider.notifier).state = 0.0;
           ref.watch(sodiumPservingProvider.notifier).state = 0.0;
+          ref.watch(sugarsPservingProvider.notifier).state = 0.0;
         }
       } else {
         // Set error messages for an invalid barcode
@@ -205,8 +218,24 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(satfatsPservingProvider.notifier).state = 0.0;
         ref.watch(transfatsPservingProvider.notifier).state = 0.0;
         ref.watch(sodiumPservingProvider.notifier).state = 0.0;
+        ref.watch(sugarsPservingProvider.notifier).state = 0.0;
       }
     }
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => NutritionContainer(
+            amtPerServing: ref.read(amtServingsProvider.notifier).state,
+            productCalories: ref.read(productCaloriesProvider.notifier).state,
+            fatsPserving: ref.read(fatsPservingProvider.notifier).state,
+            satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
+            transfatsPserving:
+                ref.read(transfatsPservingProvider.notifier).state,
+            carbsPserving: ref.read(carbsPservingProvider.notifier).state,
+            sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
+            proteinPserving: ref.read(proteinPservingProvider.notifier).state,
+            sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
+            cholesterolPerServing:
+                ref.read(cholesterolProvider.notifier).state));
   }
 
   // Function to check if a barcode is valid
@@ -252,6 +281,8 @@ class BarcodeLookupComb extends ConsumerWidget {
     final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
     final selectedFilters = ref.watch(selectedFiltersProvider);
     final selectedData = ref.watch(selectedDataProvider);
+    final sugarsPerServing = ref.watch(sugarsPservingProvider);
+    final sodiumPerServing = ref.watch(sodiumPservingProvider);
     final uid = ref.watch(uidProvider.notifier).state;
 
     // Filter data based on selected filters
@@ -288,19 +319,21 @@ class BarcodeLookupComb extends ConsumerWidget {
                   size: 50,
                 ),
               )),
+
           NutrientsList(
-            selectedFilters: selectedFilters,
-            result: result,
-            productName: productName,
-            productCalories: productCalories,
-            carbsPserving: carbsPserving,
-            proteinPserving: proteinPserving,
-            fatsPserving: fatsPserving,
-            cholesterolPerServing: cholesterolPerServing,
-            amtPerServing: amtPerServing,
-            satfatsPserving: satfatsPserving,
-            transfatsPserving: transfatsPserving,
-          ),
+              selectedFilters: selectedFilters,
+              result: result,
+              productName: productName,
+              productCalories: productCalories,
+              carbsPserving: carbsPserving,
+              proteinPserving: proteinPserving,
+              fatsPserving: fatsPserving,
+              cholesterolPerServing: cholesterolPerServing,
+              amtPerServing: amtPerServing,
+              satfatsPserving: satfatsPserving,
+              transfatsPserving: transfatsPserving,
+              sodiumPerServing: sodiumPerServing,
+              sugarsPerServing: sugarsPerServing),
         ],
       ),
     );
@@ -423,6 +456,8 @@ class NutrientsList extends StatelessWidget {
     required this.amtPerServing,
     required this.satfatsPserving,
     required this.transfatsPserving,
+    required this.sodiumPerServing,
+    required this.sugarsPerServing,
   });
 
   final List<String> selectedFilters;
@@ -436,6 +471,8 @@ class NutrientsList extends StatelessWidget {
   final double cholesterolPerServing;
   final double satfatsPserving;
   final double transfatsPserving;
+  final double sodiumPerServing;
+  final double sugarsPerServing;
 
   @override
   Widget build(BuildContext context) {
@@ -444,113 +481,162 @@ class NutrientsList extends StatelessWidget {
         minChildSize: .15,
         maxChildSize: .8,
         builder: (BuildContext context, ScrollController _controller) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 252, 252),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12.0),
-                topRight: Radius.circular(12.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              controller: _controller,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(children: [
-                  //Drag Handle
-                  Center(
-                    child: Container(
-                        margin: EdgeInsets.all(8.0),
-                        width: 40,
-                        height: 5.0,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 104, 104, 104),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(12.0),
-                          ),
-                        )),
-                  ),
-                  //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
-                  //Nutritional Facts Column Sheet
-                  const Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Align(
-                        child: Text(
-                          'Nutrition Facts',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontFamily: 'Helvetica Black',
-                              fontSize: 44,
-                              fontWeight: FontWeight.w900),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(
-                      thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
-                  Align(
-                    child: Container(
-                      height: 25,
-                      // Stack to hold the fats and the fats variable
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${amtPerServing.toInt()}g per container",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontFamily: 'Helvetica Black',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  NutritionRow(
-                    title: "Calories",
-                    value: '$productCalories',
-                    fontSize: 24,
-                    dividerThickness: 5,
-                    showDivider: false,
-                  ),
-                  //Nutritional Column Dividers
-                  //End NUTRITION FACTS ROW
-                  Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
-                  //Start of Nutrition rows
-                  //
-                  NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
-                  //saturated Fats
-                  NutritionRow(
-                    title: 'Saturated Fat',
-                    value: '$satfatsPserving',
-                    isSubcategory: true,
-                    hideIfZero: true,
-                  ),
-                  NutritionRow(
-                    title: 'Trans Fat',
-                    value: '$transfatsPserving',
-                    isSubcategory: true,
-                    hideIfZero: true,
-                  ),
-                  //end fats
-
-                  NutritionRow(
-                      title: "Total Carbohydrates", value: '$carbsPserving'),
-                  //end Protein
-
-                  //protein per serving
-                  NutritionRow(title: "Protein", value: "$proteinPserving"),
-
-                  NutritionRow(
-                      title: "Cholesterol", value: '${cholesterolPerServing.toStringAsFixed(1)}'),
-                  //end Protein
-                ]),
-              ),
-            ),
-          );
+          return NutritionContainer(
+              amtPerServing: amtPerServing,
+              productCalories: productCalories,
+              fatsPserving: fatsPserving,
+              satfatsPserving: satfatsPserving,
+              transfatsPserving: transfatsPserving,
+              carbsPserving: carbsPserving,
+              sugarsPerServing: sugarsPerServing,
+              proteinPserving: proteinPserving,
+              sodiumPerServing: sodiumPerServing,
+              cholesterolPerServing: cholesterolPerServing);
         });
+  }
+}
+
+class NutritionContainer extends StatelessWidget {
+  const NutritionContainer({
+    super.key,
+    required this.amtPerServing,
+    required this.productCalories,
+    required this.fatsPserving,
+    required this.satfatsPserving,
+    required this.transfatsPserving,
+    required this.carbsPserving,
+    required this.sugarsPerServing,
+    required this.proteinPserving,
+    required this.sodiumPerServing,
+    required this.cholesterolPerServing,
+  });
+
+  final double amtPerServing;
+  final double productCalories;
+  final double fatsPserving;
+  final double satfatsPserving;
+  final double transfatsPserving;
+  final double carbsPserving;
+  final double sugarsPerServing;
+  final double proteinPserving;
+  final double sodiumPerServing;
+  final double cholesterolPerServing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 255, 252, 252),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.0),
+          topRight: Radius.circular(12.0),
+        ),
+      ),
+      child: SingleChildScrollView(
+        //controller: _controller,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            //Drag Handle
+            Center(
+              child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  width: 40,
+                  height: 5.0,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 104, 104, 104),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  )),
+            ),
+            //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+            //Nutritional Facts Column Sheet
+            const Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Align(
+                  child: Text(
+                    'Nutrition Facts',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontFamily: 'Helvetica Black',
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ],
+            ),
+            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            Align(
+              child: Container(
+                height: 25,
+                // Stack to hold the fats and the fats variable
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${amtPerServing.toInt()}g per container",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: 'Helvetica Black',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            NutritionRow(
+              title: "Calories",
+              value: '$productCalories',
+              fontSize: 24,
+              dividerThickness: 5,
+              showDivider: false,
+            ),
+            //Nutritional Column Dividers
+            //End NUTRITION FACTS ROW
+            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            //Start of Nutrition rows
+            //
+            NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
+            //saturated Fats
+            NutritionRow(
+              title: 'Saturated Fat',
+              value: '$satfatsPserving',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            NutritionRow(
+              title: 'Trans Fat',
+              value: '$transfatsPserving',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            //end fats
+
+            NutritionRow(title: "Total Carbohydrates", value: '$carbsPserving'),
+            //Sugars
+            NutritionRow(
+                title: "Total Sugars",
+                isSubcategory: true,
+                value: '$sugarsPerServing'),
+            //end Protein
+
+            //protein per serving
+            NutritionRow(title: "Protein", value: "$proteinPserving"),
+
+            //sodium
+            NutritionRow(title: "Sodium", value: "$sodiumPerServing"),
+
+            NutritionRow(
+                title: "Cholesterol",
+                value: '${cholesterolPerServing.toStringAsFixed(1)}'),
+            //end Protein
+          ]),
+        ),
+      ),
+    );
   }
 }
 
@@ -564,6 +650,20 @@ class NutritionDivider extends StatelessWidget {
       thickness: thickness,
       color: Color.fromARGB(255, 118, 117, 117),
     );
+  }
+}
+
+//NutritionalModalClass
+// This is the class that will pop up a sheet of nutritional information
+
+class NutritionalModalClass {
+  static void show(BuildContext context, Widget content) {
+    //Function that will pop a modal sheet to the middle of the screen
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return content;
+        });
   }
 }
 
@@ -635,55 +735,6 @@ class NutritionRow extends StatelessWidget {
             thickness: dividerThickness,
           )
       ],
-    );
-  }
-}
-
-class DraggableScrollCard extends StatefulWidget {
-  const DraggableScrollCard({Key? key});
-
-  @override
-  State<DraggableScrollCard> createState() => _DraggableScrollCardState();
-}
-
-class _DraggableScrollCardState extends State<DraggableScrollCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 104, 104, 104),
-        title: Text('Draggable Scrollable Sheet'),
-        centerTitle: true,
-        shadowColor: Colors.amber,
-      ),
-      body: Center(
-        child: productHouserSheet(),
-      ),
-    );
-  }
-
-  DraggableScrollableSheet productHouserSheet() {
-    return DraggableScrollableSheet(
-      builder: (BuildContext context, ScrollController _controller) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 238, 238, 238),
-          ),
-          child: GridView.builder(
-            controller: _controller,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Number of columns in the grid
-            ),
-            itemCount: 50, // Adjust the number of items as needed
-            itemBuilder: (BuildContext context, int index) {
-              return ProductCard(
-                title: 'Item $index',
-                data: 'Some sample text for item $index.', // Sample data text
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }

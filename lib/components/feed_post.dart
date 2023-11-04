@@ -87,11 +87,11 @@ class _FeedPostState extends State<FeedPost> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 //message
-                // Text(
-                //   widget.message,
-                //   style: const TextStyle(color: Colors.black),
-                //   maxLines: null,
-                // ),
+                Text(
+                  widget.message,
+                  style: const TextStyle(color: Colors.black),
+                  maxLines: null,
+                ),
                 // Only display specific barcode data entries
                 Card(
                   shape: RoundedRectangleBorder(

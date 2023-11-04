@@ -396,7 +396,7 @@ class _FeedPostState extends State<FeedPost> {
             onPressed: () => Navigator.pop(context),
           ),
 
-          // Save button
+          // Confirm button
           TextButton(
             child: const Text(
               'Confirm',
@@ -409,12 +409,14 @@ class _FeedPostState extends State<FeedPost> {
     );
 
     // Update in Firestore
-    try {
-      // Only update if there is something in the text field
-      await userPostsCollection.doc(widget.postId).update({field: newValue});
-      print("Post updated successfully");
-    } catch (error) {
-      print("Error updating post: $error");
+    if (newValue != null && newValue.trim().isNotEmpty) {
+      try {
+        // Only update if there is something in the text field
+        await userPostsCollection.doc(widget.postId).update({field: newValue});
+        print("Post updated successfully");
+      } catch (error) {
+        print("Error updating post: $error");
+      }
     }
   }
 }

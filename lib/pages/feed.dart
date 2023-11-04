@@ -14,7 +14,6 @@ class Feed extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final textController = TextEditingController();
-    final usersCollection = FirebaseFirestore.instance.collection("Users");
 
     void postMessage() {
       //only post if there is something in the textfield

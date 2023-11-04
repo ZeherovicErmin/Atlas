@@ -186,7 +186,7 @@ class UserProfile extends ConsumerWidget {
           content: TextField(
             controller: username,
             autofocus: true,
-            style: TextStyle(color: themeColor), // Change text color to white
+            style: TextStyle(color: themeColor), // Change text color to theme
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),

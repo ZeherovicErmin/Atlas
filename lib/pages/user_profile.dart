@@ -1,18 +1,13 @@
-import 'dart:io';
-import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/components/text_box.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
-import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -37,7 +32,7 @@ class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key}) : super(key: key);
 
   Future<void> _handleReresh() async {
-    return await Future.delayed(Duration(seconds: 1));
+    return await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -52,8 +47,7 @@ class UserProfile extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -72,8 +66,7 @@ class UserProfile extends ConsumerWidget {
             .child('profilePictures/$fileName')
             .putData(imageBytes!);
         // Waits for the Task of uploading profile picture to complete
-        final TaskSnapshot taskSnapshot =
-            await uploadTask.whenComplete(() => null);
+        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
         final String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
         try {
@@ -94,8 +87,7 @@ class UserProfile extends ConsumerWidget {
 // Awaits user input to select an Image
     void selectImage() async {
       // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
       //Image.file(pickedFile as File,width: 400,height: 300,);
       // Check if an image was picked.
       if (pickedFile != null) {
@@ -147,37 +139,6 @@ class UserProfile extends ConsumerWidget {
           });
     }
 
-    //Shows the settings page when called
-    //Saving for later because it works
-    /*
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-    */
-
     //App bar for the user profile page
     PreferredSize userProfileAppBar(
         BuildContext context, WidgetRef ref, String title) {
@@ -208,59 +169,79 @@ class UserProfile extends ConsumerWidget {
 
     // Edit field
     Future<void> editField(String field) async {
-      String newValue = "";
-      await showDialog(
+      TextEditingController username = TextEditingController();
+
+      String? newValue = await showDialog<String> (
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: themeColor2,
           title: Text(
             "Edit $field",
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: themeColor),
           ),
           content: TextField(
+            controller: username,
             autofocus: true,
-            style: const TextStyle(
-                color:  Colors.black
+            style: TextStyle(
+                color:  themeColor
                 ), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
-              hintStyle: const TextStyle(color: Colors.black),
+              hintStyle: TextStyle(color: themeColor),
             ),
-            onChanged: (value) {
-              newValue = value;
-            },
           ),
           actions: [
             // Cancel button
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: themeColor),
               ),
               onPressed: () => Navigator.pop(context),
             ),
 
             // Save button
             TextButton(
-              child: const Text(
+              child: Text(
                 'Save',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: themeColor),
               ),
-              onPressed: () => Navigator.of(context).pop(newValue),
+              onPressed: () => Navigator.of(context).pop(username.text),
             ),
           ],
         ),
       );
 
       // Update in Firestore
-      if (newValue.trim().isNotEmpty) {
+      if (newValue != null && newValue.trim().isNotEmpty) {
         // Only update if there is something in the text field
         await usersCollection.doc(currentUser.email).update({field: newValue});
       }
     }
 
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
+    //Gets the user's username
+    Stream<String> fetchUsername({String? email}) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
+      }
+      return Stream.value('');
+    }
+
     return Scaffold(
-      backgroundColor: themeColor,
-      appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
+      backgroundColor: themeColor2,
+      appBar: userProfileAppBar(context, ref, 'U s e r'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -312,7 +293,8 @@ class UserProfile extends ConsumerWidget {
                                         ? MemoryImage(image.state!)
                                         : null,
                                   )
-                                : const Icon(
+                                : Icon(
+                                    color: themeColor,
                                     CupertinoIcons.profile_circled,
                                     size: 72,
                                   );
@@ -320,13 +302,15 @@ class UserProfile extends ConsumerWidget {
                           loading: () => const CircularProgressIndicator(),
                           error: (e, stack) => const Icon(
                               CupertinoIcons.profile_circled,
-                              size: 72),
+                              size: 72
+                              ),
                         ),
                       ),
                       Positioned(
                         bottom: -10,
                         left: 240,
                         child: IconButton(
+                          color: themeColor,
                           // onPressed, opens Image Picker
                           onPressed: selectImage,
                           icon: const Icon(Icons.add_a_photo),
@@ -337,58 +321,66 @@ class UserProfile extends ConsumerWidget {
 
                   const SizedBox(height: 10),
 
-                  // User email
-                  Text(
-                    currentUser.email!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
+                  //Username
+                  StreamBuilder<String>(
+                      stream: fetchUsername(email: currentUser.email),
+                      builder: (context, usernameSnapshot) {
+                        if (usernameSnapshot.hasData) {
+                          return Text(
+                            usernameSnapshot.data.toString().trim(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: themeColor,
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      }),
 
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 30),
 
                   // User details
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
+                  ExpansionTile(
+                    title: Text(
                       'My Details',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: themeColor,
                       ),
                     ),
+                    children: [
+                      // Username
+                      MyTextBox(
+                        text: userData['username']?.toString() ??
+                            '', // Safely access username
+                        sectionName: 'Username',
+                        onPressed: () => editField('username'),
+                      ),
+
+                      // Bio
+                      MyTextBox(
+                        text: userData['bio']?.toString() ??
+                            '', // Safely access bio
+                        sectionName: 'Bio',
+                        onPressed: () => editField('bio'),
+                      ),
+                    ],
                   ),
 
-                  // Username
-                  MyTextBox(
-                    text: userData['username']?.toString() ??
-                        '', // Safely access username
-                    sectionName: 'Username',
-                    onPressed: () => editField('username'),
-                  ),
-
-                  // Bio
-                  MyTextBox(
-                    text:
-                        userData['bio']?.toString() ?? '', // Safely access bio
-                    sectionName: 'Bio',
-                    onPressed: () => editField('bio'),
-                  ),
-
-                  const SizedBox(height: 50),
-
-                  // User posts
-                  /*
-                  const Padding(
-                    padding: EdgeInsets.only(left: 25.0),
-                    child: Text(
+                  //posts
+                  ExpansionTile(
+                    title: Text(
                       'My Posts',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: themeColor,
                       ),
                     ),
+                    children: [
+                     
+                    ],
                   ),
-                  */
                 ],
               ),
             );

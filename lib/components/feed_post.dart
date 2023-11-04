@@ -2,6 +2,7 @@ import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/like_button.dart';
+import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,7 @@ class FeedPost extends StatefulWidget {
   final String postId;
   final List<String> likes;
   final Map<String, dynamic>? barcodeData;
+  final String email;
   const FeedPost(
       {super.key,
       required this.message,
@@ -22,6 +24,7 @@ class FeedPost extends StatefulWidget {
       required this.postId,
       required this.likes,
       required this.time,
+    required this.email,
       this.barcodeData});
 
   @override
@@ -31,8 +34,8 @@ class FeedPost extends StatefulWidget {
 class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
+
   bool isLiked = false;
-  final _postTextController = TextEditingController();
   final _commentTextController = TextEditingController();
   //List of widgets to include in the barcode sharing
 
@@ -82,10 +85,10 @@ class _FeedPostState extends State<FeedPost> {
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            // group of text (message + user email)
+            // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+                children: <Widget>[
                 //message
                 Text(
                   widget.message,
@@ -125,7 +128,7 @@ class _FeedPostState extends State<FeedPost> {
                 Row(
                   children: [
                     Text(
-                      widget.user,
+                      widget.user.trim(),
                       style: TextStyle(color: Colors.grey[500]),
                     ),
                     Text(
@@ -141,9 +144,16 @@ class _FeedPostState extends State<FeedPost> {
               ],
             ),
 
-            // delete button
-            if (widget.user == currentUser.email)
-              DeleteButton(onTap: deletePost),
+            //delete button
+            //  if (currentUser.email == widget.email)
+            //    DeleteButton(onTap: deletePost),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: currentUser.email == widget.email
+                  ? DeleteButton(onTap: deletePost)
+                  : const SizedBox(),
+            ),
           ],
         ),
 
@@ -172,7 +182,7 @@ class _FeedPostState extends State<FeedPost> {
               ],
             ),
 
-            const SizedBox(width: 10),
+            const SizedBox(width: 15),
 
             //COMMENT
             Column(
@@ -294,11 +304,11 @@ class _FeedPostState extends State<FeedPost> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Comment"),
+        //title: const Text("Add Comment"),
         content: TextField(
           maxLength: 100,
           controller: _commentTextController,
-          decoration: const InputDecoration(hintText: "Write a comment..."),
+          decoration: const InputDecoration(hintText: "Add a comment..."),
         ),
         actions: [
           //cancel button

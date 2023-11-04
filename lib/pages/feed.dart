@@ -59,7 +59,7 @@ class Feed extends ConsumerWidget {
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection("BarPosts")
+                    .collection("User Posts")
                     .orderBy(
                       "TimeStamp",
                       descending: false,

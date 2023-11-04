@@ -626,12 +626,11 @@ class BarcodeLogPage extends ConsumerWidget {
 
   //sharing posts
   void shareBarcodeToFeed(Map<String, dynamic> data){
-    FirebaseFirestore.instance.collection('BarPosts').add({
+    FirebaseFirestore.instance.collection('User Posts').add({
                   'Message': 'barcode',
                   'UserEmail': currentUser.email,
                   'TimeStamp': Timestamp.now(),
                   'barcodeData': data,
-                  
                   'Likes': [],
                   
     });

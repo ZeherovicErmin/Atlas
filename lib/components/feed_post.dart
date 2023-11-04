@@ -354,7 +354,7 @@ class _FeedPostState extends State<FeedPost> {
               //(if you only delete the post, the comments will still be stored in firestore)
               final commentDocs = await FirebaseFirestore.instance
                   //Change back to User Posts
-                  .collection("BarPosts")
+                  .collection("User Posts")
                   .doc(widget.postId)
                   .collection("Comments")
                   .get();
@@ -362,7 +362,7 @@ class _FeedPostState extends State<FeedPost> {
               for (var doc in commentDocs.docs) {
                 await FirebaseFirestore.instance
                     //Change back to User Posts
-                    .collection("BarPosts")
+                    .collection("User Posts")
                     .doc(widget.postId)
                     .collection("Comments")
                     .doc(doc.id)
@@ -373,7 +373,7 @@ class _FeedPostState extends State<FeedPost> {
               FirebaseFirestore.instance
 
                   ///Change back to User Posts
-                  .collection("BarPosts")
+                  .collection("User Posts")
                   .doc(widget.postId)
                   .delete()
                   .then((value) => print("post deleted"))

@@ -86,7 +86,7 @@ class RecipeDetails extends ConsumerWidget {
               //Recipe Servings
               Container(
                 margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.all(7),
+                padding: EdgeInsets.only(left: 7, right: 7),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
                   borderRadius: BorderRadius.all(Radius.circular(25))),
@@ -99,7 +99,7 @@ class RecipeDetails extends ConsumerWidget {
                   child: TextFormField(
                     //Controller stores value entered by user
                     controller: servingsController,
-                    //Checks if searchbar has a value, if not: show error message
+                    //Checks if value is valid, if not: show error message
                     validator: (value) {
                       if (value == null ||
                           value.isEmpty ||
@@ -109,6 +109,7 @@ class RecipeDetails extends ConsumerWidget {
                       return null;
                     },
                     onFieldSubmitted: (value) => {
+                      //convert user input from string to number and save it
                       ref.read(servingsProvider.notifier).state =
                           double.parse(value)
                     },

@@ -45,8 +45,7 @@ class RecipeInfo extends ConsumerWidget {
                 Ingredient ingredient = recipe.nutrition.ingredients[index];
                 //Amount of the ingredient
                 double servings = ref.watch(servingsProvider);
-                double ingredientAmount =
-                    ((0.0 + ingredient.amount)) * servings;
+                double ingredientAmount = ingredient.amount * servings;
                 //Formatted ingredient string with amount and unit
                 String ingredientFormatted =
                     "• ${ingredient.name} - $ingredientAmount ${ingredient.unit}";

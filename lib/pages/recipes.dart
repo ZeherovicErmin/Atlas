@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/custom-recipes.dart';
 import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,7 +49,7 @@ class Recipes extends ConsumerWidget {
     final recipes = ref.watch(resultProvider).results;
     return DefaultTabController(
         initialIndex: 0,
-        length: 2,
+        length: 3,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
@@ -60,6 +61,7 @@ class Recipes extends ConsumerWidget {
               bottom: const TabBar(tabs: [
                 Tab(icon: Icon(Icons.search), text: "Search"),
                 Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
+                Tab(icon: Icon(Icons.dining), text: "Custom")
               ])),
           body: TabBarView(children: [
             Column(children: [
@@ -68,7 +70,8 @@ class Recipes extends ConsumerWidget {
               ingredientsList(context, ref),
               recipeList(recipes, context, ref)
             ]),
-            const SavedRecipes()
+            const SavedRecipes(),
+            const CustomRecipes()
           ]),
         ));
   }
@@ -420,13 +423,17 @@ class Recipes extends ConsumerWidget {
   //list of quick-search ingredients 
   Widget ingredientsList(BuildContext context, WidgetRef ref) {
     List<String> ingredients = [
+      "apple",
+      "orange",
+      "banana",
+      "blueberry",
+      "lemon",
       "beef",
       "chicken",
       "cheese",
       "eggs",
       "fish",
       "milk",
-      "pasta",
       "potato"
     ];
     return Padding(

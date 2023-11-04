@@ -1,3 +1,4 @@
+import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/text_box.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,7 +48,8 @@ class UserProfile extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -66,7 +68,8 @@ class UserProfile extends ConsumerWidget {
             .child('profilePictures/$fileName')
             .putData(imageBytes!);
         // Waits for the Task of uploading profile picture to complete
-        final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+        final TaskSnapshot taskSnapshot =
+            await uploadTask.whenComplete(() => null);
         final String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
         try {
@@ -87,7 +90,8 @@ class UserProfile extends ConsumerWidget {
 // Awaits user input to select an Image
     void selectImage() async {
       // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
       //Image.file(pickedFile as File,width: 400,height: 300,);
       // Check if an image was picked.
       if (pickedFile != null) {
@@ -171,7 +175,7 @@ class UserProfile extends ConsumerWidget {
     Future<void> editField(String field) async {
       TextEditingController username = TextEditingController();
 
-      String? newValue = await showDialog<String> (
+      String? newValue = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: themeColor2,
@@ -182,9 +186,7 @@ class UserProfile extends ConsumerWidget {
           content: TextField(
             controller: username,
             autofocus: true,
-            style: TextStyle(
-                color:  themeColor
-                ), // Change text color to white
+            style: TextStyle(color: themeColor), // Change text color to white
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),
@@ -302,8 +304,7 @@ class UserProfile extends ConsumerWidget {
                           loading: () => const CircularProgressIndicator(),
                           error: (e, stack) => const Icon(
                               CupertinoIcons.profile_circled,
-                              size: 72
-                              ),
+                              size: 72),
                         ),
                       ),
                       Positioned(
@@ -377,9 +378,7 @@ class UserProfile extends ConsumerWidget {
                         color: themeColor,
                       ),
                     ),
-                    children: [
-                     
-                    ],
+                    children: const [],
                   ),
                 ],
               ),

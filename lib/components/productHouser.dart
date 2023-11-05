@@ -221,21 +221,21 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(sugarsPservingProvider.notifier).state = 0.0;
       }
     }
-    showModalBottomSheet(
-        context: context,
-        builder: (context) => NutritionContainer(
-            amtPerServing: ref.read(amtServingsProvider.notifier).state,
-            productCalories: ref.read(productCaloriesProvider.notifier).state,
-            fatsPserving: ref.read(fatsPservingProvider.notifier).state,
-            satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
-            transfatsPserving:
-                ref.read(transfatsPservingProvider.notifier).state,
-            carbsPserving: ref.read(carbsPservingProvider.notifier).state,
-            sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
-            proteinPserving: ref.read(proteinPservingProvider.notifier).state,
-            sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
-            cholesterolPerServing:
-                ref.read(cholesterolProvider.notifier).state));
+    // showModalBottomSheet(
+    //     context: context,
+    //     builder: (context) => NutritionContainer(
+    //         amtPerServing: ref.read(amtServingsProvider.notifier).state,
+    //         productCalories: ref.read(productCaloriesProvider.notifier).state,
+    //         fatsPserving: ref.read(fatsPservingProvider.notifier).state,
+    //         satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
+    //         transfatsPserving:
+    //             ref.read(transfatsPservingProvider.notifier).state,
+    //         carbsPserving: ref.read(carbsPservingProvider.notifier).state,
+    //         sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
+    //         proteinPserving: ref.read(proteinPservingProvider.notifier).state,
+    //         sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
+    //         cholesterolPerServing:
+    //             ref.read(cholesterolProvider.notifier).state));
   }
 
   // Function to check if a barcode is valid
@@ -285,19 +285,14 @@ class BarcodeLookupComb extends ConsumerWidget {
     final sodiumPerServing = ref.watch(sodiumPservingProvider);
     final uid = ref.watch(uidProvider.notifier).state;
 
-    // Filter data based on selected filters
-    final filteredItems = selectedData
-        .where((dataItem) => selectedFilters.contains(dataItem.category))
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "B a r c o d e  L o o k u p",
           style:
               TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color.fromARGB(255, 0, 136, 204),
+        backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -314,187 +309,134 @@ class BarcodeLookupComb extends ConsumerWidget {
               bottom: 200,
               child: ElevatedButton(
                 onPressed: () => scanBarcode(context, ref),
-                child: Icon(
+                child: const Icon(
                   CupertinoIcons.barcode_viewfinder,
                   size: 50,
                 ),
               )),
-
-          NutrientsList(
-              selectedFilters: selectedFilters,
-              result: result,
-              productName: productName,
-              productCalories: productCalories,
-              carbsPserving: carbsPserving,
-              proteinPserving: proteinPserving,
-              fatsPserving: fatsPserving,
-              cholesterolPerServing: cholesterolPerServing,
-              amtPerServing: amtPerServing,
-              satfatsPserving: satfatsPserving,
-              transfatsPserving: transfatsPserving,
-              sodiumPerServing: sodiumPerServing,
-              sugarsPerServing: sugarsPerServing),
+          // NutrientsList(
+          //     selectedFilters: selectedFilters,
+          //     result: result,
+          //     productName: productName,
+          //     productCalories: productCalories,
+          //     carbsPserving: carbsPserving,
+          //     proteinPserving: proteinPserving,
+          //     fatsPserving: fatsPserving,
+          //     cholesterolPerServing: cholesterolPerServing,
+          //     amtPerServing: amtPerServing,
+          //     satfatsPserving: satfatsPserving,
+          //     transfatsPserving: transfatsPserving,
+          //     sodiumPerServing: sodiumPerServing,
+          //     sugarsPerServing: sugarsPerServing),
         ],
       ),
     );
   }
+}
 
-  Wrap FilterChips(
-      List<String> selectedFilters, BuildContext context, WidgetRef ref) {
-    return Wrap(
-      spacing: 1,
-      children: filterOptions.map((filter) {
-        return FilterChip(
-          label: Text(filter),
-          selected: selectedFilters.contains(filter),
-          onSelected: (isSelected) {
-            _onFilterChanged(filter, context, ref);
-          },
-        );
-      }).toList(),
-    );
-  }
-
-  // Function to send data to Firestore
-  Future<void> sendDataToFirestore(BuildContext context, WidgetRef ref,
-      Map<String, dynamic> data, String productName) async {
-    try {
-      final List<DataItem> selectedData =
-          ref.read(selectedDataProvider.notifier).state;
-      if (selectedData.isNotEmpty) {
-        final Map<String, dynamic> dataMap = {};
-        dataMap['uid'] = uid;
-        for (final item in selectedData) {
-          dataMap[item.category] = item.value;
-        }
-
-        bool exists = await isBarcodeExists(dataMap['Barcode']);
-
-        if (!exists) {
-          // Add data to Firestore
-          await FirebaseFirestore.instance
-              .collection('Barcode_Lookup')
-              .add(dataMap);
-          print("Data to Firestore sent!!!");
-
-          // Send a Snackbar when data is sent to database
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Data added to Firestore!')));
-        } else {
-          print("Barcode already exists in Firestore.");
-
-          // Send a Snackbar indicating barcode already exists
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Barcode already exists!')));
-        }
+// Function to send data to Firestore
+Future<void> sendDataToFirestore(BuildContext context, WidgetRef ref,
+    Map<String, dynamic> data, String productName) async {
+  try {
+    final List<DataItem> selectedData =
+        ref.read(selectedDataProvider.notifier).state;
+    if (selectedData.isNotEmpty) {
+      final Map<String, dynamic> dataMap = {};
+      dataMap['uid'] = uid;
+      for (final item in selectedData) {
+        dataMap[item.category] = item.value;
       }
-    } catch (e) {
-      print('Error sending data to Firestore: $e');
+
+      bool exists = await isBarcodeExists(dataMap['Barcode']);
+
+      if (!exists) {
+        // Add data to Firestore
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .add(dataMap);
+        print("Data to Firestore sent!!!");
+
+        // Send a Snackbar when data is sent to database
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data added to Firestore!')));
+      } else {
+        print("Barcode already exists in Firestore.");
+
+        // Send a Snackbar indicating barcode already exists
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Barcode already exists!')));
+      }
     }
-  }
-
-  // Function to handle filter changes
-  void _onFilterChanged(String newFilter, BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(selectedFiltersProvider.notifier);
-    final currentFilters = notifier.state;
-    print("Selected Filter: $newFilter");
-    if (currentFilters.contains(newFilter)) {
-      _removeFilter(notifier, currentFilters, newFilter);
-    } else {
-      _addFilter(notifier, currentFilters, newFilter);
-    }
-    notifier.state = notifier.state;
-  }
-
-  // Function to add a filter
-  void _addFilter(StateController<List<String>> notifier,
-      List<String> currentFilters, String newFilter) {
-    notifier.state = [...currentFilters, newFilter];
-    print("Filters after adding: ${notifier.state}");
-    notifier.state = notifier.state;
-  }
-
-  // Function to remove a filter
-  void _removeFilter(StateController<List<String>> notifier,
-      List<String> currentFilters, String filterToRemove) {
-    notifier.state = [
-      for (final item in currentFilters)
-        if (filterToRemove != item) item
-    ];
-    print("Filters after removing: ${notifier.state}");
-    notifier.state = notifier.state;
-  }
-
-  Future<bool> isBarcodeExists(String barcode) async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('Barcode_Lookup')
-          .where('Barcode', isEqualTo: barcode)
-          .limit(1) // Ma
-          .get();
-
-      // If the snapshot contains any documents, then a document with the provided barcode already exists
-      return snapshot.docs.isNotEmpty;
-    } catch (e) {
-      print('Error checking barcode existence in Firestore: $e');
-      return false; // Return false in case of any error
-    }
+  } catch (e) {
+    print('Error sending data to Firestore: $e');
   }
 }
 
-class NutrientsList extends StatelessWidget {
-  const NutrientsList({
-    super.key,
-    required this.selectedFilters,
-    required this.result,
-    required this.productName,
-    required this.productCalories,
-    required this.carbsPserving,
-    required this.proteinPserving,
-    required this.fatsPserving,
-    required this.cholesterolPerServing,
-    required this.amtPerServing,
-    required this.satfatsPserving,
-    required this.transfatsPserving,
-    required this.sodiumPerServing,
-    required this.sugarsPerServing,
-  });
+Future<bool> isBarcodeExists(String barcode) async {
+  try {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Barcode_Lookup')
+        .where('Barcode', isEqualTo: barcode)
+        .limit(1) // Ma
+        .get();
 
-  final List<String> selectedFilters;
-  final String result;
-  final String productName;
-  final double productCalories;
-  final double amtPerServing;
-  final double carbsPserving;
-  final double proteinPserving;
-  final double fatsPserving;
-  final double cholesterolPerServing;
-  final double satfatsPserving;
-  final double transfatsPserving;
-  final double sodiumPerServing;
-  final double sugarsPerServing;
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-        initialChildSize: .20,
-        minChildSize: .15,
-        maxChildSize: .8,
-        builder: (BuildContext context, ScrollController _controller) {
-          return NutritionContainer(
-              amtPerServing: amtPerServing,
-              productCalories: productCalories,
-              fatsPserving: fatsPserving,
-              satfatsPserving: satfatsPserving,
-              transfatsPserving: transfatsPserving,
-              carbsPserving: carbsPserving,
-              sugarsPerServing: sugarsPerServing,
-              proteinPserving: proteinPserving,
-              sodiumPerServing: sodiumPerServing,
-              cholesterolPerServing: cholesterolPerServing);
-        });
+    // If the snapshot contains any documents, then a document with the provided barcode already exists
+    return snapshot.docs.isNotEmpty;
+  } catch (e) {
+    print('Error checking barcode existence in Firestore: $e');
+    return false; // Return false in case of any error
   }
 }
+
+// class NutrientsList extends StatelessWidget {
+//   const NutrientsList({
+//     super.key,
+//     required this.selectedFilters,
+//     required this.result,
+//     required this.productName,
+//     required this.productCalories,
+//     required this.carbsPserving,
+//     required this.proteinPserving,
+//     required this.fatsPserving,
+//     required this.cholesterolPerServing,
+//     required this.amtPerServing,
+//     required this.satfatsPserving,
+//     required this.transfatsPserving,
+//     required this.sodiumPerServing,
+//     required this.sugarsPerServing,
+//   });
+
+//   final List<String> selectedFilters;
+//   final String result;
+//   final String productName;
+//   final double productCalories;
+//   final double amtPerServing;
+//   final double carbsPserving;
+//   final double proteinPserving;
+//   final double fatsPserving;
+//   final double cholesterolPerServing;
+//   final double satfatsPserving;
+//   final double transfatsPserving;
+//   final double sodiumPerServing;
+//   final double sugarsPerServing;
+
+//}
+
+// @override
+// Widget build(BuildContext context) {
+//   return NutritionContainer(
+//       amtPerServing: amtPerServing,
+//       productCalories: productCalories,
+//       fatsPserving: fatsPserving,
+//       satfatsPserving: satfatsPserving,
+//       transfatsPserving: transfatsPserving,
+//       carbsPserving: carbsPserving,
+//       sugarsPerServing: sugarsPerServing,
+//       proteinPserving: proteinPserving,
+//       sodiumPerServing: sodiumPerServing,
+//       cholesterolPerServing: cholesterolPerServing);
+// }
+//}
 
 class NutritionContainer extends StatelessWidget {
   const NutritionContainer({
@@ -525,7 +467,7 @@ class NutritionContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color.fromARGB(255, 255, 252, 252),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12.0),
@@ -540,10 +482,10 @@ class NutritionContainer extends StatelessWidget {
             //Drag Handle
             Center(
               child: Container(
-                  margin: EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
                   width: 40,
                   height: 5.0,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 104, 104, 104),
                     borderRadius: BorderRadius.all(
                       Radius.circular(12.0),
@@ -567,7 +509,8 @@ class NutritionContainer extends StatelessWidget {
                 ),
               ],
             ),
-            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            const Divider(
+                thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
               child: Container(
                 height: 25,
@@ -578,7 +521,7 @@ class NutritionContainer extends StatelessWidget {
                     Text(
                       "${amtPerServing.toInt()}g per container",
                       textAlign: TextAlign.start,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontFamily: 'Helvetica Black',
                           fontSize: 20,
                           fontWeight: FontWeight.w800),
@@ -596,7 +539,7 @@ class NutritionContainer extends StatelessWidget {
             ),
             //Nutritional Column Dividers
             //End NUTRITION FACTS ROW
-            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            const Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
             //Start of Nutrition rows
             //
             NutritionRow(title: 'Total Fats', value: '$fatsPserving'),
@@ -648,7 +591,7 @@ class NutritionDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Divider(
       thickness: thickness,
-      color: Color.fromARGB(255, 118, 117, 117),
+      color: const Color.fromARGB(255, 118, 117, 117),
     );
   }
 }
@@ -695,7 +638,7 @@ class NutritionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (hideIfZero && value == '0.0') {
-      return SizedBox.shrink(); // returns an empty widgetif value is 0
+      return const SizedBox.shrink(); // returns an empty widgetif value is 0
     }
 
     return Column(

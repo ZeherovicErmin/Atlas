@@ -388,12 +388,11 @@ class _HomePageState extends State<HomePage> {
 
   //Function to save habit data in Firebase
   void saveHabitData(String uid, String formattedDate, String habit, String value) async {
-    CollectionReference habitCollectionRef = FirebaseFirestore.instance
+    DocumentReference habitCollectionRef = FirebaseFirestore.instance
       .collection('Habits')
       .doc(uid)
       .collection(formattedDate)
-      .doc('habits')
-      .collection('habits');
-    await habitCollectionRef.doc(habit).set({'data': value});
+      .doc('habits');
+    await habitCollectionRef.set({habit: value}, SetOptions(merge: true));
   }
 }

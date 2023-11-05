@@ -182,17 +182,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DateTime currentDate = DateTime.now();
   late String selectedDate;
   late String formattedDate;
   late Stream<String> usernameStream;
+  String formatDate(DateTime date) => "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
+  String formatDateTime(DateTime date) => "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
 
   @override
   void initState() {
-    var currentDate = DateTime.now();
-    selectedDate = "${currentDate.month}/${currentDate.day}";
-    formattedDate = "${currentDate.year}-${currentDate.month}-${currentDate.day}";
+    currentDate = DateTime.now();
+    selectedDate = formatDate(currentDate);
+    formattedDate = formatDateTime(currentDate);
     usernameStream = fetchUsername();
     super.initState();
+  }
+
+  //Changes the date to the next day in real time
+  void addDate() => changeDate(currentDate.add(const Duration(days: 1)));
+
+  //Changes the date to the previous day in real time
+  void deleteDate() => changeDate(currentDate.subtract(const Duration(days: 1)));
+
+  //Changes the date to the next or previous date
+  void changeDate(DateTime newDate) {
+    setState(() {
+      currentDate = newDate;
+      selectedDate = formatDate(currentDate);
+      formattedDate = formatDateTime(currentDate);
+    });
   }
 
   //Function for choosing a date
@@ -288,6 +306,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //Function to save habit data in Firebase
+  void saveHabitData(String uid, String formattedDate, String habit, String value) async {
+    DocumentReference habitCollectionRef = FirebaseFirestore.instance
+      .collection('Habits')
+      .doc(uid)
+      .collection(formattedDate)
+      .doc('habits');
+    await habitCollectionRef.set({habit: value}, SetOptions(merge: true));
+  }
+
   @override
   Widget build(BuildContext context) {
   //Variables
@@ -297,42 +325,50 @@ class _HomePageState extends State<HomePage> {
   String uid2 = uid.toString();
 
   //Returns the app bar & habit cards
-  return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFAF9F6),
-        appBar: homePageAppBar(context),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  chooseDate(context);
-                },
-              child: Container(
-                height: 46,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.circular(30),
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAF9F6),
+      appBar: homePageAppBar(context),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: deleteDate,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                      Text(
+                GestureDetector(
+                  onTap: () {
+                    chooseDate(context);
+                  },
+                  child: Container(
+                    height: 46,
+                    width: 256,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Center(
+                      child: Text(
                         selectedDate,
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: Colors.white,
                           fontSize: 24,
-                          fontFamily: 'Open Sans',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  onPressed: () => addDate(),
+                ),
+              ],
+            ),
               const SizedBox(height: 20),
               Expanded(
                 child: GridView.count(
@@ -375,24 +411,13 @@ class _HomePageState extends State<HomePage> {
                         saveHabitData(uid2, formattedDate, 'running', value);
                       },
                       selectedDate: formattedDate,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
-  }
-
-  //Function to save habit data in Firebase
-  void saveHabitData(String uid, String formattedDate, String habit, String value) async {
-    DocumentReference habitCollectionRef = FirebaseFirestore.instance
-      .collection('Habits')
-      .doc(uid)
-      .collection(formattedDate)
-      .doc('habits');
-    await habitCollectionRef.set({habit: value}, SetOptions(merge: true));
   }
 }

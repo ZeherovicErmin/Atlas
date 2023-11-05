@@ -625,16 +625,16 @@ class BarcodeLogPage extends ConsumerWidget {
       );
 
   //sharing posts
-  void shareBarcodeToFeed(Map<String, dynamic> data){
+  void shareBarcodeToFeed(Map<String, dynamic> data) {
     FirebaseFirestore.instance.collection('User Posts').add({
-                  'Message': 'barcode',
-                  'UserEmail': currentUser.email,
-                  'TimeStamp': Timestamp.now(),
-                  'barcodeData': data,
-                  'Likes': [],
-                  
+      'Message': 'Just scanned this barcode! Check it out!',
+      'UserEmail': currentUser.email,
+      'TimeStamp': Timestamp.now(),
+      'barcodeData': data,
+      'Likes': [],
     });
   }
+
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {
     //Confirmation dialog
     bool confirmDelete = await showDialog(

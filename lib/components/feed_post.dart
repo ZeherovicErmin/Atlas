@@ -112,22 +112,40 @@ class _FeedPostState extends State<FeedPost> {
                     child: Padding(
                       padding: const EdgeInsets.only(
                           left: 16, top: 16, bottom: 8, right: 8),
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (widget.barcodeData != null &&
-                              widget.barcodeData!.isNotEmpty)
-                            ...widget.barcodeData!.entries
-                                .where((entry) =>
-                                    entry.key == 'productName' ||
-                                    entry.key == 'proteinPerServing' ||
-                                    entry.key == 'carbsPerServing' ||
-                                    entry.key == 'fatsPerServing' ||
-                                    entry.key ==
-                                        'cholesterolPerServing') // Filter specific keyshere
-                                .map(socialBarcode)
-                                .toList(),
-                          const SizedBox(height: 5),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  widget.barcodeData?['productName'] ?? '',
+                                  maxLines: 1,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  minFontSize: 15,
+                                ),
+
+                                // The keys that are filtered get sent into .map(socialBarcode)
+                                ...widget.barcodeData!.entries
+                                    .where((entry) =>
+                                        entry.key == 'proteinPerServing' ||
+                                        entry.key == 'carbsPerServing' ||
+                                        entry.key ==
+                                            'fatsPerServing') // Filter specific keyshere
+                                    .map(socialBarcode)
+                                    .toList(),
+                                const SizedBox(height: 5),
+                              ],
+                            ),
+                          ),
+                          Image(
+                              height: 120,
+                              width: 100,
+                              image: AssetImage(
+                                  'assets/icons/flameiconnameplate.png'),
+                              fit: BoxFit.contain),
                         ],
                       ),
                     ),
@@ -290,7 +308,7 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
-  Column socialBarcode(MapEntry<String, dynamic> entry) {
+  Row socialBarcode(MapEntry<String, dynamic> entry) {
     // Capitalize the first letter of each word, and remove 'PerServing'
     String keyText = entry.key
         .replaceAll(RegExp(r'PerServing'), '')
@@ -299,26 +317,24 @@ class _FeedPostState extends State<FeedPost> {
         .join(' ');
 
     // Check if the entry is 'productName' and format it differently
-    if (entry.key == 'productName') {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        AutoSizeText(
-          '${entry.value.toString()}',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-          maxLines: 1,
-          textAlign: TextAlign.left,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(),
+              AutoSizeText(
+                '$keyText: ${entry.value}g',
+                maxLines: 1,
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
         ),
-      ]);
-    } else {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Divider(),
-        AutoSizeText(
-          '$keyText: ${entry.value}',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-          maxLines: 1,
-          textAlign: TextAlign.left,
-        ),
-      ]);
-    }
+      ],
+    );
   }
 
   //show dialog box to add a comment

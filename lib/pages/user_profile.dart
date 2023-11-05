@@ -350,6 +350,8 @@ class UserProfile extends ConsumerWidget {
                         color: themeColor,
                       ),
                     ),
+                    collapsedIconColor: themeColor,
+                    iconColor: themeColor,
                     children: [
                       // Username
                       MyTextBox(
@@ -377,8 +379,9 @@ class UserProfile extends ConsumerWidget {
                         color: themeColor,
                       ),
                     ),
+                    collapsedIconColor: themeColor,
+                    iconColor: themeColor,
                     children: [
-                     
                     ],
                   ),
                 ],

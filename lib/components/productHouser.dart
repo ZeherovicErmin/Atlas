@@ -306,7 +306,7 @@ class BarcodeLookupComb extends ConsumerWidget {
           BarcodeLogPage(),
           Positioned(
               right: 16,
-              bottom: 200,
+              bottom: 100,
               child: ElevatedButton(
                 onPressed: () => scanBarcode(context, ref),
                 child: const Icon(

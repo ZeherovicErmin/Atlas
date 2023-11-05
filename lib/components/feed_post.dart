@@ -26,7 +26,7 @@ class FeedPost extends StatefulWidget {
       required this.postId,
       required this.likes,
       required this.time,
-    required this.email,
+      required this.email,
       this.barcodeData});
 
   @override
@@ -92,9 +92,7 @@ class _FeedPostState extends State<FeedPost> {
             // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: <Widget>[
-
+              children: <Widget>[
                 //message
                 Text(
                   widget.message,
@@ -102,30 +100,36 @@ class _FeedPostState extends State<FeedPost> {
                   maxLines: null,
                 ),
                 // Only display specific barcode data entries
-                Card(
-                  shape: RoundedRectangleBorder(
-                      side: const BorderSide(color: Colors.black, width: 3.0),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, top: 16, bottom: 8, right: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (widget.barcodeData != null &&
-                            widget.barcodeData!.isNotEmpty)
-                          ...widget.barcodeData!.entries
-                              .where((entry) =>
-                                  entry.key == 'productName' ||
-                                  entry.key == 'proteinPerServing' ||
-                                  entry.key == 'carbsPerServing' ||
-                                  entry.key == 'fatsPerServing' ||
-                                  entry.key ==
-                                      'cholesterolPerServing') // Filter specific keyshere
-                              .map(socialBarcode)
-                              .toList(),
-                        const SizedBox(height: 5),
-                      ],
+                Visibility(
+                  visible: widget.barcodeData != null &&
+                      widget.barcodeData!.isNotEmpty &&
+                      widget.barcodeData!['productName'] != null &&
+                      widget.barcodeData!['productName'].isNotEmpty,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        side: const BorderSide(color: Colors.black, width: 3.0),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, top: 16, bottom: 8, right: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.barcodeData != null &&
+                              widget.barcodeData!.isNotEmpty)
+                            ...widget.barcodeData!.entries
+                                .where((entry) =>
+                                    entry.key == 'productName' ||
+                                    entry.key == 'proteinPerServing' ||
+                                    entry.key == 'carbsPerServing' ||
+                                    entry.key == 'fatsPerServing' ||
+                                    entry.key ==
+                                        'cholesterolPerServing') // Filter specific keyshere
+                                .map(socialBarcode)
+                                .toList(),
+                          const SizedBox(height: 5),
+                        ],
+                      ),
                     ),
                   ),
                 ),

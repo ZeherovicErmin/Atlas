@@ -57,7 +57,7 @@ class Recipes extends ConsumerWidget {
             null,
           ),
           centerTitle: true,
-              title: const Text("R e c i p e s",
+              title: const Text("Recipes",
                 style: TextStyle(fontWeight: FontWeight.bold)),
               backgroundColor: const Color.fromARGB(255, 0, 136, 204),
               bottom: const TabBar(tabs: [

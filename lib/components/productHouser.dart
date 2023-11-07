@@ -266,7 +266,7 @@ class BarcodeLookupComb extends ConsumerWidget {
             null,
           ),
         title: const Text(
-          "B a r c o d e  L o o k u p",
+          "Barcode Lookup",
           style:
               TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
         ),

@@ -91,7 +91,7 @@ class FitCenter extends ConsumerWidget {
             ),
             centerTitle: true,
               title: const Text(
-                  "F i t n e s s   C e n t e r",
+                  "Fitness Center",
                   style: TextStyle(
                     fontFamily: 'Open Sans',
                     fontWeight: FontWeight.bold,

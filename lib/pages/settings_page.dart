@@ -37,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
         brightness: lightDarkTheme ? Brightness.dark : Brightness.light,
       ),
       child: Scaffold(
-        appBar: myAppBar4(context, ref, 'S e t t i n g s'),
+        appBar: myAppBar4(context, ref, 'Settings'),
         body: Column (
         children: [
           Expanded (

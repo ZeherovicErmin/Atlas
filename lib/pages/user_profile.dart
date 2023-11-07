@@ -240,7 +240,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: themeColor2,
-      appBar: userProfileAppBar(context, ref, 'U s e r'),
+      appBar: userProfileAppBar(context, ref, 'Profile'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")

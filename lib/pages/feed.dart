@@ -62,7 +62,7 @@ class Feed extends ConsumerWidget {
           ),
         centerTitle: true,
         title: const Text(
-            "F e e d",
+            "Feed",
             style:
                 TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
           ),

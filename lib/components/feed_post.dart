@@ -5,6 +5,7 @@ import 'package:atlas/components/editPostButton.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/helper_method.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +17,17 @@ class FeedPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
+  final Map<String, dynamic>? barcodeData;
   final String email;
-  const FeedPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-    required this.email,
-  });
+  const FeedPost(
+      {super.key,
+      required this.message,
+      required this.user,
+      required this.postId,
+      required this.likes,
+      required this.time,
+      required this.email,
+      this.barcodeData});
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -39,6 +41,7 @@ class _FeedPostState extends State<FeedPost> {
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
+  //List of widgets to include in the barcode sharing
 
   @override
   void initState() {
@@ -89,15 +92,65 @@ class _FeedPostState extends State<FeedPost> {
             // group of text (message + username)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 //message
                 Text(
                   widget.message,
                   style: const TextStyle(color: Colors.black),
                   maxLines: null,
                 ),
+                // Only display specific barcode data entries
+                Visibility(
+                  visible: widget.barcodeData != null &&
+                      widget.barcodeData!.isNotEmpty &&
+                      widget.barcodeData!['productName'] != null &&
+                      widget.barcodeData!['productName'].isNotEmpty,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        side: const BorderSide(color: Colors.black, width: 3.0),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, top: 16, bottom: 8, right: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  widget.barcodeData?['productName'] ?? '',
+                                  maxLines: 1,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  minFontSize: 15,
+                                ),
 
-                const SizedBox(height: 5),
+                                // The keys that are filtered get sent into .map(socialBarcode)
+                                ...widget.barcodeData!.entries
+                                    .where((entry) =>
+                                        entry.key == 'proteinPerServing' ||
+                                        entry.key == 'carbsPerServing' ||
+                                        entry.key ==
+                                            'fatsPerServing') // Filter specific keyshere
+                                    .map(socialBarcode)
+                                    .toList(),
+                                const SizedBox(height: 5),
+                              ],
+                            ),
+                          ),
+                          Image(
+                              height: 120,
+                              width: 100,
+                              image: AssetImage(
+                                  'assets/icons/flameiconnameplate.png'),
+                              fit: BoxFit.contain),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
 
                 //user + day
                 Row(
@@ -255,6 +308,35 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
+  Row socialBarcode(MapEntry<String, dynamic> entry) {
+    // Capitalize the first letter of each word, and remove 'PerServing'
+    String keyText = entry.key
+        .replaceAll(RegExp(r'PerServing'), '')
+        .split(' ')
+        .map((str) => str[0].toUpperCase() + str.substring(1))
+        .join(' ');
+
+    // Check if the entry is 'productName' and format it differently
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(),
+              AutoSizeText(
+                '$keyText: ${entry.value}g',
+                maxLines: 1,
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   //show dialog box to add a comment
   void showCommentDialog() {
     showDialog(
@@ -319,6 +401,7 @@ class _FeedPostState extends State<FeedPost> {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
               final commentDocs = await FirebaseFirestore.instance
+                  //Change back to User Posts
                   .collection("User Posts")
                   .doc(widget.postId)
                   .collection("Comments")
@@ -326,6 +409,7 @@ class _FeedPostState extends State<FeedPost> {
 
               for (var doc in commentDocs.docs) {
                 await FirebaseFirestore.instance
+                    //Change back to User Posts
                     .collection("User Posts")
                     .doc(widget.postId)
                     .collection("Comments")
@@ -335,6 +419,8 @@ class _FeedPostState extends State<FeedPost> {
 
               // delete the post
               FirebaseFirestore.instance
+
+                  ///Change back to User Posts
                   .collection("User Posts")
                   .doc(widget.postId)
                   .delete()

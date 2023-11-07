@@ -53,10 +53,13 @@ class Recipes extends ConsumerWidget {
           resizeToAvoidBottomInset: false,
           backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
-              title: const Center(
-                  child: Text("R e c i p e s",
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-              backgroundColor: Color.fromARGB(255, 0, 136, 204),
+          leading: const Icon(
+            null,
+          ),
+          centerTitle: true,
+              title: const Text("R e c i p e s",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
               bottom: const TabBar(tabs: [
                 Tab(icon: Icon(Icons.search), text: "Search"),
                 Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),

@@ -86,14 +86,16 @@ class FitCenter extends ConsumerWidget {
           backgroundColor: const Color(0xFFFAF9F6),
           //Home page for when a user logs in
           appBar: AppBar(
-              title: const Center(
-                child: Text(
+            leading: const Icon(
+              null,
+            ),
+            centerTitle: true,
+              title: const Text(
                   "F i t n e s s   C e n t e r",
                   style: TextStyle(
                     fontFamily: 'Open Sans',
                     fontWeight: FontWeight.bold,
                   ),
-                ),
               ),
               backgroundColor: Color.fromARGB(255, 0, 136, 204),
               bottom: const TabBar(
@@ -172,12 +174,10 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
-                  backgroundColor: Color(0xFFFAF9F6),
+                  backgroundColor: const Color(0xFFFAF9F6),
                   appBar: AppBar(
-                    backgroundColor:
-
-                        //Workouts for each muscle group
-                        const Color.fromARGB(255, 0, 136, 204),
+                  centerTitle: true,
+                  backgroundColor:const Color.fromARGB(255, 0, 136, 204),
                     title: Text(
                       "${capitalizeFirstLetter(muscle)} Exercises",
                     ),

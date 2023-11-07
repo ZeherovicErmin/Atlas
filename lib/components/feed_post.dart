@@ -348,4 +348,20 @@ class _FeedPostState extends State<FeedPost> {
       "CommentTime": Timestamp.now() //format when displaying
     });
   }
+
+  //Gets the user's username
+  Stream<String> fetchUsername({String? email}) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      return FirebaseFirestore.instance
+          .collection("Users")
+          .doc(email)
+          .snapshots()
+          .map((snapshot) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        return userData['username']?.toString() ?? '';
+      });
+    }
+    return Stream.value('');
+  }
 }

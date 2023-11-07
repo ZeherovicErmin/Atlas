@@ -68,6 +68,10 @@ class BarcodeLogPage extends ConsumerWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            leading: const Icon(
+              null,
+              ),
+            centerTitle: true,
             backgroundColor: const Color.fromARGB(255, 0, 136, 204),
             floating: true,
             title: TextField(

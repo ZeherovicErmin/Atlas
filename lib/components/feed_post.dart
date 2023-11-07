@@ -109,44 +109,47 @@ class _FeedPostState extends State<FeedPost> {
                     shape: RoundedRectangleBorder(
                         side: const BorderSide(color: Colors.black, width: 3.0),
                         borderRadius: BorderRadius.circular(20)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, top: 16, bottom: 8, right: 8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoSizeText(
-                                  widget.barcodeData?['productName'] ?? '',
-                                  maxLines: 1,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                  minFontSize: 15,
-                                ),
-
-                                // The keys that are filtered get sent into .map(socialBarcode)
-                                ...widget.barcodeData!.entries
-                                    .where((entry) =>
-                                        entry.key == 'proteinPerServing' ||
-                                        entry.key == 'carbsPerServing' ||
-                                        entry.key ==
-                                            'fatsPerServing') // Filter specific keyshere
-                                    .map(socialBarcode)
-                                    .toList(),
-                                const SizedBox(height: 5),
-                              ],
+                    child: InkWell(
+                      onTap: () => print('object'),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, top: 16, bottom: 8, right: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AutoSizeText(
+                                    widget.barcodeData?['productName'] ?? '',
+                                    maxLines: 1,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    minFontSize: 15,
+                                  ),
+                    
+                                  // The keys that are filtered get sent into .map(socialBarcode)
+                                  ...widget.barcodeData!.entries
+                                      .where((entry) =>
+                                          entry.key == 'proteinPerServing' ||
+                                          entry.key == 'carbsPerServing' ||
+                                          entry.key ==
+                                              'fatsPerServing') // Filter specific keyshere
+                                      .map(socialBarcode)
+                                      .toList(),
+                                  const SizedBox(height: 5),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Image(
-                              height: 120,
-                              width: 100,
-                              image: AssetImage(
-                                  'assets/icons/flameiconnameplate.png'),
-                              fit: BoxFit.contain),
-                        ],
+                            const Image(
+                                height: 120,
+                                width: 100,
+                                image: AssetImage(
+                                    'assets/icons/flameiconnameplate.png'),
+                                fit: BoxFit.contain),
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -1,3 +1,5 @@
+import 'package:atlas/components/my_button2.dart';
+import 'package:atlas/pages/line_chart.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -120,7 +122,9 @@ class HabitCardState extends State<HabitCard> {
   void editDialog(BuildContext context, String title) async {
     //Variables
     TextEditingController textController = TextEditingController(text: currentSubtitle);
-    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
     //Habit card popup for editing data
     showDialog(
       context: context,
@@ -129,14 +133,47 @@ class HabitCardState extends State<HabitCard> {
           builder: (context, setState) {
             return AlertDialog(
               title: Text('Edit $title'),
-              content: TextField(
-                controller: textController,
-                decoration: const InputDecoration(hintText: 'Enter a value'),
-                onChanged: (value) {
-                  setState(() {
-                    currentSubtitle = value;
-                  });
-                },
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: textController,
+                    decoration: const InputDecoration(hintText: 'Enter a value'),
+                    onChanged: (value) {
+                      setState(() {
+                        currentSubtitle = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                  width: 250,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => HabitLineChartPage(
+                            habitTitle: title
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+                    ),
+                    child: Center(
+                      child: Text('View $title Graph',
+                        style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    ),
+                  )
+                ],
               ),
               actions: <Widget>[
                 TextButton(
@@ -150,9 +187,9 @@ class HabitCardState extends State<HabitCard> {
                         userDocRef.collection(widget.selectedDate);
                     await dateSubcollectionRef
                       .doc('habits')
-                      .set({
-                      title.toLowerCase(): currentSubtitle,
-                    }, SetOptions(merge: true));
+                      .set({title.toLowerCase(): currentSubtitle,
+                      },
+                      SetOptions(merge: true));
                     Navigator.of(context).pop();
                     setState(() {
                       currentSubtitle = textController.text;
@@ -251,9 +288,15 @@ class _HomePageState extends State<HomePage> {
 
   //App Bar
   PreferredSize homePageAppBar(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: AppBar(
+        leading: const Icon(
+          null,
+          ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
         toolbarHeight: 60,
@@ -414,7 +457,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

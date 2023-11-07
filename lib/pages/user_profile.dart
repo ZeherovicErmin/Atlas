@@ -140,8 +140,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     //App bar for the user profile page
-    PreferredSize userProfileAppBar(
-        BuildContext context, WidgetRef ref, String title) {
+    PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
       return PreferredSize(
           preferredSize: const Size.fromHeight(70),
           child: AppBar(

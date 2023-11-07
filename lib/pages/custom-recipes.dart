@@ -15,136 +15,244 @@ final customRecipesProvider = StateProvider<List<Result>>((ref) {
 
 final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
+final ingredientCountProvider = StateProvider<int>((ref) {
+  return 1;
+});
+
+final instructionCountProvider = StateProvider<int>((ref) {
+  return 1;
+});
+
 class CustomRecipes extends ConsumerWidget {
   const CustomRecipes({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     //List of custom recipes, updated when user adds/removes
     List<Result>? customRecipes = ref.watch(customRecipesProvider);
     return Scaffold(
         body: Column(
           children: [
-            Container(
-              alignment: Alignment.center,
-              child: IconButton(
-                onPressed: addRecipeDialog(context, ref),
-                icon: Icon(Icons.add_circle),
-                iconSize: 40,
-              )
-            ),
-            customRecipeList(customRecipes)]));
+              Container(
+                alignment: Alignment.center,
+                child:  ElevatedButton(
+                  onPressed: addRecipeDialog(context, ref),
+                  child: Text("Add New Recipe")),
+              ),
+              customRecipeList(customRecipes, ref)
+            ]));
   }
+
 
   addRecipeDialog(BuildContext context, WidgetRef ref) {
-    return () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => Dialog(
-            child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: FormBuilder(
-                          key: _formKey,
-                          child: Column(
-                            children: <Widget>[
-                              FormBuilderTextField(
-                                name: 'recipeTitle',
-                                decoration:
-                                    InputDecoration(labelText: 'Recipe Title'),
-                                validator: FormBuilderValidators.required(),
-                              ),
-                              FormBuilderTextField(
-                                name: 'recipeImage',
-                                decoration:
-                                    InputDecoration(labelText: 'Recipe Image'),
-                                    //Compose is used for multiple validators
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required()])
-                              ),
-                              FormBuilderTextField(
-                                name: 'cuisine',
-                                decoration:
-                                    InputDecoration(labelText: 'Cuisine'),
-                                validator: FormBuilderValidators.required(),
+    int instructionCount = ref.watch(instructionCountProvider);
+    int ingredientCount = ref.watch(ingredientCountProvider);
 
+    return () => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Consumer(builder: (context, ref, _) {
+            return Dialog(
+                child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: SingleChildScrollView(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: FormBuilder(
+                              key: _formKey,
+                              child: Column(
+                                children: <Widget>[
+                                  //Recipe Title Form Input
+                                  FormBuilderTextField(
+                                    name: 'recipeTitle',
+                                    decoration: InputDecoration(
+                                        labelText: 'Recipe Title'),
+                                    validator: FormBuilderValidators.required(),
+                                  ),
+                                  //Recipe Image Form Input
+                                  FormBuilderTextField(
+                                    name: 'recipeImage',
+                                    decoration: InputDecoration(
+                                        labelText: 'Recipe Image'),
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.match(
+                                          '^(https?|ftp):\\/\\/[^\\s/\$.?#].[^\\s]*\$')
+                                    ]),
+                                  ),
+                                  //Recipe Cuisine Form Input
+                                  FormBuilderTextField(
+                                    name: 'cuisine',
+                                    decoration:
+                                        InputDecoration(labelText: 'Cuisine'),
+                                        
+                                  validator: FormBuilderValidators.required(),
+                                  ),
+                                  //Recipe Calories Form Input
+                                  FormBuilderTextField(
+                                    name: 'calories',
+                                    decoration:
+                                        InputDecoration(labelText: 'Calories'),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  //Recipe Ready Time Form Input
+                                  FormBuilderTextField(
+                                    name: 'readyTime',
+                                    decoration: InputDecoration(
+                                        labelText: 'Ready Time (in minutes)'),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  
+                                  FormBuilderCheckbox(
+                                    name: 'isVegan',
+                                    title: Text('Is it Vegan?'),
+                                  ),
+                                  FormBuilderCheckbox(
+                                    name: 'isVegetarian',
+                                    title: Text('Is it Vegetarian?'),
+                                  ),
+                                  const Divider(
+                                    height: 100,
+                                    color: Colors.orange,
+                                    thickness: 5,
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "Instructions",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      //Number of ingredients
+                                      itemCount:
+                                          ref.watch(instructionCountProvider),
+                                      //Used to build instruction list tiles
+                                      itemBuilder: (context, index) {
+                                        return FormBuilderTextField(
+                                          name: 'instruction${index + 1}',
+                                          decoration: InputDecoration(
+                                              labelText:
+                                                  'Instruction ${index + 1}'),
+                                          maxLines: 5,
+                                        );
+                                      }),
+                                  IconButton(
+                                      onPressed: () => {
+                                            ref
+                                                .read(instructionCountProvider
+                                                    .notifier)
+                                                .state = ++instructionCount
+                                          },
+                                      icon: Icon(Icons.add_circle_outlined)),
+                                  const Divider(
+                                    height: 100,
+                                    color: Colors.orange,
+                                    thickness: 5,
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "Ingredients",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  Padding(padding: EdgeInsets.only(bottom: 10)),
+                                  ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      //Number of ingredients
+                                      itemCount:
+                                          ref.watch(ingredientCountProvider),
+                                      //Used to build instruction list tiles
+                                      itemBuilder: (context, index) {
+                                        return Column(children: [
+                                          Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 30)),
+                                          Container(
+                                              alignment: Alignment.topLeft,
+                                              child: Text(
+                                                "Ingredient ${index + 1}",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                          FormBuilderTextField(
+                                            name: 'ingredientName${index + 1}',
+                                            decoration: InputDecoration(
+                                                labelText: 'Name'),
+                                          ),
+                                          Row(children: [
+                                            Expanded(
+                                                child: FormBuilderTextField(
+                                              name:
+                                                  'ingredientAmount${index + 1}',
+                                              decoration: InputDecoration(
+                                                  labelText: 'Amount'),
+                                            )),
+                                            Expanded(
+                                                child: FormBuilderTextField(
+                                              name:
+                                                  'ingredientUnit${index + 1}',
+                                              decoration: InputDecoration(
+                                                  labelText: 'Unit'),
+                                            )),
+                                          ]),
+                                        ]);
+                                      }),
+                                  IconButton(
+                                      onPressed: () => {
+                                            ref
+                                                .read(ingredientCountProvider
+                                                    .notifier)
+                                                .state = ++ingredientCount
+                                          },
+                                      icon: Icon(Icons.add_circle_outlined)),
+                                  const Divider(
+                                    height: 100,
+                                    color: Colors.orange,
+                                    thickness: 5,
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 20)),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!
+                                          .saveAndValidate()) {
+                                        // Handle form data submission
+                                        final formData =
+                                            _formKey.currentState!.value;
+                                        onAdd(formData, ref);
+                                      }
+                                    },
+                                    child: Text('Submit'),
+                                  ),
+                                ],
                               ),
-                              FormBuilderTextField(
-                                name: 'calories',
-                                decoration:
-                                    InputDecoration(labelText: 'Calories'),
-                                keyboardType: TextInputType.number,
-                              ),
-                              FormBuilderTextField(
-                                name: 'readyTime',
-                                decoration: InputDecoration(
-                                    labelText: 'Ready Time (in minutes)'),
-                                keyboardType: TextInputType.number,
-                              ),
-                              FormBuilderCheckbox(
-                                name: 'isVegan',
-                                title: Text('Is it Vegan?'),
-                              ),
-                              FormBuilderCheckbox(
-                                name: 'isVegetarian',
-                                title: Text('Is it Vegetarian?')
-                              ),
-                              FormBuilderTextField(
-                                name: 'instructions',
-                                decoration:
-                                    InputDecoration(labelText: 'Instructions'),
-                                maxLines: 5,
-                              ),
-                              FormBuilderTextField(
-                                name: 'ingredientName',
-                                decoration: InputDecoration(
-                                    labelText: 'Ingredient Name'),
-                              ),
-                              FormBuilderTextField(
-                                name: 'ingredientAmount',
-                                decoration: InputDecoration(
-                                    labelText: 'Ingredient Amount'),
-                              ),
-                              FormBuilderTextField(
-                                name: 'ingredientUnit',
-                                decoration: InputDecoration(
-                                    labelText: 'Ingredient Unit'),
-                              ),
-                              SizedBox(height: 20),
-                              ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!
-                                      .saveAndValidate()) {
-                                    // Handle form data submission
-                                    final formData =
-                                        _formKey.currentState!.value;
-                                    onAdd(formData, ref);
-                                  }
-                                },
-                                child: Text('Submit'),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                      //Close dialog
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Close'),
-                      )
-                    ])))));
+                          //Close dialog
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Close'),
+                          )
+                        ]))));
+          });
+        });
   }
 
-  customRecipeList(List<Result>? customRecipes){
-    return Column(children: [
-            Expanded(
+  customRecipeList(List<Result>? customRecipes, WidgetRef ref){
+    return Expanded(
                 child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     //ListView used to output recipe list element into individual components
@@ -211,7 +319,7 @@ class CustomRecipes extends ConsumerWidget {
                                                 child: IconButton(
                                                   onPressed: () => onRemove(
                                                       recipe,
-                                                      context,
+                                                      ref,
                                                       customRecipesProvider),
                                                   icon: const Icon(
                                                       Icons.delete_forever),
@@ -230,9 +338,11 @@ class CustomRecipes extends ConsumerWidget {
                       separatorBuilder: (context, index) {
                         return const Divider();
                       },
-                    )))
-    ]);
+                    )));
   }
+  
+  
+ 
   onAdd(Map<String, dynamic> formData, WidgetRef ref) {
     Nutrient nutrient = Nutrient(
         name: "Calories",
@@ -240,25 +350,37 @@ class CustomRecipes extends ConsumerWidget {
         unit: "kcal",
         percentOfDailyNeeds: 56.05);
 
-   Ingredient ingredients = Ingredient(
-        id: 0,
-        amount: double.parse(formData["ingredientAmount"]),
-        name: formData["ingredientName"],
-        unit: formData["ingredientUnit"],
-        nutrients: []);
+    int ingredientCount = ref.watch(ingredientCountProvider);
+    List<Ingredient> ingredientsList = [];
+    for (int i = 1; i <= ingredientCount; i++) {
+      Ingredient ingredient = Ingredient(
+          id: 0,
+          amount: double.parse(formData["ingredientAmount$i"]),
+          name: formData["ingredientName${i}"],
+          unit: formData["ingredientUnit${i}"],
+          nutrients: []);
 
-    RecipeModel.Step step = RecipeModel.Step(
-        number: 1,
-        step: formData["instructions"],
-        ingredients: [],
-        equipment: []);
+      ingredientsList.add(ingredient);
+    }
+
+    int instructionCount = ref.watch(instructionCountProvider);
+    List<RecipeModel.Step> stepsList = [];
+    for (int i = 1; i <= instructionCount; i++) {
+      RecipeModel.Step step = RecipeModel.Step(
+          number: i + 1,
+          step: formData["instruction${i}"],
+          ingredients: [],
+          equipment: []);
+
+      stepsList.add(step);
+    }
 
     AnalyzedInstruction instructions =
-        AnalyzedInstruction(name: "", steps: [step]);
+        AnalyzedInstruction(name: "", steps: stepsList);
 
     Nutrition nutrition = Nutrition(
         nutrients: [nutrient], 
-        ingredients: [ingredients],
+        ingredients: ingredientsList,
         properties: [],
         flavonoids: [],
         caloricBreakdown: CaloricBreakdown(
@@ -268,26 +390,37 @@ class CustomRecipes extends ConsumerWidget {
         ),
         weightPerServing: WeightPerServing(amount: 0, unit: "unit"));
 
+    //Build Result object with all of the data
     Result recipe = Result(
         title: formData["recipeTitle"],
         image: formData["recipeImage"],
         cuisines: [formData["cuisine"]],
         readyInMinutes: int.parse(formData["readyTime"]),
-        vegan: formData["isVegan"],
-        vegetarian: formData["isVegetarian"],
+        vegan: formData["isVegan"] == null ? false : true,
+        vegetarian: formData["isVegetarian"] == null ? false : true,
         analyzedInstructions: [instructions],
         servings: 1,
-        nutrition: nutrition
-        );
+        nutrition: nutrition);
+    recipe.nutrition = nutrition;
 
     print(recipe.toMap());
+
+    //Add new recipe to custom recipe list after copying the list.
     List<Result> recipes = [...ref.watch(customRecipesProvider)];
     recipes.add(recipe);
     ref.read(customRecipesProvider.notifier).state = recipes;
+
+    //Reset ingredient and instruction counts to 1
+    ref.read(instructionCountProvider.notifier).state = 1;
+    ref.read(ingredientCountProvider.notifier).state = 1;
   }
 
   
-  onRemove(Result recipe, BuildContext context, StateProvider<List<Result>> customRecipesProvider) {}
+  onRemove(Result recipe, WidgetRef ref, StateProvider<List<Result>> customRecipesProvider) {
+    List<Result> recipes = [...ref.watch(customRecipesProvider)];
+    recipes.remove(recipe);
+    ref.read(customRecipesProvider.notifier).state = recipes;
+  }
 
   // Function to navigate to recipe details page
 void navigateToRecipeDetails(BuildContext context, Result recipe) {

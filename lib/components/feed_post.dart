@@ -34,7 +34,7 @@ class FeedPost extends StatefulWidget {
 }
 
 class _FeedPostState extends State<FeedPost> {
-  //user
+  //user //hey
   final currentUser = FirebaseAuth.instance.currentUser!;
   final userPostsCollection =
       FirebaseFirestore.instance.collection("User Posts");

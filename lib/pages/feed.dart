@@ -1,6 +1,6 @@
 import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/productHouser.dart';
-import 'package:atlas/helper/helper_method.dart';
+import 'package:atlas/helper/time_stamp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -85,15 +85,16 @@ class Feed extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           //get the message
                           final post = snapshot.data!.docs[index];
-                        //Mao for barcodeData
+                          //Mao for barcodeData
                           // Handle barcodeData with type checking
-  final barcodeDataDynamic = post['barcodeData'];
-  Map<String, dynamic> barcodeDataMap = {};
-  if (barcodeDataDynamic is Map<String, dynamic>) {
-    barcodeDataMap = barcodeDataDynamic;
-  } else {
-        print('Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
-  }
+                          final barcodeDataDynamic = post['barcodeData'];
+                          Map<String, dynamic> barcodeDataMap = barcodeDataDynamic as Map<String, dynamic>;
+                          if (barcodeDataMap.isNotEmpty) {
+                            barcodeDataMap = barcodeDataDynamic;
+                          } else {
+                            print(
+                                'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+                          }
                           return StreamBuilder<String>(
                             stream: fetchUsername(email: post['UserEmail']),
                             builder: (context, usernameSnapshot) {
@@ -102,9 +103,8 @@ class Feed extends ConsumerWidget {
                                   message: post['Message'],
                                   user: usernameSnapshot.data!,
                                   postId: post.id,
-                          barcodeData: barcodeDataMap,
+                                  barcodeData: barcodeDataMap,
                                   likes: List<String>.from(post['Likes'] ?? []),
-                          
                                   time: formatDate(post['TimeStamp']),
                                   email: post['UserEmail'],
                                 );

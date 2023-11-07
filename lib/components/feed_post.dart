@@ -360,7 +360,7 @@ class _FeedPostState extends State<FeedPost> {
         .collection("Comments")
         .add({
       "CommentText": commentText,
-      "CommentedBy": currentUser.email,
+      "CommentedBy": widget.user,
       "CommentTime": Timestamp.now() //format when displaying
     });
   }

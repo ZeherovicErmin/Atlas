@@ -4,7 +4,7 @@ import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/editPostButton.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
-import 'package:atlas/helper/helper_method.dart';
+import 'package:atlas/helper/time_stamp.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -123,7 +123,7 @@ class _FeedPostState extends State<FeedPost> {
                                 AutoSizeText(
                                   widget.barcodeData?['productName'] ?? '',
                                   maxLines: 1,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                   minFontSize: 15,
                                 ),
 
@@ -140,7 +140,7 @@ class _FeedPostState extends State<FeedPost> {
                               ],
                             ),
                           ),
-                          Image(
+                          const Image(
                               height: 120,
                               width: 100,
                               image: AssetImage(
@@ -293,7 +293,7 @@ class _FeedPostState extends State<FeedPost> {
                         //return the comment
                         return Comment(
                           text: commentData["CommentText"],
-                          user: commentData["CommentedBy"],
+                          userId: commentData["CommentedBy"],
                           time: formatDate(commentData["CommentTime"]),
                         );
                       }).toList(),
@@ -324,7 +324,7 @@ class _FeedPostState extends State<FeedPost> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Divider(),
+              const Divider(),
               AutoSizeText(
                 '$keyText: ${entry.value}g',
                 maxLines: 1,

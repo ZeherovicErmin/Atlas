@@ -19,10 +19,11 @@ class Feed extends ConsumerWidget {
     void postMessage() {
       //only post if there is something in the textfield
       if (textController.text.isNotEmpty) {
-        FirebaseFirestore.instance.collection("User Posts").add({
+        FirebaseFirestore.instance.collection("Fitness Posts").add({
           'UserEmail': currentUser.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          
           'Likes': [],
         });
       }
@@ -74,7 +75,7 @@ class Feed extends ConsumerWidget {
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection("User Posts")
+                    .collection("Fitness Posts")
                     .orderBy("TimeStamp", descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {

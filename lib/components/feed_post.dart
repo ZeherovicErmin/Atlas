@@ -35,7 +35,7 @@ class _FeedPostState extends State<FeedPost> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
   final userPostsCollection =
-      FirebaseFirestore.instance.collection("User Posts");
+      FirebaseFirestore.instance.collection("Fitness Posts");
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
@@ -54,7 +54,7 @@ class _FeedPostState extends State<FeedPost> {
 
     //Access the document in Firebase
     DocumentReference postRef =
-        FirebaseFirestore.instance.collection('User Posts').doc(widget.postId);
+        FirebaseFirestore.instance.collection('Fitness Posts').doc(widget.postId);
 
     if (isLiked) {
       //if post is liked add users email to Likes field
@@ -182,7 +182,7 @@ class _FeedPostState extends State<FeedPost> {
                 //comment count
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
-                      .collection("User Posts")
+                      .collection("Fitness Posts")
                       .doc(widget.postId)
                       .collection("Comments")
                       .snapshots(),
@@ -217,7 +217,7 @@ class _FeedPostState extends State<FeedPost> {
               children: [
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
-                      .collection("User Posts")
+                      .collection("Fitness Posts")
                       .doc(widget.postId)
                       .collection("Comments")
                       .orderBy("CommentTime", descending: true)
@@ -319,14 +319,14 @@ class _FeedPostState extends State<FeedPost> {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
               final commentDocs = await FirebaseFirestore.instance
-                  .collection("User Posts")
+                  .collection("Fitness Posts")
                   .doc(widget.postId)
                   .collection("Comments")
                   .get();
 
               for (var doc in commentDocs.docs) {
                 await FirebaseFirestore.instance
-                    .collection("User Posts")
+                    .collection("Fitness Posts")
                     .doc(widget.postId)
                     .collection("Comments")
                     .doc(doc.id)
@@ -335,7 +335,7 @@ class _FeedPostState extends State<FeedPost> {
 
               // delete the post
               FirebaseFirestore.instance
-                  .collection("User Posts")
+                  .collection("Fitness Posts")
                   .doc(widget.postId)
                   .delete()
                   .then((value) => print("post deleted"))
@@ -355,7 +355,7 @@ class _FeedPostState extends State<FeedPost> {
   addComment(String commentText) {
     // write the comment to firestore
     FirebaseFirestore.instance
-        .collection("User Posts")
+        .collection("Fitness Posts")
         .doc(widget.postId)
         .collection("Comments")
         .add({

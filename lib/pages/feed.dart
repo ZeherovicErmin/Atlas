@@ -77,8 +77,14 @@ class Feed extends ConsumerWidget {
     void addPicture(Uint8List imageBytes) async {
       try {
         final FirebaseStorage storage = FirebaseStorage.instance;
-        final String fileName =
-            "${FirebaseAuth.instance.currentUser!.email}_postImage.jpg";
+        final String? userEmail = FirebaseAuth.instance.currentUser!.email;
+
+        // Generate a timestamp and convert it to a string
+        final String timestamp =
+            DateTime.now().millisecondsSinceEpoch.toString();
+
+        // Construct a unique file name with the email and timestamp
+        final String fileName = "{$userEmail$timestamp}postImage.jpg";
 
         // Upload the image to Firebase Storage
         final UploadTask uploadTask =
@@ -133,8 +139,7 @@ class Feed extends ConsumerWidget {
           'TimeStamp': Timestamp.now(),
           'Likes': [],
           'barcodeData': {},
-          'postImage':
-              '', // Add the download URL to your Firestore document
+          'postImage': '', // Add the download URL to your Firestore document
         });
       }
 
@@ -263,7 +268,7 @@ class Feed extends ConsumerWidget {
                         const InputDecoration(hintText: "Share your progress!"),
                     obscureText: false,
                   )),
-                  
+
                   IconButton(
                     onPressed: selectImage,
                     icon: const Icon(

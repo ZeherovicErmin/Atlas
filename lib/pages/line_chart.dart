@@ -171,13 +171,13 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 tooltipBgColor: Colors.black,
-                getTooltipItems: (touchedSpots) {
+                getTooltipItems: (List<LineBarSpot> touchedSpots) {
                   return touchedSpots.map((touchedSpot) {
                     const textStyle = TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     );
-                    return LineTooltipItem('${touchedSpot.y}', textStyle);
+                    return LineTooltipItem('${touchedSpot.y.toInt()}', textStyle);
                   }).toList();
                 },
               ),

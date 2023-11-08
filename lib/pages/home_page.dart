@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class HabitCard extends StatefulWidget {
   final String title;
@@ -128,7 +129,7 @@ class HabitCardState extends State<HabitCard> {
     //Habit card popup for editing data
     showDialog(
       context: context,
-      builder: (context) {
+        builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -138,7 +139,11 @@ class HabitCardState extends State<HabitCard> {
                 children: [
                   TextField(
                     controller: textController,
-                    decoration: const InputDecoration(hintText: 'Enter a value'),
+                    keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(
+                      hintText: 'Enter a value',
+                      ),
                     onChanged: (value) {
                       setState(() {
                         currentSubtitle = value;
@@ -161,7 +166,7 @@ class HabitCardState extends State<HabitCard> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+                      backgroundColor: Colors.grey[850],
                     ),
                     child: Center(
                       child: Text('View $title Graph',
@@ -179,23 +184,23 @@ class HabitCardState extends State<HabitCard> {
                 TextButton(
                   child: const Text('Save'),
                   onPressed: () async {
-                    widget.onTap(currentSubtitle);
-                    DocumentReference userDocRef = FirebaseFirestore.instance
-                      .collection('Habits')
-                      .doc(uid);
-                    CollectionReference dateSubcollectionRef =
-                        userDocRef.collection(widget.selectedDate);
-                    await dateSubcollectionRef
-                      .doc('habits')
-                      .set({title.toLowerCase(): currentSubtitle,
-                      },
-                      SetOptions(merge: true));
-                    Navigator.of(context).pop();
-                    setState(() {
-                      currentSubtitle = textController.text;
-                    });
-                  },
-                ),
+                      widget.onTap(currentSubtitle);
+                      DocumentReference userDocRef = FirebaseFirestore.instance
+                        .collection('Habits')
+                        .doc(uid);
+                      CollectionReference dateSubcollectionRef =
+                          userDocRef.collection(widget.selectedDate);
+                      await dateSubcollectionRef
+                        .doc('habits')
+                        .set({title.toLowerCase(): currentSubtitle,
+                        },
+                        SetOptions(merge: true));
+                      Navigator.of(context).pop();
+                      setState(() {
+                        currentSubtitle = textController.text;
+                      });
+                    },
+                  ),
                 TextButton(
                   child: const Text('Cancel'),
                   onPressed: () {

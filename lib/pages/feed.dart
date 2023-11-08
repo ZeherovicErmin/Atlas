@@ -23,6 +23,11 @@ class Feed extends ConsumerWidget {
           'UserEmail': currentUser.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          'ExerciseName': '',
+      'ExerciseType': '',
+      'ExerciseMuscle': '',
+      'ExerciseEquipment': '',
+      'ExerciseDifficulty': '',
           
           'Likes': [],
         });
@@ -96,6 +101,11 @@ class Feed extends ConsumerWidget {
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
                                   email: post['UserEmail'],
+                                  exerciseName: post['ExerciseName'] ?? '',
+                                  exerciseType: post['ExerciseType'] ?? '',
+                                  muscle: post['ExerciseMuscle'] ?? '',
+                                  equipment: post['ExerciseEquipment'] ?? '',
+                                  difficulty: post['ExerciseDifficulty'] ?? '',
                                 );
                               } else if (snapshot.hasError) {
                                 return Center(

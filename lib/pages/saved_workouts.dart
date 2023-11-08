@@ -253,6 +253,8 @@ class _SavedExercisesState extends State<SavedExercises> {
     String muscle = exerciseData['exercise']['muscle'] ?? '';
     String equipment = exerciseData['exercise']['equipment'] ?? '';
     String difficulty = exerciseData['exercise']['difficulty'] ?? '';
+
+
       // Creating a post in the feed collection with exercise details
       FirebaseFirestore.instance.collection("Fitness Posts").add({  
     

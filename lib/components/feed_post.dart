@@ -17,6 +17,12 @@ class FeedPost extends StatefulWidget {
   final String postId;
   final List<String> likes;
   final String email;
+  final String? exerciseName;
+  final String? exerciseType;
+  final String? muscle;
+  final String? equipment;
+  final String? difficulty;
+
   const FeedPost({
     super.key,
     required this.message,
@@ -25,6 +31,11 @@ class FeedPost extends StatefulWidget {
     required this.likes,
     required this.time,
     required this.email,
+    required this.exerciseName,
+    required this.exerciseType,
+    required this.muscle,
+    required this.equipment,
+    required this.difficulty,
   });
 
   @override
@@ -116,6 +127,20 @@ class _FeedPostState extends State<FeedPost> {
                     ),
                   ],
                 ),
+                SizedBox(height: 5),
+                // Displaying workout details
+                if (widget.exerciseName != null && widget.exerciseType != null )
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Exercise Name: ${widget.exerciseName}'),
+                      Text('Exercise Type: ${widget.exerciseType}'),
+                      Text('Exercise Muscle: ${widget.muscle}'),
+                      Text('Exercise Equipment: ${widget.equipment}'),
+                      Text('Exercise Difficulty: ${widget.difficulty}'),
+                    ],
+                  )
+                
               ],
             ),
 

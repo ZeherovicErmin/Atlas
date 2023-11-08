@@ -110,7 +110,16 @@ class _FeedPostState extends State<FeedPost> {
                         side: const BorderSide(color: Colors.black, width: 3.0),
                         borderRadius: BorderRadius.circular(20)),
                     child: InkWell(
-                      onTap: () => print('object'),
+                      //This will pull up a modal sheet
+                      onTap: () {
+                        Widget modalContent = NewWidget(widget.barcodeData);
+
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => modalContent,
+                        );
+                        //deleteLog(context, data);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 16, top: 16, bottom: 8, right: 8),
@@ -125,10 +134,11 @@ class _FeedPostState extends State<FeedPost> {
                                   AutoSizeText(
                                     widget.barcodeData?['productName'] ?? '',
                                     maxLines: 1,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                     minFontSize: 15,
                                   ),
-                    
+
                                   // The keys that are filtered get sent into .map(socialBarcode)
                                   ...widget.barcodeData!.entries
                                       .where((entry) =>
@@ -508,4 +518,124 @@ class _FeedPostState extends State<FeedPost> {
       }
     }
   }
+
+  Widget NewWidget(Map<String, dynamic>? barcodeData) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 255, 252, 252),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.0),
+          topRight: Radius.circular(12.0),
+        ),
+      ),
+      child: SingleChildScrollView(
+        //controller: _controller,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            //Drag Handle
+            Center(
+              child: Container(
+                  margin: EdgeInsets.all(8.0),
+                  width: 40,
+                  height: 5.0,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 104, 104, 104),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12.0),
+                    ),
+                  )),
+            ),
+            //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+            //Nutritional Facts Column Sheet
+            const Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Align(
+                  child: Text(
+                    'Nutrition Facts',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontFamily: 'Helvetica Black',
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ],
+            ),
+            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            Align(
+              child: Container(
+                height: 25,
+                // Stack to hold the fats and the fats variable
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${barcodeData?['amtServingsProvider']}g per container",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: 'Helvetica Black',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            NutritionRow(
+              title: "Calories",
+              value: '${0}',
+              fontSize: 24,
+              dividerThickness: 5,
+              showDivider: false,
+            ),
+            //Nutritional Column Dividers
+            //End NUTRITION FACTS ROW
+            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            //Start of Nutrition rows
+            //
+            NutritionRow(
+                title: 'Total Fats',
+                value: '${barcodeData!['fatsPerServing']}'),
+            //saturated Fats
+            NutritionRow(
+              title: 'Saturated Fat',
+              value: '${barcodeData['satfatsPserving']}',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            NutritionRow(
+              title: 'Trans Fat',
+              value: '${barcodeData['transfatsPserving']}',
+              isSubcategory: true,
+              hideIfZero: false,
+            ),
+            //end fats
+
+            NutritionRow(
+                title: "Total Carbohydrates",
+                value: '${barcodeData['carbsPerServing']}'),
+            //Sugars
+            NutritionRow(
+                title: "Total Sugars", isSubcategory: true, value: '${barcodeData['sugarsPerServing']}'),
+            //end Protein
+
+            //protein per serving
+            NutritionRow(
+                title: "Protein", value: '${barcodeData['proteinPerServing']}'),
+
+            //sodium
+            NutritionRow(title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+
+            NutritionRow(title: "Cholesterol", value: '${barcodeData['cholesterolPerServing']}'),
+            //end Protein
+          ]),
+        ),
+      ),
+    );
+  }
 }
+
+
+//Text(barcodeData!['productName']),

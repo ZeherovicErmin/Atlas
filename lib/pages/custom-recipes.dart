@@ -1,12 +1,13 @@
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/Models/recipe-model.dart' as RecipeModel show Step;
 import 'package:atlas/pages/recipe-details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_card/image_card.dart';
-
 
 //riverpod state provider that holds list of custom recipes
 final customRecipesProvider = StateProvider<List<Result>>((ref) {
@@ -24,27 +25,39 @@ final instructionCountProvider = StateProvider<int>((ref) {
 });
 
 class CustomRecipes extends ConsumerWidget {
-  const CustomRecipes({Key? key}) : super(key: key);
+  CustomRecipes({Key? key}) : super(key: key);
+
+  final CollectionReference customRecipesCollection =
+      FirebaseFirestore.instance.collection("Custom_Recipes");
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //List of custom recipes, updated when user adds/removes
-    List<Result>? customRecipes = ref.watch(customRecipesProvider);
+    // List<Result>? customRecipes = ref.watch(customRecipesProvider);
+
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
     return Scaffold(
-        body: Column(
-          children: [
-              Container(
-                alignment: Alignment.center,
-                child:  ElevatedButton(
-                  onPressed: addRecipeDialog(context, ref),
-                  child: Text("Add New Recipe")),
-              ),
-              customRecipeList(customRecipes, ref)
-            ]));
+        body: Column(children: [
+      Container(
+          alignment: Alignment.center,
+          child: ElevatedButton(
+              onPressed: addRecipeDialog(context, ref),
+              child: Text("Add New Recipe"),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromARGB(255, 255, 162, 23)),
+              ))),
+      customRecipeList(ref, customRecipesCollection, userID)
+    ]));
   }
 
-
-  addRecipeDialog(BuildContext context, WidgetRef ref) {
+  addRecipeDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     int instructionCount = ref.watch(instructionCountProvider);
     int ingredientCount = ref.watch(ingredientCountProvider);
 
@@ -88,8 +101,7 @@ class CustomRecipes extends ConsumerWidget {
                                     name: 'cuisine',
                                     decoration:
                                         InputDecoration(labelText: 'Cuisine'),
-                                        
-                                  validator: FormBuilderValidators.required(),
+                                    validator: FormBuilderValidators.required(),
                                   ),
                                   //Recipe Calories Form Input
                                   FormBuilderTextField(
@@ -105,7 +117,7 @@ class CustomRecipes extends ConsumerWidget {
                                         labelText: 'Ready Time (in minutes)'),
                                     keyboardType: TextInputType.number,
                                   ),
-                                  
+
                                   FormBuilderCheckbox(
                                     name: 'isVegan',
                                     title: Text('Is it Vegan?'),
@@ -251,99 +263,113 @@ class CustomRecipes extends ConsumerWidget {
         });
   }
 
-  customRecipeList(List<Result>? customRecipes, WidgetRef ref){
-    return Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    //ListView used to output recipe list element into individual components
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      //Used to ensure list is scrollable
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      //Number of recipes
-                      itemCount: customRecipes!.length,
-                      //Used to build recipe list tiles
-                      itemBuilder: (context, index) {
-                        Result recipe = customRecipes[index];
-                        String recipeName = recipe.title;
-                        return Container(
-                            alignment: Alignment.center,
-                            child: TransparentImageCard(
-                              width: 300,
-                              imageProvider: recipe.image != null ||
-                                      recipe.image != ""
-                                  ? NetworkImage(recipe.image)
-                                  : const AssetImage(
-                                          'assets/icons/recipe-notfound.svg')
-                                      as ImageProvider,
-                              // tags: [
-                              //   _tag('Product', () {}),
-                              // ],
-                              title: Container(
-                                  child: Text(
-                                "${recipe.title}",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                              description: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty
-                                                    .all<Color>(Color.fromARGB(
-                                                        255, 255, 162, 23))),
-                                        onPressed: () =>
-                                            navigateToRecipeDetails(
-                                                context, recipe),
-                                        child: Text(
-                                          "View Details",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                    Container(
-                                        padding: EdgeInsets.all(0),
-                                        alignment: Alignment.bottomRight,
-                                        child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
-                                            child: Material(
-                                                color: const Color.fromARGB(
-                                                    0, 255, 255, 255),
-                                                child: IconButton(
-                                                  onPressed: () => onRemove(
-                                                      recipe,
-                                                      ref,
-                                                      customRecipesProvider),
-                                                  icon: const Icon(
-                                                      Icons.delete_forever),
-                                                  tooltip: "Remove Recipe",
-                                                  color: Colors.white,
-                                                  highlightColor: Colors.black,
-                                                  hoverColor: Colors.red
-                                                      .withOpacity(0.3),
-                                                  splashRadius: 20,
-                                                  splashColor: Colors.blue,
-                                                ))))
-                                  ]),
-                            ));
-                      },
-                      //Used to put a divider line between recipes
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                    )));
+  customRecipeList(WidgetRef ref,
+      CollectionReference<Object?> customRecipesCollection, String? userID) {
+    return StreamBuilder<QuerySnapshot>(
+        stream:
+            customRecipesCollection.where("uid", isEqualTo: userID).snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container(
+                padding: EdgeInsets.all(50),
+                alignment: Alignment.center,
+                child: CircularProgressIndicator());
+          }
+
+          List<Result> customRecipes = [];
+          snapshot.data!.docs.forEach((doc) {
+            customRecipes.add(Result.fromJson(doc["recipe"], id: doc.id));
+          });
+
+          return Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  //ListView used to output recipe list element into individual components
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    //Used to ensure list is scrollable
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    //Number of recipes
+                    itemCount: customRecipes!.length,
+                    //Used to build recipe list tiles
+                    itemBuilder: (context, index) {
+                      Result recipe = customRecipes[index];
+                      String recipeName = recipe.title;
+                      return Container(
+                          alignment: Alignment.center,
+                          child: TransparentImageCard(
+                            width: 300,
+                            imageProvider:
+                                recipe.image != null || recipe.image != ""
+                                    ? NetworkImage(recipe.image)
+                                    : const AssetImage(
+                                            'assets/icons/recipe-notfound.svg')
+                                        as ImageProvider,
+                            // tags: [
+                            //   _tag('Product', () {}),
+                            // ],
+                            title: Container(
+                                child: Text(
+                              "${recipe.title}",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                            description: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  Color.fromARGB(
+                                                      255, 255, 162, 23))),
+                                      onPressed: () => navigateToRecipeDetails(
+                                          context, recipe),
+                                      child: Text(
+                                        "View Details",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  Container(
+                                      padding: EdgeInsets.all(0),
+                                      alignment: Alignment.bottomRight,
+                                      child: CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 255, 176, 58),
+                                          child: Material(
+                                              color: const Color.fromARGB(
+                                                  0, 255, 255, 255),
+                                              child: IconButton(
+                                                onPressed: () => onRemove(
+                                                    recipe,
+                                                    context, 
+                                                    customRecipesCollection),
+                                                icon: const Icon(
+                                                    Icons.delete_forever),
+                                                tooltip: "Remove Recipe",
+                                                color: Colors.white,
+                                                highlightColor: Colors.black,
+                                                hoverColor:
+                                                    Colors.red.withOpacity(0.3),
+                                                splashRadius: 20,
+                                                splashColor: Colors.blue,
+                                              ))))
+                                ]),
+                          ));
+                    },
+                    //Used to put a divider line between recipes
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                  )));
+        });
   }
-  
-  
- 
-  onAdd(Map<String, dynamic> formData, WidgetRef ref) {
+
+  onAdd(Map<String, dynamic> formData, WidgetRef ref) async {
     Nutrient nutrient = Nutrient(
         name: "Calories",
         amount: double.parse(formData["calories"]),
@@ -379,15 +405,12 @@ class CustomRecipes extends ConsumerWidget {
         AnalyzedInstruction(name: "", steps: stepsList);
 
     Nutrition nutrition = Nutrition(
-        nutrients: [nutrient], 
+        nutrients: [nutrient],
         ingredients: ingredientsList,
         properties: [],
         flavonoids: [],
         caloricBreakdown: CaloricBreakdown(
-          percentCarbs: 0.0,
-          percentFat: 0.0,
-          percentProtein: 0.0
-        ),
+            percentCarbs: 0.0, percentFat: 0.0, percentProtein: 0.0),
         weightPerServing: WeightPerServing(amount: 0, unit: "unit"));
 
     //Build Result object with all of the data
@@ -405,30 +428,51 @@ class CustomRecipes extends ConsumerWidget {
 
     print(recipe.toMap());
 
+    // Create an instance of FirebaseAuth
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Get the current user's uid
+    final userID = auth.currentUser?.uid;
+
+    //reference to Custom_Recipes collection in firebase
+    final recipeCollection =
+        FirebaseFirestore.instance.collection("Custom_Recipes");
+
+    //send request to firebase to add recipe to the Custom_Recipes collection
+    await recipeCollection.add(
+        {"uid": userID, "recipe": recipe.toMap(), "saveDate": DateTime.now()});
+
     //Add new recipe to custom recipe list after copying the list.
-    List<Result> recipes = [...ref.watch(customRecipesProvider)];
-    recipes.add(recipe);
-    ref.read(customRecipesProvider.notifier).state = recipes;
+    // List<Result> recipes = [...ref.watch(customRecipesProvider)];
+    // recipes.add(recipe);
+    // ref.read(customRecipesProvider.notifier).state = recipes;
 
     //Reset ingredient and instruction counts to 1
     ref.read(instructionCountProvider.notifier).state = 1;
     ref.read(ingredientCountProvider.notifier).state = 1;
   }
 
-  
-  onRemove(Result recipe, WidgetRef ref, StateProvider<List<Result>> customRecipesProvider) {
-    List<Result> recipes = [...ref.watch(customRecipesProvider)];
-    recipes.remove(recipe);
-    ref.read(customRecipesProvider.notifier).state = recipes;
+  //Remove Button Handler - Remove Custom Recipe
+  onRemove(Result recipe, BuildContext context,
+      CollectionReference<Object?> customRecipesCollection) async {
+    // List<Result> recipes = [...ref.watch(customRecipesProvider)];
+    // recipes.remove(recipe);
+    // ref.read(customRecipesProvider.notifier).state = recipes;
+
+    await customRecipesCollection.doc(recipe.firebaseID).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Recipe Removed - ${recipe.title}'),
+        duration: Duration(seconds: 1)));
   }
 
   // Function to navigate to recipe details page
-void navigateToRecipeDetails(BuildContext context, Result recipe) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => RecipeDetails(recipe: recipe),
-    ),
-  );
-}
+  void navigateToRecipeDetails(BuildContext context, Result recipe) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecipeDetails(recipe: recipe),
+      ),
+    );
+  }
 }

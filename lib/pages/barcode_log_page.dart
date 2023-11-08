@@ -632,6 +632,7 @@ class BarcodeLogPage extends ConsumerWidget {
       'TimeStamp': Timestamp.now(),
       'barcodeData': data,
       'Likes': [],
+      'postImage': '',
     });
   }
 

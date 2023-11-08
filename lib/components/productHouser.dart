@@ -439,7 +439,7 @@ Future<bool> isBarcodeExists(String barcode) async {
 //}
 
 class NutritionContainer extends StatelessWidget {
-  const NutritionContainer({
+  const NutritionContainer(carbsPerServing, {
     super.key,
     required this.amtPerServing,
     required this.productCalories,

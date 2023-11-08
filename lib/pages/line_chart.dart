@@ -6,8 +6,12 @@ import 'dart:math';
 
 class HabitLineChartPage extends StatefulWidget {
   final String habitTitle;
+  final Color habitCardColor;
 
-  HabitLineChartPage({Key? key, required this.habitTitle}) : super(key: key);
+  HabitLineChartPage({
+    required this.habitTitle,
+    required this.habitCardColor
+    });
 
   @override
   _HabitLineChartPageState createState() => _HabitLineChartPageState();
@@ -86,7 +90,7 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
     preferredSize: const Size.fromHeight(50),
     child: AppBar(
       centerTitle: true,
-      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+      backgroundColor: widget.habitCardColor,
         title: Text(
           title,
           style: const TextStyle(
@@ -173,7 +177,7 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
                           preventCurveOverShooting: true,
                           barWidth: 4,
                           dotData: const FlDotData(show: true),
-                          color: Colors.blue,
+                          color: widget.habitCardColor,
                         ),
                       ],
                       lineTouchData: LineTouchData(
@@ -181,8 +185,8 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
                           tooltipBgColor: Colors.black,
                           getTooltipItems: (List<LineBarSpot> touchedSpots) {
                             return touchedSpots.map((touchedSpot) {
-                              const textStyle = TextStyle(
-                                color: Colors.blue,
+                              final textStyle = TextStyle(
+                                color: widget.habitCardColor,
                                 fontWeight: FontWeight.bold,
                               );
                               return LineTooltipItem('${touchedSpot.y.toInt()}', textStyle);

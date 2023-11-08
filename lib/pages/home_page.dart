@@ -160,7 +160,8 @@ class HabitCardState extends State<HabitCard> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => HabitLineChartPage(
-                            habitTitle: title
+                            habitTitle: title,
+                            habitCardColor: widget.backgroundColor,
                           ),
                         ),
                       );

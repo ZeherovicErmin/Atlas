@@ -103,89 +103,133 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
       appBar: graphAppBar(context, 'Your ${widget.habitTitle.toLowerCase()} for the last 7 Days'),
       body: graphLoading ? const Center(
       child: CircularProgressIndicator()):
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: LineChart(
-          LineChartData(
-            gridData: const FlGridData(show: false),
-            titlesData: FlTitlesData(
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 32,
-                  getTitlesWidget: (double value, TitleMeta meta) {
-                    if (value % 1 == 0 && value.toInt() < pastWeek.length) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Text(
-                          pastWeek[value.toInt()],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+      Column(
+        children:[
+          Expanded(
+            child: Stack(
+              children:[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 35,
+                    right: 40,
+                    top: 20,
+                  ),
+                  child: LineChart(
+                    LineChartData(
+                      gridData: const FlGridData(show: false),
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              if (value % 1 == 0 && value.toInt() < pastWeek.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    pastWeek[value.toInt()],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
                           ),
                         ),
-                      );
-                    }
-                    return Container();
-                  },
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 35,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              return Text(value.toInt().toString(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                )
+                              );
+                            },
+                          ),
+                        ),
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                      minX: 0,
+                      maxX: 6,
+                      minY: minY,
+                      maxY: maxY,
+                      lineBarsData:[
+                        LineChartBarData(
+                          spots: lineChartPoints,
+                          belowBarData: BarAreaData(show: true),
+                          preventCurveOverShooting: true,
+                          barWidth: 4,
+                          dotData: const FlDotData(show: true),
+                          color: Colors.blue,
+                        ),
+                      ],
+                      lineTouchData: LineTouchData(
+                        touchTooltipData: LineTouchTooltipData(
+                          tooltipBgColor: Colors.black,
+                          getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                            return touchedSpots.map((touchedSpot) {
+                              const textStyle = TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              );
+                              return LineTooltipItem('${touchedSpot.y.toInt()}', textStyle);
+                            }).toList();
+                          },
+                        ),
+                        touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {},
+                        handleBuiltInTouches: true,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 40,
-                  getTitlesWidget: (double value, TitleMeta meta) {
-                    return Text(value.toInt().toString(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      )
-                    );
-                  },
+                //Y-Axis Label
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 10,
+                  child: SizedBox(
+                    width: 40,
+                    child: RotatedBox(
+                      quarterTurns: 3,
+                      child: Text(
+                        widget.habitTitle,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
-            ),
-            minX: 0,
-            maxX: 6,
-            minY: minY,
-            maxY: maxY,
-            lineBarsData: [
-              LineChartBarData(
-                spots: lineChartPoints,
-                isCurved: false,
-                belowBarData: BarAreaData(show: true),
-                preventCurveOverShooting: true,
-                barWidth: 4,
-                dotData: const FlDotData(show: true),
-                color: Colors.blue,
-              ),
-            ],
-            lineTouchData: LineTouchData(
-              touchTooltipData: LineTouchTooltipData(
-                tooltipBgColor: Colors.black,
-                getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                  return touchedSpots.map((touchedSpot) {
-                    const textStyle = TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    );
-                    return LineTooltipItem('${touchedSpot.y.toInt()}', textStyle);
-                  }).toList();
-                },
-              ),
-              touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {},
-              handleBuiltInTouches: true,
+              ],
             ),
           ),
-        ),
+          //X-Axis Label
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: Text(
+              'Dates',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

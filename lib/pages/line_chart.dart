@@ -173,11 +173,14 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
                       lineBarsData:[
                         LineChartBarData(
                           spots: lineChartPoints,
-                          belowBarData: BarAreaData(show: true),
                           preventCurveOverShooting: true,
                           barWidth: 4,
                           dotData: const FlDotData(show: true),
                           color: widget.habitCardColor,
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: widget.habitCardColor.withOpacity(.3),
+                          ),
                         ),
                       ],
                       lineTouchData: LineTouchData(

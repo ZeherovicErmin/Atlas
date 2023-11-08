@@ -19,6 +19,7 @@ class FeedPost extends StatefulWidget {
   final List<String> likes;
   final Map<String, dynamic>? barcodeData;
   final String email;
+  final String imageUrl;
   const FeedPost(
       {super.key,
       required this.message,
@@ -27,7 +28,9 @@ class FeedPost extends StatefulWidget {
       required this.likes,
       required this.time,
       required this.email,
-      this.barcodeData});
+      this.barcodeData,
+      required this.imageUrl,
+      });
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -99,6 +102,11 @@ class _FeedPostState extends State<FeedPost> {
                   style: const TextStyle(color: Colors.black),
                   maxLines: null,
                 ),
+                Image.network(
+                  widget.imageUrl,
+                  fit:BoxFit.cover,
+                ),
+
                 // Only display specific barcode data entries
                 Visibility(
                   visible: widget.barcodeData != null &&

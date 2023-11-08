@@ -102,9 +102,12 @@ class _FeedPostState extends State<FeedPost> {
                   style: const TextStyle(color: Colors.black),
                   maxLines: null,
                 ),
-                Image.network(
-                  widget.imageUrl,
-                  fit:BoxFit.cover,
+                Visibility(
+                  visible: widget.imageUrl != ''&& widget.imageUrl.isNotEmpty,
+                  child: Image.network(
+                    widget.imageUrl,
+                    fit:BoxFit.cover,
+                  ),
                 ),
 
                 // Only display specific barcode data entries

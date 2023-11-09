@@ -130,15 +130,18 @@ class _FeedPostState extends State<FeedPost> {
                 SizedBox(height: 5),
                 // Displaying workout details
                 if (widget.exerciseName != null && widget.exerciseType != null )
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Exercise Name: ${widget.exerciseName}'),
-                      Text('Exercise Type: ${widget.exerciseType}'),
-                      Text('Exercise Muscle: ${widget.muscle}'),
-                      Text('Exercise Equipment: ${widget.equipment}'),
-                      Text('Exercise Difficulty: ${widget.difficulty}'),
-                    ],
+                  Visibility(
+                    visible: widget.exerciseName!= null && widget.exerciseName!.isNotEmpty,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Exercise Name: ${widget.exerciseName}'),
+                        Text('Exercise Type: ${widget.exerciseType}'),
+                        Text('Exercise Muscle: ${widget.muscle}'),
+                        Text('Exercise Equipment: ${widget.equipment}'),
+                        Text('Exercise Difficulty: ${widget.difficulty}'),
+                      ],
+                    ),
                   )
                 
               ],

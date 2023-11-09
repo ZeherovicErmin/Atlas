@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:atlas/components/feed_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+//import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 //paramaters to hold search, sort, filter
 class FilterState {
@@ -50,7 +52,12 @@ class FilterStateController extends StateNotifier<FilterState> {
 }
 
 class BarcodeLogPage extends ConsumerWidget {
-  const BarcodeLogPage({Key? key});
+  BarcodeLogPage({Key? key});
+  final currentUser = FirebaseAuth.instance.currentUser!;
+  final content = NutritionalModalClass(
+      //productName: ''
+      );
+
   String formatDecimal(double value) {
     // Round to one decimal place and format as a string
     return value.toStringAsFixed(1);
@@ -305,7 +312,11 @@ class BarcodeLogPage extends ConsumerWidget {
         final proteinPerServing = formatDecimal(data['proteinPerServing']);
         final cholesterolPerServing =
             formatDecimal(data['cholesterolPerServing']);
-
+        final caloriesPerServing = formatDecimal(data['productCalories']);
+        final satfatsPserving = formatDecimal(data["satfatsPserving"]);
+        final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
+        final transfatsPserving = formatDecimal(data["transfatsPserving"]);
+        final amtServings = formatDecimal(data["amtServingsProvider"]);
         return Slidable(
           // Allows logs to be deleted, Wraps entire list widget
 
@@ -325,6 +336,23 @@ class BarcodeLogPage extends ConsumerWidget {
               )
             ],
           ),
+          //Sliding to the rihgt activates sharing a post
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            extentRatio: .25,
+            children: [
+              SlidableAction(
+                autoClose: true,
+                onPressed: (context) => shareBarcodeToFeed(data),
+                backgroundColor: const Color.fromARGB(2, 140, 215, 85),
+                foregroundColor: Color.fromARGB(255, 0, 78, 12),
+                icon: Icons.share,
+                label: 'Share',
+              )
+            ],
+          ),
+          //card for the barcode logs
+          // This shows in the list of logs
           child: Card(
             shape: RoundedRectangleBorder(
               side: const BorderSide(color: Colors.black, width: 3.8),
@@ -336,7 +364,22 @@ class BarcodeLogPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(24),
               // Logic for showing a nutritional label
               onTap: () {
-                deleteLog(context, data);
+                Widget modalContent = NutritionContainer(
+                    carbsPerServing,
+                    proteinPerServing,
+                    fatsPerServing,
+                    caloriesPerServing,
+                    satfatsPserving,
+                    sodiumPerServing,
+                    transfatsPserving,
+                    cholesterolPerServing,
+                    amtServings);
+
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => modalContent,
+                );
+                //deleteLog(context, data);
               },
               child: Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 0),
@@ -457,6 +500,140 @@ class BarcodeLogPage extends ConsumerWidget {
         );
       },
     );
+  }
+
+  Container NutritionContainer(
+          String carbsPerServing,
+          String proteinPerServing,
+          String fatsPerServing,
+          String calories,
+          String satfatsPserving,
+          String sodiumPerServing,
+          String transfatsPserving,
+          String cholesterolPerServing,
+          String amtServings) =>
+      Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 255, 252, 252),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.0),
+            topRight: Radius.circular(12.0),
+          ),
+        ),
+        child: SingleChildScrollView(
+          //controller: _controller,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(children: [
+              //Drag Handle
+              Center(
+                child: Container(
+                    margin: EdgeInsets.all(8.0),
+                    width: 40,
+                    height: 5.0,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 104, 104, 104),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12.0),
+                      ),
+                    )),
+              ),
+              //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
+              //Nutritional Facts Column Sheet
+              const Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Align(
+                    child: Text(
+                      'Nutrition Facts',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: 'Helvetica Black',
+                          fontSize: 44,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+              Align(
+                child: Container(
+                  height: 25,
+                  // Stack to hold the fats and the fats variable
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${amtServings}g per container",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontFamily: 'Helvetica Black',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              NutritionRow(
+                title: "Calories",
+                value: '${calories}',
+                fontSize: 24,
+                dividerThickness: 5,
+                showDivider: false,
+              ),
+              //Nutritional Column Dividers
+              //End NUTRITION FACTS ROW
+              Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+              //Start of Nutrition rows
+              //
+              NutritionRow(title: 'Total Fats', value: '${fatsPerServing}'),
+              //saturated Fats
+              NutritionRow(
+                title: 'Saturated Fat',
+                value: '${satfatsPserving}',
+                isSubcategory: true,
+                hideIfZero: false,
+              ),
+              NutritionRow(
+                title: 'Trans Fat',
+                value: '${transfatsPserving}',
+                isSubcategory: true,
+                hideIfZero: false,
+              ),
+              //end fats
+
+              NutritionRow(
+                  title: "Total Carbohydrates", value: '${carbsPerServing}'),
+              //Sugars
+              NutritionRow(
+                  title: "Total Sugars", isSubcategory: true, value: '${0}'),
+              //end Protein
+
+              //protein per serving
+              NutritionRow(title: "Protein", value: "${proteinPerServing}"),
+
+              //sodium
+              NutritionRow(title: "Sodium", value: "${sodiumPerServing}"),
+
+              NutritionRow(
+                  title: "Cholesterol", value: '${cholesterolPerServing}'),
+              //end Protein
+            ]),
+          ),
+        ),
+      );
+
+  //sharing posts
+  void shareBarcodeToFeed(Map<String, dynamic> data) {
+    FirebaseFirestore.instance.collection('User Posts').add({
+      'Message': 'Just scanned this barcode! Check it out!',
+      'UserEmail': currentUser.email,
+      'TimeStamp': Timestamp.now(),
+      'barcodeData': data,
+      'Likes': [],
+      'postImage': '',
+    });
   }
 
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {

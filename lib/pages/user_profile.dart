@@ -16,6 +16,8 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
+
+
 final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
   try {
     final DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -186,7 +188,7 @@ class UserProfile extends ConsumerWidget {
           content: TextField(
             controller: username,
             autofocus: true,
-            style: TextStyle(color: themeColor), // Change text color to white
+            style: TextStyle(color: themeColor), // Change text color to theme
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),

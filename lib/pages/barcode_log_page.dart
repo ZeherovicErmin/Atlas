@@ -631,6 +631,12 @@ class BarcodeLogPage extends ConsumerWidget {
       'UserEmail': currentUser.email,
       'TimeStamp': Timestamp.now(),
       'barcodeData': data,
+      'ExerciseName': '',
+      'ExerciseType': '',
+      'ExerciseMuscle': '',
+      'ExerciseEquipment': '',
+      'ExerciseDifficulty': '',
+      'ExerciseInstructions': '',
       'Likes': [],
       'postImage': '',
     });

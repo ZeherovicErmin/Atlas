@@ -8,6 +8,7 @@ import 'package:atlas/helper/time_stamp.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -19,18 +20,31 @@ class FeedPost extends StatefulWidget {
   final List<String> likes;
   final Map<String, dynamic>? barcodeData;
   final String email;
+  final String? exerciseName;
+  final String? exerciseType;
+  final String? muscle;
+  final String? equipment;
+  final String? difficulty;
+  final String? instructions;
   final String imageUrl;
-  const FeedPost(
-      {super.key,
-      required this.message,
-      required this.user,
-      required this.postId,
-      required this.likes,
-      required this.time,
-      required this.email,
-      this.barcodeData,
-      required this.imageUrl,
-      });
+
+  const FeedPost({
+    super.key,
+    required this.message,
+    required this.user,
+    required this.postId,
+    required this.likes,
+    required this.time,
+    required this.email,
+    required this.exerciseName,
+    required this.exerciseType,
+    required this.muscle,
+    required this.equipment,
+    required this.difficulty,
+    required this.instructions,
+    this.barcodeData,
+    required this.imageUrl,
+  });
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -103,10 +117,10 @@ class _FeedPostState extends State<FeedPost> {
                   maxLines: null,
                 ),
                 Visibility(
-                  visible: widget.imageUrl != ''&& widget.imageUrl.isNotEmpty,
+                  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
                   child: Image.network(
                     widget.imageUrl,
-                    fit:BoxFit.cover,
+                    fit: BoxFit.cover,
                   ),
                 ),
 
@@ -176,6 +190,26 @@ class _FeedPostState extends State<FeedPost> {
                   ),
                 ),
 
+                SizedBox(height: 5),
+                // Displaying workout details
+                if (widget.exerciseName != null && widget.exerciseType != null)
+                  Visibility(
+                      visible: widget.exerciseName != null &&
+                          widget.exerciseName!.isNotEmpty,
+                      child: Container(
+                        margin: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              12.0), // Add a border radius
+                          border: Border.all(
+                            width: .5,
+                            style: BorderStyle.solid,
+                            color: Colors.transparent,
+                            // Set the border color and width
+                          ),
+                        ),
+                        child: fitdesign(),
+                      )),
                 //user + day
                 Row(
                   children: [
@@ -329,6 +363,98 @@ class _FeedPostState extends State<FeedPost> {
           ],
         ),
       ]),
+    );
+  }
+
+  FlipCard fitdesign() {
+    return FlipCard(
+      fill: Fill.fillBack,
+      direction: FlipDirection.VERTICAL,
+      speed: 400,
+      front: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 150.0,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AutoSizeText(
+                    widget.exerciseName ?? '',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 32,
+                    ),
+                    maxLines: 1,
+                    minFontSize: 20,
+                    overflow: TextOverflow.clip,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        widget.difficulty ?? '',
+                        style: const TextStyle(
+                          color: Colors.purple,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        widget.muscle ?? '',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        widget.equipment ?? '',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      back: Card(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Returning a numbered list for the instructions of the workout
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: (widget.instructions ?? '').split('.').length - 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        '${index + 1}. ${(widget.instructions ?? '').split('.')[index]}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -629,7 +755,9 @@ class _FeedPostState extends State<FeedPost> {
                 value: '${barcodeData['carbsPerServing']}'),
             //Sugars
             NutritionRow(
-                title: "Total Sugars", isSubcategory: true, value: '${barcodeData['sugarsPerServing']}'),
+                title: "Total Sugars",
+                isSubcategory: true,
+                value: '${barcodeData['sugarsPerServing']}'),
             //end Protein
 
             //protein per serving
@@ -637,9 +765,12 @@ class _FeedPostState extends State<FeedPost> {
                 title: "Protein", value: '${barcodeData['proteinPerServing']}'),
 
             //sodium
-            NutritionRow(title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+            NutritionRow(
+                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
-            NutritionRow(title: "Cholesterol", value: '${barcodeData['cholesterolPerServing']}'),
+            NutritionRow(
+                title: "Cholesterol",
+                value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),
         ),
@@ -647,6 +778,8 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 }
+
+
 
 
 //Text(barcodeData!['productName']),

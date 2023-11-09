@@ -37,6 +37,9 @@ class _SavedExercisesState extends State<SavedExercises> {
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
 
+    // Storing the currentUser into a variable
+    final currentUser = FirebaseAuth.instance.currentUser!;
+
     // Getting the user id of the current user
     final userID = auth.currentUser?.uid;
 
@@ -139,18 +142,37 @@ class _SavedExercisesState extends State<SavedExercises> {
                           ),
                           Positioned(
                             top: 0.0,
-                            right: 0.0,
-                            child: //Save To FireStore button
+                            left: 0.0,
+                            child: Row(
+                              children: [
+                                // Creating a button to share exercises to the feed
                                 IconButton(
+                                  onPressed: () {
+                                    onShare(exerciseData, currentUser);
+                                  },
+                                  // Delete from firebase and my workouts
+                                  icon: const Icon(
+                                    CupertinoIcons.share,
+                                    size: 30,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: 0.0,
+                            right: 0.0,
+                            child: IconButton(
                               onPressed: () {
                                 onRemove(exercisesSnapshot);
                               },
+                              // Delete from firebase and my workouts
                               icon: const Icon(
                                 CupertinoIcons.delete,
                                 size: 30,
                               ),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -213,5 +235,32 @@ class _SavedExercisesState extends State<SavedExercises> {
         ),
       );
     }
+  }
+
+  // Creating a function to share workouts to the feed page
+  void onShare(Map<String, dynamic> exerciseData, User currentUser) {
+    // Gathering the exercise details to share
+    String name = exerciseData['exercise']['name'] ?? '';
+    String type = exerciseData['exercise']['type'] ?? '';
+    String muscle = exerciseData['exercise']['muscle'] ?? '';
+    String equipment = exerciseData['exercise']['equipment'] ?? '';
+    String difficulty = exerciseData['exercise']['difficulty'] ?? '';
+    String instructions = exerciseData['exercise']['instructions'] ?? '';
+
+    // Creating a post in the feed collection with exercise details
+    FirebaseFirestore.instance.collection("User Posts").add({
+      'Message': "Here's a cool workout!",
+      'UserEmail': currentUser.email,
+      'TimeStamp': Timestamp.now(),
+      'ExerciseName': name,
+      'ExerciseType': type,
+      'ExerciseMuscle': muscle,
+      'ExerciseEquipment': equipment,
+      'ExerciseDifficulty': difficulty,
+      'ExerciseInstructions': instructions,
+      'postImage': '',
+      'barcodeData': {},
+      'Likes': [],
+    });
   }
 }

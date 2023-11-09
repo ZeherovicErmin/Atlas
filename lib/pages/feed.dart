@@ -137,6 +137,12 @@ class Feed extends ConsumerWidget {
           'UserEmail': currentUser.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          'ExerciseName': '',
+          'ExerciseType': '',
+          'ExerciseMuscle': '',
+          'ExerciseEquipment': '',
+          'ExerciseDifficulty': '',
+
           'Likes': [],
           'barcodeData': {},
           'postImage': '', // Add the download URL to your Firestore document
@@ -223,6 +229,13 @@ class Feed extends ConsumerWidget {
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
                                   email: post['UserEmail'],
+                                  exerciseName: post['ExerciseName'] ?? '',
+                                  exerciseType: post['ExerciseType'] ?? '',
+                                  muscle: post['ExerciseMuscle'] ?? '',
+                                  equipment: post['ExerciseEquipment'] ?? '',
+                                  difficulty: post['ExerciseDifficulty'] ?? '',
+                                  instructions:
+                                      post['ExerciseInstructions'] ?? '',
                                   imageUrl: post['postImage'],
                                 );
                               } else if (snapshot.hasError) {

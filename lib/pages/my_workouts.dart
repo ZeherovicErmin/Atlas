@@ -28,7 +28,7 @@ class DiscoverPage extends ConsumerWidget {
     "Wednesday": Color.fromARGB(255, 131, 217, 131),
     "Thursday": Color.fromARGB(255, 112, 128, 144),
     "Friday": Color.fromARGB(255, 147, 112, 219),
-    "Saturday": Color.fromARGB(255, 63, 199, 202),
+    "Saturday": Color.fromARGB(255, 206, 182, 47),
     "Sunday": Color.fromARGB(255, 202, 63, 160),
   };
 

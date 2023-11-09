@@ -71,7 +71,7 @@ class Recipes extends ConsumerWidget {
               recipeList(recipes, context, ref)
             ]),
             const SavedRecipes(),
-            const CustomRecipes()
+            CustomRecipes()
           ]),
         ));
   }

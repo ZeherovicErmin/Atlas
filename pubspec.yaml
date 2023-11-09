@@ -65,8 +65,8 @@ dependencies:
   visibility_detector: ^0.4.0
 
   stroke_text: any
-
-
+  flutter_form_builder: ^9.1.1
+  form_builder_validators: ^9.1.0
 
   fl_chart: ^0.64.0
   liquid_pull_to_refresh: ^3.0.0

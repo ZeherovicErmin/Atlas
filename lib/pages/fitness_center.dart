@@ -1,31 +1,19 @@
 //Atlas Fitness App CSC 4996
+import 'package:atlas/pages/constants.dart';
+import 'package:atlas/pages/my_workouts.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flip_card/flip_card.dart';
+import 'package:stroke_text/stroke_text.dart';
 
-// Creating a list of target muscles
-const List<String> list = <String>[
-  "biceps",
-  "forearms",
-  "triceps",
-  "abductors",
-  "adductors",
-  "calves",
-  "quadriceps",
-  "abdominals",
-  "chest",
-  "lats",
-  "lower_back",
-  "middle_back",
-  "neck",
-  "traps",
-  "glutes",
-  "hamstrings",
-];
+// Creating a global variable to store the selected day
+int selectedDay = 1;
 
 // Creating a method to capitalize the first letter of each muscle
 String capitalizeFirstLetter(String text) {
@@ -33,104 +21,30 @@ String capitalizeFirstLetter(String text) {
   return text[0].toUpperCase() + text.substring(1);
 }
 
-// Creating A map of Icons for each specific muscles
-final Map<String, Widget> muscleIcons = {
-  "biceps": Image.asset(
-    'lib/images/bicepicon.png',
-    height: 60,
-    width: 60,
-  ),
-  "forearms": Image.asset(
-    'lib/images/forearm.png',
-    height: 60,
-    width: 60,
-  ),
-  "triceps": Image.asset(
-    'lib/images/triceps.png',
-    height: 60,
-    width: 60,
-  ),
-  "abdominals": Image.asset(
-    'lib/images/abdominals.png',
-    height: 60,
-    width: 60,
-  ),
-  "calves": Image.asset(
-    'lib/images/calves.png',
-    height: 60,
-    width: 60,
-  ),
-  "chest": Image.asset(
-    'lib/images/chest.png',
-    height: 60,
-    width: 60,
-  ),
-  "neck": Image.asset(
-    'lib/images/neck.png',
-    height: 60,
-    width: 60,
-  ),
-  "abductors": Image.asset(
-    'lib/images/abductors.png',
-    height: 60,
-    width: 60,
-  ),
-  "adductors": Image.asset(
-    'lib/images/adductors.png',
-    height: 60,
-    width: 60,
-  ),
-  "lower_back": Image.asset(
-    'lib/images/lowerback.png',
-    height: 60,
-    width: 60,
-  ),
-  "middle_back": Image.asset(
-    'lib/images/middleback.png',
-    height: 60,
-    width: 60,
-  ),
-  "quadriceps": Image.asset(
-    'lib/images/quads.png',
-    height: 60,
-    width: 60,
-  ),
-};
-
-// Creating A map of icons for the exercise type i.e strength or cardio
-final Map<String, IconData> exerciseTypeIcons = {
-  "strength": Icons.fitness_center,
-};
-
-// Creating a map of colors to apply to each type of muscle
-const Map<String, Color> muscleColors = {
-  "abdominals": Color.fromARGB(255, 64, 224, 208),
-  "abductors": Color.fromARGB(255, 255, 107, 76),
-  "adductors": Color.fromARGB(255, 255, 107, 76),
-  "biceps": Color.fromARGB(255, 255, 230, 128),
-  "calves": Color.fromARGB(255, 255, 107, 76),
-  "chest": Color.fromARGB(255, 152, 251, 152),
-  "forearms": Color.fromARGB(255, 255, 230, 128),
-  "glutes": Color.fromARGB(255, 112, 128, 144),
-  "hamstrings": Color.fromARGB(255, 112, 128, 144),
-  "lats": Color.fromARGB(255, 147, 112, 219),
-  "lower_back": Color.fromARGB(255, 147, 112, 219),
-  "middle_back": Color.fromARGB(255, 147, 112, 219),
-  "neck": Color.fromARGB(255, 147, 112, 219),
-  "quadriceps": Color.fromARGB(255, 255, 107, 76),
-  "traps": Color.fromARGB(255, 147, 112, 219),
-  "triceps": Color.fromARGB(255, 255, 230, 128)
-};
-
 // Creating a state provider to return a string for selected muscle
 final selectedMuscleProvider = StateProvider<String>((ref) {
   String muscle = 'biceps';
   return muscle;
 });
 
+class SavedExercisesNotifier extends Notifier<List<String>> {
+  SavedExercisesNotifier() : super();
+
+  @override
+  List<String> build() {
+    return state;
+  }
+}
+
+// Adding an info button
+final infoDialogProvider = StateProvider<bool>((ref) => false);
+
 class FitCenter extends ConsumerWidget {
+  // A bool to prevent multiple clicks of a button
   const FitCenter({Key? key}) : super(key: key);
 
+  //for saving to database
+  final bool saved = false;
   Future<List<dynamic>> getExercises(String muscle) async {
     // The Api key from API NINJAS
     final String myApiKey =
@@ -155,37 +69,65 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Setting the muscle variable to watch whatever the user selects in the drop down
-    var muscle = ref.watch(selectedMuscleProvider);
-
     return Container(
       child: DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 232, 229, 229),
+          backgroundColor: const Color(0xFFFAF9F6),
           //Home page for when a user logs in
           appBar: AppBar(
-            title: const Center(
-              child: Text(
-                "F i t n e s s   C e n t e r",
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontWeight: FontWeight.bold,
+              title: const Center(
+                child: Text(
+                  "F i t n e s s   C e n t e r",
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-            bottom: const TabBar(
-              indicatorColor: Color.fromARGB(255, 90, 86, 86),
-              tabs: [
-                Tab(
-                  text: "Discover",
-                ),
-                Tab(text: "My Workouts"),
-              ],
-            ),
-          ),
+              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+              bottom: const TabBar(
+                indicatorColor: Color.fromARGB(255, 90, 86, 86),
+                tabs: [
+                  Tab(
+                    text: "Discover",
+                  ),
+                  Tab(text: "My Workouts"),
+                ],
+              ),
+              actions: [
+                // Creating a button that will display information on how to use the page to the user
+                IconButton(
+                    icon: const Icon(Icons.info),
+                    onPressed: () {
+                      final isInfoDialogOpen = ref.read(infoDialogProvider);
+
+                      if (!isInfoDialogOpen) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Center(
+                                  child: Text('Discover Page Guide')),
+                              content: const Text(
+                                  "Displayed is a list of muscles with icons depicting the muscle.\n"
+                                  "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
+                                  "The muscles are color coded by general muscle group they belong to.\n"),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    })
+              ]),
 
           body: TabBarView(
             children: [
@@ -194,12 +136,7 @@ class FitCenter extends ConsumerWidget {
               // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
               musclesList(),
 
-              Container(
-                color: const Color.fromARGB(255, 232, 229, 229),
-                child: Center(
-                  child: Text(muscle),
-                ),
-              ),
+              const DiscoverPage(),
             ],
           ),
         ),
@@ -207,14 +144,15 @@ class FitCenter extends ConsumerWidget {
     );
   }
 
+  // A
   ListView musclesList() {
     return ListView.builder(
       itemCount: list.length,
       itemBuilder: (context, index) {
         final muscle = list[index];
         final muscleColor = muscleColors[muscle];
-        final icon = muscleIcons[
-            muscle]; // Initalize each entry of the list to the muscle
+
+        // Initalize each entry of the list to the muscle
         return GestureDetector(
           onTap: () async {
             final exercisesData = await getExercises(muscle);
@@ -222,13 +160,15 @@ class FitCenter extends ConsumerWidget {
             if (exercisesData.isNotEmpty) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Scaffold(
-                  backgroundColor: Color.fromARGB(255, 232, 229, 229),
+                  backgroundColor: const Color(0xFFFAF9F6),
                   appBar: AppBar(
                     backgroundColor:
 
                         //Workouts for each muscle group
                         const Color.fromARGB(255, 0, 136, 204),
-                    title: Text("$muscle Exercises"),
+                    title: Text(
+                      "${capitalizeFirstLetter(muscle)} Exercises",
+                    ),
                   ),
                   body: exercisesList(exercisesData),
                 ),
@@ -252,7 +192,7 @@ class FitCenter extends ConsumerWidget {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 4,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -264,16 +204,17 @@ class FitCenter extends ConsumerWidget {
                 children: [
                   // Adding an icon to each specific muscle
                   muscleIcons[muscle] ??
-                      Icon(Icons.fitness_center,
+                      const Icon(Icons.fitness_center,
                           size:
                               34), // Setting the default Icon if one does not exist
-                  Text(
-                    capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
-                    style: const TextStyle(
+                  StrokeText(
+                    text: capitalizeFirstLetter(muscle.replaceAll('_', ' ')),
+                    textStyle: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    strokeColor: Colors.black12,
                   ),
                   const Icon(Icons.arrow_forward_ios,
                       size: 34, color: Colors.white),
@@ -286,15 +227,22 @@ class FitCenter extends ConsumerWidget {
     );
   }
 
+  // The function that returns the list view of exercises based on the muscle that the user classes
   ListView exercisesList(List<dynamic> exercisesData) {
     return ListView.builder(
       itemCount: exercisesData.length,
       itemBuilder: (context, index) {
         final exercise = exercisesData[index];
-        final exerciseType = exercise['type'];
 
-        // Finding the icon for each exercise type
-        final exerciseTypeIcon = exerciseTypeIcons[exerciseType];
+        // Map of exercises to be saved in firestore
+        final exerciseData = {
+          'name': exercise['name'],
+          'type': exercise['type'],
+          'muscle': exercise['muscle'],
+          'equipment': exercise['equipment'],
+          'difficulty': exercise['difficulty'],
+          'instructions': exercise['instructions'],
+        };
 
         return Container(
           margin: const EdgeInsets.all(16.0),
@@ -319,76 +267,105 @@ class FitCenter extends ConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 150.0,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Text(
-                      exercise['name'],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 32,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        AutoSizeText(
+                          exercise['name'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 32,
+                          ),
+                          maxLines: 1,
+                          minFontSize: 20,
+                          overflow: TextOverflow.clip,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              exercise['type'],
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['muscle'],
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['equipment'],
+                              style: const TextStyle(
+                                color: Colors.green,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              exercise['difficulty'],
+                              style: const TextStyle(
+                                color: Colors.purple,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    //Plus icon that saves to database
+                    Positioned(
+                      top: 0.0,
+                      right: 0.0,
+                      child: //Save To FireStore button
+                          IconButton(
+                        onPressed: () {
+                          // Display a pop up first to ask if the user would like to save the workout
+
+                          // Returning a List that the user will be able to select which specific day to save an exercise to which will then pass the exercise
+                          // to the corresponding collection on FireStore
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    'What day would you like to save this exercise to?'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(
+                                    7,
+                                    (day) {
+                                      return RadioListTile(
+                                        title: Text(getDayName(day)),
+                                        value: day,
+                                        groupValue: selectedDay,
+                                        onChanged: (value) {
+                                          selectedDay = value!;
+                                          Navigator.of(context).pop();
+                                          saveExerciseToFirestore(exerciseData,
+                                              context, selectedDay);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.add_circled,
+                          size: 30,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          exercise['type'],
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['muscle'],
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['equipment'],
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          exercise['difficulty'],
-                          style: const TextStyle(
-                            color: Colors.purple,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.red,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.blue,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.green,
-                          size: 18,
-                        ),
-                        Icon(
-                          exerciseTypeIcon ?? Icons.category,
-                          color: Colors.purple,
-                          size: 18,
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),
@@ -397,9 +374,26 @@ class FitCenter extends ConsumerWidget {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    exercise['instructions'],
-                    style: const TextStyle(fontSize: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Returning a numbered list for the instructions of the workout
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            exercise['instructions'].split('.').length - 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              '${index + 1}. ${exercise['instructions'].split('.')[index]}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -408,5 +402,98 @@ class FitCenter extends ConsumerWidget {
         );
       },
     );
+  }
+
+  String getDayName(int day) {
+    switch (day) {
+      case 0:
+        return "Sunday";
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      case 6:
+        return "Saturday";
+      default:
+        throw ArgumentError("Invalid day: $day");
+    }
+  }
+
+//save exercise
+  void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
+      BuildContext context, int selectedDay) async {
+    try {
+      // Create an instance of FirebaseAuth
+      final FirebaseAuth auth = FirebaseAuth.instance;
+
+      // Get the current user
+      final User? user = auth.currentUser;
+
+      if (user == null) {
+        print('User not logged in.');
+        return;
+      }
+
+      // Get the current user's UID
+      final userID = user.uid;
+
+      // Creating a name for the FIrestore collection based on the day the user selects
+      final collectionName = getDayName(selectedDay) + "_exercises";
+
+      // Make a reference to the Exercises collection in Firebase based on the day selected
+      final exerciseCollection =
+          FirebaseFirestore.instance.collection(collectionName);
+
+      // Check if the exercise with the same name is already saved by the user
+      final existingExerciseQuery = await exerciseCollection
+          .where("uid", isEqualTo: userID)
+          .where("exercise.name", isEqualTo: exercisesData["name"])
+          .limit(1)
+          .get();
+
+      if (existingExerciseQuery.docs.isNotEmpty) {
+        print('Exercise already saved.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Exercise already saved.'),
+          ),
+        );
+        Navigator.of(context).pop();
+        return;
+      }
+
+      // If the exercise is not already saved, add it to the Exercises collection
+      await exerciseCollection.add(
+        {
+          "uid": userID,
+          "exercise": exercisesData,
+          "saveDate": DateTime.now(),
+          "selectedDay": getDayName(selectedDay),
+        },
+      );
+
+      print('Exercise saved to Firestore.');
+      // Save workout to FireStore
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Exercise saved to Firestore.'),
+        ),
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('Error adding exercise to Firestore: $e');
+      // if there is an error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error adding exercise to Firestore.'),
+        ),
+      );
+    }
   }
 }

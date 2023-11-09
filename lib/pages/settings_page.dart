@@ -12,7 +12,7 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, bool> ( (ref) {
 );
 
 class ThemeNotifier extends StateNotifier<bool> {
-  ThemeNotifier() : super(true);
+  ThemeNotifier() : super(false);
 
   //Calling this function toggles the state of the theme
   void toggleTheme() {
@@ -32,88 +32,92 @@ class SettingsPage extends ConsumerWidget {
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
     final themeColor2 = lightDarkTheme ? Colors.black : Colors.white;
 
-    return Scaffold(
-      appBar: myAppBar4(context, ref, 'S e t t i n g s'),
-      backgroundColor: themeColor2,
-      body: Column (
-      children: [
-        Expanded (
-          child: SettingsList(
-            sections: [
-              SettingsSection(
-                title: Text(
-                  'Account',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: themeColor2,
-                    ),
-                  ),
-                tiles: [
-                  SettingsTile(
-                    title: Text(
-                      'Change Password',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: themeColor2,
-                      ),
-                    ),
-                    leading: Icon(
-                      Icons.lock,
-                      color: themeColor2,
-                      ),
-                    onPressed: (BuildContext context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute (builder: (context) => const ChangePassword()),
-                        );
-                    },
-                  ),
-                ],
-              ),
-              SettingsSection(
-                title: Text(
-                  'Appearance',
+    return Theme(
+      data: ThemeData(
+        brightness: lightDarkTheme ? Brightness.dark : Brightness.light,
+      ),
+      child: Scaffold(
+        appBar: myAppBar4(context, ref, 'S e t t i n g s'),
+        body: Column (
+        children: [
+          Expanded (
+            child: SettingsList(
+              sections: [
+                SettingsSection(
+                  title: Text(
+                    'Account',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: themeColor2,
+                        color: themeColor,
+                      ),
                     ),
-                  ),
-                tiles: [
-                  SettingsTile.switchTile (
-                    title: Text(
-                      'Dark Mode',
+                  tiles: [
+                    SettingsTile(
+                      title: Text(
+                        'Change Password',
                         style: TextStyle(
                           fontSize: 16,
-                          color: themeColor2,
+                          color: themeColor,
+                        ),
+                      ),
+                      leading: Icon(
+                        Icons.lock,
+                        color: themeColor,
+                        ),
+                      onPressed: (BuildContext context) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute (builder: (context) => const ChangePassword()),
+                          );
+                      },
                     ),
+                  ],
+                ),
+                SettingsSection(
+                  title: Text(
+                    'Appearance',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: themeColor,
                       ),
-                    leading: Icon(
-                      Icons.flashlight_on_outlined,
-                      color: themeColor2,
+                    ),
+                  tiles: [
+                    SettingsTile.switchTile (
+                      title: Text(
+                        'Dark Mode',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: themeColor,
                       ),
-                    initialValue: lightDarkTheme,
-                    onToggle: (bool lightDarkTheme) {
-                      ref.read(themeProvider.notifier).toggleTheme();
-                    },
-                  ),
+                        ),
+                      leading: Icon(
+                        Icons.flashlight_on_outlined,
+                        color: themeColor,
+                        ),
+                      initialValue: lightDarkTheme,
+                      onToggle: (bool lightDarkTheme) {
+                        ref.read(themeProvider.notifier).toggleTheme();
+                      },
+                    ),
+                  ],
+                ),
                 ],
               ),
-              ],
             ),
-          ),
-          Padding (
-          padding: const EdgeInsets.all(6),
-          child: SignoutButton(
-            onPressed: () async {
-              ref.read(signOutProvider);
-              // After succesful logout redirect to logout page
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-            text: 'Sign Out')
-          ),
-        ],
+            Padding (
+            padding: const EdgeInsets.all(6),
+            child: SignoutButton(
+              onPressed: () async {
+                ref.read(signOutProvider);
+                // After succesful logout redirect to logout page
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
+              text: 'Sign Out')
+            ),
+          ],
+        ),
       ),
     );
   }

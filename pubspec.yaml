@@ -64,6 +64,13 @@ dependencies:
   mobile_scanner: ^3.5.0
   visibility_detector: ^0.4.0
 
+  stroke_text: any
+
+
+
+  fl_chart: ^0.64.0
+  liquid_pull_to_refresh: ^3.0.0
+  modal_bottom_sheet: ^2.1.2
 
 
 
@@ -77,6 +84,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+ 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

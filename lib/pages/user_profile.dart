@@ -1,24 +1,23 @@
-import 'dart:io';
-import 'package:atlas/components/my_textfield.dart';
+import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/text_box.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atlas/main.dart';
-import "package:cupertino_icons/cupertino_icons.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 //import 'image'
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
+
+
 final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
   try {
     final DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -35,6 +34,10 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key}) : super(key: key);
 
+  Future<void> _handleReresh() async {
+    return await Future.delayed(const Duration(seconds: 1));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = FirebaseAuth.instance.currentUser!;
@@ -47,7 +50,8 @@ class UserProfile extends ConsumerWidget {
 
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
-    final themeColor2 = lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+    final themeColor2 =
+        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -103,129 +107,92 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
-  //Signs the user out when called
-  void signOut() {
-    FirebaseAuth.instance.signOut();
-    runApp(
-      ProviderScope(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: LoginPage(),
-          routes: {
-            '/home': (context) => LoginPage(),
-          },
-        ),
-      ),
-    );
-  }
-
-  //Shows the settings page when called
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/settings');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-
-  //Shows the settings page when called
-  //Saving for later because it works
-  /*
-  void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget> [
-                //Signout button
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    // After succesful logout redirect to logout page
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  },
-                  child: const Text (
-                    "Sign out Button"
-                  )
-                ),
-              ]
-            ),
-          );
-        }
-      );
-    }
-    */
-
-      //App bar for the user profile page
-  PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
-    return PreferredSize (
-      preferredSize: const Size.fromHeight(70),
-      child: AppBar (
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-        actions: [
-          //Settings icon button
-          IconButton (
-          icon: const Icon(Icons.settings),
-          onPressed: () {
-              Navigator.push (
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
+    //Signs the user out when called
+    void signOut() {
+      FirebaseAuth.instance.signOut();
+      runApp(
+        ProviderScope(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: LoginPage(),
+            routes: {
+              '/home': (context) => LoginPage(),
             },
           ),
-        ],
-          title: Text(
-            title,
-            style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-            )
-          )
+        ),
       );
-  }
+    }
+
+    //Shows the settings page when called
+    void showSettings(BuildContext context) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Settings'),
+              content:
+                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                //Signout button
+                ElevatedButton(
+                    onPressed: () async {
+                      await ref.read(signOutProvider);
+                      // After succesful logout redirect to logout page
+                      Navigator.of(context).pushReplacementNamed('/settings');
+                    },
+                    child: const Text("Sign out Button")),
+              ]),
+            );
+          });
+    }
+
+    //App bar for the user profile page
+    PreferredSize userProfileAppBar(
+        BuildContext context, WidgetRef ref, String title) {
+      return PreferredSize(
+          preferredSize: const Size.fromHeight(70),
+          child: AppBar(
+              centerTitle: true,
+              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+              actions: [
+                //Settings icon button
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsPage()),
+                    );
+                  },
+                ),
+              ],
+              title: Text(
+                title,
+                style: const TextStyle(
+                    fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+              )));
+    }
 
     // Edit field
     Future<void> editField(String field) async {
-      String newValue = "";
-      await showDialog(
+      TextEditingController username = TextEditingController();
+
+      String? newValue = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: themeColor2,
           title: Text(
             "Edit $field",
             style: TextStyle(color: themeColor),
           ),
           content: TextField(
+            controller: username,
             autofocus: true,
-            style: const TextStyle(
-                color:  Color.fromARGB(255, 0, 0, 0)), // Change text color to white
+            style: TextStyle(color: themeColor), // Change text color to theme
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),
             ),
-            onChanged: (value) {
-              newValue = value;
-            },
           ),
           actions: [
             // Cancel button
@@ -243,22 +210,42 @@ class UserProfile extends ConsumerWidget {
                 'Save',
                 style: TextStyle(color: themeColor),
               ),
-              onPressed: () => Navigator.of(context).pop(newValue),
+              onPressed: () => Navigator.of(context).pop(username.text),
             ),
           ],
         ),
       );
 
       // Update in Firestore
-      if (newValue.trim().isNotEmpty) {
+      if (newValue != null && newValue.trim().isNotEmpty) {
         // Only update if there is something in the text field
         await usersCollection.doc(currentUser.email).update({field: newValue});
       }
     }
 
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
+    //Gets the user's username
+    Stream<String> fetchUsername({String? email}) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        return FirebaseFirestore.instance
+            .collection("Users")
+            .doc(email)
+            .snapshots()
+            .map((snapshot) {
+          final userData = snapshot.data() as Map<String, dynamic>;
+          return userData['username']?.toString() ?? '';
+        });
+      }
+      return Stream.value('');
+    }
+
     return Scaffold(
       backgroundColor: themeColor2,
-      appBar: userProfileAppBar(context, ref, 'U s e r  P r o f i l e'),
+      appBar: userProfileAppBar(context, ref, 'U s e r'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -278,106 +265,125 @@ class UserProfile extends ConsumerWidget {
           final userData = snapshot.data!.data() as Map<String, dynamic>?;
 
           if (userData != null) {
-            return ListView(
-              children: [
-                const SizedBox(height: 50),
+            //starts the user profile page
+            return LiquidPullToRefresh(
+              // Handle refresh logic
+              onRefresh: _handleReresh,
+              height: 100,
+              backgroundColor: Colors.deepPurple[200],
+              showChildOpacityTransition: false,
+              animSpeedFactor: 1,
+              child: ListView(
+                children: [
+                  const SizedBox(height: 50),
 
-          //Profile Picture
-          Stack(
-            children: [
-              Align(
-                alignment: Alignment.center, // Center the icon
-                child: profilePictureUrl.when(
-                  data: (url) {
-                    if (url != null && url.isNotEmpty) {
-                      return CircleAvatar(
-                        radius: 64,
-                        backgroundImage: NetworkImage(url),
-                      );
-                    }
-                    return image.state != null
-                        ? CircleAvatar(
-                            radius: 64,
-                            backgroundImage: image.state != null
-                                ? MemoryImage(image.state!)
-                                : null,
-                          )
-                        : const Icon(
-                            CupertinoIcons.profile_circled,
-                            size: 72,
+                  //Profile Picture
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.center, // Center the icon
+                        child: profilePictureUrl.when(
+                          data: (url) {
+                            if (url != null && url.isNotEmpty) {
+                              return CircleAvatar(
+                                radius: 64,
+                                backgroundImage: NetworkImage(url),
+                              );
+                            }
+                            return image.state != null
+                                ? CircleAvatar(
+                                    radius: 64,
+                                    backgroundImage: image.state != null
+                                        ? MemoryImage(image.state!)
+                                        : null,
+                                  )
+                                : Icon(
+                                    color: themeColor,
+                                    CupertinoIcons.profile_circled,
+                                    size: 72,
+                                  );
+                          },
+                          loading: () => const CircularProgressIndicator(),
+                          error: (e, stack) => const Icon(
+                              CupertinoIcons.profile_circled,
+                              size: 72),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -10,
+                        left: 240,
+                        child: IconButton(
+                          color: themeColor,
+                          // onPressed, opens Image Picker
+                          onPressed: selectImage,
+                          icon: const Icon(Icons.add_a_photo),
+                        ),
+                      )
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  //Username
+                  StreamBuilder<String>(
+                      stream: fetchUsername(email: currentUser.email),
+                      builder: (context, usernameSnapshot) {
+                        if (usernameSnapshot.hasData) {
+                          return Text(
+                            usernameSnapshot.data.toString().trim(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: themeColor,
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                            ),
                           );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (e, stack) => const Icon(
-                      CupertinoIcons.profile_circled,
-                      size: 72),
-                ),
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      }),
+
+                  const SizedBox(height: 30),
+
+                  // User details
+                  ExpansionTile(
+                    title: Text(
+                      'My Details',
+                      style: TextStyle(
+                        color: themeColor,
+                      ),
+                    ),
+                    children: [
+                      // Username
+                      MyTextBox(
+                        text: userData['username']?.toString() ??
+                            '', // Safely access username
+                        sectionName: 'Username',
+                        onPressed: () => editField('username'),
+                      ),
+
+                      // Bio
+                      MyTextBox(
+                        text: userData['bio']?.toString() ??
+                            '', // Safely access bio
+                        sectionName: 'Bio',
+                        onPressed: () => editField('bio'),
+                      ),
+                    ],
+                  ),
+
+                  //posts
+                  ExpansionTile(
+                    title: Text(
+                      'My Posts',
+                      style: TextStyle(
+                        color: themeColor,
+                      ),
+                    ),
+                    children: const [],
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: -10,
-                left: 80,
-                child: IconButton(
-                  // onPressed, opens Image Picker
-                  onPressed: selectImage,
-                  icon: const Icon(Icons.add_a_photo),
-                ),
-              )
-            ],
-          ),
-
-
-                const SizedBox(height: 10),
-
-                // User email
-                Text(
-                  currentUser.email!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: themeColor,
-                  ),
-                ),
-
-                const SizedBox(height: 50),
-
-                // User details
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    'My Details',
-                    style: TextStyle(
-                      color: themeColor,
-                    ),
-                  ),
-                ),
-
-                // Username
-                MyTextBox(
-                  text: userData['username']?.toString() ??
-                      '', // Safely access username
-                  sectionName: 'Username',
-                  onPressed: () => editField('username'),
-                ),
-
-                // Bio
-                MyTextBox(
-                  text: userData['bio']?.toString() ?? '', // Safely access bio
-                  sectionName: 'Bio',
-                  onPressed: () => editField('bio'),
-                ),
-
-                const SizedBox(height: 50),
-
-                // User posts
-                Padding(
-                  padding: EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    'My Posts',
-                    style: TextStyle(
-                      color: themeColor,
-                    ),
-                  ),
-                ),
-              ],
             );
           } else {
             // Handle the case where userData is null

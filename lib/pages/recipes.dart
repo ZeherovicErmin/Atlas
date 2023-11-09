@@ -55,9 +55,9 @@ class Recipes extends ConsumerWidget {
           backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
               title: const Center(
-                  child: Text("Recipes",
+                  child: Text("R e c i p e s",
                       style: TextStyle(fontWeight: FontWeight.bold))),
-              backgroundColor: Colors.orange,
+              backgroundColor: Color.fromARGB(255, 0, 136, 204),
               bottom: const TabBar(tabs: [
                 Tab(icon: Icon(Icons.search), text: "Search"),
                 Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),

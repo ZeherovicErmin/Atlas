@@ -9,17 +9,21 @@ import 'package:flutter/services.dart';
 
 class HabitCard extends StatefulWidget {
   final String title;
+  final String unit;
   final IconData iconData;
   final Color backgroundColor;
   final Function(String) onTap;
   final String selectedDate;
+  final String image;
 
   const HabitCard({
     required this.title,
-    required this.iconData,
+    required this.unit,
     required this.backgroundColor,
     required this.onTap,
     required this.selectedDate,
+    this.iconData = Icons.flutter_dash,
+    this.image = '',
   });
 
   @override
@@ -87,6 +91,13 @@ class HabitCardState extends State<HabitCard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                if (widget.image.isNotEmpty)
+                Image.asset(
+                  widget.image,
+                  width: 60,
+                  height: 60,
+                ),
+                if (widget.image.isEmpty)
                 Icon(
                   widget.iconData,
                   size: 50,
@@ -110,6 +121,15 @@ class HabitCardState extends State<HabitCard> {
                     color: Colors.white,
                   ),
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.unit,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )
               ],
             ),
           ),
@@ -427,39 +447,43 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     HabitCard(
                       title: 'Calories',
-                      iconData: Icons.fastfood,
+                      image: 'lib/images/burger.png',
                       backgroundColor: Colors.red,
                       onTap: (value) {
                         saveHabitData(uid2, formattedDate, 'calories', value);
                       },
                       selectedDate: formattedDate,
+                      unit: '(kcal)',
                     ),
                     HabitCard(
                       title: 'Sleep',
-                      iconData: Icons.nightlight_round,
+                      image: 'lib/images/bed.png',
                       backgroundColor: Colors.purple,
                       onTap: (value) {
                         saveHabitData(uid2, formattedDate, 'sleep', value);
                       },
                       selectedDate: formattedDate,
+                      unit: '(Hours)'
                     ),
                     HabitCard(
                       title: 'Water',
-                      iconData: Icons.water_drop,
-                      backgroundColor: Colors.blue,
+                      image: 'lib/images/water.png',
+                      backgroundColor: Colors.lightBlue,
                       onTap: (value) {
                         saveHabitData(uid2, formattedDate, 'water', value);
                       },
                       selectedDate: formattedDate,
+                      unit: '(Fluid Ounces)',
                     ),
                     HabitCard(
-                      title: 'Running',
-                      iconData: Icons.directions_run,
-                      backgroundColor: Colors.green,
+                      title: 'Protein',
+                      image: 'lib/images/protein.png',
+                      backgroundColor: Colors.brown,
                       onTap: (value) {
-                        saveHabitData(uid2, formattedDate, 'running', value);
+                        saveHabitData(uid2, formattedDate, 'Protein', value);
                       },
                       selectedDate: formattedDate,
+                      unit: '(Grams)'
                   ),
                 ],
               ),

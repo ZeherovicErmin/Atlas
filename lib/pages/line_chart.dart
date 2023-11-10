@@ -188,8 +188,8 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
                           tooltipBgColor: Colors.black,
                           getTooltipItems: (List<LineBarSpot> touchedSpots) {
                             return touchedSpots.map((touchedSpot) {
-                              final textStyle = TextStyle(
-                                color: widget.habitCardColor,
+                              const textStyle = TextStyle(
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               );
                               return LineTooltipItem('${touchedSpot.y.toInt()}', textStyle);

@@ -113,6 +113,16 @@ class HabitCardState extends State<HabitCard> {
                   ),
                 ),
                 const SizedBox(height: 5),
+
+                Text(
+                  widget.unit,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Text(
                   currentSubtitle,
                   style: const TextStyle(
@@ -121,15 +131,6 @@ class HabitCardState extends State<HabitCard> {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  widget.unit,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                )
               ],
             ),
           ),

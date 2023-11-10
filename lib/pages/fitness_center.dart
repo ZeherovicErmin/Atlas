@@ -1,6 +1,7 @@
 //Atlas Fitness App CSC 4996
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/my_workouts.dart';
+import 'package:atlas/pages/notes.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,7 +73,7 @@ class FitCenter extends ConsumerWidget {
     return Container(
       child: DefaultTabController(
         initialIndex: 0,
-        length: 2,
+        length: 3,
         child: Scaffold(
           backgroundColor: const Color(0xFFFAF9F6),
           //Home page for when a user logs in
@@ -94,6 +95,9 @@ class FitCenter extends ConsumerWidget {
                     text: "Discover",
                   ),
                   Tab(text: "My Workouts"),
+                  Tab(
+                    text: "Notes",
+                  )
                 ],
               ),
               actions: [
@@ -137,6 +141,8 @@ class FitCenter extends ConsumerWidget {
               musclesList(),
 
               const DiscoverPage(),
+
+              const NotesPage(),
             ],
           ),
         ),

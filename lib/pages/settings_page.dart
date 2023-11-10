@@ -45,6 +45,24 @@ class NotificationService {
     await notificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {});
+
+  void scheduleDailyNoonNotification(NotificationService notificationService) async {
+  DateTime now = DateTime.now();
+  DateTime noon = DateTime(now.year, now.month, now.day, 12, 0); // Set to 12:00 PM
+
+  // If 12:00 PM today has already passed, schedule for the next day
+  if (noon.isBefore(now)) {
+    noon = noon.add(Duration(days: 1));
+  }
+
+  notificationService.scheduleNotification(
+    title: 'Log a habit',
+    body: 'Would you like to log your habits now?',
+    scheduledNotificationDateTime: noon,
+  );
+
+  debugPrint('Notification scheduled for $noon');
+}
   }
 
   notificationDetails() {
@@ -221,11 +239,15 @@ class SettingsPage extends ConsumerWidget {
     );
     
   }
+
+
+
   // Function to open DatePicker and schedule notification
   void _openTimePickerAndSchedule(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      
+      initialTime: TimeOfDay(hour: 12,minute: 0),
     );
 
     if (pickedTime != null) {

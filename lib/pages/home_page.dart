@@ -1,4 +1,4 @@
-import 'package:atlas/components/my_button2.dart';
+import 'package:atlas/pages/habit_toggle.dart';
 import 'package:atlas/pages/line_chart.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -113,7 +113,6 @@ class HabitCardState extends State<HabitCard> {
                   ),
                 ),
                 const SizedBox(height: 5),
-
                 Text(
                   widget.unit,
                   style: const TextStyle(
@@ -252,6 +251,7 @@ class _HomePageState extends State<HomePage> {
   late Stream<String> usernameStream;
   String formatDate(DateTime date) => "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
   String formatDateTime(DateTime date) => "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  String? profileImage;
 
   @override
   void initState() {
@@ -259,7 +259,43 @@ class _HomePageState extends State<HomePage> {
     selectedDate = formatDate(currentDate);
     formattedDate = formatDateTime(currentDate);
     usernameStream = fetchUsername();
+    fetchProfileImage();
     super.initState();
+  }
+
+  //Gets the user's profile picture from firebase for the appbar
+  void fetchProfileImage() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null && currentUser.email != null) {
+      try {
+        final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.email)
+          .get();
+        final userPicture = userDoc.data() as Map<String, dynamic>?;
+        if (userPicture != null && userPicture.containsKey('profilePicture')) {
+          setState(() {
+            profileImage = userPicture['profilePicture'];
+          });
+        }
+      } catch (e) {
+        print('Error fetching your profile picture.');
+      }
+    }
+  }
+
+  //Grabs selected habits from firebase
+  Stream<Map<String, bool>> fetchSelectedHabits() {
+    //Variables
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
+    //Returns toggled habits to the screen
+    return FirebaseFirestore.instance.collection('SelectedHabits').doc(uid).snapshots().map((snapshot) {
+      final data = snapshot.data() as Map<String, dynamic>?;
+      return Map<String, bool>.from(data?['selectedHabits'] ?? {});
+    });
   }
 
   //Changes the date to the next day in real time
@@ -302,10 +338,10 @@ class _HomePageState extends State<HomePage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       return FirebaseFirestore.instance
-          .collection("Users")
-          .doc(currentUser.email)
-          .snapshots()
-          .map((snapshot) {
+        .collection("Users")
+        .doc(currentUser.email)
+        .snapshots()
+        .map((snapshot) {
         final userData = snapshot.data() as Map<String, dynamic>;
         return userData['username']?.toString() ?? '';
       });
@@ -315,15 +351,24 @@ class _HomePageState extends State<HomePage> {
 
   //App Bar
   PreferredSize homePageAppBar(BuildContext context) {
+    //Variables
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user?.uid;
+
+    //Returns App bar
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: AppBar(
-        leading: const Icon(
-          null,
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HabitToggle()),
+            );
+          }
+        ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
         toolbarHeight: 60,
@@ -362,6 +407,19 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
+          if (profileImage != null)
+          IconButton(
+            icon: CircleAvatar(
+            backgroundImage: NetworkImage(profileImage!),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UserProfile()),
+              );
+            },
+          ),
+          if (profileImage == null)
           IconButton(
             icon: const Icon(CupertinoIcons.profile_circled),
             onPressed: () {
@@ -395,98 +453,158 @@ class _HomePageState extends State<HomePage> {
   String uid2 = uid.toString();
 
   //Returns the app bar & habit cards
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAF9F6),
-      appBar: homePageAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  onPressed: deleteDate,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    chooseDate(context);
-                  },
-                  child: Container(
-                    height: 46,
-                    width: 256,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Center(
-                      child: Text(
-                        selectedDate,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+  return Scaffold(
+    backgroundColor: const Color(0xFFFAF9F6),
+    appBar: homePageAppBar(context),
+    body: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: deleteDate,
+              ),
+              GestureDetector(
+                onTap: () {
+                  chooseDate(context);
+                },
+                child: Container(
+                  height: 46,
+                  width: 256,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Center(
+                    child: Text(
+                      selectedDate,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios),
-                  onPressed: () => addDate(),
-                ),
-              ],
-            ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  children: [
-                    HabitCard(
-                      title: 'Calories',
-                      image: 'lib/images/burger.png',
-                      backgroundColor: Colors.red,
-                      onTap: (value) {
-                        saveHabitData(uid2, formattedDate, 'calories', value);
-                      },
-                      selectedDate: formattedDate,
-                      unit: '(kcal)',
-                    ),
-                    HabitCard(
-                      title: 'Sleep',
-                      image: 'lib/images/bed.png',
-                      backgroundColor: Colors.purple,
-                      onTap: (value) {
-                        saveHabitData(uid2, formattedDate, 'sleep', value);
-                      },
-                      selectedDate: formattedDate,
-                      unit: '(Hours)'
-                    ),
-                    HabitCard(
-                      title: 'Water',
-                      image: 'lib/images/water.png',
-                      backgroundColor: Colors.lightBlue,
-                      onTap: (value) {
-                        saveHabitData(uid2, formattedDate, 'water', value);
-                      },
-                      selectedDate: formattedDate,
-                      unit: '(Fluid Ounces)',
-                    ),
-                    HabitCard(
-                      title: 'Protein',
-                      image: 'lib/images/protein.png',
-                      backgroundColor: Colors.brown,
-                      onTap: (value) {
-                        saveHabitData(uid2, formattedDate, 'Protein', value);
-                      },
-                      selectedDate: formattedDate,
-                      unit: '(Grams)'
-                  ),
-                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.arrow_forward_ios),
+                onPressed: () => addDate(),
+              ),
+            ],
+          ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: StreamBuilder<Map<String, bool>> (
+                stream: fetchSelectedHabits(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text("No habit cards found");
+                  }
+                  var selectedHabits = snapshot.data!;
+                    return GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
+                    children: [
+                      if (selectedHabits['Calories'] ?? true)
+                      HabitCard(
+                        title: 'Calories',
+                        image: 'lib/images/burger.png',
+                        backgroundColor: Colors.red,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'calories', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(kcal)',
+                      ),
+                      if (selectedHabits['Sleep'] ?? true)
+                      HabitCard(
+                        title: 'Sleep',
+                        image: 'lib/images/bed.png',
+                        backgroundColor: Colors.purple,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'sleep', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Hours)'
+                      ),
+                      if (selectedHabits['Water'] ?? true)
+                      HabitCard(
+                        title: 'Water',
+                        image: 'lib/images/water.png',
+                        backgroundColor: Colors.lightBlue,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'water', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Fluid Ounces)',
+                      ),
+                      if (selectedHabits['Protein'] ?? true)
+                      HabitCard(
+                        title: 'Protein',
+                        image: 'lib/images/protein.png',
+                        backgroundColor: Colors.brown,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'protein', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Weight'] ?? true)
+                      HabitCard(
+                        title: 'Weight',
+                        image: 'lib/images/weigh-scales.png',
+                        backgroundColor: Colors.grey[700] ?? Colors.grey,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'weight', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Pounds)'
+                      ),
+                      if (selectedHabits['Carbohydrates'] ?? true)
+                      HabitCard(
+                        title: 'Carbohydrates',
+                        image: 'lib/images/bread.png',
+                        backgroundColor: Colors.cyan,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'carbohydrates', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Sugar'] ?? true)
+                      HabitCard(
+                        title: 'Sugar',
+                        image: 'lib/images/sugar.png',
+                        backgroundColor: const Color.fromARGB(255, 255, 116, 163),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'Sugar', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Running'] ?? true)
+                      HabitCard(
+                        title: 'Running',
+                        image: 'lib/images/jogging.png',
+                        backgroundColor: Colors.green,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'Running', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Miles)'
+                      ),
+                    ],
+                  );
+                }
               ),
             ),
           ],

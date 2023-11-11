@@ -1,17 +1,19 @@
 // The notes data class
 
 import 'package:atlas/pages/notes.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NoteData {
   // The list of notes
   List<Note> allNotes = [
     // Default first note
     Note(id: 0, text: 'First Note'),
+    Note(id: 2, text: 'Second Note'),
   ];
 
   // Getting the notes
   List<Note> getAllNotes() {
-    return allNotes;
+    return List.from(allNotes);
   }
 
   // Adding a new note
@@ -36,3 +38,11 @@ class NoteData {
     allNotes.remove(note);
   }
 }
+
+// Creating a notes provider using riverpods
+final noteDataProvider = Provider<NoteData>((ref){
+  // Initializing NoteData
+  return NoteData();
+});
+
+

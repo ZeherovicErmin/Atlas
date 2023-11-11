@@ -103,7 +103,7 @@ class FitCenter extends ConsumerWidget {
               actions: [
                 // Creating a button that will display information on how to use the page to the user
                 IconButton(
-                    icon: const Icon(Icons.info),
+                    icon: const Icon(CupertinoIcons.info_circle_fill),
                     onPressed: () {
                       final isInfoDialogOpen = ref.read(infoDialogProvider);
 

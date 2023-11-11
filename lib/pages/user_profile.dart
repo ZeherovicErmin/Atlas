@@ -12,6 +12,7 @@ import 'package:atlas/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 //import 'image'
 
 // Riverpod Provider

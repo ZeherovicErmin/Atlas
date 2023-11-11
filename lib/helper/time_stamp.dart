@@ -1,21 +1,19 @@
 // return formatted date as a string
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 String formatDate(Timestamp timestamp) {
   DateTime dateTime = timestamp.toDate();
 
-  //get year
-  String year = dateTime.year.toString();
+  // Format date
+  String formattedDate = DateFormat('MM/dd/yyyy').format(dateTime);
 
-  //get month
-  String month = dateTime.month.toString();
+  // Format time
+  String formattedTime = DateFormat('h:mm a').format(dateTime);
 
-  //get year
-  String day = dateTime.day.toString();
-
-  //formatted data
-  String formattedData = '$month/$day/$year';
+  // Combine date and time
+  String formattedData = '$formattedDate • $formattedTime';
 
   return formattedData;
 }

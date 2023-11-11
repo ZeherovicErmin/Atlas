@@ -29,6 +29,10 @@ final selectedMuscleProvider = StateProvider<String>((ref) {
   return muscle;
 });
 
+// A variable to track selected days
+final selectedDaysProvider =
+    StateProvider<List<bool>>((ref) => List.generate(7, (index) => false));
+
 class SavedExercisesNotifier extends Notifier<List<String>> {
   SavedExercisesNotifier() : super();
 
@@ -46,13 +50,13 @@ final loadingProvider = StateProvider<bool>((ref) => false);
 
 class FitCenter extends ConsumerWidget {
   // A bool to prevent multiple clicks of a button
-  FitCenter({Key? key}) : super(key: key);
+  const FitCenter({Key? key}) : super(key: key);
 
   //for saving to database
   final bool saved = false;
   Future<List<dynamic>> getExercises(String muscle) async {
     // The Api key from API NINJAS
-    final String myApiKey =
+    const String myApiKey =
         'q48XgvLytBmNhVJHFzoZgg==QWOhrECybUKjiRR8'; // Need to hide
 
     // THe url to Api ninjas site, the $muscle will be provided from the muscle variable
@@ -74,81 +78,79 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      child: DefaultTabController(
-        initialIndex: 0,
-        length: 3,
-        child: Scaffold(
-          backgroundColor: const Color(0xFFFAF9F6),
-          //Home page for when a user logs in
-          appBar: AppBar(
-              title: const Center(
-                child: Text(
-                  "F i t n e s s   C e n t e r",
-                  style: TextStyle(
-                    fontFamily: 'Open Sans',
-                    fontWeight: FontWeight.bold,
-                  ),
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 3,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFAF9F6),
+        //Home page for when a user logs in
+        appBar: AppBar(
+            title: const Center(
+              child: Text(
+                "F i t n e s s   C e n t e r",
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-              bottom: const TabBar(
-                indicatorColor: Color.fromARGB(255, 90, 86, 86),
-                tabs: [
-                  Tab(
-                    text: "Discover",
-                  ),
-                  Tab(text: "My Workouts"),
-                  Tab(
-                    text: "Notes",
-                  )
-                ],
-              ),
-              actions: [
-                // Creating a button that will display information on how to use the page to the user
-                IconButton(
-                    icon: const Icon(CupertinoIcons.info_circle_fill),
-                    onPressed: () {
-                      final isInfoDialogOpen = ref.read(infoDialogProvider);
+            ),
+            backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+            bottom: const TabBar(
+              indicatorColor: Color.fromARGB(255, 90, 86, 86),
+              tabs: [
+                Tab(
+                  text: "Discover",
+                ),
+                Tab(text: "My Workouts"),
+                Tab(
+                  text: "Notes",
+                )
+              ],
+            ),
+            actions: [
+              // Creating a button that will display information on how to use the page to the user
+              IconButton(
+                  icon: const Icon(CupertinoIcons.info_circle_fill),
+                  onPressed: () {
+                    final isInfoDialogOpen = ref.read(infoDialogProvider);
 
-                      if (!isInfoDialogOpen) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Center(
-                                  child: Text('Discover Page Guide')),
-                              content: const Text(
-                                  "Displayed is a list of muscles with icons depicting the muscle.\n"
-                                  "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
-                                  "The muscles are color coded by general muscle group they belong to.\n"),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Close'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    })
-              ]),
+                    if (!isInfoDialogOpen) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Center(
+                                child: Text('Discover Page Guide')),
+                            content: const Text(
+                                "Displayed is a list of muscles with icons depicting the muscle.\n"
+                                "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
+                                "The muscles are color coded by general muscle group they belong to.\n"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Close'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  })
+            ]),
 
-          body: TabBarView(
-            children: [
-              // The Discover Tab Of the workouts page
+        body: TabBarView(
+          children: [
+            // The Discover Tab Of the workouts page
 
-              // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
-              musclesList(ref),
+            // Listing each muscle that will dynamically show a list of exercises for the clicked workout on a different page
+            musclesList(ref),
 
-              const DiscoverPage(),
+            const DiscoverPage(),
 
-              const NotesPage(),
-            ],
-          ),
+            const NotesPage(),
+          ],
         ),
       ),
     );
@@ -156,8 +158,6 @@ class FitCenter extends ConsumerWidget {
 
   // the list of clickable muscles
   Widget musclesList(WidgetRef ref) {
-    final isLoading = ref.watch(loadingProvider);
-
     return ListView.builder(
       itemCount: list.length,
       itemBuilder: (context, index) {
@@ -172,7 +172,6 @@ class FitCenter extends ConsumerWidget {
                 context: context,
                 barrierDismissible: false,
                 builder: (BuildContext context) {
-                  child:
                   return LoadingAnimationWidget.inkDrop(
                     color: Color.fromARGB(255, 0, 136, 204),
                     size: 200,
@@ -181,8 +180,8 @@ class FitCenter extends ConsumerWidget {
 
             final exercisesData = await getExercises(muscle);
 
-            // Waiting 2 seconds
-            await Future.delayed(Duration(milliseconds: 1500));
+            // Waiting 1 second
+            await Future.delayed(Duration(milliseconds: 750));
 
             // Dismiss the loading indicator
             Navigator.pop(context);
@@ -200,7 +199,7 @@ class FitCenter extends ConsumerWidget {
                       "${capitalizeFirstLetter(muscle)} Exercises",
                     ),
                   ),
-                  body: exercisesList(exercisesData),
+                  body: exercisesList(exercisesData, ref),
                 ),
               ));
             } else {
@@ -259,7 +258,7 @@ class FitCenter extends ConsumerWidget {
 }
 
 // The function that returns the list view of exercises based on the muscle that the user classes
-ListView exercisesList(List<dynamic> exercisesData) {
+ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
   return ListView.builder(
     itemCount: exercisesData.length,
     itemBuilder: (context, index) {
@@ -359,35 +358,63 @@ ListView exercisesList(List<dynamic> exercisesData) {
                       onPressed: () {
                         // Display a pop up first to ask if the user would like to save the workout
 
-                        // Returning a List that the user will be able to select which specific day to save an exercise to which will then pass the exercise
-                        // to the corresponding collection on FireStore
-
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text(
-                                  'What day would you like to save this exercise to?'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
-                                  7,
-                                  (day) {
-                                    return RadioListTile(
+                                title: const Text(
+                                    'What day would you like to save this exercise to?'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(7, (day) {
+                                    // watching for the state of the provider to see if the specific day of the week is selected
+                                    final isSelected =
+                                        ref.watch(selectedDaysProvider)[day];
+                                    return CheckboxListTile(
                                       title: Text(getDayName(day)),
-                                      value: day,
-                                      groupValue: selectedDay,
-                                      onChanged: (value) {
-                                        selectedDay = value!;
-                                        Navigator.of(context).pop();
-                                        saveExerciseToFirestore(
-                                            exerciseData, context, selectedDay);
+                                      value: isSelected,
+
+                                      // Updating the state of whether or not its selected by modifying the state of the provider notifier
+                                      onChanged: (bool? value) {
+                                        ref
+                                            .read(selectedDaysProvider.notifier)
+                                            .update((state) {
+                                          final newState =
+                                              List<bool>.from(state);
+                                          newState[day] = value!;
+                                          return newState;
+                                        });
                                       },
                                     );
-                                  },
+                                  }),
                                 ),
-                              ),
-                            );
+                                // Adding the buttons to save / cancel
+                                actions: [
+                                  // Adding a button to cancel
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('Save'),
+                                    onPressed: () {
+                                      final selectedDays =
+                                          ref.read(selectedDaysProvider);
+                                      // Iterating through each selected day to save it to the particular collection
+                                      for (int i = 0;
+                                          i < selectedDays.length;
+                                          i++) {
+                                        if (selectedDays[i]) {
+                                          saveExerciseToFirestore(
+                                              exerciseData, context, i);
+                                        }
+                                      }
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ]);
                           },
                         );
                       },
@@ -487,6 +514,11 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
         .limit(1)
         .get();
 
+    // Checking if context is still valid
+    if (!Navigator.of(context).mounted) {
+      return;
+    }
+
     if (existingExerciseQuery.docs.isNotEmpty) {
       print('Exercise already saved.');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -494,28 +526,25 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
           content: Text('Exercise already saved.'),
         ),
       );
-      Navigator.of(context).pop();
-      return;
+    } else {
+      // If the exercise is not already saved, add it to the Exercises collection
+      await exerciseCollection.add(
+        {
+          "uid": userID,
+          "exercise": exercisesData,
+          "saveDate": DateTime.now(),
+          "selectedDay": getDayName(selectedDay),
+        },
+      );
+
+      print('Exercise saved to Firestore.');
+      // Save workout to FireStore
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Exercise saved to Firestore.'),
+        ),
+      );
     }
-
-    // If the exercise is not already saved, add it to the Exercises collection
-    await exerciseCollection.add(
-      {
-        "uid": userID,
-        "exercise": exercisesData,
-        "saveDate": DateTime.now(),
-        "selectedDay": getDayName(selectedDay),
-      },
-    );
-
-    print('Exercise saved to Firestore.');
-    // Save workout to FireStore
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Exercise saved to Firestore.'),
-      ),
-    );
-    Navigator.of(context).pop();
   } catch (e) {
     print('Error adding exercise to Firestore: $e');
     // if there is an error

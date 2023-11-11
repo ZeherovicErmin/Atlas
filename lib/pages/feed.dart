@@ -211,20 +211,27 @@ class Feed extends ConsumerWidget {
                             print(
                                 'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
                           }
+
+                          //Check if doc has recipe data. If so, get the recipe data
+                          final recipe = post.data().toString().contains('recipe')
+                              ? post.get('recipe')
+                              : '';
+                          Map<String, dynamic> emptyMap = Map<String, dynamic>();
                           return StreamBuilder<String>(
                             stream: fetchUsername(email: post['UserEmail']),
                             builder: (context, usernameSnapshot) {
                               if (usernameSnapshot.hasData) {
                                 return FeedPost(
-                                  message: post['Message'],
-                                  user: usernameSnapshot.data!,
-                                  postId: post.id,
-                                  barcodeData: barcodeDataMap,
-                                  likes: List<String>.from(post['Likes'] ?? []),
-                                  time: formatDate(post['TimeStamp']),
-                                  email: post['UserEmail'],
-                                  imageUrl: post['postImage'],
-                                );
+                                    message: post['Message'],
+                                    user: usernameSnapshot.data!,
+                                    postId: post.id,
+                                    barcodeData: barcodeDataMap,
+                                    likes:
+                                        List<String>.from(post['Likes'] ?? []),
+                                    time: formatDate(post['TimeStamp']),
+                                    email: post['UserEmail'],
+                                    imageUrl: post['postImage'],
+                                    recipe: recipe == '' ?  emptyMap : recipe);
                               } else if (snapshot.hasError) {
                                 return Center(
                                   child: Text('Error:${snapshot.error}'),

@@ -1,3 +1,4 @@
+import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
@@ -5,6 +6,7 @@ import 'package:atlas/components/editPostButton.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/time_stamp.dart';
+import 'package:atlas/pages/saved_recipes.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,17 +22,20 @@ class FeedPost extends StatefulWidget {
   final Map<String, dynamic>? barcodeData;
   final String email;
   final String imageUrl;
-  const FeedPost(
-      {super.key,
-      required this.message,
-      required this.user,
-      required this.postId,
-      required this.likes,
-      required this.time,
-      required this.email,
-      this.barcodeData,
-      required this.imageUrl,
-      });
+  final Map<String, dynamic>? recipe;
+
+  const FeedPost({
+    super.key,
+    required this.message,
+    required this.user,
+    required this.postId,
+    required this.likes,
+    required this.time,
+    required this.email,
+    this.barcodeData,
+    required this.imageUrl,
+    this.recipe
+  });
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -174,6 +179,17 @@ class _FeedPostState extends State<FeedPost> {
                       ),
                     ),
                   ),
+                ),
+
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
                 ),
 
                 //user + day
@@ -629,7 +645,9 @@ class _FeedPostState extends State<FeedPost> {
                 value: '${barcodeData['carbsPerServing']}'),
             //Sugars
             NutritionRow(
-                title: "Total Sugars", isSubcategory: true, value: '${barcodeData['sugarsPerServing']}'),
+                title: "Total Sugars",
+                isSubcategory: true,
+                value: '${barcodeData['sugarsPerServing']}'),
             //end Protein
 
             //protein per serving
@@ -637,9 +655,12 @@ class _FeedPostState extends State<FeedPost> {
                 title: "Protein", value: '${barcodeData['proteinPerServing']}'),
 
             //sodium
-            NutritionRow(title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+            NutritionRow(
+                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
-            NutritionRow(title: "Cholesterol", value: '${barcodeData['cholesterolPerServing']}'),
+            NutritionRow(
+                title: "Cholesterol",
+                value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),
         ),

@@ -237,6 +237,24 @@ class Recipes extends ConsumerWidget {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 )),
                             Container(
+                                        padding: EdgeInsets.all(0),
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 255, 176, 58),
+                                            child: Material(
+                                                color: const Color.fromARGB(
+                                                    0, 255, 255, 255),
+                                                child: IconButton(
+                                                  onPressed: onShare(recipe, context),
+                                                  icon: const Icon(
+                                                      Icons.share),
+                                                  tooltip: "Share Recipe",
+                                                  color: Colors.white,
+                                                )))),
+                            Container(
                                 padding: EdgeInsets.all(0),
                                 alignment: Alignment.bottomRight,
                                 child: CircleAvatar(

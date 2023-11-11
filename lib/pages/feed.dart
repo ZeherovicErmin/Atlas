@@ -102,6 +102,12 @@ class Feed extends ConsumerWidget {
           'TimeStamp': Timestamp.now(),
           'Likes': [],
           'barcodeData': {},
+                    'ExerciseName': '',
+          'ExerciseType': '',
+          'ExerciseMuscle': '',
+          'ExerciseEquipment': '',
+          'ExerciseDifficulty': '',
+          'ExerciseInstructions': '',
           'postImage':
               downloadURL, // Add the download URL to your Firestore document
         });
@@ -142,7 +148,7 @@ class Feed extends ConsumerWidget {
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
           'ExerciseDifficulty': '',
-
+          'ExerciseInstructions': '',
           'Likes': [],
           'barcodeData': {},
           'postImage': '', // Add the download URL to your Firestore document

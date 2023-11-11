@@ -190,7 +190,7 @@ class _FeedPostState extends State<FeedPost> {
                   ),
                 ),
 
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 // Displaying workout details
                 if (widget.exerciseName != null && widget.exerciseType != null)
                   Visibility(
@@ -246,8 +246,33 @@ class _FeedPostState extends State<FeedPost> {
               alignment: Alignment.topRight,
               child: currentUser.email == widget.email
                   ? editButton(
-                      onTap: () {
-                        editPost("Message");
+                      onTap: () async {
+                        // Check if there are comments
+                        bool hasComments = await checkForComments();
+
+                        BuildContext dialogContext = context;
+
+                        if (hasComments) {
+                          // Show a message or take any other action
+                          // ignore: use_build_context_synchronously
+                          showDialog(
+                            context: dialogContext,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Cannot Edit"),
+                              content: const Text(
+                                  "There are comments on this post. You cannot edit it."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          // Allow editing if there are no comments
+                          editPost("Message");
+                        }
                       },
                     )
                   : const SizedBox(),
@@ -658,7 +683,7 @@ class _FeedPostState extends State<FeedPost> {
 
   Widget NewWidget(Map<String, dynamic>? barcodeData) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color.fromARGB(255, 255, 252, 252),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12.0),
@@ -673,10 +698,10 @@ class _FeedPostState extends State<FeedPost> {
             //Drag Handle
             Center(
               child: Container(
-                  margin: EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
                   width: 40,
                   height: 5.0,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 104, 104, 104),
                     borderRadius: BorderRadius.all(
                       Radius.circular(12.0),
@@ -700,7 +725,7 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            const Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
               child: Container(
                 height: 25,
@@ -711,7 +736,7 @@ class _FeedPostState extends State<FeedPost> {
                     Text(
                       "${barcodeData?['amtServingsProvider']}g per container",
                       textAlign: TextAlign.start,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontFamily: 'Helvetica Black',
                           fontSize: 20,
                           fontWeight: FontWeight.w800),
@@ -720,7 +745,7 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ),
             ),
-            NutritionRow(
+            const NutritionRow(
               title: "Calories",
               value: '${0}',
               fontSize: 24,
@@ -729,7 +754,7 @@ class _FeedPostState extends State<FeedPost> {
             ),
             //Nutritional Column Dividers
             //End NUTRITION FACTS ROW
-            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            const Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
             //Start of Nutrition rows
             //
             NutritionRow(
@@ -777,6 +802,18 @@ class _FeedPostState extends State<FeedPost> {
       ),
     );
   }
+
+  Future<bool> checkForComments() async {
+  QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
+      .collection("User Posts")
+      .doc(widget.postId)
+      .collection("Comments")
+      .get();
+
+  return commentSnapshot.docs.isNotEmpty;
+}
+
+    
 }
 
 

@@ -645,6 +645,23 @@ class _FeedPostState extends State<FeedPost> {
     });
   }
 
+
+  //Gets the user's username
+  Stream<String> fetchUsername({String? email}) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      return FirebaseFirestore.instance
+          .collection("Users")
+          .doc(email)
+          .snapshots()
+          .map((snapshot) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        return userData['username']?.toString() ?? '';
+      });
+    }
+    return Stream.value('');
+  }
+  
   Future<void> editPost(String field) async {
     TextEditingController post = TextEditingController();
     //show a dialog box for ediitng the post

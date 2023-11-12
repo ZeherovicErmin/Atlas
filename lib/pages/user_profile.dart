@@ -150,8 +150,7 @@ class UserProfile extends ConsumerWidget {
     }
 
     //App bar for the user profile page
-    PreferredSize userProfileAppBar(
-        BuildContext context, WidgetRef ref, String title) {
+    PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
       return PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
@@ -249,7 +248,7 @@ class UserProfile extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: themeColor2,
-      appBar: userProfileAppBar(context, ref, 'U s e r'),
+      appBar: userProfileAppBar(context, ref, 'Profile'),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
@@ -356,6 +355,8 @@ class UserProfile extends ConsumerWidget {
                         color: themeColor,
                       ),
                     ),
+                    collapsedIconColor: themeColor,
+                    iconColor: themeColor,
                     children: [
                       // Username
                       MyTextBox(
@@ -373,7 +374,6 @@ class UserProfile extends ConsumerWidget {
                     ],
                   ),
 
-                  
                   SingleChildScrollView(
                     child: Column(
                       children: [
@@ -384,6 +384,8 @@ class UserProfile extends ConsumerWidget {
                               color: themeColor,
                             ),
                           ),
+                          collapsedIconColor: themeColor,
+                          iconColor: themeColor,
                           children: [
                             FutureBuilder<QuerySnapshot>(
                               future: FirebaseFirestore.instance

@@ -187,13 +187,15 @@ class Feed extends ConsumerWidget {
       backgroundColor: const Color.fromARGB(
           255, 232, 229, 229), //Home page for when a user logs in
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            "F e e d",
+        leading: const Icon(
+          null,
+          ),
+        centerTitle: true,
+        title: const Text(
+            "Feed",
             style:
                 TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
           ),
-        ),
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       ),
 

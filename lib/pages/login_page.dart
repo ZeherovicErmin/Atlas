@@ -73,10 +73,11 @@ class LoginPage extends ConsumerWidget {
 
                     //Logo
                     SizedBox(
-                        height: 220,
-                        width: 220,
-                        //color: Colors.blue,
-                        child: Image.asset('lib/images/atlas.png')),
+                      height: 220,
+                      width: 220,
+                      //color: Colors.blue,
+                      child: Image.asset('lib/images/atlas.png')
+                    ),
 
                     //const SizedBox(height: 5),
 

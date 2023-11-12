@@ -133,15 +133,15 @@ class SettingsPage extends ConsumerWidget {
         brightness: lightDarkTheme ? Brightness.dark : Brightness.light,
       ),
       child: Scaffold(
-        appBar: myAppBar4(context, ref, 'S e t t i n g s'),
-        body: Column(
-          children: [
-            Expanded(
-              child: SettingsList(
-                sections: [
-                  SettingsSection(
-                    title: Text(
-                      'Account',
+        appBar: myAppBar4(context, ref, 'Settings'),
+        body: Column (
+        children: [
+          Expanded (
+            child: SettingsList(
+              sections: [
+                SettingsSection(
+                  title: Text(
+                    'Account',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

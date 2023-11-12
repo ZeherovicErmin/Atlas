@@ -377,6 +377,7 @@ Future<bool> isBarcodeExists(String barcode) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('Barcode_Lookup')
         .where('Barcode', isEqualTo: barcode)
+        .where('uid', isEqualTo: uid)
         .limit(1) // Ma
         .get();
 

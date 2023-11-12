@@ -102,6 +102,12 @@ class Feed extends ConsumerWidget {
           'TimeStamp': Timestamp.now(),
           'Likes': [],
           'barcodeData': {},
+                    'ExerciseName': '',
+          'ExerciseType': '',
+          'ExerciseMuscle': '',
+          'ExerciseEquipment': '',
+          'ExerciseDifficulty': '',
+          'ExerciseInstructions': '',
           'postImage':
               downloadURL, // Add the download URL to your Firestore document
         });
@@ -137,6 +143,12 @@ class Feed extends ConsumerWidget {
           'UserEmail': currentUser.email,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
+          'ExerciseName': '',
+          'ExerciseType': '',
+          'ExerciseMuscle': '',
+          'ExerciseEquipment': '',
+          'ExerciseDifficulty': '',
+          'ExerciseInstructions': '',
           'Likes': [],
           'barcodeData': {},
           'postImage': '', // Add the download URL to your Firestore document
@@ -230,7 +242,14 @@ class Feed extends ConsumerWidget {
                                         List<String>.from(post['Likes'] ?? []),
                                     time: formatDate(post['TimeStamp']),
                                     email: post['UserEmail'],
-                                    imageUrl: post['postImage'],
+                                    exerciseName: post['ExerciseName'] ?? '',
+                                  exerciseType: post['ExerciseType'] ?? '',
+                                  muscle: post['ExerciseMuscle'] ?? '',
+                                  equipment: post['ExerciseEquipment'] ?? '',
+                                  difficulty: post['ExerciseDifficulty'] ?? '',
+                                  instructions:
+                                      post['ExerciseInstructions'] ?? '',
+                                  imageUrl: post['postImage'],
                                     recipe: recipe == '' ?  emptyMap : recipe);
                               } else if (snapshot.hasError) {
                                 return Center(

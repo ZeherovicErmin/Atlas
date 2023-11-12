@@ -10,6 +10,7 @@ import 'package:atlas/pages/saved_recipes.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -21,7 +22,31 @@ class FeedPost extends StatefulWidget {
   final List<String> likes;
   final Map<String, dynamic>? barcodeData;
   final String email;
+  final String? exerciseName;
+  final String? exerciseType;
+  final String? muscle;
+  final String? equipment;
+  final String? difficulty;
+  final String? instructions;
   final String imageUrl;
+
+  const FeedPost({
+    super.key,
+    required this.message,
+    required this.user,
+    required this.postId,
+    required this.likes,
+    required this.time,
+    required this.email,
+    required this.exerciseName,
+    required this.exerciseType,
+    required this.muscle,
+    required this.equipment,
+    required this.difficulty,
+    required this.instructions,
+    this.barcodeData,
+    required this.imageUrl,
+  });
   final Map<String, dynamic>? recipe;
 
   const FeedPost({
@@ -108,10 +133,10 @@ class _FeedPostState extends State<FeedPost> {
                   maxLines: null,
                 ),
                 Visibility(
-                  visible: widget.imageUrl != ''&& widget.imageUrl.isNotEmpty,
+                  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
                   child: Image.network(
                     widget.imageUrl,
-                    fit:BoxFit.cover,
+                    fit: BoxFit.cover,
                   ),
                 ),
 
@@ -192,6 +217,48 @@ class _FeedPostState extends State<FeedPost> {
                       
                 ),
 
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
+                ),
+
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
+                ),
+
+                const SizedBox(height: 5),
+                // Displaying workout details
+                if (widget.exerciseName != null && widget.exerciseType != null)
+                  Visibility(
+                      visible: widget.exerciseName != null &&
+                          widget.exerciseName!.isNotEmpty,
+                      child: Container(
+                        margin: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              12.0), // Add a border radius
+                          border: Border.all(
+                            width: .5,
+                            style: BorderStyle.solid,
+                            color: Colors.transparent,
+                            // Set the border color and width
+                          ),
+                        ),
+                        child: fitdesign(),
+                      )),
                 //user + day
                 Row(
                   children: [
@@ -228,8 +295,33 @@ class _FeedPostState extends State<FeedPost> {
               alignment: Alignment.topRight,
               child: currentUser.email == widget.email
                   ? editButton(
-                      onTap: () {
-                        editPost("Message");
+                      onTap: () async {
+                        // Check if there are comments
+                        bool hasComments = await checkForComments();
+
+                        BuildContext dialogContext = context;
+
+                        if (hasComments) {
+                          // Show a message or take any other action
+                          // ignore: use_build_context_synchronously
+                          showDialog(
+                            context: dialogContext,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Cannot Edit"),
+                              content: const Text(
+                                  "There are comments on this post. You cannot edit it."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          // Allow editing if there are no comments
+                          editPost("Message");
+                        }
                       },
                     )
                   : const SizedBox(),
@@ -345,6 +437,98 @@ class _FeedPostState extends State<FeedPost> {
           ],
         ),
       ]),
+    );
+  }
+
+  FlipCard fitdesign() {
+    return FlipCard(
+      fill: Fill.fillBack,
+      direction: FlipDirection.VERTICAL,
+      speed: 400,
+      front: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 150.0,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AutoSizeText(
+                    widget.exerciseName ?? '',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 32,
+                    ),
+                    maxLines: 1,
+                    minFontSize: 20,
+                    overflow: TextOverflow.clip,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        widget.difficulty ?? '',
+                        style: const TextStyle(
+                          color: Colors.purple,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        widget.muscle ?? '',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        widget.equipment ?? '',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      back: Card(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Returning a numbered list for the instructions of the workout
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: (widget.instructions ?? '').split('.').length - 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        '${index + 1}. ${(widget.instructions ?? '').split('.')[index]}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -548,7 +732,7 @@ class _FeedPostState extends State<FeedPost> {
 
   Widget NewWidget(Map<String, dynamic>? barcodeData) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color.fromARGB(255, 255, 252, 252),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12.0),
@@ -563,10 +747,10 @@ class _FeedPostState extends State<FeedPost> {
             //Drag Handle
             Center(
               child: Container(
-                  margin: EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
                   width: 40,
                   height: 5.0,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 104, 104, 104),
                     borderRadius: BorderRadius.all(
                       Radius.circular(12.0),
@@ -590,7 +774,7 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-            Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            const Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
               child: Container(
                 height: 25,
@@ -601,7 +785,7 @@ class _FeedPostState extends State<FeedPost> {
                     Text(
                       "${barcodeData?['amtServingsProvider']}g per container",
                       textAlign: TextAlign.start,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontFamily: 'Helvetica Black',
                           fontSize: 20,
                           fontWeight: FontWeight.w800),
@@ -610,7 +794,7 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ),
             ),
-            NutritionRow(
+            const NutritionRow(
               title: "Calories",
               value: '${0}',
               fontSize: 24,
@@ -619,7 +803,7 @@ class _FeedPostState extends State<FeedPost> {
             ),
             //Nutritional Column Dividers
             //End NUTRITION FACTS ROW
-            Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
+            const Divider(thickness: 5, color: Color.fromARGB(255, 0, 0, 0)),
             //Start of Nutrition rows
             //
             NutritionRow(
@@ -657,9 +841,13 @@ class _FeedPostState extends State<FeedPost> {
             //sodium
             NutritionRow(
                 title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+            NutritionRow(
+                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
             NutritionRow(
+                
                 title: "Cholesterol",
+               
                 value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),
@@ -667,7 +855,21 @@ class _FeedPostState extends State<FeedPost> {
       ),
     );
   }
+
+  Future<bool> checkForComments() async {
+  QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
+      .collection("User Posts")
+      .doc(widget.postId)
+      .collection("Comments")
+      .get();
+
+  return commentSnapshot.docs.isNotEmpty;
 }
+
+    
+}
+
+
 
 
 //Text(barcodeData!['productName']),

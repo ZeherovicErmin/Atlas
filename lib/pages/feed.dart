@@ -101,7 +101,9 @@ class Feed extends ConsumerWidget {
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
           'Likes': [],
+          'recipe': {},
           'barcodeData': {},
+          
                     'ExerciseName': '',
           'ExerciseType': '',
           'ExerciseMuscle': '',

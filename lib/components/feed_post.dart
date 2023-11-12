@@ -194,16 +194,7 @@ class _FeedPostState extends State<FeedPost> {
                   ),
                 ),
 
-                //Show if there is recipe data
-                Visibility(
-                  visible: widget.recipe != null &&
-                      widget.recipe!.isNotEmpty,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
-                    child: Text("View Recipe"),)
-                      
-                ),
+                
 
                 //Show if there is recipe data
                 Visibility(
@@ -216,16 +207,7 @@ class _FeedPostState extends State<FeedPost> {
                       
                 ),
 
-                //Show if there is recipe data
-                Visibility(
-                  visible: widget.recipe != null &&
-                      widget.recipe!.isNotEmpty,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
-                    child: Text("View Recipe"),)
-                      
-                ),
+                
 
                 const SizedBox(height: 5),
                 // Displaying workout details

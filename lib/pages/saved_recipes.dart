@@ -174,7 +174,13 @@ onShare(Result recipe, BuildContext context) {
               'Likes': [],
               'barcodeData': {},
               'postImage': '',
-              'recipe': recipe.toMap() 
+              'ExerciseName': '',
+      'ExerciseType': '',
+      'ExerciseMuscle': '',
+      'ExerciseEquipment': '',
+      'ExerciseDifficulty': '',
+      'ExerciseInstructions': '',
+              'recipe': recipe.toMap() ,
               });
               Navigator.pop(context);
             },

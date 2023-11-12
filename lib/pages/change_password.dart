@@ -10,7 +10,7 @@ class ChangePassword extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
       return Scaffold(
-      appBar: myAppBar4(context, ref, 'C h a n g e  P a s s w o r d'),
+      appBar: myAppBar4(context, ref, 'Change Password'),
       );
   }
 }

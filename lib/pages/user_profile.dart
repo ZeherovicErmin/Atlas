@@ -374,7 +374,6 @@ class UserProfile extends ConsumerWidget {
                     ],
                   ),
 
-                  
                   SingleChildScrollView(
                     child: Column(
                       children: [
@@ -385,6 +384,8 @@ class UserProfile extends ConsumerWidget {
                               color: themeColor,
                             ),
                           ),
+                          collapsedIconColor: themeColor,
+                          iconColor: themeColor,
                           children: [
                             FutureBuilder<QuerySnapshot>(
                               future: FirebaseFirestore.instance
@@ -483,10 +484,6 @@ class UserProfile extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    collapsedIconColor: themeColor,
-                    iconColor: themeColor,
-                    children: [
-                    ],
                   ),
                 ],
               ),

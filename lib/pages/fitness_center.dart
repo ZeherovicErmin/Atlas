@@ -78,30 +78,26 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Setting the muscle variable to watch whatever the user selects in the drop down
-    var muscle = ref.watch(selectedMuscleProvider);
-
-    return Container(
-      child: DefaultTabController(
-        initialIndex: 0,
-        length: 2,
-        child: Scaffold(
-          backgroundColor: const Color(0xFFFAF9F6),
-          //Home page for when a user logs in
-          appBar: AppBar(
-            leading: const Icon(
-              null,
-            ),
-            centerTitle: true,
-              title: const Text(
-                  "Fitness Center",
-                  style: TextStyle(
-                    fontFamily: 'Open Sans',
-                    fontWeight: FontWeight.bold,
-                  ),
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 3,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFAF9F6),
+        //Home page for when a user logs in
+        appBar: AppBar(
+            title: const Center(
+              child: Text(
+                "Fitness Center",
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+          leading: const Icon(
+            null,
+          ),
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -198,8 +194,10 @@ class FitCenter extends ConsumerWidget {
                 builder: (context) => Scaffold(
                   backgroundColor: const Color(0xFFFAF9F6),
                   appBar: AppBar(
-                  centerTitle: true,
-                  backgroundColor:const Color.fromARGB(255, 0, 136, 204),
+                    backgroundColor:
+
+                        //Workouts for each muscle group
+                        const Color.fromARGB(255, 0, 136, 204),
                     title: Text(
                       "${capitalizeFirstLetter(muscle)} Exercises",
                     ),

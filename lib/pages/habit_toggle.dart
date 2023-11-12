@@ -22,7 +22,7 @@ class _HabitToggleState extends State<HabitToggle> {
     HabitInfo(title: 'Sugar',         image: 'lib/images/sugar.png',        backgroundColor: const Color.fromARGB(255, 255, 116, 163)),
     HabitInfo(title: 'Running',       image: 'lib/images/jogging.png',      backgroundColor: Colors.green),
     HabitInfo(title: 'Pullups',       image: 'lib/images/pull-up-bar.png',  backgroundColor: const Color.fromARGB(255, 76, 165, 175)),
-    HabitInfo(title: 'Pushups',       image: 'lib/images/push-up.png',      backgroundColor: const Color.fromARGB(255, 175, 142, 76),),
+    HabitInfo(title: 'Pushups',       image: 'lib/images/push-up.png',      backgroundColor: const Color.fromARGB(255, 175, 142, 76)),
     HabitInfo(title: 'Situps',        image: 'lib/images/sit-up.png',       backgroundColor: const Color.fromARGB(255, 209, 116, 238)),
     HabitInfo(title: 'Sodium',        image: 'lib/images/sodium.png',       backgroundColor: const Color.fromARGB(255, 238, 116, 177)),
   ];
@@ -160,8 +160,8 @@ class _HabitToggleState extends State<HabitToggle> {
           //Search bar
           Padding(
             padding: const EdgeInsets.only(
-              left: 32,
-              right: 32,
+              left: 16,
+              right: 16,
               top: 16,
               bottom: 16,
               ),
@@ -171,9 +171,9 @@ class _HabitToggleState extends State<HabitToggle> {
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 childAspectRatio: 1.5,
-                mainAxisSpacing: 12,
+                mainAxisSpacing: 4,
               ),
               itemCount: habitCardFilter.length,
               itemBuilder: (context, index) {
@@ -181,8 +181,9 @@ class _HabitToggleState extends State<HabitToggle> {
                 bool isChosen = selectedHabits[habit.title] ?? true;
                 return Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16),
+                    left: 8,
+                    right: 8
+                    ),
                   child: GestureDetector(
                     onTap: () => toggleHabit(habit.title),
                     child: Opacity(
@@ -197,14 +198,14 @@ class _HabitToggleState extends State<HabitToggle> {
                           children: [
                             Image.asset(
                               habit.image,
-                              width: 60,
-                              height: 60,
+                              width: 40,
+                              height: 40,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               habit.title,
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

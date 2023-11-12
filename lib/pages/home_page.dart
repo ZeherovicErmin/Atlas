@@ -252,6 +252,7 @@ class _HomePageState extends State<HomePage> {
   String formatDate(DateTime date) => "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
   String formatDateTime(DateTime date) => "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   String? profileImage;
+  ScrollController scroll = ScrollController();
 
   @override
   void initState() {
@@ -261,6 +262,12 @@ class _HomePageState extends State<HomePage> {
     usernameStream = fetchUsername();
     fetchProfileImage();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scroll.dispose();
+    super.dispose();
   }
 
   //Gets the user's profile picture from firebase for the appbar
@@ -510,6 +517,8 @@ class _HomePageState extends State<HomePage> {
                   }
                   var selectedHabits = snapshot.data!;
                     return GridView.count(
+                    key: const PageStorageKey<String>(''),
+                    controller: scroll,
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 20,

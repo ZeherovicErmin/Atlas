@@ -187,7 +187,7 @@ class _HabitToggleState extends State<HabitToggle> {
                   child: GestureDetector(
                     onTap: () => toggleHabit(habit.title),
                     child: Opacity(
-                      opacity: isChosen ? 1 : .5,
+                      opacity: isChosen ? 1 : .4,
                       child: Container(
                         decoration: BoxDecoration(
                           color: habit.backgroundColor,
@@ -198,14 +198,14 @@ class _HabitToggleState extends State<HabitToggle> {
                           children: [
                             Image.asset(
                               habit.image,
-                              width: 40,
-                              height: 40,
+                              width: 46,
+                              height: 46,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               habit.title,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

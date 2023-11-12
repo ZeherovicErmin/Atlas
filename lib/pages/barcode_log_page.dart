@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 //import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 //paramaters to hold search, sort, filter
@@ -317,181 +318,191 @@ class BarcodeLogPage extends ConsumerWidget {
         final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
         final transfatsPserving = formatDecimal(data["transfatsPserving"]);
         final amtServings = formatDecimal(data["amtServingsProvider"]);
-        return Slidable(
-          // Allows logs to be deleted, Wraps entire list widget
-
-          key: ValueKey(logs[index].id),
-
-          startActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            extentRatio: .25,
-            children: [
-              SlidableAction(
-                autoClose: true,
-                onPressed: (context) => deleteLog(context, data),
-                backgroundColor: const Color.fromARGB(2, 140, 215, 85),
-                foregroundColor: const Color.fromARGB(255, 255, 0, 0),
-                icon: Icons.delete,
-                label: 'Delete',
-              )
+        return Animate(
+          
+          effects: [
+            //Fades a barcode in
+            FadeEffect(begin: 0.0,end: 5.0, curve: Curves.easeInOut),
+            //Slide effect
+            SlideEffect(begin: Offset(-1, 0), end: Offset.zero, curve: Curves.easeOut,delay: Duration(milliseconds: 300)),
             ],
-          ),
-          //Sliding to the rihgt activates sharing a post
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            extentRatio: .25,
-            children: [
-              SlidableAction(
-                autoClose: true,
-                onPressed: (context) => shareBarcodeToFeed(data),
-                backgroundColor: const Color.fromARGB(2, 140, 215, 85),
-                foregroundColor: Color.fromARGB(255, 0, 78, 12),
-                icon: Icons.share,
-                label: 'Share',
-              )
-            ],
-          ),
-          //card for the barcode logs
-          // This shows in the list of logs
-          child: Card(
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.black, width: 3.8),
-              borderRadius: BorderRadius.circular(20),
+            
+          child: Slidable(
+            // Allows logs to be deleted, Wraps entire list widget
+        
+            key: ValueKey(logs[index].id),
+        
+            startActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              extentRatio: .25,
+              children: [
+                SlidableAction(
+                  autoClose: true,
+                  onPressed: (context) => deleteLog(context, data),
+                  backgroundColor: const Color.fromARGB(2, 140, 215, 85),
+                  foregroundColor: const Color.fromARGB(255, 255, 0, 0),
+                  icon: Icons.delete,
+                  label: 'Delete',
+                )
+              ],
             ),
-            elevation: 7, // Card-like appearance
-            margin: const EdgeInsets.all(12), // Margin for spacing
-            child: InkWell(
-              borderRadius: BorderRadius.circular(24),
-              // Logic for showing a nutritional label
-              onTap: () {
-                Widget modalContent = NutritionContainer(
-                    carbsPerServing,
-                    proteinPerServing,
-                    fatsPerServing,
-                    caloriesPerServing,
-                    satfatsPserving,
-                    sodiumPerServing,
-                    transfatsPserving,
-                    cholesterolPerServing,
-                    amtServings);
-
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => modalContent,
-                );
-                //deleteLog(context, data);
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 0, bottom: 0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(0),
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: AutoSizeText(
-                                '${data['productName']}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                maxLines: 1,
-                                minFontSize: 12,
-                              ),
-                            ),
-                            const Divider(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              thickness: 3,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Text(
-                                  'Carbs Per Serving: ${carbsPerServing}g'),
-                            ),
-                            const Divider(
-                              thickness: 1,
-                            ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  child: Text(
-                                      'Protein Per Serving: ${proteinPerServing}g'),
-                                ),
-                              ],
-                            ),
-                            const Divider(
-                              thickness: 1,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child:
-                                  Text('Fats Per Serving: ${fatsPerServing}g'),
-                            ),
-                            const Divider(
-                              thickness: 1,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Text(
-                                  'Cholesterol Per Serving: ${cholesterolPerServing}g'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 170,
-                        child: const VerticalDivider(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          thickness: 3.0,
-                          width: 2.0,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          height: 125,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.blue,
-                            image: const DecorationImage(
-                                image: AssetImage(
-                                    'assets/icons/flameiconnameplate.png'),
-                                fit: BoxFit.contain),
-                          ),
-                          //Text over image
-                          child: Stack(
+            //Sliding to the rihgt activates sharing a post
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              extentRatio: .25,
+              children: [
+                SlidableAction(
+                  autoClose: true,
+                  onPressed: (context) => shareBarcodeToFeed(data),
+                  backgroundColor: const Color.fromARGB(2, 140, 215, 85),
+                  foregroundColor: Color.fromARGB(255, 0, 78, 12),
+                  icon: Icons.share,
+                  label: 'Share',
+                )
+              ],
+            ),
+            //card for the barcode logs
+            // This shows in the list of logs
+            child: Card(
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Colors.black, width: 3.8),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 7, // Card-like appearance
+              margin: const EdgeInsets.all(12), // Margin for spacing
+              child: InkWell(
+                borderRadius: BorderRadius.circular(24),
+                // Logic for showing a nutritional label
+                onTap: () {
+                  Widget modalContent = NutritionContainer(
+                      carbsPerServing,
+                      proteinPerServing,
+                      fatsPerServing,
+                      caloriesPerServing,
+                      satfatsPserving,
+                      sodiumPerServing,
+                      transfatsPserving,
+                      cholesterolPerServing,
+                      amtServings);
+        
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => modalContent,
+                  );
+                  //deleteLog(context, data);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 0, bottom: 0),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    title: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Positioned(
-                                top: 100,
-                                left: 0,
-                                right: 0,
-                                child: Center(
-                                  child: Text(
-                                    '${data['productCalories'].toInt()}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                    textAlign: TextAlign.center,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: AutoSizeText(
+                                  '${data['productName']}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  minFontSize: 12,
                                 ),
-                              )
+                              ),
+                              const Divider(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                thickness: 3,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                    'Carbs Per Serving: ${carbsPerServing}g'),
+                              ),
+                              const Divider(
+                                thickness: 1,
+                              ),
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: Text(
+                                        'Protein Per Serving: ${proteinPerServing}g'),
+                                  ),
+                                ],
+                              ),
+                              const Divider(
+                                thickness: 1,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child:
+                                    Text('Fats Per Serving: ${fatsPerServing}g'),
+                              ),
+                              const Divider(
+                                thickness: 1,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                    'Cholesterol Per Serving: ${cholesterolPerServing}g'),
+                              ),
                             ],
                           ),
-
-                          //crossAxisAlignment: CrossAxisAlignment.start, de
-                          // children: [
-                          //   Text('Calories'),
-                          //   Text('${data['productCalories']}'),
-                          // ],
                         ),
-                      )
-                    ],
+                        Container(
+                          width: 1,
+                          height: 170,
+                          child: const VerticalDivider(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            thickness: 3.0,
+                            width: 2.0,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            height: 125,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.blue,
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                      'assets/icons/flameiconnameplate.png'),
+                                  fit: BoxFit.contain),
+                            ),
+                            //Text over image
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  top: 100,
+                                  left: 0,
+                                  right: 0,
+                                  child: Center(
+                                    child: Text(
+                                      '${data['productCalories'].toInt()}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+        
+                            //crossAxisAlignment: CrossAxisAlignment.start, de
+                            // children: [
+                            //   Text('Calories'),
+                            //   Text('${data['productCalories']}'),
+                            // ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

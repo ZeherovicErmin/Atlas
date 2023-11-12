@@ -244,10 +244,14 @@ class SettingsPage extends ConsumerWidget {
 
   // Function to open DatePicker and schedule notification
   void _openTimePickerAndSchedule(BuildContext context) async {
+    final now = DateTime.now();
+    final xMinutesFromNow = now.add(Duration(minutes: 3));
+    final initialTime = TimeOfDay(hour: xMinutesFromNow.hour, minute: xMinutesFromNow.minute);
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       
-      initialTime: TimeOfDay(hour: 12,minute: 0),
+
+      initialTime: initialTime,
     );
 
     if (pickedTime != null) {

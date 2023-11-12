@@ -74,6 +74,7 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.0
   modal_bottom_sheet: ^2.1.2
   flutter_local_notifications: ^16.1.0
+  intl: ^0.18.1
 
 
 

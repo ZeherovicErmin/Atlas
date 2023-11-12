@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/text_box.dart';
+import 'package:atlas/helper/time_stamp.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,12 +15,12 @@ import 'package:atlas/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 //import 'image'
 
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
-
 
 final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
   try {
@@ -35,7 +38,7 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key}) : super(key: key);
 
-  Future<void> _handleReresh() async {
+  Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
   }
 
@@ -116,9 +119,7 @@ class UserProfile extends ConsumerWidget {
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             home: LoginPage(),
-            routes: {
-              '/home': (context) => LoginPage(),
-            },
+            routes: {'/home': (context) => LoginPage()},
           ),
         ),
       );
@@ -127,51 +128,53 @@ class UserProfile extends ConsumerWidget {
     //Shows the settings page when called
     void showSettings(BuildContext context) {
       showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Settings'),
-              content:
-                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                //Signout button
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Settings'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
                 ElevatedButton(
-                    onPressed: () async {
-                      await ref.read(signOutProvider);
-                      // After succesful logout redirect to logout page
-                      Navigator.of(context).pushReplacementNamed('/settings');
-                    },
-                    child: const Text("Sign out Button")),
-              ]),
-            );
-          });
+                  onPressed: () async {
+                    await ref.read(signOutProvider);
+                    Navigator.of(context).pushReplacementNamed('/settings');
+                  },
+                  child: const Text("Sign out Button"),
+                ),
+              ],
+            ),
+          );
+        },
+      );
     }
 
     //App bar for the user profile page
     PreferredSize userProfileAppBar(
         BuildContext context, WidgetRef ref, String title) {
       return PreferredSize(
-          preferredSize: const Size.fromHeight(70),
-          child: AppBar(
-              centerTitle: true,
-              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-              actions: [
-                //Settings icon button
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SettingsPage()),
-                    );
-                  },
-                ),
-              ],
-              title: Text(
-                title,
-                style: const TextStyle(
-                    fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-              )));
+        preferredSize: const Size.fromHeight(70),
+        child: AppBar(
+          centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+          ],
+          title: Text(
+            title,
+            style: const TextStyle(
+                fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
     }
 
     // Edit field
@@ -189,7 +192,7 @@ class UserProfile extends ConsumerWidget {
           content: TextField(
             controller: username,
             autofocus: true,
-            style: TextStyle(color: themeColor), // Change text color to theme
+            style: TextStyle(color: themeColor),
             decoration: InputDecoration(
               hintText: "Enter new $field",
               hintStyle: TextStyle(color: themeColor),
@@ -268,8 +271,7 @@ class UserProfile extends ConsumerWidget {
           if (userData != null) {
             //starts the user profile page
             return LiquidPullToRefresh(
-              // Handle refresh logic
-              onRefresh: _handleReresh,
+              onRefresh: _handleRefresh,
               height: 100,
               backgroundColor: Colors.deepPurple[200],
               showChildOpacityTransition: false,
@@ -282,7 +284,7 @@ class UserProfile extends ConsumerWidget {
                   Stack(
                     children: [
                       Align(
-                        alignment: Alignment.center, // Center the icon
+                        alignment: Alignment.center,
                         child: profilePictureUrl.when(
                           data: (url) {
                             if (url != null && url.isNotEmpty) {
@@ -327,24 +329,24 @@ class UserProfile extends ConsumerWidget {
 
                   //Username
                   StreamBuilder<String>(
-                      stream: fetchUsername(email: currentUser.email),
-                      builder: (context, usernameSnapshot) {
-                        if (usernameSnapshot.hasData) {
-                          return Text(
-                            usernameSnapshot.data.toString().trim(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: themeColor,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      }),
-
-                  const SizedBox(height: 30),
+                    stream: fetchUsername(email: currentUser.email),
+                    builder: (context, usernameSnapshot) {
+                      if (usernameSnapshot.hasData) {
+                        return Text(
+                          usernameSnapshot.data.toString().trim(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: themeColor,
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
                   // User details
                   ExpansionTile(
@@ -357,31 +359,129 @@ class UserProfile extends ConsumerWidget {
                     children: [
                       // Username
                       MyTextBox(
-                        text: userData['username']?.toString() ??
-                            '', // Safely access username
+                        text: userData['username']?.toString() ?? '',
                         sectionName: 'Username',
                         onPressed: () => editField('username'),
                       ),
 
                       // Bio
                       MyTextBox(
-                        text: userData['bio']?.toString() ??
-                            '', // Safely access bio
+                        text: userData['bio']?.toString() ?? '',
                         sectionName: 'Bio',
                         onPressed: () => editField('bio'),
                       ),
                     ],
                   ),
 
-                  //posts
-                  ExpansionTile(
-                    title: Text(
-                      'My Posts',
-                      style: TextStyle(
-                        color: themeColor,
-                      ),
+                  
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ExpansionTile(
+                          title: Text(
+                            'My Posts',
+                            style: TextStyle(
+                              color: themeColor,
+                            ),
+                          ),
+                          children: [
+                            FutureBuilder<QuerySnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection("User Posts")
+                                  .where('UserEmail',
+                                      isEqualTo: currentUser.email)
+                                  .get(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+
+                                if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text('Error: ${snapshot.error}'),
+                                  );
+                                }
+
+                                if (!snapshot.hasData ||
+                                    snapshot.data == null) {
+                                  return const Center(
+                                    child: Text('No posts found.'),
+                                  );
+                                }
+
+                                return SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.6, // Adjust the height
+                                  child: ListView.builder(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      final post = snapshot.data!.docs[index];
+                                      final barcodeDataDynamic =
+                                          post['barcodeData'];
+                                      Map<String, dynamic> barcodeDataMap =
+                                          barcodeDataDynamic
+                                              as Map<String, dynamic>;
+                                      if (barcodeDataMap.isNotEmpty) {
+                                        barcodeDataMap = barcodeDataDynamic;
+                                      } else {
+                                        print(
+                                            'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+                                      }
+                                      return StreamBuilder<String>(
+                                        stream: fetchUsername(
+                                            email: post['UserEmail']),
+                                        builder: (context, usernameSnapshot) {
+                                          if (usernameSnapshot.hasData) {
+                                            return FeedPost(
+                                              message: post['Message'],
+                                              user: usernameSnapshot.data!,
+                                              postId: post.id,
+                                              barcodeData: barcodeDataMap,
+                                              likes: List<String>.from(
+                                                  post['Likes'] ?? []),
+                                              time:
+                                                  formatDate(post['TimeStamp']),
+                                              email: post['UserEmail'],
+                                              exerciseName:
+                                                  post['ExerciseName'] ?? '',
+                                              exerciseType:
+                                                  post['ExerciseType'] ?? '',
+                                              muscle:
+                                                  post['ExerciseMuscle'] ?? '',
+                                              equipment:
+                                                  post['ExerciseEquipment'] ??
+                                                      '',
+                                              difficulty:
+                                                  post['ExerciseDifficulty'] ??
+                                                      '',
+                                              instructions: post[
+                                                      'ExerciseInstructions'] ??
+                                                  '',
+                                              imageUrl: post['postImage'],
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                              child: Text(
+                                                  'Error:${snapshot.error}'),
+                                            );
+                                          }
+
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    children: const [],
                   ),
                 ],
               ),

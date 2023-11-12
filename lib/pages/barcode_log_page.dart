@@ -318,7 +318,9 @@ class BarcodeLogPage extends ConsumerWidget {
         final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
         final transfatsPserving = formatDecimal(data["transfatsPserving"]);
         final amtServings = formatDecimal(data["amtServingsProvider"]);
-        final sugarsPerServing = formatDecimal(data["sugarsPerServing"]);
+        final sugarsPerServi = formatDecimal(data["sugarsPerServing"]);
+        //final sugarsPerServing = '0';
+        print('Sugars: $sugarsPerServi');
         return Animate(
           
           effects: [
@@ -385,7 +387,7 @@ class BarcodeLogPage extends ConsumerWidget {
                       transfatsPserving,
                       cholesterolPerServing,
                       amtServings,
-                      sugarsPerServing);
+                      sugarsPerServi);
         
                   showModalBottomSheet(
                     context: context,
@@ -524,7 +526,7 @@ class BarcodeLogPage extends ConsumerWidget {
           String sodiumPerServing,
           String transfatsPserving,
           String cholesterolPerServing,
-          String sugarsPerServing,
+          String sugarsPerServi,
           String amtServings) =>
       Container(
         decoration: BoxDecoration(
@@ -578,7 +580,7 @@ class BarcodeLogPage extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${amtServings}g per container",
+                        "${sugarsPerServi}g per container",
                         textAlign: TextAlign.start,
                         style: TextStyle(
                             fontFamily: 'Helvetica Black',
@@ -621,7 +623,7 @@ class BarcodeLogPage extends ConsumerWidget {
                   title: "Total Carbohydrates", value: '${carbsPerServing}'),
               //Sugars
               NutritionRow(
-                  title: "Total Sugars", isSubcategory: true, value: '$sugarsPerServing'),
+                  title: "Total Sugars", isSubcategory: true, value: '$amtServings'),
               //end Protein
 
               //protein per serving

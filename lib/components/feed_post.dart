@@ -30,25 +30,24 @@ class FeedPost extends StatefulWidget {
   final String? instructions;
   final String imageUrl;
   final Map<String, dynamic>? recipe;
-  
-  const FeedPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-    required this.email,
-    required this.exerciseName,
-    required this.exerciseType,
-    required this.muscle,
-    required this.equipment,
-    required this.difficulty,
-    required this.instructions,
-    this.barcodeData,
-    required this.imageUrl,
-    this.recipe
-  });
+
+  const FeedPost(
+      {super.key,
+      required this.message,
+      required this.user,
+      required this.postId,
+      required this.likes,
+      required this.time,
+      required this.email,
+      required this.exerciseName,
+      required this.exerciseType,
+      required this.muscle,
+      required this.equipment,
+      required this.difficulty,
+      required this.instructions,
+      this.barcodeData,
+      required this.imageUrl,
+      this.recipe});
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -194,20 +193,16 @@ class _FeedPostState extends State<FeedPost> {
                   ),
                 ),
 
-                
-
                 //Show if there is recipe data
                 Visibility(
-                  visible: widget.recipe != null &&
-                      widget.recipe!.isNotEmpty,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
-                    child: Text("View Recipe"),)
-                      
-                ),
-
-                
+                    visible: widget.recipe != null && widget.recipe!.isNotEmpty,
+                    child: ElevatedButton(
+                      onPressed: () => navigateToRecipeDetails(
+                          context,
+                          Result.fromJson(
+                              widget.recipe as Map<String, dynamic>)),
+                      child: Text("View Recipe"),
+                    )),
 
                 const SizedBox(height: 5),
                 // Displaying workout details
@@ -359,7 +354,7 @@ class _FeedPostState extends State<FeedPost> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 20),
 
         //comments under the post
@@ -714,19 +709,6 @@ class _FeedPostState extends State<FeedPost> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(children: [
-            //Drag Handle
-            Center(
-              child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  width: 40,
-                  height: 5.0,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 104, 104, 104),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12.0),
-                    ),
-                  )),
-            ),
             //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
             //Nutritional Facts Column Sheet
             const Column(
@@ -744,7 +726,8 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-            const Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            const Divider(
+                thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
               child: Container(
                 height: 25,
@@ -815,9 +798,7 @@ class _FeedPostState extends State<FeedPost> {
                 title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
             NutritionRow(
-                
                 title: "Cholesterol",
-               
                 value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),
@@ -827,16 +808,14 @@ class _FeedPostState extends State<FeedPost> {
   }
 
   Future<bool> checkForComments() async {
-  QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
-      .collection("User Posts")
-      .doc(widget.postId)
-      .collection("Comments")
-      .get();
+    QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
+        .collection("User Posts")
+        .doc(widget.postId)
+        .collection("Comments")
+        .get();
 
-  return commentSnapshot.docs.isNotEmpty;
-}
-
-    
+    return commentSnapshot.docs.isNotEmpty;
+  }
 }
 
 

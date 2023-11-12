@@ -4,6 +4,7 @@ import 'package:atlas/pages/feed.dart';
 
 import 'package:atlas/pages/home_page.dart';
 import 'package:atlas/pages/fitness_center.dart';
+import 'package:atlas/pages/newFeed.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/user_profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,7 @@ class BottomNav extends ConsumerWidget {
       Recipes(),
       HomePage(),
       BarcodeLookupComb(),
-      const Feed(),
+      const newFeed(),
     ];
 
     return Scaffold(

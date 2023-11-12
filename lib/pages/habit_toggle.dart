@@ -21,6 +21,10 @@ class _HabitToggleState extends State<HabitToggle> {
     HabitInfo(title: 'Carbohydrates', image: 'lib/images/bread.png',        backgroundColor: Colors.cyan),
     HabitInfo(title: 'Sugar',         image: 'lib/images/sugar.png',        backgroundColor: const Color.fromARGB(255, 255, 116, 163)),
     HabitInfo(title: 'Running',       image: 'lib/images/jogging.png',      backgroundColor: Colors.green),
+    HabitInfo(title: 'Pullups',       image: 'lib/images/pull-up-bar.png',  backgroundColor: const Color.fromARGB(255, 76, 165, 175)),
+    HabitInfo(title: 'Pushups',       image: 'lib/images/push-up.png',      backgroundColor: const Color.fromARGB(255, 175, 142, 76),),
+    HabitInfo(title: 'Situps',        image: 'lib/images/sit-up.png',       backgroundColor: const Color.fromARGB(255, 209, 116, 238)),
+    HabitInfo(title: 'Sodium',        image: 'lib/images/sodium.png',       backgroundColor: const Color.fromARGB(255, 238, 116, 177)),
   ];
 
   @override

@@ -586,7 +586,7 @@ class _HomePageState extends State<HomePage> {
                         image: 'lib/images/sugar.png',
                         backgroundColor: const Color.fromARGB(255, 255, 116, 163),
                         onTap: (value) {
-                          saveHabitData(uid2, formattedDate, 'Sugar', value);
+                          saveHabitData(uid2, formattedDate, 'sugar', value);
                         },
                         selectedDate: formattedDate,
                         unit: '(Grams)'
@@ -597,10 +597,54 @@ class _HomePageState extends State<HomePage> {
                         image: 'lib/images/jogging.png',
                         backgroundColor: Colors.green,
                         onTap: (value) {
-                          saveHabitData(uid2, formattedDate, 'Running', value);
+                          saveHabitData(uid2, formattedDate, 'running', value);
                         },
                         selectedDate: formattedDate,
                         unit: '(Miles)'
+                      ),
+                      if (selectedHabits['Pushups'] ?? true)
+                      HabitCard(
+                        title: 'Pushups',
+                        image: 'lib/images/push-up.png',
+                        backgroundColor: const Color.fromARGB(255, 175, 142, 76),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'pushups', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Pullups'] ?? true)
+                      HabitCard(
+                        title: 'Pullups',
+                        image: 'lib/images/pull-up-bar.png',
+                        backgroundColor: const Color.fromARGB(255, 76, 165, 175),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'pullups', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Situps'] ?? true)
+                      HabitCard(
+                        title: 'Situps',
+                        image: 'lib/images/sit-up.png',
+                        backgroundColor: const Color.fromARGB(255, 209, 116, 238),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'situps', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Sodium'] ?? true)
+                      HabitCard(
+                        title: 'Sodium',
+                        image: 'lib/images/sodium.png',
+                        backgroundColor: const Color.fromARGB(255, 238, 116, 177),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'sodium', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Miligrams)'
                       ),
                     ],
                   );

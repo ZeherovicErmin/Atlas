@@ -542,18 +542,7 @@ class BarcodeLogPage extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               //Drag Handle
-              Center(
-                child: Container(
-                    margin: EdgeInsets.all(8.0),
-                    width: 40,
-                    height: 5.0,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 104, 104, 104),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(12.0),
-                      ),
-                    )),
-              ),
+              
               //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
               //Nutritional Facts Column Sheet
               const Column(

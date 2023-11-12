@@ -267,26 +267,7 @@ class BarcodeLookupComb extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // // Get data from state providers
-    // final barcode = ref.watch(barcodeProvider.notifier).state;
-    // final result = ref.watch(resultProvider.notifier).state;
-    // final productName = ref.watch(productNameProvider.notifier).state;
-    // final productName_lowercase = ref.watch(productNameProvider.notifier).state;
-    // final productCalories = ref.watch(productCaloriesProvider.notifier).state;
-    // final amtPerServing = ref.watch(amtServingsProvider.notifier).state;
-    // //fats
-    // final fatsPserving = ref.watch(fatsPservingProvider.notifier).state;
-    // final satfatsPserving = ref.watch(satfatsPservingProvider.notifier).state;
-    // final transfatsPserving =
-    //     ref.watch(transfatsPservingProvider.notifier).state;
-    // final carbsPserving = ref.watch(carbsPservingProvider.notifier).state;
-    // final proteinPserving = ref.watch(proteinPservingProvider.notifier).state;
-    // final cholesterolPerServing = ref.watch(cholesterolProvider.notifier).state;
-    // final selectedFilters = ref.watch(selectedFiltersProvider);
-    // final selectedData = ref.watch(selectedDataProvider);
-    // final sugarsPerServing = ref.watch(sugarsPservingProvider);
-    // final sodiumPerServing = ref.watch(sodiumPservingProvider);
-    // final uid = ref.watch(uidProvider.notifier).state;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -392,55 +373,7 @@ Future<bool> isBarcodeExists(String barcode) async {
   }
 }
 
-// class NutrientsList extends StatelessWidget {
-//   const NutrientsList({
-//     super.key,
-//     required this.selectedFilters,
-//     required this.result,
-//     required this.productName,
-//     required this.productCalories,
-//     required this.carbsPserving,
-//     required this.proteinPserving,
-//     required this.fatsPserving,
-//     required this.cholesterolPerServing,
-//     required this.amtPerServing,
-//     required this.satfatsPserving,
-//     required this.transfatsPserving,
-//     required this.sodiumPerServing,
-//     required this.sugarsPerServing,
-//   });
 
-//   final List<String> selectedFilters;
-//   final String result;
-//   final String productName;
-//   final double productCalories;
-//   final double amtPerServing;
-//   final double carbsPserving;
-//   final double proteinPserving;
-//   final double fatsPserving;
-//   final double cholesterolPerServing;
-//   final double satfatsPserving;
-//   final double transfatsPserving;
-//   final double sodiumPerServing;
-//   final double sugarsPerServing;
-
-//}
-
-// @override
-// Widget build(BuildContext context) {
-//   return NutritionContainer(
-//       amtPerServing: amtPerServing,
-//       productCalories: productCalories,
-//       fatsPserving: fatsPserving,
-//       satfatsPserving: satfatsPserving,
-//       transfatsPserving: transfatsPserving,
-//       carbsPserving: carbsPserving,
-//       sugarsPerServing: sugarsPerServing,
-//       proteinPserving: proteinPserving,
-//       sodiumPerServing: sodiumPerServing,
-//       cholesterolPerServing: cholesterolPerServing);
-// }
-//}
 
 class NutritionContainer extends StatelessWidget {
   const NutritionContainer({
@@ -483,19 +416,7 @@ class NutritionContainer extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(children: [
-            //Drag Handle
-            Center(
-              child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  width: 40,
-                  height: 5.0,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 104, 104, 104),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12.0),
-                    ),
-                  )),
-            ),
+ 
             //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
             //Nutritional Facts Column Sheet
             const Column(

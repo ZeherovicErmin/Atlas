@@ -94,7 +94,9 @@ class _HabitLineChartPageState extends State<HabitLineChartPage> {
         title: Text(
           title,
           style: const TextStyle(
-          fontFamily: 'Open Sans', fontWeight: FontWeight.bold
+          fontSize: 18,
+          fontFamily: 'Open Sans',
+          fontWeight: FontWeight.bold
           ),
         ),
       ),

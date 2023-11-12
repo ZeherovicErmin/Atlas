@@ -356,7 +356,7 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                     child: //Save To FireStore button
                         IconButton(
                       onPressed: () {
-                        // Display a pop up first to ask if the user would like to save the workout
+                        // Display a pop up to see what days the user would like to save the exercise too
 
                         showDialog(
                           context: context,
@@ -364,29 +364,34 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                             return AlertDialog(
                                 title: const Text(
                                     'What day would you like to save this exercise to?'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(7, (day) {
-                                    // watching for the state of the provider to see if the specific day of the week is selected
-                                    final isSelected =
-                                        ref.watch(selectedDaysProvider)[day];
-                                    return CheckboxListTile(
-                                      title: Text(getDayName(day)),
-                                      value: isSelected,
+                                content: Consumer(
+                                  builder: (context, ref, child) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: List.generate(7, (day) {
+                                        // watching for the state of the provider to see if the specific day of the week is selected
+                                        final isSelected = ref
+                                            .watch(selectedDaysProvider)[day];
+                                        return CheckboxListTile(
+                                          title: Text(getDayName(day)),
+                                          value: isSelected,
 
-                                      // Updating the state of whether or not its selected by modifying the state of the provider notifier
-                                      onChanged: (bool? value) {
-                                        ref
-                                            .read(selectedDaysProvider.notifier)
-                                            .update((state) {
-                                          final newState =
-                                              List<bool>.from(state);
-                                          newState[day] = value!;
-                                          return newState;
-                                        });
-                                      },
+                                          // Updating the state of whether or not its selected by modifying the state of the provider notifier
+                                          onChanged: (bool? value) {
+                                            ref
+                                                .read(selectedDaysProvider
+                                                    .notifier)
+                                                .update((state) {
+                                              final newState =
+                                                  List<bool>.from(state);
+                                              newState[day] = value!;
+                                              return newState;
+                                            });
+                                          },
+                                        );
+                                      }),
                                     );
-                                  }),
+                                  },
                                 ),
                                 // Adding the buttons to save / cancel
                                 actions: [
@@ -394,6 +399,11 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                                   TextButton(
                                     child: const Text('Cancel'),
                                     onPressed: () {
+                                      // Clearing the checklist
+                                      ref
+                                              .read(selectedDaysProvider.notifier)
+                                              .state =
+                                          List.generate(7, (index) => false);
                                       Navigator.of(context).pop();
                                     },
                                   ),
@@ -411,6 +421,12 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                                               exerciseData, context, i);
                                         }
                                       }
+
+                                      // Resetting the checklist after saving
+                                      ref
+                                              .read(selectedDaysProvider.notifier)
+                                              .state =
+                                          List.generate(7, (index) => false);
                                       Navigator.of(context).pop();
                                     },
                                   ),

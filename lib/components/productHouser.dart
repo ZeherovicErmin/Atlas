@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
@@ -177,15 +178,32 @@ class BarcodeLookupComb extends ConsumerWidget {
                 ref.read(satfatsPservingProvider.notifier).state),
             DataItem('transfatsPserving',
                 ref.read(transfatsPservingProvider.notifier).state),
-            DataItem('sodiumPerServing', ref.read(sodiumPservingProvider)),
+            DataItem('sodiumPerServing', ref.read(sodiumPservingProvider.notifier).state),
             DataItem('productName_lowercase',
                 ref.read(productNameProvider).toLowerCase()),
             DataItem(
               'sugarsPerServing',
-              ref.read(sugarsPservingProvider),
+              ref.read(sugarsPservingProvider.notifier).state,
             )
           ];
-
+          
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return NutritionContainer(amtPerServing: 0.0,
+              productCalories:  ref.read(productCaloriesProvider.notifier).state,
+              carbsPserving: ref.read(carbsPservingProvider.notifier).state,
+              fatsPserving: ref.read(fatsPservingProvider.notifier).state,
+              transfatsPserving: ref.read(transfatsPservingProvider.notifier).state,
+              proteinPserving: ref.read(proteinPservingProvider.notifier).state,
+              sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
+              cholesterolPerServing: ref.read(cholesterolProvider.notifier).state,
+              satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
+              sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
+              
+              );
+            },
+          );
           // Send data to Firestore
           sendDataToFirestore(
               context, ref, {}, ref.read(productNameProvider.notifier).state);
@@ -221,21 +239,6 @@ class BarcodeLookupComb extends ConsumerWidget {
         ref.watch(sugarsPservingProvider.notifier).state = 0.0;
       }
     }
-    // showModalBottomSheet(
-    //     context: context,
-    //     builder: (context) => NutritionContainer(
-    //         amtPerServing: ref.read(amtServingsProvider.notifier).state,
-    //         productCalories: ref.read(productCaloriesProvider.notifier).state,
-    //         fatsPserving: ref.read(fatsPservingProvider.notifier).state,
-    //         satfatsPserving: ref.read(satfatsPservingProvider.notifier).state,
-    //         transfatsPserving:
-    //             ref.read(transfatsPservingProvider.notifier).state,
-    //         carbsPserving: ref.read(carbsPservingProvider.notifier).state,
-    //         sugarsPerServing: ref.read(sugarsPservingProvider.notifier).state,
-    //         proteinPserving: ref.read(proteinPservingProvider.notifier).state,
-    //         sodiumPerServing: ref.read(sodiumPservingProvider.notifier).state,
-    //         cholesterolPerServing:
-    //             ref.read(cholesterolProvider.notifier).state));
   }
 
   // Function to check if a barcode is valid
@@ -440,7 +443,7 @@ Future<bool> isBarcodeExists(String barcode) async {
 //}
 
 class NutritionContainer extends StatelessWidget {
-  const NutritionContainer(carbsPerServing, {
+  const NutritionContainer({
     super.key,
     required this.amtPerServing,
     required this.productCalories,

@@ -318,6 +318,7 @@ class BarcodeLogPage extends ConsumerWidget {
         final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
         final transfatsPserving = formatDecimal(data["transfatsPserving"]);
         final amtServings = formatDecimal(data["amtServingsProvider"]);
+        final sugarsPerServing = formatDecimal(data["sugarsPerServing"]);
         return Animate(
           
           effects: [
@@ -383,7 +384,8 @@ class BarcodeLogPage extends ConsumerWidget {
                       sodiumPerServing,
                       transfatsPserving,
                       cholesterolPerServing,
-                      amtServings);
+                      amtServings,
+                      sugarsPerServing);
         
                   showModalBottomSheet(
                     context: context,
@@ -522,6 +524,7 @@ class BarcodeLogPage extends ConsumerWidget {
           String sodiumPerServing,
           String transfatsPserving,
           String cholesterolPerServing,
+          String sugarsPerServing,
           String amtServings) =>
       Container(
         decoration: BoxDecoration(
@@ -618,7 +621,7 @@ class BarcodeLogPage extends ConsumerWidget {
                   title: "Total Carbohydrates", value: '${carbsPerServing}'),
               //Sugars
               NutritionRow(
-                  title: "Total Sugars", isSubcategory: true, value: '${0}'),
+                  title: "Total Sugars", isSubcategory: true, value: '$sugarsPerServing'),
               //end Protein
 
               //protein per serving

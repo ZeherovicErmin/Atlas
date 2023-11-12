@@ -17,7 +17,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -48,6 +48,8 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.4.0
+  loading_animation_widget:
+  
 
   accordion: ^2.6.0
 
@@ -65,11 +67,15 @@ dependencies:
   visibility_detector: ^0.4.0
 
   stroke_text: any
-
-
+  flutter_form_builder: ^9.1.1
+  form_builder_validators: ^9.1.0
 
   fl_chart: ^0.64.0
   liquid_pull_to_refresh: ^3.0.0
+  modal_bottom_sheet: ^2.1.2
+  flutter_local_notifications: ^16.1.0
+  intl: ^0.18.1
+
 
 
 
@@ -83,6 +89,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+ 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

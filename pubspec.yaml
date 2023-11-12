@@ -48,6 +48,8 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.4.0
+  loading_animation_widget:
+  
 
   accordion: ^2.6.0
 

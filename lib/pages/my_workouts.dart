@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'saved_workouts.dart';
@@ -25,8 +24,8 @@ class DiscoverPage extends ConsumerWidget {
   static const Map<String, Color> dayContColors = {
     "Monday": Color.fromARGB(255, 63, 199, 202),
     "Tuesday": Color.fromARGB(255, 255, 107, 76),
-    "Wednesday": Color.fromARGB(255, 131, 217, 131),
-    "Thursday": Color.fromARGB(255, 112, 128, 144),
+    "Wednesday": Color.fromARGB(255, 112, 128, 144),
+    "Thursday": Color.fromARGB(255, 131, 217, 131),
     "Friday": Color.fromARGB(255, 147, 112, 219),
     "Saturday": Color.fromARGB(255, 206, 182, 47),
     "Sunday": Color.fromARGB(255, 202, 63, 160),
@@ -43,42 +42,42 @@ class DiscoverPage extends ConsumerWidget {
     ),
     "Tuesday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/TuesdayIcon.png',
       ),
       height: 50,
       width: 50,
     ),
     "Wednesday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/WednesdayIcon.png',
       ),
       height: 50,
       width: 50,
     ),
     "Thursday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/ThursdayIcon.png',
       ),
       height: 50,
       width: 50,
     ),
     "Friday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/FridayIcon.png',
       ),
       height: 50,
       width: 50,
     ),
     "Saturday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/SaturdayIcon.png',
       ),
       height: 50,
       width: 50,
     ),
     "Sunday": Image(
       image: AssetImage(
-        'lib/images/monday_icon.png',
+        'lib/images/SundayIcon.png',
       ),
       height: 50,
       width: 50,

@@ -29,7 +29,8 @@ class FeedPost extends StatefulWidget {
   final String? difficulty;
   final String? instructions;
   final String imageUrl;
-
+  final Map<String, dynamic>? recipe;
+  
   const FeedPost({
     super.key,
     required this.message,
@@ -44,19 +45,6 @@ class FeedPost extends StatefulWidget {
     required this.equipment,
     required this.difficulty,
     required this.instructions,
-    this.barcodeData,
-    required this.imageUrl,
-  });
-  final Map<String, dynamic>? recipe;
-
-  const FeedPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-    required this.email,
     this.barcodeData,
     required this.imageUrl,
     this.recipe

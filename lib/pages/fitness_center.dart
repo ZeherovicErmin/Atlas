@@ -85,19 +85,45 @@ class FitCenter extends ConsumerWidget {
         backgroundColor: const Color(0xFFFAF9F6),
         //Home page for when a user logs in
         appBar: AppBar(
-            title: const Center(
-              child: Text(
+            centerTitle: true,
+              title: const Text(
                 "Fitness Center",
                 style: TextStyle(
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
             backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-          leading: const Icon(
-            null,
-          ),
+            leading: IconButton(
+              icon: const Icon(CupertinoIcons.info_circle_fill),
+              onPressed: () {
+                final isInfoDialogOpen = ref.read(infoDialogProvider);
+
+                if (!isInfoDialogOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Center(
+                            child: Text('Discover Page Guide')),
+                        content: const Text(
+                            "Displayed is a list of muscles with icons depicting the muscle.\n"
+                            "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
+                            "The muscles are color coded by general muscle group they belong to.\n"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Close'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              }
+            ),
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -111,37 +137,8 @@ class FitCenter extends ConsumerWidget {
               ],
             ),
             actions: [
-              // Creating a button that will display information on how to use the page to the user
-              IconButton(
-                  icon: const Icon(CupertinoIcons.info_circle_fill),
-                  onPressed: () {
-                    final isInfoDialogOpen = ref.read(infoDialogProvider);
-
-                    if (!isInfoDialogOpen) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Center(
-                                child: Text('Discover Page Guide')),
-                            content: const Text(
-                                "Displayed is a list of muscles with icons depicting the muscle.\n"
-                                "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
-                                "The muscles are color coded by general muscle group they belong to.\n"),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Close'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  })
-            ]),
+            ]
+          ),
 
         body: TabBarView(
           children: [

@@ -1,3 +1,4 @@
+import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
@@ -5,6 +6,7 @@ import 'package:atlas/components/editPostButton.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/time_stamp.dart';
+import 'package:atlas/pages/saved_recipes.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +29,8 @@ class FeedPost extends StatefulWidget {
   final String? difficulty;
   final String? instructions;
   final String imageUrl;
-
+  final Map<String, dynamic>? recipe;
+  
   const FeedPost({
     super.key,
     required this.message,
@@ -44,6 +47,7 @@ class FeedPost extends StatefulWidget {
     required this.instructions,
     this.barcodeData,
     required this.imageUrl,
+    this.recipe
   });
 
   @override
@@ -188,6 +192,39 @@ class _FeedPostState extends State<FeedPost> {
                       ),
                     ),
                   ),
+                ),
+
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
+                ),
+
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
+                ),
+
+                //Show if there is recipe data
+                Visibility(
+                  visible: widget.recipe != null &&
+                      widget.recipe!.isNotEmpty,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                    child: Text("View Recipe"),)
+                      
                 ),
 
                 const SizedBox(height: 5),
@@ -792,9 +829,13 @@ class _FeedPostState extends State<FeedPost> {
             //sodium
             NutritionRow(
                 title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+            NutritionRow(
+                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
             NutritionRow(
+                
                 title: "Cholesterol",
+               
                 value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),

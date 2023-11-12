@@ -107,6 +107,24 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
                                                 child: IconButton(
+                                                  onPressed: onShare(recipe, context),
+                                                  icon: const Icon(
+                                                      Icons.share),
+                                                  tooltip: "Share Recipe",
+                                                  color: Colors.white,
+                                                )))),
+                                    Container(
+                                        padding: EdgeInsets.all(0),
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 255, 176, 58),
+                                            child: Material(
+                                                color: const Color.fromARGB(
+                                                    0, 255, 255, 255),
+                                                child: IconButton(
                                                   onPressed: () => onRemove(
                                                       recipe,
                                                       context,
@@ -134,6 +152,46 @@ class _SavedRecipesState extends State<SavedRecipes> {
       ),
     );
   }
+}
+
+onShare(Result recipe, BuildContext context) {
+  return () => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Consumer(builder: (context, ref, _) {
+          return Dialog(
+            insetPadding: EdgeInsets.symmetric(vertical: 300),
+            child: Column(children: [
+              //Recipe title
+              Text("Post the recipe \"${recipe.title}\"?"),
+              //Post button
+              TextButton(
+                onPressed: () {
+              FirebaseFirestore.instance.collection("User Posts").add({
+              'UserEmail': FirebaseAuth.instance.currentUser!.email,
+              'Message': "Check out this recipe: ${recipe.title}",
+              'TimeStamp': Timestamp.now(),
+              'Likes': [],
+              'barcodeData': {},
+              'postImage': '',
+              'recipe': recipe.toMap() 
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Post'),
+          ),
+          //Close button
+              TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Close'),
+          )
+            ],) 
+            );
+        }
+        );
+      });
 }
 
 // Function to navigate to recipe details page

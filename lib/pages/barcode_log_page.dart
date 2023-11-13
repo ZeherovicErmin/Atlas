@@ -322,6 +322,9 @@ class BarcodeLogPage extends ConsumerWidget {
         final sodiumPerServing = formatDecimal(data["sodiumPerServing"]);
         final transfatsPserving = formatDecimal(data["transfatsPserving"]);
         final amtServings = formatDecimal(data["amtServingsProvider"]);
+        final sugarsPerServi = formatDecimal(data["sugarsPerServing"]);
+        //final sugarsPerServing = '0';
+        print('Sugars: $sugarsPerServi');
         return Animate(
           
           effects: [
@@ -387,7 +390,8 @@ class BarcodeLogPage extends ConsumerWidget {
                       sodiumPerServing,
                       transfatsPserving,
                       cholesterolPerServing,
-                      amtServings);
+                      amtServings,
+                      sugarsPerServi);
         
                   showModalBottomSheet(
                     context: context,
@@ -526,6 +530,7 @@ class BarcodeLogPage extends ConsumerWidget {
           String sodiumPerServing,
           String transfatsPserving,
           String cholesterolPerServing,
+          String sugarsPerServi,
           String amtServings) =>
       Container(
         decoration: BoxDecoration(
@@ -540,6 +545,9 @@ class BarcodeLogPage extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
+
+              //Drag Handle
+
               //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
               //Nutritional Facts Column Sheet
               const Column(
@@ -566,7 +574,7 @@ class BarcodeLogPage extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${amtServings}g per container",
+                        "${sugarsPerServi}g per container",
                         textAlign: TextAlign.start,
                         style: TextStyle(
                             fontFamily: 'Helvetica Black',
@@ -609,7 +617,7 @@ class BarcodeLogPage extends ConsumerWidget {
                   title: "Total Carbohydrates", value: '${carbsPerServing}'),
               //Sugars
               NutritionRow(
-                  title: "Total Sugars", isSubcategory: true, value: '${0}'),
+                  title: "Total Sugars", isSubcategory: true, value: '$amtServings'),
               //end Protein
 
               //protein per serving

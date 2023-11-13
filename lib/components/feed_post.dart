@@ -61,12 +61,14 @@ class _FeedPostState extends State<FeedPost> {
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
+  bool hasComments = true;
   //List of widgets to include in the barcode sharing
 
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+    checkForComments();
   }
 
   //toggle like
@@ -99,199 +101,218 @@ class _FeedPostState extends State<FeedPost> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
-      padding: const EdgeInsets.all(25),
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // feed post
-        Wrap(
-          spacing: 8.0,
-          direction: Axis.horizontal,
-          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.start,
+        Row(
+          //Makes it so the 3 dots is separated from Username
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // group of text (message + username)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                //message
-                Text(
-                  widget.message,
-                  style: const TextStyle(color: Colors.black),
-                  maxLines: null,
-                ),
-                Visibility(
-                  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
-                  child: Image.network(
-                    widget.imageUrl,
-                    fit: BoxFit.cover,
+            Expanded(
+              child: Row(
+                //User Icon, Username, Timestamp
+                children: [
+                  Icon(
+                    Icons.account_circle,
+                    size: 40.0,
+                    color: Colors.grey,
                   ),
-                ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  // User name stacked on top of the timestamp of time posted
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //Username
+                      Text(
+                        widget.user.trim(),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                      //Timestamp
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            //More options Icon
+            //Should give the user access to report, edit, delete
+            //REMEMBER TO UPDATE WITH THE OPTIONS!!!!!
+            //Most likely a modal shee
+            IconButton(
+                //passes in widget and current user for the Visibility check
+                onPressed: () =>
+                    _showPostOptions(context, widget, currentUser, this),
+                icon: Icon(Icons.more_vert)),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        // feed post
+        Text(
+          widget.message,
+          style: const TextStyle(color: Colors.black),
+          maxLines: null,
+        ),
+        Visibility(
+          visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
+          child: Image.network(
+            widget.imageUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
 
-                // Only display specific barcode data entries
-                Visibility(
-                  visible: widget.barcodeData != null &&
-                      widget.barcodeData!.isNotEmpty &&
-                      widget.barcodeData!['productName'] != null &&
-                      widget.barcodeData!['productName'].isNotEmpty,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.black, width: 3.0),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: InkWell(
-                      //This will pull up a modal sheet
-                      onTap: () {
-                        Widget modalContent = NewWidget(widget.barcodeData);
+        // Only display specific barcode data entries
+        Visibility(
+          visible: widget.barcodeData != null &&
+              widget.barcodeData!.isNotEmpty &&
+              widget.barcodeData!['productName'] != null &&
+              widget.barcodeData!['productName'].isNotEmpty,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.black, width: 3.0),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: InkWell(
+              //This will pull up a modal sheet
+              onTap: () {
+                Widget modalContent = NewWidget(widget.barcodeData);
 
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => modalContent,
-                        );
-                        //deleteLog(context, data);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, top: 16, bottom: 8, right: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AutoSizeText(
-                                    widget.barcodeData?['productName'] ?? '',
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                    minFontSize: 15,
-                                  ),
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => modalContent,
+                );
+                //deleteLog(context, data);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 16, top: 16, bottom: 8, right: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            widget.barcodeData?['productName'] ?? '',
+                            maxLines: 1,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            minFontSize: 15,
+                          ),
 
-                                  // The keys that are filtered get sent into .map(socialBarcode)
-                                  ...widget.barcodeData!.entries
-                                      .where((entry) =>
-                                          entry.key == 'proteinPerServing' ||
-                                          entry.key == 'carbsPerServing' ||
-                                          entry.key ==
-                                              'fatsPerServing') // Filter specific keyshere
-                                      .map(socialBarcode)
-                                      .toList(),
-                                  const SizedBox(height: 5),
-                                ],
-                              ),
-                            ),
-                            const Image(
-                                height: 120,
-                                width: 100,
-                                image: AssetImage(
-                                    'assets/icons/flameiconnameplate.png'),
-                                fit: BoxFit.contain),
-                          ],
-                        ),
+                          // The keys that are filtered get sent into .map(socialBarcode)
+                          ...widget.barcodeData!.entries
+                              .where((entry) =>
+                                  entry.key == 'proteinPerServing' ||
+                                  entry.key == 'carbsPerServing' ||
+                                  entry.key ==
+                                      'fatsPerServing') // Filter specific keyshere
+                              .map(socialBarcode)
+                              .toList(),
+                          const SizedBox(height: 5),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-
-                //Show if there is recipe data
-                Visibility(
-                    visible: widget.recipe != null && widget.recipe!.isNotEmpty,
-                    child: ElevatedButton(
-                      onPressed: () => navigateToRecipeDetails(
-                          context,
-                          Result.fromJson(
-                              widget.recipe as Map<String, dynamic>)),
-                      child: Text("View Recipe"),
-                    )),
-
-                const SizedBox(height: 5),
-                // Displaying workout details
-                if (widget.exerciseName != null && widget.exerciseType != null)
-                  Visibility(
-                      visible: widget.exerciseName != null &&
-                          widget.exerciseName!.isNotEmpty,
-                      child: Container(
-                        margin: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              12.0), // Add a border radius
-                          border: Border.all(
-                            width: .5,
-                            style: BorderStyle.solid,
-                            color: Colors.transparent,
-                            // Set the border color and width
-                          ),
-                        ),
-                        child: fitdesign(),
-                      )),
-                //user + day
-                Row(
-                  children: [
-                    Text(
-                      widget.user.trim(),
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                    Text(
-                      " • ",
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                    Text(
-                      widget.time,
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
+                    const Image(
+                        height: 120,
+                        width: 100,
+                        image:
+                            AssetImage('assets/icons/flameiconnameplate.png'),
+                        fit: BoxFit.contain),
                   ],
                 ),
-              ],
+              ),
             ),
+          ),
+        ),
 
-            //delete button
-            //  if (currentUser.email == widget.email)
-            //    DeleteButton(onTap: deletePost),
+        //Show if there is recipe data
+        Visibility(
+          visible: widget.recipe != null && widget.recipe!.isNotEmpty,
+          child: ElevatedButton(
+            onPressed: () => navigateToRecipeDetails(context,
+                Result.fromJson(widget.recipe as Map<String, dynamic>)),
+            child: Text("View Recipe"),
+          ),
+        ),
 
-            Align(
-              alignment: Alignment.topRight,
-              child: currentUser.email == widget.email
-                  ? DeleteButton(onTap: deletePost)
-                  : const SizedBox(),
-            ),
+        const SizedBox(height: 5),
+        // Displaying workout details
+        if (widget.exerciseName != null && widget.exerciseType != null)
+          Visibility(
+              visible: widget.exerciseName != null &&
+                  widget.exerciseName!.isNotEmpty,
+              child: Container(
+                margin: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(12.0), // Add a border radius
+                  border: Border.all(
+                    width: .5,
+                    style: BorderStyle.solid,
+                    color: Colors.transparent,
+                    // Set the border color and width
+                  ),
+                ),
+                child: fitdesign(),
+              )),
 
-            //edit post button
-            Align(
-              alignment: Alignment.topRight,
-              child: currentUser.email == widget.email
-                  ? editButton(
-                      onTap: () async {
-                        // Check if there are comments
-                        bool hasComments = await checkForComments();
+        //delete button
+        //  if (currentUser.email == widget.email)
+        //    DeleteButton(onTap: deletePost),
 
-                        BuildContext dialogContext = context;
+        Align(
+          alignment: Alignment.topRight,
+          child: currentUser.email == widget.email
+              ? DeleteButton(onTap: deletePost)
+              : const SizedBox(),
+        ),
 
-                        if (hasComments) {
-                          // Show a message or take any other action
-                          // ignore: use_build_context_synchronously
-                          showDialog(
-                            context: dialogContext,
-                            builder: (context) => AlertDialog(
-                              title: const Text("Cannot Edit"),
-                              content: const Text(
-                                  "There are comments on this post. You cannot edit it."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("OK"),
-                                ),
-                              ],
+        //edit post button
+        Align(
+          alignment: Alignment.topRight,
+          child: currentUser.email == widget.email
+              ? editButton(
+                  onTap: () async {
+                    // Check if there are comments
+                    bool hasComments = await checkForComments();
+
+                    BuildContext dialogContext = context;
+
+                    if (hasComments) {
+                      // Show a message or take any other action
+                      // ignore: use_build_context_synchronously
+                      showDialog(
+                        context: dialogContext,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Cannot Edit"),
+                          content: const Text(
+                              "There are comments on this post. You cannot edit it."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"),
                             ),
-                          );
-                        } else {
-                          // Allow editing if there are no comments
-                          editPost("Message");
-                        }
-                      },
-                    )
-                  : const SizedBox(),
-            ),
-          ],
+                          ],
+                        ),
+                      );
+                    } else {
+                      // Allow editing if there are no comments
+                      editPost();
+                    }
+                  },
+                )
+              : const SizedBox(),
         ),
 
         const SizedBox(height: 20),
@@ -640,15 +661,15 @@ class _FeedPostState extends State<FeedPost> {
     });
   }
 
-  Future<void> editPost(String field) async {
-    TextEditingController post = TextEditingController();
+  Future<void> editPost() async {
+    TextEditingController post = TextEditingController(text: widget.message);
     //show a dialog box for ediitng the post
     String? newValue = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         title: Text(
-          "Edit $field",
+          "Edit Message",
           style: const TextStyle(color: Colors.black),
         ),
         content: TextField(
@@ -657,7 +678,7 @@ class _FeedPostState extends State<FeedPost> {
           style: const TextStyle(
               color: Colors.black), // Change text color to white
           decoration: InputDecoration(
-            hintText: "Enter new $field",
+            hintText: "Enter new Message",
             hintStyle: const TextStyle(color: Colors.black),
           ),
         ),
@@ -687,7 +708,9 @@ class _FeedPostState extends State<FeedPost> {
     if (newValue != null && newValue.trim().isNotEmpty) {
       try {
         // Only update if there is something in the text field
-        await userPostsCollection.doc(widget.postId).update({field: newValue});
+        await userPostsCollection
+            .doc(widget.postId)
+            .update({'Message': newValue});
         print("Post updated successfully");
       } catch (error) {
         print("Error updating post: $error");
@@ -818,7 +841,145 @@ class _FeedPostState extends State<FeedPost> {
   }
 }
 
+//Need to pass in widget and currentUser variables
+void _showPostOptions(
+    BuildContext context, widget, currentUser, _FeedPostState state) {
+  showModalBottomSheet(
+    context: context,
+    builder: (
+      BuildContext context,
+    ) {
+      return Container(
+        height: 115,
+        child: Column(
+          children: <Widget>[
+            Visibility(
+              visible: currentUser.email != widget.email,
+              child: ListTile(
+                leading: Icon(Icons.report),
+                title: Text('Report Post'),
+                onTap: () {
+                  // Add functionality for reporting a post
+                  Navigator.pop(context);
+                  //reportPost
+                  _confirmReportDialog(
+                      context, widget.postId, currentUser, widget);
+                  //reportPost(widget.postId, currentUser, widget);
+                },
+              ),
+            ),
+            //Edit Post if user owns the post
+            Visibility(
+              visible: currentUser.email == widget.email,
+              child: ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit Post'),
+                onTap: () {
+                  // Add functionality for reporting a post
+                  Navigator.pop(context);
+                  state.editPost();
+                },
+              ),
+            ),
+            //Delete Post if user owns the post (Need to add this functionality)
+            Visibility(
+              visible: currentUser.email == widget.email,
+              child: ListTile(
+                leading: Icon(Icons.cancel),
+                title: Text('Delete Post'),
+                onTap: () {
+                  // Add functionality for reporting a post
+                  Navigator.pop(context);
+                  state.deletePost();
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
+void _confirmReportDialog(
+    BuildContext context, String postId, currentUser, widget) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Report Post"),
+      content: const Text(
+          "Are you sure you want to report this post? This action cannot be undone."),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            reportPost(postId, currentUser, widget, context);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Reported!')));
+            Navigator.pop(context);
+          },
+          child: const Text("Report"),
+        ),
+      ],
+    ),
+  );
+}
 
+//Function to report a post
+Future<void> reportPost(
+    String postId, currentUser, widget, BuildContext context) async {
+  final currentUserEmail = currentUser.email;
+  final postRef =
+      FirebaseFirestore.instance.collection('User Posts').doc(postId);
+  final postSnapshot = await postRef.get();
+  if (!postSnapshot.exists) {
+    print('Post does not exist');
+    return;
+  }
+
+  //Adds to data for reporting
+  Map<String, dynamic> postData = postSnapshot.data() as Map<String, dynamic>;
+  List<dynamic> reports = postData['Reports'] ?? [];
+
+  if (!reports.contains(currentUserEmail)) {
+    reports.add(currentUserEmail);
+    await postRef.update({'Reports': reports});
+
+    //Check if reports hits the amt of time
+    if (reports.length >= 3) {
+      //await deletePost(postId);
+      final commentDocs = await FirebaseFirestore.instance
+          .collection('User Posts')
+          .doc(widget.postId)
+          .collection("Comments")
+          .get();
+      //The only for loop in this codebases existence
+      for (var doc in commentDocs.docs) {
+        await FirebaseFirestore.instance
+            .collection('User Posts')
+            .doc(widget.postId)
+            .collection('Comments')
+            .doc(doc.id)
+            .delete();
+      }
+      //delete the post
+      FirebaseFirestore.instance
+          .collection('User Posts')
+          .doc(widget.postId)
+          .delete()
+          .then((value) => print("post deleted"))
+          .catchError((error) => print('failed to report post: $error'));
+
+      //dismiss dialog
+      //Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Post reported')));
+    }
+  }
 
 //Text(barcodeData!['productName']),
+}

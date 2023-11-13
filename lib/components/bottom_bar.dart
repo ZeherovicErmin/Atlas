@@ -28,7 +28,7 @@ class BottomNav extends ConsumerWidget {
       Recipes(),
       HomePage(),
       BarcodeLookupComb(),
-      const newFeed(),
+      const Feed(),
     ];
 
     return Scaffold(

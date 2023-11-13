@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class newFeed extends ConsumerWidget {
   const newFeed({Key? key}) : super(key: key);
@@ -42,70 +41,83 @@ class newFeed extends ConsumerWidget {
   }
 
   // Method to build each post item
-  Widget _buildPostItem(int index, BuildContext context) {
-    // Post container with basic layout
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Post header with username and more options icon
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // User profile icon and username
-              Row(
+Widget _buildPostItem(int index, BuildContext context) {
+  // Placeholder for timestamp - replace with actual timestamp data
+  String timestamp = "10 mins ago"; 
+
+  return Container(
+    margin: const EdgeInsets.all(10),
+    padding: const EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Post header with username, timestamp, and more options icon
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // User profile icon, username, and timestamp
+            Expanded(
+              child: Row(
                 children: [
                   Icon(Icons.account_circle, size: 40.0, color: Colors.grey),
                   SizedBox(width: 10),
-                  Text(
-                    "Username ${index + 1}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Username ${index + 1}",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        timestamp, // Display timestamp
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              // More options icon
-              IconButton(
-                icon: Icon(Icons.more_vert, color: Colors.grey),
-                onPressed: () => _showPostOptions(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Post content section
-          Text(
-            "This is a sample post content. It can include text and images.",
-            style: TextStyle(color: Colors.black.withOpacity(0.6)),
-          ),
-          const SizedBox(height: 10),
-          // Image placeholder
-          Container(
-            height: 200,
-            color: Colors.grey[300],
-            child: const Center(child: Text("Image Placeholder")),
-          ),
-          const SizedBox(height: 10),
-          // Like and comment icons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Icon(Icons.thumb_up, color: Colors.blue),
-              // Comment icon with action to show comments
-              IconButton(
-                icon: Icon(Icons.comment, color: Colors.grey),
-                onPressed: () => _showCommentsModal(context),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            ),
+            // More options icon
+            IconButton(
+              icon: Icon(Icons.more_vert, color: Colors.grey),
+              onPressed: () => _showPostOptions(context),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        // Post content section
+        Text(
+          "This is a sample post content. It can include text and images.",
+          style: TextStyle(color: Colors.black.withOpacity(0.6)),
+        ),
+        const SizedBox(height: 10),
+        // Image placeholder
+        Container(
+          height: 200,
+          color: Colors.grey[300],
+          child: const Center(child: Text("Image Placeholder")),
+        ),
+        const SizedBox(height: 10),
+        // Like and comment icons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Icon(Icons.thumb_up, color: Colors.blue),
+            // Comment icon with action to show comments
+            IconButton(
+              icon: Icon(Icons.comment, color: Colors.grey),
+              onPressed: () => _showCommentsModal(context),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
   void _showPostOptions(BuildContext context) {
     showModalBottomSheet(
@@ -200,7 +212,7 @@ void _showCommentsModal(BuildContext context) {
                 title: Text('User 2'),
                 subtitle: Text('I totally agree!'),
               ),
-              // Comments
+              // Add more sample comments here if needed
               Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -217,8 +229,7 @@ void _showCommentsModal(BuildContext context) {
                       icon: Icon(Icons.send,
                           color: Color.fromARGB(255, 0, 136, 204)),
                       onPressed: () {
-                        // handle the logic to post the comment
-
+                        // Here you can handle the logic to post the comment
                         commentController.clear();
                         FocusScope.of(context).unfocus();
                       },

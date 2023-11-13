@@ -271,12 +271,8 @@ class BarcodeLookupComb extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-          leading: const Icon(
-            null,
-          ),
         title: const Text(
-          "Barcode Lookup",
+          "B a r c o d e  L o o k u p",
           style:
               TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
         ),
@@ -380,10 +376,7 @@ Future<bool> isBarcodeExists(String barcode) async {
 
 
 class NutritionContainer extends StatelessWidget {
-
-  const NutritionContainer(
-    carbsPerServing, {
-
+  const NutritionContainer({
     super.key,
     required this.amtPerServing,
     required this.productCalories,

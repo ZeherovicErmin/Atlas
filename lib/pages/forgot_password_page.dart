@@ -69,7 +69,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-        'F o r g o t  P a s s w o r d',
+        'Forgot Password',
         style:
         TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
     ),

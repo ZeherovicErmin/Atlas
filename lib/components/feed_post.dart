@@ -163,46 +163,49 @@ class _FeedPostState extends State<FeedPost> {
           style: const TextStyle(color: Colors.black),
           maxLines: null,
         ),
-Visibility(
-  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
-  child: GestureDetector(
-    onTap: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return GestureDetector(
-            onTap: () => Navigator.of(context).pop(), // Close dialog on tap outside
+        Visibility(
+          visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return GestureDetector(
+                    onTap: () => Navigator.of(context)
+                        .pop(), // Close dialog on tap outside
+                    child: Container(
+                      color: Colors.transparent, // Transparent background
+                      child: Center(
+                        child: PhotoView(
+                          imageProvider: NetworkImage(widget.imageUrl),
+                          backgroundDecoration: BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                          initialScale: PhotoViewComputedScale.contained,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
             child: Container(
-              color: Colors.transparent, // Transparent background
-              child: Center(
-                child: PhotoView(
-                  imageProvider: NetworkImage(widget.imageUrl),
-                  backgroundDecoration: BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  minScale: PhotoViewComputedScale.contained,
-                  maxScale: PhotoViewComputedScale.covered * 2,
-                  initialScale: PhotoViewComputedScale.contained,
+              height: 200, // Set a fixed height
+              width: double.infinity, // Use the full width of the screen
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(8), // Optional for rounded corners
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageUrl),
+                  fit: BoxFit
+                      .cover, // This will cover the container, maintaining aspect ratio
                 ),
               ),
             ),
-          );
-        },
-      );
-    },
-    child: Container(
-      height: 200, // Set a fixed height
-      width: double.infinity, // Use the full width of the screen
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8), // Optional for rounded corners
-        image: DecorationImage(
-          image: NetworkImage(widget.imageUrl),
-          fit: BoxFit.cover, // This will cover the container, maintaining aspect ratio
+          ),
         ),
-      ),
-    ),
-  ),
-),
 
         // Only display specific barcode data entries
         Visibility(
@@ -723,6 +726,22 @@ Visibility(
       "CommentedBy": currentUser.email,
       "CommentTime": Timestamp.now() //format when displaying
     });
+  }
+
+  //Gets the user's username
+  Stream<String> fetchUsername({String? email}) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      return FirebaseFirestore.instance
+          .collection("Users")
+          .doc(email)
+          .snapshots()
+          .map((snapshot) {
+        final userData = snapshot.data() as Map<String, dynamic>;
+        return userData['username']?.toString() ?? '';
+      });
+    }
+    return Stream.value('');
   }
 
   Future<void> editPost() async {

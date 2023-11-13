@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:photo_view/photo_view.dart';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -162,13 +163,46 @@ class _FeedPostState extends State<FeedPost> {
           style: const TextStyle(color: Colors.black),
           maxLines: null,
         ),
-        Visibility(
-          visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
-          child: Image.network(
-            widget.imageUrl,
-            fit: BoxFit.cover,
-          ),
+Visibility(
+  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
+  child: GestureDetector(
+    onTap: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return GestureDetector(
+            onTap: () => Navigator.of(context).pop(), // Close dialog on tap outside
+            child: Container(
+              color: Colors.transparent, // Transparent background
+              child: Center(
+                child: PhotoView(
+                  imageProvider: NetworkImage(widget.imageUrl),
+                  backgroundDecoration: BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  minScale: PhotoViewComputedScale.contained,
+                  maxScale: PhotoViewComputedScale.covered * 2,
+                  initialScale: PhotoViewComputedScale.contained,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+    child: Container(
+      height: 200, // Set a fixed height
+      width: double.infinity, // Use the full width of the screen
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8), // Optional for rounded corners
+        image: DecorationImage(
+          image: NetworkImage(widget.imageUrl),
+          fit: BoxFit.cover, // This will cover the container, maintaining aspect ratio
         ),
+      ),
+    ),
+  ),
+),
 
         // Only display specific barcode data entries
         Visibility(

@@ -44,7 +44,8 @@ class _FeedPostState extends State<FeedPost> {
         // Comments Section Placeholder
         ExpansionTile(
           backgroundColor: Colors.grey[200],
-          title: Text('View Comments', style: TextStyle(color: Colors.grey[500])),
+          title:
+              Text('View Comments', style: TextStyle(color: Colors.grey[500])),
           children: [
             // Comments List Placeholder
           ],

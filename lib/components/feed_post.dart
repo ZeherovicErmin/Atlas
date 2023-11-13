@@ -271,12 +271,12 @@ class _FeedPostState extends State<FeedPost> {
         //  if (currentUser.email == widget.email)
         //    DeleteButton(onTap: deletePost),
 
-        Align(
-          alignment: Alignment.topRight,
-          child: currentUser.email == widget.email
-              ? DeleteButton(onTap: deletePost)
-              : const SizedBox(),
-        ),
+        // Align(
+        //   alignment: Alignment.topRight,
+        //   child: currentUser.email == widget.email
+        //       ? DeleteButton(onTap: deletePost)
+        //       : const SizedBox(),
+        // ),
 
         //edit post button
         Align(
@@ -422,6 +422,34 @@ class _FeedPostState extends State<FeedPost> {
             ),
           ],
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              children: [
+                //like button
+                LikeButton(
+                  isLiked: isLiked,
+                  onTap: toggleLike,
+                ),
+
+                const SizedBox(height: 5),
+
+                //like count
+                Text(
+                  widget.likes.length.toString(),
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+            IconButton(
+                onPressed: () => _showCommentsModal(context, widget.postId),
+                icon: Icon(
+                  Icons.comment,
+                  color: Colors.grey,
+                ))
+          ],
+        )
       ]),
     );
   }
@@ -839,6 +867,114 @@ class _FeedPostState extends State<FeedPost> {
 
     return commentSnapshot.docs.isNotEmpty;
   }
+}
+
+_showCommentsModal(BuildContext context, String postId) {
+  TextEditingController commentController = TextEditingController();
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('User Posts')
+            .doc(postId)
+            .collection('Comments')
+            .orderBy('CommentTime', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              child: CircularProgressIndicator(),
+              height: 500,
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Container(height: 500, child: Text('No comments yet.'));
+          }
+
+          List<Map<String, dynamic>> comments = snapshot.data!.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList();
+
+          return Container(
+            height: 500,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: comments.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> comment = comments[index];
+                      return ListTile(
+                        title: Text(comment['CommentText']),
+                        subtitle:
+                            Text('Commented by: ${comment['CommentedBy']}'),
+                      );
+                    },
+                  ),
+                ),
+                Divider(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: commentController,
+                          decoration:
+                              InputDecoration(hintText: "Write a Comment..."),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          String commentText = commentController.text;
+                          if (commentText.isNotEmpty) {
+                            postComment(postId, commentText);
+                            commentController.clear();
+                            FocusScope.of(context).unfocus();
+                          }
+                        },
+                        icon: Icon(Icons.send,
+                            color: Color.fromARGB(255, 0, 136, 204)),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+void postComment(String postId, String commentText) {
+  FirebaseFirestore.instance
+      .collection('User Posts')
+      .doc(postId)
+      .collection('Comments')
+      .add({
+    "CommentText": commentText,
+    "CommentedBy": FirebaseAuth.instance.currentUser?.email ?? "Anonymous",
+    "CommentTime": Timestamp.now()
+  });
+}
+
+Future<List<Map<String, dynamic>>> fetchComments(postId) async {
+// Collects comments from a particular post
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('User Posts')
+      .doc(postId)
+      .collection('Comments')
+      .orderBy('CommentTime', descending: true)
+      .get();
+  return snapshot.docs
+      .map((doc) => doc.data() as Map<String, dynamic>)
+      .toList();
 }
 
 //Need to pass in widget and currentUser variables

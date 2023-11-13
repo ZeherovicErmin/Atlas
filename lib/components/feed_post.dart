@@ -442,12 +442,14 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-            IconButton(
-                onPressed: () => _showCommentsModal(context, widget.postId),
-                icon: Icon(
-                  Icons.comment,
-                  color: Colors.grey,
-                ))
+            Column(children: [
+              IconButton(
+                  onPressed: () => _showCommentsModal(context, widget.postId),
+                  icon: Icon(
+                    Icons.comment,
+                    color: Colors.grey,
+                  )),
+            ])
           ],
         )
       ]),
@@ -886,13 +888,18 @@ _showCommentsModal(BuildContext context, String postId) {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
-              child: CircularProgressIndicator(),
               height: 500,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
             );
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Container(height: 500, child: Text('No comments yet.'));
+            return Container(
+              height: 500,
+              alignment: Alignment.center,
+              child: Text('No comments yet.', style: TextStyle(fontSize: 18)),
+            );
           }
 
           List<Map<String, dynamic>> comments = snapshot.data!.docs
@@ -903,15 +910,26 @@ _showCommentsModal(BuildContext context, String postId) {
             height: 500,
             child: Column(
               children: [
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    'Comments',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Divider(),
                 Expanded(
                   child: ListView.builder(
                     itemCount: comments.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> comment = comments[index];
                       return ListTile(
-                        title: Text(comment['CommentText']),
-                        subtitle:
-                            Text('Commented by: ${comment['CommentedBy']}'),
+                        leading: Icon(Icons.account_circle, size: 40),
+                        title: Text(comment['CommentText'],
+                            style: TextStyle(fontSize: 16)),
+                        subtitle: Text(
+                            'Commented by: ${comment['CommentedBy']}',
+                            style: TextStyle(fontSize: 14, color: Colors.grey)),
                       );
                     },
                   ),
@@ -922,10 +940,16 @@ _showCommentsModal(BuildContext context, String postId) {
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: commentController,
-                          decoration:
-                              InputDecoration(hintText: "Write a Comment..."),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(left: 16, bottom: 32.0),
+                          child: TextField(
+                            controller: commentController,
+                            decoration: InputDecoration(
+                              hintText: "Write a comment...",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
                         ),
                       ),
                       IconButton(

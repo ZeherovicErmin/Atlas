@@ -545,8 +545,9 @@ class BarcodeLogPage extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
+
               //Drag Handle
-              
+
               //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
               //Nutritional Facts Column Sheet
               const Column(
@@ -635,7 +636,7 @@ class BarcodeLogPage extends ConsumerWidget {
 
   //sharing posts
   void shareBarcodeToFeed(Map<String, dynamic> data) {
-    FirebaseFirestore.instance.collection('User Posts').add({
+    FirebaseFirestore.instance.collection('New_Feed').add({
       'Message': 'Just scanned this barcode! Check it out!',
       'UserEmail': currentUser.email,
       'TimeStamp': Timestamp.now(),

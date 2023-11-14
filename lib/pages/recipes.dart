@@ -540,32 +540,34 @@ class Recipes extends ConsumerWidget {
         padding: EdgeInsets.all(15),
         child: SizedBox(
             height: 75,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                //Used to ensure list is scrollable
-                physics: const AlwaysScrollableScrollPhysics(),
-                //Number of ingredients
-                itemCount: ingredients.length,
-                //Used to output ingredient buttons
-                itemBuilder: (context, index) {
-                  String ingredient = ingredients[index];
-                  return Container(
-                      width: 120,
-                      padding: EdgeInsets.all(5),
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.orange)),
-                          child: Text(ingredient,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 17)),
-                          //Function used to capture tap event for list items
-                          onPressed: () =>
-                              searchIngredient(context, ref, ingredient)));
-                })));
+
+                    child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    //Used to ensure list is scrollable
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    //Number of ingredients
+                    itemCount: ingredients.length,
+                    //Used to output ingredient buttons
+                    itemBuilder: (context, index) {
+                      String ingredient = ingredients[index];
+                      return Container(
+                          width: 120,
+                          padding: EdgeInsets.all(5),
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(Colors.orange)),
+                              child: Text(ingredient,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 17)),
+                              //Function used to capture tap event for list items
+                              onPressed: () =>
+                                  searchIngredient(context, ref, ingredient)));
+                    })));
+
   }
 
   void searchIngredient(

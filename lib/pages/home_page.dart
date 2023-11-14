@@ -309,14 +309,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   //Changes the date to the next day in real time
-  void addDate() {
-    changeDate(currentDate.add(const Duration(days: 1)));
-  }
+  void addDate() => changeDate(currentDate.add(const Duration(days: 1)));
 
   //Changes the date to the previous day in real time
-  void deleteDate() {
-    changeDate(currentDate.subtract(const Duration(days: 1)));
-  }
+  void deleteDate() => changeDate(currentDate.subtract(const Duration(days: 1)));
 
   //Changes the date to the next or previous date
   void changeDate(DateTime newDate) {
@@ -329,6 +325,7 @@ class _HomePageState extends State<HomePage> {
 
   //Function for choosing a date
   Future<void> chooseDate(BuildContext context) async {
+    DateTime currentDate = DateTime.now();
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
@@ -340,7 +337,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         var month = picked.month.toString().padLeft(2, '0');
         var day = picked.day.toString().padLeft(2, '0');
-        currentDate = picked;
         formattedDate = "${picked.year}-$month-$day";
         selectedDate = "$month/$day";
       });

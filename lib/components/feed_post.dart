@@ -122,7 +122,7 @@ class _FeedPostState extends State<FeedPost> {
                         return CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.grey.shade300,
-                          child: CircularProgressIndicator(),
+                          child: const CircularProgressIndicator(),
                         );
                       }
                       if (snapshot.hasData && snapshot.data != null) {
@@ -134,11 +134,11 @@ class _FeedPostState extends State<FeedPost> {
                       return CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.grey.shade300,
-                        child: Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                        child: const Icon(Icons.account_circle, size: 40, color: Colors.grey),
                       );
                     },
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -195,7 +195,7 @@ class _FeedPostState extends State<FeedPost> {
                         child: PhotoView(
 
                           imageProvider: CachedNetworkImageProvider(widget.imageUrl),
-                          backgroundDecoration: BoxDecoration(
+                          backgroundDecoration: const BoxDecoration(
 
                             color: Colors.transparent,
                           ),
@@ -1009,15 +1009,15 @@ void _showCommentsModal(BuildContext context, String postId) {
                 Expanded(
 
                   child: comments.isEmpty
-                      ? Center(child: Text('No comments yet. Be the first to comment!', style: TextStyle(fontSize: 18)))
+                      ? const Center(child: Text('No comments yet. Be the first to comment!', style: TextStyle(fontSize: 18)))
                       : ListView.builder(
                           itemCount: comments.length,
                           itemBuilder: (context, index) {
                             Map<String, dynamic> comment = comments[index];
                             return ListTile(
-                              leading: Icon(Icons.account_circle, size: 40),
-                              title: Text(comment['CommentText'], style: TextStyle(fontSize: 16)),
-                              subtitle: Text('Commented by: ${comment['CommentedBy']}', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                              leading: const Icon(Icons.account_circle, size: 40),
+                              title: Text(comment['CommentText'], style: const TextStyle(fontSize: 16)),
+                              subtitle: Text('Commented by: ${comment['CommentedBy']}', style: const TextStyle(fontSize: 14, color: Colors.grey)),
                             );
                           },
                         ),
@@ -1049,7 +1049,7 @@ void _showCommentsModal(BuildContext context, String postId) {
                           }
                         },
 
-                        icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
+                        icon: const Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
                       )
                     ],
                   ),

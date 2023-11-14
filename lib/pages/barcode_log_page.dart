@@ -487,7 +487,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                   right: 0,
                                   child: Center(
                                     child: Text(
-                                      '${data['productCalories'].toInt()}',
+                                      '${data['productCalories'].ceil()}',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black),

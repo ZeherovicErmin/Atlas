@@ -953,7 +953,7 @@ void _showCommentsModal(BuildContext context, String postId) {
       return Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: Container(
-          height: 350,
+          height: 500,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -999,10 +999,14 @@ void _showCommentsModal(BuildContext context, String postId) {
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: commentController,
-                        decoration: InputDecoration(hintText: "Write a comment..."),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom:32.0),
+                        child: TextField(
+                          controller: commentController,
+                          decoration: InputDecoration(hintText: "  Write a comment..."),
+                        ),
                       ),
+                      
                     ),
                     IconButton(
                       icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),

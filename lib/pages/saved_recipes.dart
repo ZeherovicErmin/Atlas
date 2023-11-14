@@ -184,6 +184,8 @@ onShare(Result recipe, BuildContext context) {
               'recipe': recipe.toMap() ,
               });
               Navigator.pop(context);
+              ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Recipe \"${recipe.title}\" was shared')));
             },
             child: const Text('Post'),
           ),

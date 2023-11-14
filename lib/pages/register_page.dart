@@ -144,7 +144,7 @@ class RegisterPage extends ConsumerWidget {
 
     //Builds the page
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 232, 229, 229),
+      backgroundColor: const Color.fromARGB(255, 232, 229, 229),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

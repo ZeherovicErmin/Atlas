@@ -662,13 +662,24 @@ class _HomePageState extends State<HomePage> {
                         if (selectedHabits['Fats'] ?? true)
                         HabitCard(
                           title: 'Fats',
-                          image: 'lib/images/sodium.png',
+                          image: 'lib/images/fat.png',
                           backgroundColor: const Color.fromARGB(255, 116, 238, 124),
                           onTap: (value) {
                             saveHabitData(uid2, formattedDate, 'fats', value);
                           },
                           selectedDate: formattedDate,
                           unit: '(Grams)'
+                        ),
+                        if (selectedHabits['Cholesterol'] ?? true)
+                        HabitCard(
+                          title: 'Cholesterol',
+                          image: 'lib/images/colesterol.png',
+                          backgroundColor: const Color.fromARGB(255, 248, 202, 17),
+                          onTap: (value) {
+                            saveHabitData(uid2, formattedDate, 'cholesterol', value);
+                          },
+                          selectedDate: formattedDate,
+                          unit: '(Miligrams)'
                         ),
                       ],
                     );

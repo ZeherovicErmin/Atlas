@@ -13,7 +13,7 @@ class MyButtonTwo extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(25),
-        margin: const EdgeInsets.symmetric(horizontal: 100),
+        margin: const EdgeInsets.symmetric(horizontal: 80),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(8),

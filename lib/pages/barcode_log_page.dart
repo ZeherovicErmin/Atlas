@@ -320,7 +320,7 @@ class BarcodeLogPage extends ConsumerWidget {
         final amtServings = formatDecimal(data["amtServingsProvider"]);
         final sugarsPerServi = formatDecimal(data["sugarsPerServing"]);
         //final sugarsPerServing = '0';
-        print('Sugars: $sugarsPerServi');
+        //print('Sugars: $sugarsPerServi');
         return Animate(
           
           effects: [

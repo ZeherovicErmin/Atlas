@@ -76,10 +76,6 @@ class BarcodeLogPage extends ConsumerWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            leading: const Icon(
-              null,
-              ),
-            centerTitle: true,
             backgroundColor: const Color.fromARGB(255, 0, 136, 204),
             floating: true,
             title: TextField(
@@ -324,7 +320,7 @@ class BarcodeLogPage extends ConsumerWidget {
         final amtServings = formatDecimal(data["amtServingsProvider"]);
         final sugarsPerServi = formatDecimal(data["sugarsPerServing"]);
         //final sugarsPerServing = '0';
-        print('Sugars: $sugarsPerServi');
+        //print('Sugars: $sugarsPerServi');
         return Animate(
           
           effects: [
@@ -545,9 +541,8 @@ class BarcodeLogPage extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
-
               //Drag Handle
-
+              
               //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
               //Nutritional Facts Column Sheet
               const Column(
@@ -636,7 +631,7 @@ class BarcodeLogPage extends ConsumerWidget {
 
   //sharing posts
   void shareBarcodeToFeed(Map<String, dynamic> data) {
-    FirebaseFirestore.instance.collection('New_Feed').add({
+    FirebaseFirestore.instance.collection('User Posts').add({
       'Message': 'Just scanned this barcode! Check it out!',
       'UserEmail': currentUser.email,
       'TimeStamp': Timestamp.now(),

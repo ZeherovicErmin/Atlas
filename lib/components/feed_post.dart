@@ -14,6 +14,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -97,6 +98,7 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -104,28 +106,42 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Row(
-          //Makes it so the 3 dots is separated from Username
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Row(
-                //User Icon, Username, Timestamp
                 children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 40.0,
-                    color: Colors.grey,
+                  FutureBuilder<String?>(
+                    future: fetchProfilePicture(widget.email), // email of the post's author
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey.shade300,
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(snapshot.data!),
+                        );
+                      }
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey.shade300,
+                        child: Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                      );
+                    },
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  // User name stacked on top of the timestamp of time posted
+                  SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //Username
                       Text(
                         widget.user.trim(),
                         style: const TextStyle(
@@ -177,8 +193,10 @@ class _FeedPostState extends State<FeedPost> {
                       color: Colors.transparent, // Transparent background
                       child: Center(
                         child: PhotoView(
-                          imageProvider: NetworkImage(widget.imageUrl),
-                          backgroundDecoration: const BoxDecoration(
+
+                          imageProvider: CachedNetworkImageProvider(widget.imageUrl),
+                          backgroundDecoration: BoxDecoration(
+
                             color: Colors.transparent,
                           ),
                           minScale: PhotoViewComputedScale.contained,
@@ -198,7 +216,7 @@ class _FeedPostState extends State<FeedPost> {
                 borderRadius:
                     BorderRadius.circular(8), // Optional for rounded corners
                 image: DecorationImage(
-                  image: NetworkImage(widget.imageUrl),
+                  image: CachedNetworkImageProvider(widget.imageUrl),
                   fit: BoxFit
                       .cover, // This will cover the container, maintaining aspect ratio
                 ),
@@ -944,7 +962,7 @@ class _FeedPostState extends State<FeedPost> {
   }
 }
 
-_showCommentsModal(BuildContext context, String postId) {
+void _showCommentsModal(BuildContext context, String postId) {
   TextEditingController commentController = TextEditingController();
 
   showModalBottomSheet(
@@ -959,6 +977,7 @@ _showCommentsModal(BuildContext context, String postId) {
             .orderBy('CommentTime', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
+          // Handling loading and no data scenarios
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               height: 500,
@@ -967,17 +986,13 @@ _showCommentsModal(BuildContext context, String postId) {
             );
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Container(
-              height: 500,
-              alignment: Alignment.center,
-              child: const Text('No comments yet.', style: TextStyle(fontSize: 18)),
-            );
-          }
 
-          List<Map<String, dynamic>> comments = snapshot.data!.docs
-              .map((doc) => doc.data() as Map<String, dynamic>)
-              .toList();
+          List<Map<String, dynamic>> comments = [];
+          if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            comments = snapshot.data!.docs
+                .map((doc) => doc.data() as Map<String, dynamic>)
+                .toList();
+          }
 
           return Container(
             height: 500,
@@ -992,20 +1007,20 @@ _showCommentsModal(BuildContext context, String postId) {
                 ),
                 const Divider(),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: comments.length,
-                    itemBuilder: (context, index) {
-                      Map<String, dynamic> comment = comments[index];
-                      return ListTile(
-                        leading: const Icon(Icons.account_circle, size: 40),
-                        title: Text(comment['CommentText'],
-                            style: const TextStyle(fontSize: 16)),
-                        subtitle: Text(
-                            'Commented by: ${comment['CommentedBy']}',
-                            style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                      );
-                    },
-                  ),
+
+                  child: comments.isEmpty
+                      ? Center(child: Text('No comments yet. Be the first to comment!', style: TextStyle(fontSize: 18)))
+                      : ListView.builder(
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> comment = comments[index];
+                            return ListTile(
+                              leading: Icon(Icons.account_circle, size: 40),
+                              title: Text(comment['CommentText'], style: TextStyle(fontSize: 16)),
+                              subtitle: Text('Commented by: ${comment['CommentedBy']}', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                            );
+                          },
+                        ),
                 ),
                 const Divider(),
                 Padding(
@@ -1014,8 +1029,7 @@ _showCommentsModal(BuildContext context, String postId) {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 16, bottom: 32.0),
+                          padding: const EdgeInsets.only(left: 16, bottom: 32.0),
                           child: TextField(
                             controller: commentController,
                             decoration: const InputDecoration(
@@ -1034,8 +1048,8 @@ _showCommentsModal(BuildContext context, String postId) {
                             FocusScope.of(context).unfocus();
                           }
                         },
-                        icon: const Icon(Icons.send,
-                            color: Color.fromARGB(255, 0, 136, 204)),
+
+                        icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
                       )
                     ],
                   ),
@@ -1048,6 +1062,7 @@ _showCommentsModal(BuildContext context, String postId) {
     },
   );
 }
+
 
 void postComment(String postId, String commentText) {
   FirebaseFirestore.instance
@@ -1073,7 +1088,23 @@ Future<List<Map<String, dynamic>>> fetchComments(postId) async {
       .map((doc) => doc.data() as Map<String, dynamic>)
       .toList();
 }
+Future<String?> fetchProfilePicture(String userEmail) async {
+  try {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userEmail)
+        .get();
+    final userPicture = userDoc.data() as Map<String, dynamic>?;
+    if (userPicture != null && userPicture.containsKey('profilePicture')) {
+      return userPicture['profilePicture'];
+    }
+  } catch (e) {
+    print('Error fetching profile picture: $e');
+  }
+  return null; // Return null if there is no picture or in case of an error
+}
 
+  
 //Need to pass in widget and currentUser variables
 void _showPostOptions(
     BuildContext context, widget, currentUser, _FeedPostState state) {

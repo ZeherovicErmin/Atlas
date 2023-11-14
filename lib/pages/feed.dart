@@ -214,19 +214,18 @@ class Feed extends ConsumerWidget {
                     return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
-                          //get the message
-                          final post = snapshot.data!.docs[index];
-                          //Mao for barcodeData
-                          // Handle barcodeData with type checking
-                          final barcodeDataDynamic = post['barcodeData'];
-                          Map<String, dynamic> barcodeDataMap =
-                              barcodeDataDynamic as Map<String, dynamic>;
-                          if (barcodeDataMap.isNotEmpty) {
-                            barcodeDataMap = barcodeDataDynamic;
-                          } else {
-                            print(
-                                'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
-                          }
+                          // Get the message
+final post = snapshot.data!.docs[index];
+
+// Handle barcodeData with type checking
+final barcodeDataDynamic = post['barcodeData'];
+Map<String, dynamic> barcodeDataMap = {};
+
+if (barcodeDataDynamic is Map<String, dynamic>) {
+  barcodeDataMap = barcodeDataDynamic;
+} else {
+  print('Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+}
 
                           //Check if doc has recipe data. If so, get the recipe data
                           final recipe = post.data().toString().contains('recipe')

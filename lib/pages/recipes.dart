@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/custom-recipes.dart';
 import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:atlas/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -50,51 +48,49 @@ class Recipes extends ConsumerWidget {
         length: 3,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Color(0xFFFAF9F6), //- OFFWHITE
+          backgroundColor: const Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
           leading: const Icon(
-            null,
+             null,
           ),
           centerTitle: true,
-              title: const Text("Recipes",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-              bottom: const TabBar(tabs: [
-                Tab(icon: Icon(Icons.search), text: "Search"),
-                Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
-                Tab(icon: Icon(Icons.dining), text: "Custom")
-              ])),
+          title: const Text("Recipes",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+          backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+          bottom: const TabBar(tabs: [
+            Tab(icon: Icon(Icons.search), text: "Search"),
+            Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
+            Tab(icon: Icon(Icons.dining), text: "Custom")
+          ])),
           body: TabBarView(children: [
-            Column(children: [
-              Padding(padding: EdgeInsets.only(top: 20)),
-              SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: ExpansionTile(
+             Column(children: [
+               ExpansionTile(
                 title: const Text(
                   "Search",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                backgroundColor: const Color.fromARGB(255, 248, 237, 220),
+                collapsedBackgroundColor: const Color.fromARGB(255, 248, 237, 220),
+                initiallyExpanded: true,
                 children: [
                   form(context, ref),
-                  Text("Ingredient Quick-Search", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  const Text("Ingredient Quick-Search", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ingredientsList(context, ref),
                 ],
-                backgroundColor: Color.fromARGB(255, 248, 237, 220),
-                collapsedBackgroundColor: Color.fromARGB(255, 248, 237, 220),
-                initiallyExpanded: true,
-              )),
+              ),
               recipeList(recipes, context, ref)
             ]),
-            SavedRecipes(),
-            CustomRecipes()
+           SavedRecipes(),
+           CustomRecipes()
           ]),
         ));
   }
 
   //Recipe search form
   Widget form(BuildContext context, WidgetRef ref) {
-    return Column(children: [
+    return Column(
+        children: [
       //Spacing between components
       const Padding(
         padding: EdgeInsets.only(
@@ -186,7 +182,7 @@ class Recipes extends ConsumerWidget {
           FormBuilderChipOption(value: 'vegan', child: Text("Vegan")),
           FormBuilderChipOption(value: 'vegetarian', child: Text("Vegetarian")),
           FormBuilderChipOption(
-              value: 'pescetarian', child: Text("Pescetarian")),
+              value: 'pescetarian', child: Text("Pescatarian")),
           FormBuilderChipOption(
               value: 'glutenFree', child: Text("Gluten Free")),
           FormBuilderChipOption(value: 'dairyFree', child: Text("Dairy Free")),
@@ -201,7 +197,7 @@ class Recipes extends ConsumerWidget {
             return null;
           }
           if (value!.contains("vegan") && value!.contains("pescetarian")) {
-            return 'Recipe cannot be vegan and pesecatarian';
+            return 'Recipe cannot be vegan and pescatarian';
           } else if (value!.contains("vegetarian") &&
               value!.contains("pescetarian")) {
             return 'Recipe cannot be vegetarian and pesecatarian';
@@ -228,8 +224,6 @@ class Recipes extends ConsumerWidget {
             //ListView used to output recipe list element into individual components
             child: ListView.separated(
               shrinkWrap: true,
-              //Used to ensure list is scrollable
-              physics: const AlwaysScrollableScrollPhysics(),
               //Number of recipes
               itemCount: recipes.length,
               //Used to build recipe list tiles
@@ -281,9 +275,10 @@ class Recipes extends ConsumerWidget {
                                             Color.fromARGB(255, 255, 162, 23))),
                                 onPressed: () =>
                                     navigateToRecipeDetails(context, recipe),
-                                child: Text(
+                                child: const Text(
                                   "View Details",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
                                 )),
                             Container(
                                 padding: EdgeInsets.all(0),
@@ -362,37 +357,39 @@ class Recipes extends ConsumerWidget {
       String diets = "";
       String intolerances = "";
 
-      if (formData["diets"].contains("vegan")) {
-        diets += "vegan";
-      }
-      if (formData["diets"].contains("vegetarian")) {
-        diets += ",vegetarian";
-      }
-      if (formData["diets"].contains("pescetarian")) {
-        diets += ",pescetarian";
-      }
-      if (formData["diets"].contains("glutenFree")) {
-        diets += ",gluten free";
-      }
-      if (formData["diets"].contains("dairyFree")) {
-        intolerances += ",dairy";
-      }
-      if (formData["diets"].contains("peanutFree")) {
-        intolerances += ",peanut";
-      }
+      if (formData["diets"] != null) {
+        if (formData["diets"].contains("vegan")) {
+          diets += "vegan";
+        }
+        if (formData["diets"].contains("vegetarian")) {
+          diets += ",vegetarian";
+        }
+        if (formData["diets"].contains("pescetarian")) {
+          diets += ",pescetarian";
+        }
+        if (formData["diets"].contains("glutenFree")) {
+          diets += ",gluten free";
+        }
+        if (formData["diets"].contains("dairyFree")) {
+          intolerances += ",dairy";
+        }
+        if (formData["diets"].contains("peanutFree")) {
+          intolerances += ",peanut";
+        }
 
-      //Make sure diet string doesn't start/end with comma
-      if (diets.startsWith(',')) {
-        diets = diets.substring(1);
-      } else if (diets.endsWith(',')) {
-        diets = diets.substring(0, diets.length - 2);
-      }
+        //Make sure diet string doesn't start/end with comma
+        if (diets.startsWith(',')) {
+          diets = diets.substring(1);
+        } else if (diets.endsWith(',')) {
+          diets = diets.substring(0, diets.length - 2);
+        }
 
-      //Make sure intolerance string doesn't start/end with comma
-      if (intolerances.startsWith(',')) {
-        intolerances = intolerances.substring(1);
-      } else if (intolerances.endsWith(',')) {
-        intolerances = intolerances.substring(0, intolerances.length - 2);
+        //Make sure intolerance string doesn't start/end with comma
+        if (intolerances.startsWith(',')) {
+          intolerances = intolerances.substring(1);
+        } else if (intolerances.endsWith(',')) {
+          intolerances = intolerances.substring(0, intolerances.length - 2);
+        }
       }
 
       //API Request URL with Parameters
@@ -525,18 +522,18 @@ class Recipes extends ConsumerWidget {
   //list of quick-search ingredients
   Widget ingredientsList(BuildContext context, WidgetRef ref) {
     List<String> ingredients = [
-      "apple",
-      "orange",
-      "banana",
-      "blueberry",
-      "lemon",
-      "beef",
-      "chicken",
-      "cheese",
-      "eggs",
-      "fish",
-      "milk",
-      "potato"
+      "Apple",
+      "Orange",
+      "Banana",
+      "Blueberry",
+      "Lemon",
+      "Beef",
+      "Chicken",
+      "Cheese",
+      "Eggs",
+      "Fish",
+      "Milk",
+      "Potato"
     ];
     return Padding(
         padding: EdgeInsets.all(15),
@@ -562,7 +559,9 @@ class Recipes extends ConsumerWidget {
                               child: Text(ingredient,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 17)),
                               //Function used to capture tap event for list items
                               onPressed: () =>
                                   searchIngredient(context, ref, ingredient)));

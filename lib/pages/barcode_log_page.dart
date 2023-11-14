@@ -356,7 +356,7 @@ class BarcodeLogPage extends ConsumerWidget {
               children: [
                 SlidableAction(
                   autoClose: true,
-                  onPressed: (context) => shareBarcodeToFeed(data),
+                  onPressed: (context) => shareBarcodeToFeed(data,context),
                   backgroundColor: const Color.fromARGB(2, 140, 215, 85),
                   foregroundColor: Color.fromARGB(255, 0, 78, 12),
                   icon: Icons.share,
@@ -487,7 +487,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                   right: 0,
                                   child: Center(
                                     child: Text(
-                                      '${data['productCalories'].toInt()}',
+                                      '${data['productCalories'].ceil()}',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black),
@@ -630,7 +630,7 @@ class BarcodeLogPage extends ConsumerWidget {
       );
 
   //sharing posts
-  void shareBarcodeToFeed(Map<String, dynamic> data) {
+  void shareBarcodeToFeed(Map<String, dynamic> data,BuildContext context) {
     FirebaseFirestore.instance.collection('User Posts').add({
       'Message': 'Just scanned this barcode! Check it out!',
       'UserEmail': currentUser.email,
@@ -645,6 +645,14 @@ class BarcodeLogPage extends ConsumerWidget {
       'Likes': [],
       'postImage': '',
     });
+      // Show the SnackBar
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Shared!'),
+      duration: Duration(seconds: 2),
+    ),
+  );
+}
   }
 
   void deleteLog(BuildContext context, Map<String, dynamic> data) async {
@@ -699,4 +707,4 @@ class BarcodeLogPage extends ConsumerWidget {
       }
     }
   }
-}
+

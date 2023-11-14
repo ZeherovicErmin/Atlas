@@ -539,8 +539,7 @@ class Recipes extends ConsumerWidget {
         padding: EdgeInsets.all(15),
         child: SizedBox(
             height: 75,
-            child: Expanded(
-                child: ListView.builder(
+                    child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     //Used to ensure list is scrollable
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -565,7 +564,7 @@ class Recipes extends ConsumerWidget {
                               //Function used to capture tap event for list items
                               onPressed: () =>
                                   searchIngredient(context, ref, ingredient)));
-                    }))));
+                    })));
   }
 
   void searchIngredient(

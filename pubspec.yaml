@@ -75,7 +75,9 @@ dependencies:
   modal_bottom_sheet: ^2.1.2
   flutter_local_notifications: ^16.1.0
   intl: ^0.18.1
+  photo_view: ^0.14.0
   flutter_animate: ^4.2.0+1
+  cached_network_image: ^3.3.0
 
 
 

@@ -13,6 +13,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -30,25 +32,24 @@ class FeedPost extends StatefulWidget {
   final String? instructions;
   final String imageUrl;
   final Map<String, dynamic>? recipe;
-  
-  const FeedPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-    required this.email,
-    required this.exerciseName,
-    required this.exerciseType,
-    required this.muscle,
-    required this.equipment,
-    required this.difficulty,
-    required this.instructions,
-    this.barcodeData,
-    required this.imageUrl,
-    this.recipe
-  });
+
+  const FeedPost(
+      {super.key,
+      required this.message,
+      required this.user,
+      required this.postId,
+      required this.likes,
+      required this.time,
+      required this.email,
+      required this.exerciseName,
+      required this.exerciseType,
+      required this.muscle,
+      required this.equipment,
+      required this.difficulty,
+      required this.instructions,
+      this.barcodeData,
+      required this.imageUrl,
+      this.recipe});
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -62,12 +63,14 @@ class _FeedPostState extends State<FeedPost> {
 
   bool isLiked = false;
   final _commentTextController = TextEditingController();
+  bool hasComments = true;
   //List of widgets to include in the barcode sharing
 
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+    checkForComments();
   }
 
   //toggle like
@@ -95,217 +98,388 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
-      padding: const EdgeInsets.all(25),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // feed post
-        Wrap(
-          spacing: 8.0,
-          direction: Axis.horizontal,
-          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.start,
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // group of text (message + username)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                //message
-                Text(
-                  widget.message,
-                  style: const TextStyle(color: Colors.black),
-                  maxLines: null,
-                ),
-                Visibility(
-                  visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
-                  child: Image.network(
-                    widget.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-                // Only display specific barcode data entries
-                Visibility(
-                  visible: widget.barcodeData != null &&
-                      widget.barcodeData!.isNotEmpty &&
-                      widget.barcodeData!['productName'] != null &&
-                      widget.barcodeData!['productName'].isNotEmpty,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.black, width: 3.0),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: InkWell(
-                      //This will pull up a modal sheet
-                      onTap: () {
-                        Widget modalContent = NewWidget(widget.barcodeData);
-
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => modalContent,
+            Expanded(
+              child: Row(
+                children: [
+                  FutureBuilder<String?>(
+                    future: fetchProfilePicture(widget.email), // email of the post's author
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey.shade300,
+                          child: CircularProgressIndicator(),
                         );
-                        //deleteLog(context, data);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, top: 16, bottom: 8, right: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AutoSizeText(
-                                    widget.barcodeData?['productName'] ?? '',
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                    minFontSize: 15,
-                                  ),
+                      }
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(snapshot.data!),
+                        );
+                      }
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey.shade300,
+                        child: Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                      );
+                    },
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.user.trim(),
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                      //Timestamp
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            //More options Icon
+            //Should give the user access to report, edit, delete
+            //REMEMBER TO UPDATE WITH THE OPTIONS!!!!!
+            //Most likely a modal shee
+            IconButton(
+                //passes in widget and current user for the Visibility check
+                onPressed: () =>
+                    _showPostOptions(context, widget, currentUser, this),
+                icon: const Icon(Icons.more_vert)),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        // feed post
+        Text(
+          widget.message,
+          style: const TextStyle(color: Colors.black),
+          maxLines: null,
+        ),
+        Visibility(
+          visible: widget.imageUrl != '' && widget.imageUrl.isNotEmpty,
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return GestureDetector(
+                    onTap: () => Navigator.of(context)
+                        .pop(), // Close dialog on tap outside
+                    child: Container(
+                      color: Colors.transparent, // Transparent background
+                      child: Center(
+                        child: PhotoView(
 
-                                  // The keys that are filtered get sent into .map(socialBarcode)
-                                  ...widget.barcodeData!.entries
-                                      .where((entry) =>
-                                          entry.key == 'proteinPerServing' ||
-                                          entry.key == 'carbsPerServing' ||
-                                          entry.key ==
-                                              'fatsPerServing') // Filter specific keyshere
-                                      .map(socialBarcode)
-                                      .toList(),
-                                  const SizedBox(height: 5),
-                                ],
-                              ),
-                            ),
-                            const Image(
-                                height: 120,
-                                width: 100,
-                                image: AssetImage(
-                                    'assets/icons/flameiconnameplate.png'),
-                                fit: BoxFit.contain),
-                          ],
+                          imageProvider: CachedNetworkImageProvider(widget.imageUrl),
+                          backgroundDecoration: BoxDecoration(
+
+                            color: Colors.transparent,
+                          ),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                          initialScale: PhotoViewComputedScale.contained,
                         ),
                       ),
                     ),
-                  ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              height: 200, // Set a fixed height
+              width: double.infinity, // Use the full width of the screen
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(8), // Optional for rounded corners
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(widget.imageUrl),
+                  fit: BoxFit
+                      .cover, // This will cover the container, maintaining aspect ratio
                 ),
+              ),
+            ),
+          ),
+        ),
 
-                
+        // Only display specific barcode data entries
+        Visibility(
+          visible: widget.barcodeData != null &&
+              widget.barcodeData!.isNotEmpty &&
+              widget.barcodeData!['productName'] != null &&
+              widget.barcodeData!['productName'].isNotEmpty,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.black, width: 3.0),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: InkWell(
+              //This will pull up a modal sheet
+              onTap: () {
+                Widget modalContent = NewWidget(widget.barcodeData);
 
-                //Show if there is recipe data
-                Visibility(
-                  visible: widget.recipe != null &&
-                      widget.recipe!.isNotEmpty,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                      navigateToRecipeDetails(context, Result.fromJson(widget.recipe as Map<String, dynamic>)),
-                    child: Text("View Recipe"),)
-                      
-                ),
-
-                
-
-                const SizedBox(height: 5),
-                // Displaying workout details
-                if (widget.exerciseName != null && widget.exerciseType != null)
-                  Visibility(
-                      visible: widget.exerciseName != null &&
-                          widget.exerciseName!.isNotEmpty,
-                      child: Container(
-                        margin: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              12.0), // Add a border radius
-                          border: Border.all(
-                            width: .5,
-                            style: BorderStyle.solid,
-                            color: Colors.transparent,
-                            // Set the border color and width
-                          ),
-                        ),
-                        child: fitdesign(),
-                      )),
-                //user + day
-                Row(
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => modalContent,
+                );
+                //deleteLog(context, data);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 16, top: 16, bottom: 8, right: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.user.trim(),
-                      style: TextStyle(color: Colors.grey[500]),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            widget.barcodeData?['productName'] ?? '',
+                            maxLines: 1,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            minFontSize: 15,
+                          ),
+
+                          // The keys that are filtered get sent into .map(socialBarcode)
+                          ...widget.barcodeData!.entries
+                              .where((entry) =>
+                                  entry.key == 'proteinPerServing' ||
+                                  entry.key == 'carbsPerServing' ||
+                                  entry.key ==
+                                      'fatsPerServing') // Filter specific keyshere
+                              .map(socialBarcode)
+                              .toList(),
+                          const SizedBox(height: 5),
+                        ],
+                      ),
                     ),
-                    Text(
-                      " • ",
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                    Text(
-                      widget.time,
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
+                    const Image(
+                        height: 120,
+                        width: 100,
+                        image:
+                            AssetImage('assets/icons/flameiconnameplate.png'),
+                        fit: BoxFit.contain),
                   ],
                 ),
-              ],
+              ),
             ),
-
-            //delete button
-            //  if (currentUser.email == widget.email)
-            //    DeleteButton(onTap: deletePost),
-
-            Align(
-              alignment: Alignment.topRight,
-              child: currentUser.email == widget.email
-                  ? DeleteButton(onTap: deletePost)
-                  : const SizedBox(),
-            ),
-
-            //edit post button
-            Align(
-              alignment: Alignment.topRight,
-              child: currentUser.email == widget.email
-                  ? editButton(
-                      onTap: () async {
-                        // Check if there are comments
-                        bool hasComments = await checkForComments();
-
-                        BuildContext dialogContext = context;
-
-                        if (hasComments) {
-                          // Show a message or take any other action
-                          // ignore: use_build_context_synchronously
-                          showDialog(
-                            context: dialogContext,
-                            builder: (context) => AlertDialog(
-                              title: const Text("Cannot Edit"),
-                              content: const Text(
-                                  "There are comments on this post. You cannot edit it."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          // Allow editing if there are no comments
-                          editPost("Message");
-                        }
-                      },
-                    )
-                  : const SizedBox(),
-            ),
-          ],
+          ),
         ),
+
+        //Show if there is recipe data
+        Visibility(
+          visible: widget.recipe != null && widget.recipe!.isNotEmpty,
+          child: ElevatedButton(
+            onPressed: () => navigateToRecipeDetails(context,
+                Result.fromJson(widget.recipe as Map<String, dynamic>)),
+            child: const Text("View Recipe"),
+          ),
+        ),
+
+        const SizedBox(height: 5),
+        // Displaying workout details
+        if (widget.exerciseName != null && widget.exerciseType != null)
+          Visibility(
+              visible: widget.exerciseName != null &&
+                  widget.exerciseName!.isNotEmpty,
+              child: Container(
+                margin: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(12.0), // Add a border radius
+                  border: Border.all(
+                    width: .5,
+                    style: BorderStyle.solid,
+                    color: Colors.transparent,
+                    // Set the border color and width
+                  ),
+                ),
+                child: fitdesign(),
+              )),
+
+        //delete button
+        //  if (currentUser.email == widget.email)
+        //    DeleteButton(onTap: deletePost),
+
+        // Align(
+        //   alignment: Alignment.topRight,
+        //   child: currentUser.email == widget.email
+        //       ? DeleteButton(onTap: deletePost)
+        //       : const SizedBox(),
+        // ),
+
+        //edit post button
+        // Align(
+        //   alignment: Alignment.topRight,
+        //   child: currentUser.email == widget.email
+        //       ? editButton(
+        //           onTap: () async {
+        //             // Check if there are comments
+        //             bool hasComments = await checkForComments();
+
+        //             BuildContext dialogContext = context;
+
+        //             if (hasComments) {
+        //               // Show a message or take any other action
+        //               // ignore: use_build_context_synchronously
+        //               showDialog(
+        //                 context: dialogContext,
+        //                 builder: (context) => AlertDialog(
+        //                   title: const Text("Cannot Edit"),
+        //                   content: const Text(
+        //                       "There are comments on this post. You cannot edit it."),
+        //                   actions: [
+        //                     TextButton(
+        //                       onPressed: () => Navigator.pop(context),
+        //                       child: const Text("OK"),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               );
+        //             } else {
+        //               // Allow editing if there are no comments
+        //               editPost();
+        //             }
+        //           },
+        //         )
+        //       : const SizedBox(),
+        // ),
 
         const SizedBox(height: 20),
 
         // buttons
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     //LIKE
+        //     Column(
+        //       children: [
+        //         //like button
+        //         LikeButton(
+        //           isLiked: isLiked,
+        //           onTap: toggleLike,
+        //         ),
+
+        //         const SizedBox(height: 5),
+
+        //         //like count
+        //         Text(
+        //           widget.likes.length.toString(),
+        //           style: const TextStyle(color: Colors.grey),
+        //         ),
+        //       ],
+        //     ),
+
+        //     const SizedBox(width: 15),
+
+        //     //COMMENT
+        //     Column(
+        //       children: [
+        //         //comment button
+        //         CommentButton(onTap: showCommentDialog),
+
+        //         const SizedBox(height: 5),
+
+        //         //comment count
+        //         StreamBuilder<QuerySnapshot>(
+        //           stream: FirebaseFirestore.instance
+        //               .collection("User Posts")
+        //               .doc(widget.postId)
+        //               .collection("Comments")
+        //               .snapshots(),
+        //           builder: (context, snapshot) {
+        //             if (snapshot.hasData) {
+        //               //Calculate the comment count
+        //               final commentCount = snapshot.data?.docs.length;
+        //               return Text(
+        //                 commentCount.toString(),
+        //                 style: const TextStyle(color: Colors.grey),
+        //               );
+        //             } else {
+        //               // show a loading indicator while fetching data
+        //               return const CircularProgressIndicator();
+        //             }
+        //           },
+        //         )
+        //       ],
+        //     ),
+        //   ],
+        // ),
+
+        // const SizedBox(height: 20),
+
+        // //comments under the post
+        // Column(
+        //   children: [
+        //     ExpansionTile(
+        //       backgroundColor: Colors.grey[200],
+        //       title: Text('View Comments',
+        //           style: TextStyle(color: Colors.grey[500])),
+        //       children: [
+        //         StreamBuilder<QuerySnapshot>(
+        //           stream: FirebaseFirestore.instance
+        //               .collection("User Posts")
+        //               .doc(widget.postId)
+        //               .collection("Comments")
+        //               .orderBy("CommentTime", descending: true)
+        //               .snapshots(),
+        //           builder: (context, snapshot) {
+        //             //show loading circle if theres no data
+        //             if (!snapshot.hasData) {
+        //               return const Center(
+        //                 child: CircularProgressIndicator(),
+        //               );
+        //             }
+
+        //             return ListView(
+        //               shrinkWrap: true,
+        //               physics: const NeverScrollableScrollPhysics(),
+        //               children: snapshot.data!.docs.map((doc) {
+        //                 //get the comment
+        //                 final commentData = doc.data() as Map<String, dynamic>;
+
+        //                 //return the comment
+        //                 return Comment(
+        //                   text: commentData["CommentText"],
+        //                   userId: commentData["CommentedBy"],
+        //                   time: formatDate(commentData["CommentTime"]),
+        //                 );
+        //               }).toList(),
+        //             );
+        //           },
+        //         )
+        //       ],
+        //     ),
+        //   ],
+        // ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            //LIKE
             Column(
               children: [
                 //like button
@@ -323,19 +497,14 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-
-            const SizedBox(width: 15),
-
-            //COMMENT
-            Column(
-              children: [
-                //comment button
-                CommentButton(onTap: showCommentDialog),
-
-                const SizedBox(height: 5),
-
-                //comment count
-                StreamBuilder<QuerySnapshot>(
+            Column(children: [
+              IconButton(
+                  onPressed: () => _showCommentsModal(context, widget.postId),
+                  icon: const Icon(
+                    Icons.comment,
+                    color: Colors.grey,
+                  )),
+                  StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection("User Posts")
                       .doc(widget.postId)
@@ -355,57 +524,9 @@ class _FeedPostState extends State<FeedPost> {
                     }
                   },
                 )
-              ],
-            ),
+            ])
           ],
-        ),
-        
-        const SizedBox(height: 20),
-
-        //comments under the post
-        Column(
-          children: [
-            ExpansionTile(
-              backgroundColor: Colors.grey[200],
-              title: Text('View Comments',
-                  style: TextStyle(color: Colors.grey[500])),
-              children: [
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("User Posts")
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .orderBy("CommentTime", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    //show loading circle if theres no data
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    return ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map((doc) {
-                        //get the comment
-                        final commentData = doc.data() as Map<String, dynamic>;
-
-                        //return the comment
-                        return Comment(
-                          text: commentData["CommentText"],
-                          userId: commentData["CommentedBy"],
-                          time: formatDate(commentData["CommentTime"]),
-                        );
-                      }).toList(),
-                    );
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
+        )
       ]),
     );
   }
@@ -645,7 +766,6 @@ class _FeedPostState extends State<FeedPost> {
     });
   }
 
-
   //Gets the user's username
   Stream<String> fetchUsername({String? email}) {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -661,26 +781,26 @@ class _FeedPostState extends State<FeedPost> {
     }
     return Stream.value('');
   }
-  
-  Future<void> editPost(String field) async {
-    TextEditingController post = TextEditingController();
+
+  Future<void> editPost() async {
+    TextEditingController post = TextEditingController(text: widget.message);
     //show a dialog box for ediitng the post
     String? newValue = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Text(
-          "Edit $field",
-          style: const TextStyle(color: Colors.black),
+        title: const Text(
+          "Edit Message",
+          style:  TextStyle(color: Colors.black),
         ),
         content: TextField(
           controller: post,
           autofocus: true,
           style: const TextStyle(
               color: Colors.black), // Change text color to white
-          decoration: InputDecoration(
-            hintText: "Enter new $field",
-            hintStyle: const TextStyle(color: Colors.black),
+          decoration: const InputDecoration(
+            hintText: "Enter new Message",
+            hintStyle:  TextStyle(color: Colors.black),
           ),
         ),
         actions: [
@@ -709,7 +829,9 @@ class _FeedPostState extends State<FeedPost> {
     if (newValue != null && newValue.trim().isNotEmpty) {
       try {
         // Only update if there is something in the text field
-        await userPostsCollection.doc(widget.postId).update({field: newValue});
+        await userPostsCollection
+            .doc(widget.postId)
+            .update({'Message': newValue});
         print("Post updated successfully");
       } catch (error) {
         print("Error updating post: $error");
@@ -731,19 +853,6 @@ class _FeedPostState extends State<FeedPost> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(children: [
-            //Drag Handle
-            Center(
-              child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  width: 40,
-                  height: 5.0,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 104, 104, 104),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12.0),
-                    ),
-                  )),
-            ),
             //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
             //Nutritional Facts Column Sheet
             const Column(
@@ -761,9 +870,10 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ],
             ),
-            const Divider(thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
+            const Divider(
+                thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
-              child: Container(
+              child: SizedBox(
                 height: 25,
                 // Stack to hold the fats and the fats variable
                 child: Row(
@@ -832,9 +942,7 @@ class _FeedPostState extends State<FeedPost> {
                 title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
 
             NutritionRow(
-                
                 title: "Cholesterol",
-               
                 value: '${barcodeData['cholesterolPerServing']}'),
             //end Protein
           ]),
@@ -844,19 +952,321 @@ class _FeedPostState extends State<FeedPost> {
   }
 
   Future<bool> checkForComments() async {
-  QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
-      .collection("User Posts")
-      .doc(widget.postId)
-      .collection("Comments")
+    QuerySnapshot commentSnapshot = await FirebaseFirestore.instance
+        .collection("User Posts")
+        .doc(widget.postId)
+        .collection("Comments")
+        .get();
+
+    return commentSnapshot.docs.isNotEmpty;
+  }
+}
+
+void _showCommentsModal(BuildContext context, String postId) {
+  TextEditingController commentController = TextEditingController();
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('User Posts')
+            .doc(postId)
+            .collection('Comments')
+            .orderBy('CommentTime', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          // Handling loading and no data scenarios
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              height: 500,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            );
+          }
+
+
+          List<Map<String, dynamic>> comments = [];
+          if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            comments = snapshot.data!.docs
+                .map((doc) => doc.data() as Map<String, dynamic>)
+                .toList();
+          }
+
+          return Container(
+            height: 500,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    'Comments',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const Divider(),
+                Expanded(
+
+                  child: comments.isEmpty
+                      ? Center(child: Text('No comments yet. Be the first to comment!', style: TextStyle(fontSize: 18)))
+                      : ListView.builder(
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> comment = comments[index];
+                            return ListTile(
+                              leading: Icon(Icons.account_circle, size: 40),
+                              title: Text(comment['CommentText'], style: TextStyle(fontSize: 16)),
+                              subtitle: Text('Commented by: ${comment['CommentedBy']}', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                            );
+                          },
+                        ),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, bottom: 32.0),
+                          child: TextField(
+                            controller: commentController,
+                            decoration: const InputDecoration(
+                              hintText: "Write a comment...",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          String commentText = commentController.text;
+                          if (commentText.isNotEmpty) {
+                            postComment(postId, commentText);
+                            commentController.clear();
+                            FocusScope.of(context).unfocus();
+                          }
+                        },
+
+                        icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+
+void postComment(String postId, String commentText) {
+  FirebaseFirestore.instance
+      .collection('User Posts')
+      .doc(postId)
+      .collection('Comments')
+      .add({
+    "CommentText": commentText,
+    "CommentedBy": FirebaseAuth.instance.currentUser?.email ?? "Anonymous",
+    "CommentTime": Timestamp.now()
+  });
+}
+
+Future<List<Map<String, dynamic>>> fetchComments(postId) async {
+// Collects comments from a particular post
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('User Posts')
+      .doc(postId)
+      .collection('Comments')
+      .orderBy('CommentTime', descending: true)
       .get();
-
-  return commentSnapshot.docs.isNotEmpty;
+  return snapshot.docs
+      .map((doc) => doc.data() as Map<String, dynamic>)
+      .toList();
+}
+Future<String?> fetchProfilePicture(String userEmail) async {
+  try {
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userEmail)
+        .get();
+    final userPicture = userDoc.data() as Map<String, dynamic>?;
+    if (userPicture != null && userPicture.containsKey('profilePicture')) {
+      return userPicture['profilePicture'];
+    }
+  } catch (e) {
+    print('Error fetching profile picture: $e');
+  }
+  return null; // Return null if there is no picture or in case of an error
 }
 
-    
+  
+//Need to pass in widget and currentUser variables
+void _showPostOptions(
+    BuildContext context, widget, currentUser, _FeedPostState state) {
+  showModalBottomSheet(
+    context: context,
+    builder: (
+      BuildContext context,
+    ) {
+      return Container(
+        height: 115,
+        child: Column(
+          children: <Widget>[
+            Visibility(
+              visible: currentUser.email != widget.email,
+              child: ListTile(
+                leading: const Icon(Icons.report),
+                title: const Text('Report Post'),
+                onTap: () {
+                  // Add functionality for reporting a post
+                  Navigator.pop(context);
+                  //reportPost
+                  _confirmReportDialog(
+                      context, widget.postId, currentUser, widget);
+                  //reportPost(widget.postId, currentUser, widget);
+                },
+              ),
+            ),
+            //Edit Post if user owns the post
+            Visibility(
+              visible: currentUser.email == widget.email,
+              child: ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Post'),
+                onTap: () async {
+                    // Check if there are comments
+                    bool hasComments = await state.checkForComments();
+
+                    BuildContext dialogContext = context;
+
+                    if (hasComments) {
+                      // Show a message or take any other action
+                      // ignore: use_build_context_synchronously
+                      showDialog(
+                        context: dialogContext,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Cannot Edit"),
+                          content: const Text(
+                              "There are comments on this post. You cannot edit it."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      // Allow editing if there are no comments
+                      state.editPost();
+                    }
+                  },
+              ),
+            ),
+            //Delete Post if user owns the post (Need to add this functionality)
+            Visibility(
+              visible: currentUser.email == widget.email,
+              child: ListTile(
+                leading: const Icon(Icons.cancel),
+                title: const Text('Delete Post'),
+                onTap: () {
+                  // Add functionality for reporting a post
+                  Navigator.pop(context);
+                  state.deletePost();
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
 
+void _confirmReportDialog(
+    BuildContext context, String postId, currentUser, widget) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Report Post"),
+      content: const Text(
+          "Are you sure you want to report this post? This action cannot be undone."),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            reportPost(postId, currentUser, widget, context);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Reported!')));
+            Navigator.pop(context);
+          },
+          child: const Text("Report"),
+        ),
+      ],
+    ),
+  );
+}
 
+//Function to report a post
+Future<void> reportPost(
+    String postId, currentUser, widget, BuildContext context) async {
+  final currentUserEmail = currentUser.email;
+  final postRef =
+      FirebaseFirestore.instance.collection('User Posts').doc(postId);
+  final postSnapshot = await postRef.get();
+  if (!postSnapshot.exists) {
+    print('Post does not exist');
+    return;
+  }
 
+  //Adds to data for reporting
+  Map<String, dynamic> postData = postSnapshot.data() as Map<String, dynamic>;
+  List<dynamic> reports = postData['Reports'] ?? [];
+
+  if (!reports.contains(currentUserEmail)) {
+    reports.add(currentUserEmail);
+    await postRef.update({'Reports': reports});
+
+    //Check if reports hits the amt of time
+    if (reports.length >= 3) {
+      //await deletePost(postId);
+      final commentDocs = await FirebaseFirestore.instance
+          .collection('User Posts')
+          .doc(widget.postId)
+          .collection("Comments")
+          .get();
+      //The only for loop in this codebases existence
+      for (var doc in commentDocs.docs) {
+        await FirebaseFirestore.instance
+            .collection('User Posts')
+            .doc(widget.postId)
+            .collection('Comments')
+            .doc(doc.id)
+            .delete();
+      }
+      //delete the post
+      FirebaseFirestore.instance
+          .collection('User Posts')
+          .doc(widget.postId)
+          .delete()
+          .then((value) => print("post deleted"))
+          .catchError((error) => print('failed to report post: $error'));
+
+      //dismiss dialog
+      //Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Post reported')));
+    }
+  }
 
 //Text(barcodeData!['productName']),
+}

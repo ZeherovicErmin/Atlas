@@ -416,7 +416,6 @@ class UserProfile extends ConsumerWidget {
                                   height: MediaQuery.of(context).size.height *
                                       0.6, // Adjust the height
                                   child: ListView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
                                     itemCount: snapshot.data!.docs.length,
                                     itemBuilder: (context, index) {
                                       final post = snapshot.data!.docs[index];

@@ -162,7 +162,7 @@ onShare(Result recipe, BuildContext context) {
           return Dialog(
             insetPadding: EdgeInsets.symmetric(vertical: 300),
             child: Column(children: [
-              Padding(padding: EdgeInsets.only(top: 45)),
+              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10)),
               //Recipe title
               Text("Post the recipe \"${recipe.title}\"?"),
               //Post button

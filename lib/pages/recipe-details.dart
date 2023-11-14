@@ -86,7 +86,7 @@ class RecipeDetails extends ConsumerWidget {
               //Recipe Servings
               Container(
                 margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.only(left: 7, right: 7),
+                padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
                   borderRadius: BorderRadius.all(Radius.circular(25))),

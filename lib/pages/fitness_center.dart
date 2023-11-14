@@ -145,7 +145,7 @@ class FitCenter extends ConsumerWidget {
 
             const DiscoverPage(),
 
-            const NotesPage(),
+            NotesPage(),
           ],
         ),
       ),

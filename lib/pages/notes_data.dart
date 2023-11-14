@@ -1,6 +1,6 @@
 // The notes data class
 
-import 'package:atlas/pages/notes.dart';
+/*import 'package:atlas/pages/notes.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,3 +50,4 @@ final noteDataProvider = ChangeNotifierProvider<NoteData>((ref) {
   // Initializing NoteData
   return NoteData();
 });
+*/

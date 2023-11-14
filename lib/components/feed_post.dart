@@ -281,12 +281,28 @@ class _FeedPostState extends State<FeedPost> {
                         ],
                       ),
                     ),
-                    const Image(
-                        height: 120,
-                        width: 100,
-                        image:
-                            AssetImage('assets/icons/flameiconnameplate.png'),
-                        fit: BoxFit.contain),
+                    Stack(
+                      children:[ const Image(
+                          height: 120,
+                          width: 100,
+                          image:
+                              AssetImage('assets/icons/flameiconnameplate.png'),
+                          fit: BoxFit.contain),
+                          Positioned(
+                                  top: 100,
+                                  left: 0,
+                                  right: 0,
+                                  child: Center(
+                                    child: Text(
+                                      '${widget.barcodeData!['productCalories']}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                   ], ),
                   ],
                 ),
               ),
@@ -646,7 +662,7 @@ class _FeedPostState extends State<FeedPost> {
             children: [
               const Divider(),
               AutoSizeText(
-                '$keyText: ${entry.value}g',
+                '$keyText: ${entry.value.ceil()}g',
                 maxLines: 1,
                 textAlign: TextAlign.left,
               ),
@@ -896,9 +912,9 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ),
             ),
-            const NutritionRow(
+             NutritionRow(
               title: "Calories",
-              value: '${0}',
+              value: '${barcodeData?['productCalories']}',
               fontSize: 24,
               dividerThickness: 5,
               showDivider: false,
@@ -910,17 +926,17 @@ class _FeedPostState extends State<FeedPost> {
             //
             NutritionRow(
                 title: 'Total Fats',
-                value: '${barcodeData!['fatsPerServing']}'),
+                value: '${barcodeData!['fatsPerServing'].toInt()}'),
             //saturated Fats
             NutritionRow(
               title: 'Saturated Fat',
-              value: '${barcodeData['satfatsPserving']}',
+              value: '${barcodeData['satfatsPserving'].toInt()}',
               isSubcategory: true,
               hideIfZero: false,
             ),
             NutritionRow(
               title: 'Trans Fat',
-              value: '${barcodeData['transfatsPserving']}',
+              value: '${barcodeData['transfatsPserving'].toInt()}',
               isSubcategory: true,
               hideIfZero: false,
             ),
@@ -928,27 +944,27 @@ class _FeedPostState extends State<FeedPost> {
 
             NutritionRow(
                 title: "Total Carbohydrates",
-                value: '${barcodeData['carbsPerServing']}'),
+                value: '${barcodeData['carbsPerServing'].toInt()}'),
             //Sugars
             NutritionRow(
                 title: "Total Sugars",
                 isSubcategory: true,
-                value: '${barcodeData['sugarsPerServing']}'),
+                value: '${barcodeData['sugarsPerServing'].toInt()}'),
             //end Protein
 
             //protein per serving
             NutritionRow(
-                title: "Protein", value: '${barcodeData['proteinPerServing']}'),
+                title: "Protein", value: '${barcodeData['proteinPerServing'].toInt()}'),
 
             //sodium
             NutritionRow(
-                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+                title: "Sodium", value: "${barcodeData['sodiumPerServing'].toInt()}"),
             NutritionRow(
-                title: "Sodium", value: "${barcodeData['sodiumPerServing']}"),
+                title: "Sodium", value: "${barcodeData['sodiumPerServing'].toInt()}"),
 
             NutritionRow(
                 title: "Cholesterol",
-                value: '${barcodeData['cholesterolPerServing']}'),
+                value: '${barcodeData['cholesterolPerServing'].toInt()}'),
             //end Protein
           ]),
         ),

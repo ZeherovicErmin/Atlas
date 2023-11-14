@@ -1,9 +1,9 @@
 // Creating a notes application
+import 'package:atlas/pages/editing_note_page.dart';
 import 'package:atlas/pages/notes_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 class Note {
   int id;
@@ -15,27 +15,12 @@ class Note {
   });
 }
 
-
-
 class NotesPage extends ConsumerWidget {
   const NotesPage({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-      final noteData = ref.watch(noteDataProvider); // instance of note data
-
-          // Function to create a new note
-  void createNewNote(NoteData noteData){
-    ref.read(noteDataProvider).addNewNote(
-      Note(id: noteData.getAllNotes().length, text: 'New Note'),
-    );
-  }
-
-  
-
- 
+    final noteData = ref.watch(noteDataProvider); // instance of note data
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F6),
@@ -44,14 +29,26 @@ class NotesPage extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 75.0, right: 8.0),
           child: FloatingActionButton(
-            onPressed: () => createNewNote(noteData),
-            elevation: 0,
-            child: Icon(CupertinoIcons.pencil)
-          ),
+              onPressed: () {
+                // Creating a blank new note
+                final newNote = Note(id: noteData.allNotes.length, text: '');
+                // Adding the new note
+                noteData.addNewNote(newNote);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditingNotePage(note: newNote, isNewNote: true),
+                  ),
+                );
+              },
+              child: Icon(CupertinoIcons.add)),
         ),
       ),
-      body: 
-      Column(
+      body:
+
+          // Padded Title list to match ios
+          Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
@@ -63,26 +60,34 @@ class NotesPage extends ConsumerWidget {
                 )),
           ),
 
-          // Displaying the list of notes
-          CupertinoListSection.insetGrouped(
-            backgroundColor: const Color(0xFFFAF9F6),
-            children: 
-              List.generate(
-                NoteData().getAllNotes().length,
-                (index) => CupertinoListTile(
-                  title: Text(ref.read(noteDataProvider).getAllNotes()[index].text),
-                ),
-              ),
-          ),
-               
-          
-             
-            ],
-          ),
-    
+          // Returning an Ios Style List view for the notes
+          Expanded(
+            child: CupertinoListSection.insetGrouped(
+              backgroundColor: const Color(0xFFFAF9F6),
+              children: List.generate(
+                noteData.allNotes.length,
+                (index) {
+                  final note = noteData.allNotes[index];
+                  return CupertinoListTile(
+                    title: Text(note.text),
 
-        
-      
+                    // If the note is note a new note we simply edit the existing note and navigate accordingly
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditingNotePage(note: note, isNewNote: false),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

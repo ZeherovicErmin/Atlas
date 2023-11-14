@@ -50,47 +50,49 @@ class Recipes extends ConsumerWidget {
           resizeToAvoidBottomInset: false,
           backgroundColor: const Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
-          leading: const Icon(
-             null,
-          ),
-          centerTitle: true,
-          title: const Text("Recipes",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-          backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-          bottom: const TabBar(tabs: [
-            Tab(icon: Icon(Icons.search), text: "Search"),
-            Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
-            Tab(icon: Icon(Icons.dining), text: "Custom")
-          ])),
+              leading: const Icon(
+                null,
+              ),
+              centerTitle: true,
+              title: const Text("Recipes",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+              bottom: const TabBar(tabs: [
+                Tab(icon: Icon(Icons.search), text: "Search"),
+                Tab(icon: Icon(Icons.bookmark_add_rounded), text: "Saved"),
+                Tab(icon: Icon(Icons.dining), text: "Custom")
+              ])),
           body: TabBarView(children: [
-             Column(children: [
-               ExpansionTile(
+            Column(children: [
+              ExpansionTile(
                 title: const Text(
                   "Search",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 backgroundColor: const Color.fromARGB(255, 248, 237, 220),
-                collapsedBackgroundColor: const Color.fromARGB(255, 248, 237, 220),
+                collapsedBackgroundColor:
+                    const Color.fromARGB(255, 248, 237, 220),
                 initiallyExpanded: true,
                 children: [
                   form(context, ref),
-                  const Text("Ingredient Quick-Search", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  const Text("Ingredient Quick-Search",
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ingredientsList(context, ref),
                 ],
               ),
               recipeList(recipes, context, ref)
             ]),
-           SavedRecipes(),
-           CustomRecipes()
+            SavedRecipes(),
+            CustomRecipes()
           ]),
         ));
   }
 
   //Recipe search form
   Widget form(BuildContext context, WidgetRef ref) {
-    return Column(
-        children: [
+    return Column(children: [
       //Spacing between components
       const Padding(
         padding: EdgeInsets.only(
@@ -109,22 +111,20 @@ class Recipes extends ConsumerWidget {
             ],
           ),
           child: FormBuilder(
-                key: _formKey,
-                child: Column(children: [
-                  searchBar(context, ref),
-                  ExpansionTile(
-                    title: const Text(
-                      "Filters",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)
-                    ),
-                    children: [filters(ref)],
-                    backgroundColor: Color.fromARGB(255, 248, 237, 220),
-                    collapsedBackgroundColor:
-                        Color.fromARGB(255, 248, 237, 220),
-                  )
-                ]),
-              )),
+            key: _formKey,
+            child: Column(children: [
+              searchBar(context, ref),
+              ExpansionTile(
+                title: const Text("Filters",
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                children: [filters(ref)],
+                backgroundColor: Color.fromARGB(255, 248, 237, 220),
+                collapsedBackgroundColor: Color.fromARGB(255, 248, 237, 220),
+              )
+            ]),
+          )),
     ]);
   }
 
@@ -277,8 +277,9 @@ class Recipes extends ConsumerWidget {
                                     navigateToRecipeDetails(context, recipe),
                                 child: const Text(
                                   "View Details",
-                                  style: TextStyle(fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
                                 )),
                             Container(
                                 padding: EdgeInsets.all(0),
@@ -539,33 +540,32 @@ class Recipes extends ConsumerWidget {
         padding: EdgeInsets.all(15),
         child: SizedBox(
             height: 75,
-            child: Expanded(
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    //Used to ensure list is scrollable
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    //Number of ingredients
-                    itemCount: ingredients.length,
-                    //Used to output ingredient buttons
-                    itemBuilder: (context, index) {
-                      String ingredient = ingredients[index];
-                      return Container(
-                          width: 120,
-                          padding: EdgeInsets.all(5),
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.orange)),
-                              child: Text(ingredient,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      fontSize: 17)),
-                              //Function used to capture tap event for list items
-                              onPressed: () =>
-                                  searchIngredient(context, ref, ingredient)));
-                    }))));
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                //Used to ensure list is scrollable
+                physics: const AlwaysScrollableScrollPhysics(),
+                //Number of ingredients
+                itemCount: ingredients.length,
+                //Used to output ingredient buttons
+                itemBuilder: (context, index) {
+                  String ingredient = ingredients[index];
+                  return Container(
+                      width: 120,
+                      padding: EdgeInsets.all(5),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.orange)),
+                          child: Text(ingredient,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 17)),
+                          //Function used to capture tap event for list items
+                          onPressed: () =>
+                              searchIngredient(context, ref, ingredient)));
+                })));
   }
 
   void searchIngredient(

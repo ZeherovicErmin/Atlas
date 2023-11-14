@@ -106,6 +106,10 @@ class RegisterPage extends ConsumerWidget {
           email: registrationState.emailController.text,
           password: registrationState.passwordController.text,
         );
+        final User? user2 = userCredential.user;
+        if (user2 != null && !user2.emailVerified) {
+          await user2.sendEmailVerification();
+        }
         final FirebaseAuth auth = FirebaseAuth.instance;
         final User? user = auth.currentUser;
         final uid = user?.uid;

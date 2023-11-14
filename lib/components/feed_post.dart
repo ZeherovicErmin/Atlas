@@ -12,9 +12,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+
 import 'package:photo_view/photo_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'comment.dart';
+
+
 
 class FeedPost extends StatefulWidget {
   final String message;
@@ -969,99 +972,95 @@ void _showCommentsModal(BuildContext context, String postId) {
     context: context,
     isScrollControlled: true,
     builder: (BuildContext context) {
-      return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('User Posts')
-            .doc(postId)
-            .collection('Comments')
-            .orderBy('CommentTime', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          // Handling loading and no data scenarios
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              height: 500,
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            );
-          }
-
-
-          List<Map<String, dynamic>> comments = [];
-          if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-            comments = snapshot.data!.docs
-                .map((doc) => doc.data() as Map<String, dynamic>)
-                .toList();
-          }
-
-          return Container(
-            height: 500,
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    'Comments',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      return Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Container(
+          height: 500,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'Comments',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Divider(),
-                Expanded(
-
-                  child: comments.isEmpty
-                      ? Center(child: Text('No comments yet. Be the first to comment!', style: TextStyle(fontSize: 18)))
-                      : ListView.builder(
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> comment = comments[index];
-                            return ListTile(
-                              leading: Icon(Icons.account_circle, size: 40),
-                              title: Text(comment['CommentText'], style: TextStyle(fontSize: 16)),
-                              subtitle: Text('Commented by: ${comment['CommentedBy']}', style: TextStyle(fontSize: 14, color: Colors.grey)),
-                            );
-                          },
-                        ),
+              ),
+              // StreamBuilder to fetch comments
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('User Posts')
+                      .doc(postId)
+                      .collection('Comments')
+                      .orderBy('CommentTime', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return ListView(
+                      children: snapshot.data!.docs.map((doc) {
+                        var commentData = doc.data() as Map<String, dynamic>;
+                        return ListTile(
+                          leading: Icon(Icons.account_circle),
+                          title: Text(commentData['CommentedBy']),
+                          subtitle: Text(commentData['CommentText']),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16, bottom: 32.0),
-                          child: TextField(
-                            controller: commentController,
-                            decoration: const InputDecoration(
-                              hintText: "Write a comment...",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom:32.0),
+                        child: TextField(
+                          controller: commentController,
+                          decoration: InputDecoration(hintText: "  Write a comment..."),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          String commentText = commentController.text;
-                          if (commentText.isNotEmpty) {
-                            postComment(postId, commentText);
-                            commentController.clear();
-                            FocusScope.of(context).unfocus();
-                          }
-                        },
-
-                        icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        },
+                      
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
+                      onPressed: () {
+                        if (commentController.text.isNotEmpty) {
+                          FirebaseFirestore.instance
+                              .collection('User Posts')
+                              .doc(postId)
+                              .collection('Comments')
+                              .add({
+                                "CommentText": commentController.text,
+                                "CommentedBy": FirebaseAuth.instance.currentUser?.email ?? "Anonymous",
+                                "CommentTime": Timestamp.now(),
+                              });
+                          commentController.clear();
+                        }
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     },
   );
 }
+
+
+
 
 
 void postComment(String postId, String commentText) {

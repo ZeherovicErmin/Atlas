@@ -147,7 +147,7 @@ class _FeedPostState extends State<FeedPost> {
                     children: [
                       Text(
                         widget.user.trim(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 16),
@@ -170,7 +170,7 @@ class _FeedPostState extends State<FeedPost> {
                 //passes in widget and current user for the Visibility check
                 onPressed: () =>
                     _showPostOptions(context, widget, currentUser, this),
-                icon: Icon(Icons.more_vert)),
+                icon: const Icon(Icons.more_vert)),
           ],
         ),
         const SizedBox(
@@ -196,8 +196,10 @@ class _FeedPostState extends State<FeedPost> {
                       color: Colors.transparent, // Transparent background
                       child: Center(
                         child: PhotoView(
+
                           imageProvider: CachedNetworkImageProvider(widget.imageUrl),
                           backgroundDecoration: BoxDecoration(
+
                             color: Colors.transparent,
                           ),
                           minScale: PhotoViewComputedScale.contained,
@@ -298,7 +300,7 @@ class _FeedPostState extends State<FeedPost> {
           child: ElevatedButton(
             onPressed: () => navigateToRecipeDetails(context,
                 Result.fromJson(widget.recipe as Map<String, dynamic>)),
-            child: Text("View Recipe"),
+            child: const Text("View Recipe"),
           ),
         ),
 
@@ -335,149 +337,149 @@ class _FeedPostState extends State<FeedPost> {
         // ),
 
         //edit post button
-        Align(
-          alignment: Alignment.topRight,
-          child: currentUser.email == widget.email
-              ? editButton(
-                  onTap: () async {
-                    // Check if there are comments
-                    bool hasComments = await checkForComments();
+        // Align(
+        //   alignment: Alignment.topRight,
+        //   child: currentUser.email == widget.email
+        //       ? editButton(
+        //           onTap: () async {
+        //             // Check if there are comments
+        //             bool hasComments = await checkForComments();
 
-                    BuildContext dialogContext = context;
+        //             BuildContext dialogContext = context;
 
-                    if (hasComments) {
-                      // Show a message or take any other action
-                      // ignore: use_build_context_synchronously
-                      showDialog(
-                        context: dialogContext,
-                        builder: (context) => AlertDialog(
-                          title: const Text("Cannot Edit"),
-                          content: const Text(
-                              "There are comments on this post. You cannot edit it."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Allow editing if there are no comments
-                      editPost();
-                    }
-                  },
-                )
-              : const SizedBox(),
-        ),
+        //             if (hasComments) {
+        //               // Show a message or take any other action
+        //               // ignore: use_build_context_synchronously
+        //               showDialog(
+        //                 context: dialogContext,
+        //                 builder: (context) => AlertDialog(
+        //                   title: const Text("Cannot Edit"),
+        //                   content: const Text(
+        //                       "There are comments on this post. You cannot edit it."),
+        //                   actions: [
+        //                     TextButton(
+        //                       onPressed: () => Navigator.pop(context),
+        //                       child: const Text("OK"),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               );
+        //             } else {
+        //               // Allow editing if there are no comments
+        //               editPost();
+        //             }
+        //           },
+        //         )
+        //       : const SizedBox(),
+        // ),
 
         const SizedBox(height: 20),
 
         // buttons
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //LIKE
-            Column(
-              children: [
-                //like button
-                LikeButton(
-                  isLiked: isLiked,
-                  onTap: toggleLike,
-                ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     //LIKE
+        //     Column(
+        //       children: [
+        //         //like button
+        //         LikeButton(
+        //           isLiked: isLiked,
+        //           onTap: toggleLike,
+        //         ),
 
-                const SizedBox(height: 5),
+        //         const SizedBox(height: 5),
 
-                //like count
-                Text(
-                  widget.likes.length.toString(),
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
+        //         //like count
+        //         Text(
+        //           widget.likes.length.toString(),
+        //           style: const TextStyle(color: Colors.grey),
+        //         ),
+        //       ],
+        //     ),
 
-            const SizedBox(width: 15),
+        //     const SizedBox(width: 15),
 
-            //COMMENT
-            Column(
-              children: [
-                //comment button
-                CommentButton(onTap: showCommentDialog),
+        //     //COMMENT
+        //     Column(
+        //       children: [
+        //         //comment button
+        //         CommentButton(onTap: showCommentDialog),
 
-                const SizedBox(height: 5),
+        //         const SizedBox(height: 5),
 
-                //comment count
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("User Posts")
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      //Calculate the comment count
-                      final commentCount = snapshot.data?.docs.length;
-                      return Text(
-                        commentCount.toString(),
-                        style: const TextStyle(color: Colors.grey),
-                      );
-                    } else {
-                      // show a loading indicator while fetching data
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
+        //         //comment count
+        //         StreamBuilder<QuerySnapshot>(
+        //           stream: FirebaseFirestore.instance
+        //               .collection("User Posts")
+        //               .doc(widget.postId)
+        //               .collection("Comments")
+        //               .snapshots(),
+        //           builder: (context, snapshot) {
+        //             if (snapshot.hasData) {
+        //               //Calculate the comment count
+        //               final commentCount = snapshot.data?.docs.length;
+        //               return Text(
+        //                 commentCount.toString(),
+        //                 style: const TextStyle(color: Colors.grey),
+        //               );
+        //             } else {
+        //               // show a loading indicator while fetching data
+        //               return const CircularProgressIndicator();
+        //             }
+        //           },
+        //         )
+        //       ],
+        //     ),
+        //   ],
+        // ),
 
-        const SizedBox(height: 20),
+        // const SizedBox(height: 20),
 
-        //comments under the post
-        Column(
-          children: [
-            ExpansionTile(
-              backgroundColor: Colors.grey[200],
-              title: Text('View Comments',
-                  style: TextStyle(color: Colors.grey[500])),
-              children: [
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("User Posts")
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .orderBy("CommentTime", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    //show loading circle if theres no data
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+        // //comments under the post
+        // Column(
+        //   children: [
+        //     ExpansionTile(
+        //       backgroundColor: Colors.grey[200],
+        //       title: Text('View Comments',
+        //           style: TextStyle(color: Colors.grey[500])),
+        //       children: [
+        //         StreamBuilder<QuerySnapshot>(
+        //           stream: FirebaseFirestore.instance
+        //               .collection("User Posts")
+        //               .doc(widget.postId)
+        //               .collection("Comments")
+        //               .orderBy("CommentTime", descending: true)
+        //               .snapshots(),
+        //           builder: (context, snapshot) {
+        //             //show loading circle if theres no data
+        //             if (!snapshot.hasData) {
+        //               return const Center(
+        //                 child: CircularProgressIndicator(),
+        //               );
+        //             }
 
-                    return ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map((doc) {
-                        //get the comment
-                        final commentData = doc.data() as Map<String, dynamic>;
+        //             return ListView(
+        //               shrinkWrap: true,
+        //               physics: const NeverScrollableScrollPhysics(),
+        //               children: snapshot.data!.docs.map((doc) {
+        //                 //get the comment
+        //                 final commentData = doc.data() as Map<String, dynamic>;
 
-                        //return the comment
-                        return Comment(
-                          text: commentData["CommentText"],
-                          userId: commentData["CommentedBy"],
-                          time: formatDate(commentData["CommentTime"]),
-                        );
-                      }).toList(),
-                    );
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
+        //                 //return the comment
+        //                 return Comment(
+        //                   text: commentData["CommentText"],
+        //                   userId: commentData["CommentedBy"],
+        //                   time: formatDate(commentData["CommentTime"]),
+        //                 );
+        //               }).toList(),
+        //             );
+        //           },
+        //         )
+        //       ],
+        //     ),
+        //   ],
+        // ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -501,10 +503,30 @@ class _FeedPostState extends State<FeedPost> {
             Column(children: [
               IconButton(
                   onPressed: () => _showCommentsModal(context, widget.postId),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.comment,
                     color: Colors.grey,
                   )),
+                  StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("User Posts")
+                      .doc(widget.postId)
+                      .collection("Comments")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      //Calculate the comment count
+                      final commentCount = snapshot.data?.docs.length;
+                      return Text(
+                        commentCount.toString(),
+                        style: const TextStyle(color: Colors.grey),
+                      );
+                    } else {
+                      // show a loading indicator while fetching data
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                )
             ])
           ],
         )
@@ -770,18 +792,18 @@ class _FeedPostState extends State<FeedPost> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "Edit Message",
-          style: const TextStyle(color: Colors.black),
+          style:  TextStyle(color: Colors.black),
         ),
         content: TextField(
           controller: post,
           autofocus: true,
           style: const TextStyle(
               color: Colors.black), // Change text color to white
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: "Enter new Message",
-            hintStyle: const TextStyle(color: Colors.black),
+            hintStyle:  TextStyle(color: Colors.black),
           ),
         ),
         actions: [
@@ -854,7 +876,7 @@ class _FeedPostState extends State<FeedPost> {
             const Divider(
                 thickness: 1, color: Color.fromARGB(255, 118, 117, 117)),
             Align(
-              child: Container(
+              child: SizedBox(
                 height: 25,
                 // Stack to hold the fats and the fats variable
                 child: Row(
@@ -950,6 +972,7 @@ void _showCommentsModal(BuildContext context, String postId) {
     context: context,
     isScrollControlled: true,
     builder: (BuildContext context) {
+
       return Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: Container(
@@ -1032,6 +1055,7 @@ void _showCommentsModal(BuildContext context, String postId) {
             ],
           ),
         ),
+
       );
     },
   );
@@ -1097,8 +1121,8 @@ void _showPostOptions(
             Visibility(
               visible: currentUser.email != widget.email,
               child: ListTile(
-                leading: Icon(Icons.report),
-                title: Text('Report Post'),
+                leading: const Icon(Icons.report),
+                title: const Text('Report Post'),
                 onTap: () {
                   // Add functionality for reporting a post
                   Navigator.pop(context);
@@ -1113,21 +1137,44 @@ void _showPostOptions(
             Visibility(
               visible: currentUser.email == widget.email,
               child: ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit Post'),
-                onTap: () {
-                  // Add functionality for reporting a post
-                  Navigator.pop(context);
-                  state.editPost();
-                },
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Post'),
+                onTap: () async {
+                    // Check if there are comments
+                    bool hasComments = await state.checkForComments();
+
+                    BuildContext dialogContext = context;
+
+                    if (hasComments) {
+                      // Show a message or take any other action
+                      // ignore: use_build_context_synchronously
+                      showDialog(
+                        context: dialogContext,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Cannot Edit"),
+                          content: const Text(
+                              "There are comments on this post. You cannot edit it."),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      // Allow editing if there are no comments
+                      state.editPost();
+                    }
+                  },
               ),
             ),
             //Delete Post if user owns the post (Need to add this functionality)
             Visibility(
               visible: currentUser.email == widget.email,
               child: ListTile(
-                leading: Icon(Icons.cancel),
-                title: Text('Delete Post'),
+                leading: const Icon(Icons.cancel),
+                title: const Text('Delete Post'),
                 onTap: () {
                   // Add functionality for reporting a post
                   Navigator.pop(context);
@@ -1159,7 +1206,7 @@ void _confirmReportDialog(
           onPressed: () {
             reportPost(postId, currentUser, widget, context);
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Reported!')));
+                .showSnackBar(const SnackBar(content: Text('Reported!')));
             Navigator.pop(context);
           },
           child: const Text("Report"),
@@ -1218,7 +1265,7 @@ Future<void> reportPost(
       //Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Post reported')));
+          .showSnackBar(const SnackBar(content: Text('Post reported')));
     }
   }
 

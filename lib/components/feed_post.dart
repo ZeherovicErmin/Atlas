@@ -297,11 +297,13 @@ class _FeedPostState extends State<FeedPost> {
         //Show if there is recipe data
         Visibility(
           visible: widget.recipe != null && widget.recipe!.isNotEmpty,
+          child: Padding(padding: EdgeInsets.only(left: 110, top: 30), 
           child: ElevatedButton(
             onPressed: () => navigateToRecipeDetails(context,
                 Result.fromJson(widget.recipe as Map<String, dynamic>)),
-            child: const Text("View Recipe"),
-          ),
+            style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
+            child: const Text("View Recipe", style: TextStyle(fontSize: 15)),
+          )),
         ),
 
         const SizedBox(height: 5),

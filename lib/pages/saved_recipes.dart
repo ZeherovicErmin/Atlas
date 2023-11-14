@@ -162,6 +162,7 @@ onShare(Result recipe, BuildContext context) {
           return Dialog(
             insetPadding: EdgeInsets.symmetric(vertical: 300),
             child: Column(children: [
+              Padding(padding: EdgeInsets.only(top: 45)),
               //Recipe title
               Text("Post the recipe \"${recipe.title}\"?"),
               //Post button
@@ -175,11 +176,11 @@ onShare(Result recipe, BuildContext context) {
               'barcodeData': {},
               'postImage': '',
               'ExerciseName': '',
-      'ExerciseType': '',
-      'ExerciseMuscle': '',
-      'ExerciseEquipment': '',
-      'ExerciseDifficulty': '',
-      'ExerciseInstructions': '',
+              'ExerciseType': '',
+              'ExerciseMuscle': '',
+              'ExerciseEquipment': '',
+              'ExerciseDifficulty': '',
+              'ExerciseInstructions': '',
               'recipe': recipe.toMap() ,
               });
               Navigator.pop(context);

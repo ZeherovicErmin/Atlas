@@ -80,7 +80,7 @@ class RecipeDetails extends ConsumerWidget {
                 child: Text("Calories: $calories",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold, 
                       fontSize: 15))),
               //Recipe Servings
@@ -92,7 +92,7 @@ class RecipeDetails extends ConsumerWidget {
                   borderRadius: BorderRadius.all(Radius.circular(25))),
                 child:  Text("Servings: ",
                   textAlign: TextAlign.center,
-                  style: const TextStyle( color: Colors.white,
+                  style: const TextStyle( color: Colors.black,
                       fontWeight: FontWeight.bold, fontSize: 15, height: 2.0))),
               SizedBox(
                   width: 30,
@@ -126,7 +126,7 @@ class RecipeDetails extends ConsumerWidget {
                   child: Text("Ready Time: ${recipe.readyInMinutes} min",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 15))),
             ]),

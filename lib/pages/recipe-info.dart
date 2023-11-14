@@ -17,7 +17,10 @@ class RecipeInfo extends ConsumerWidget {
                   body: Column(children: [
                 Container(
                     color: Colors.orange,
-                    child: TabBar(tabs: const [
+                    child: TabBar(
+                      labelColor: Colors.black,
+                      indicatorColor: Colors.white,
+                      tabs: const [
                       Tab(text: "Ingredients"),
                       Tab(text: "Instructions")
                     ])),

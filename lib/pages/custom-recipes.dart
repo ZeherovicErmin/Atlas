@@ -332,7 +332,8 @@ class CustomRecipes extends ConsumerWidget {
                                       child: Text(
                                         "View Details",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
                                       )),
                                   Container(
                                         padding: EdgeInsets.all(0),

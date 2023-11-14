@@ -275,9 +275,10 @@ class Recipes extends ConsumerWidget {
                                             Color.fromARGB(255, 255, 162, 23))),
                                 onPressed: () =>
                                     navigateToRecipeDetails(context, recipe),
-                                child: Text(
+                                child: const Text(
                                   "View Details",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
                                 )),
                             Container(
                                 padding: EdgeInsets.all(0),

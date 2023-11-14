@@ -107,10 +107,18 @@ class _SavedExercisesState extends State<SavedExercises> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Text(
+                                  /*Text(
                                     exerciseData['exercise']['type'] ?? '',
                                     style: const TextStyle(
                                       color: Colors.red,
+                                      fontSize: 18,
+                                    ),
+                                  ),*/
+                                  Text(
+                                    exerciseData['exercise']['difficulty'] ??
+                                        '',
+                                    style: const TextStyle(
+                                      color: Colors.purple,
                                       fontSize: 18,
                                     ),
                                   ),
@@ -125,14 +133,6 @@ class _SavedExercisesState extends State<SavedExercises> {
                                     exerciseData['exercise']['equipment'] ?? '',
                                     style: const TextStyle(
                                       color: Colors.green,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  Text(
-                                    exerciseData['exercise']['difficulty'] ??
-                                        '',
-                                    style: const TextStyle(
-                                      color: Colors.purple,
                                       fontSize: 18,
                                     ),
                                   ),

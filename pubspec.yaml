@@ -78,7 +78,11 @@ dependencies:
   photo_view: ^0.14.0
   flutter_animate: ^4.2.0+1
   cached_network_image: ^3.3.0
+
+  flutter_quill: ^8.5.3
+
   comment_box: ^0.0.18
+
 
 
 

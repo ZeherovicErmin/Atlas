@@ -71,7 +71,6 @@ class FitCenter extends ConsumerWidget {
       final List<dynamic> data = json.decode(response.body);
       return data;
     } else {
-      print("Error: ${response.statusCode} ${response.body}");
       return []; // Returning an empty list in case there is an error
     }
   }
@@ -86,44 +85,43 @@ class FitCenter extends ConsumerWidget {
         //Home page for when a user logs in
         appBar: AppBar(
             centerTitle: true,
-              title: const Text(
-                "Fitness Center",
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontWeight: FontWeight.bold,
-                ),
+            title: const Text(
+              "Fitness Center",
+              style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontWeight: FontWeight.bold,
               ),
+            ),
             backgroundColor: const Color.fromARGB(255, 0, 136, 204),
             leading: IconButton(
-              icon: const Icon(CupertinoIcons.info_circle_fill),
-              onPressed: () {
-                final isInfoDialogOpen = ref.read(infoDialogProvider);
+                icon: const Icon(CupertinoIcons.info_circle_fill),
+                onPressed: () {
+                  final isInfoDialogOpen = ref.read(infoDialogProvider);
 
-                if (!isInfoDialogOpen) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Center(
-                            child: Text('Discover Page Guide')),
-                        content: const Text(
-                            "Displayed is a list of muscles with icons depicting the muscle.\n"
-                            "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
-                            "The muscles are color coded by general muscle group they belong to.\n"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text('Close'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              }
-            ),
+                  if (!isInfoDialogOpen) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title:
+                              const Center(child: Text('Discover Page Guide')),
+                          content: const Text(
+                              "Displayed is a list of muscles with icons depicting the muscle.\n"
+                              "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
+                              "The muscles are color coded by general muscle group they belong to.\n"),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Close'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }),
             bottom: const TabBar(
               indicatorColor: Color.fromARGB(255, 90, 86, 86),
               tabs: [
@@ -136,9 +134,7 @@ class FitCenter extends ConsumerWidget {
                 )
               ],
             ),
-            actions: [
-            ]
-          ),
+            actions: []),
 
         body: TabBarView(
           children: [
@@ -149,7 +145,7 @@ class FitCenter extends ConsumerWidget {
 
             const DiscoverPage(),
 
-            const NotesPage(),
+            NotesPage(),
           ],
         ),
       ),
@@ -317,10 +313,18 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
+                          // Type of workout seems unneccesary bloat
+                          /*Text(
                             exercise['type'],
                             style: const TextStyle(
                               color: Colors.red,
+                              fontSize: 18,
+                            ),
+                          ),*/
+                          Text(
+                            exercise['difficulty'],
+                            style: const TextStyle(
+                              color: Colors.purple,
                               fontSize: 18,
                             ),
                           ),
@@ -335,13 +339,6 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                             exercise['equipment'],
                             style: const TextStyle(
                               color: Colors.green,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            exercise['difficulty'],
-                            style: const TextStyle(
-                              color: Colors.purple,
                               fontSize: 18,
                             ),
                           ),
@@ -509,7 +506,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
     final User? user = auth.currentUser;
 
     if (user == null) {
-      print('User not logged in.');
       return;
     }
 
@@ -536,7 +532,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
     }
 
     if (existingExerciseQuery.docs.isNotEmpty) {
-      print('Exercise already saved.');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Exercise already saved.'),
@@ -553,7 +548,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
         },
       );
 
-      print('Exercise saved to Firestore.');
       // Save workout to FireStore
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -562,7 +556,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
       );
     }
   } catch (e) {
-    print('Error adding exercise to Firestore: $e');
     // if there is an error
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

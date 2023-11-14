@@ -11,7 +11,7 @@ class newFeed extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           // App bar with title
-          SliverAppBar(
+          const SliverAppBar(
             title: Text(
               "F e e d",
               style: TextStyle(
@@ -23,7 +23,7 @@ class newFeed extends ConsumerWidget {
           ),
           // Sliver list to display posts
           SliverPadding(
-            padding: EdgeInsets.only(bottom: 180),
+            padding: const EdgeInsets.only(bottom: 180),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -63,19 +63,21 @@ class newFeed extends ConsumerWidget {
               Expanded(
                 child: Row(
                   children: [
-                    Icon(Icons.account_circle, size: 40.0, color: Colors.grey),
-                    SizedBox(width: 10),
+                    const Icon(Icons.account_circle,
+                        size: 40.0, color: Colors.grey),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Username ${index + 1}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         Text(
                           timestamp, // Display timestamp
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                       ],
                     ),
@@ -84,7 +86,7 @@ class newFeed extends ConsumerWidget {
               ),
               // More options icon
               IconButton(
-                icon: Icon(Icons.more_vert, color: Colors.grey),
+                icon: const Icon(Icons.more_vert, color: Colors.grey),
                 onPressed: () => _showPostOptions(context),
               ),
             ],
@@ -107,10 +109,10 @@ class newFeed extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Icon(Icons.thumb_up, color: Colors.blue),
+              const Icon(Icons.thumb_up, color: Colors.blue),
               // Comment icon with action to show comments
               IconButton(
-                icon: Icon(Icons.comment, color: Colors.grey),
+                icon: const Icon(Icons.comment, color: Colors.grey),
                 onPressed: () => _showCommentsModal(context),
               ),
             ],
@@ -129,8 +131,8 @@ class newFeed extends ConsumerWidget {
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.report),
-                title: Text('Report Post'),
+                leading: const Icon(Icons.report),
+                title: const Text('Report Post'),
                 onTap: () {
                   // Add functionality for reporting a post
                   Navigator.pop(context);
@@ -153,11 +155,10 @@ class newFeed extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: TextField(
               maxLength: 150,
-              decoration:
-                  const InputDecoration(hintText: "Share your progress!"),
+              decoration: InputDecoration(hintText: "Share your progress!"),
               obscureText: false,
             ),
           ),
@@ -193,8 +194,8 @@ void _showCommentsModal(BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Comments',
                   style: TextStyle(
@@ -203,18 +204,18 @@ void _showCommentsModal(BuildContext context) {
                   ),
                 ),
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.account_circle),
                 title: Text('User 1'),
                 subtitle: Text('Great post!'),
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.account_circle),
                 title: Text('User 2'),
                 subtitle: Text('I totally agree!'),
               ),
               // Add more sample comments here if needed
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
@@ -222,12 +223,12 @@ void _showCommentsModal(BuildContext context) {
                     Expanded(
                       child: TextField(
                         controller: commentController,
-                        decoration:
-                            InputDecoration(hintText: "Write a comment..."),
+                        decoration: const InputDecoration(
+                            hintText: "Write a comment..."),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.send,
+                      icon: const Icon(Icons.send,
                           color: Color.fromARGB(255, 0, 136, 204)),
                       onPressed: () {
                         // Here you can handle the logic to post the comment

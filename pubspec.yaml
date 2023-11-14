@@ -79,7 +79,7 @@ dependencies:
   flutter_animate: ^4.2.0+1
   cached_network_image: ^3.3.0
 
-  flutter_quill: ^8.5.3
+  flutter_quill: 8.1.1
 
   comment_box: ^0.0.18
 

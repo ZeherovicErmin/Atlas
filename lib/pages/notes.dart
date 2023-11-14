@@ -1,6 +1,5 @@
 // Creating a notes application
 import 'package:atlas/pages/editing_note_page.dart';
-import 'package:atlas/pages/notes_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

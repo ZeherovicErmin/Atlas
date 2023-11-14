@@ -103,12 +103,44 @@ class FitCenter extends ConsumerWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title:
-                              const Center(child: Text('Discover Page Guide')),
-                          content: const Text(
-                              "Displayed is a list of muscles with icons depicting the muscle.\n"
-                              "To find exercises for a muscle, tap on one of the muscles to view a list of exercises.\n"
-                              "The muscles are color coded by general muscle group they belong to.\n"),
+                          title: const Center(
+                            child: Text(
+                              'Fitness Center Guide',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          content: const SingleChildScrollView(
+                            child: ListBody(
+                              children: <Widget>[
+                                Text(
+                                  "Discover Page",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Find targeted exercises for each muscle, muscles are seperated into color categories. Tap on a muscle icon to view related exercises.",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "My Workouts",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                    "View the workout plans you've customized. Clicking each day will bring up your plan of exercises for that day!",
+                                    style: TextStyle(fontSize: 14)),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Notes",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                    "Jot down anything that comes to mind in the notes page!",
+                                    style: TextStyle(fontSize: 14)),
+                              ],
+                            ),
+                          ),
+                          // adding space between the entries
+
                           actions: <Widget>[
                             TextButton(
                               child: const Text('Close'),
@@ -134,7 +166,7 @@ class FitCenter extends ConsumerWidget {
                 )
               ],
             ),
-            actions: []),
+            actions: const []),
 
         body: TabBarView(
           children: [
@@ -169,7 +201,7 @@ class FitCenter extends ConsumerWidget {
                 barrierDismissible: false,
                 builder: (BuildContext context) {
                   return LoadingAnimationWidget.inkDrop(
-                    color: Color.fromARGB(255, 0, 136, 204),
+                    color: const Color.fromARGB(255, 0, 136, 204),
                     size: 200,
                   );
                 });
@@ -177,7 +209,7 @@ class FitCenter extends ConsumerWidget {
             final exercisesData = await getExercises(muscle);
 
             // Waiting 1 second
-            await Future.delayed(Duration(milliseconds: 750));
+            await Future.delayed(const Duration(milliseconds: 750));
 
             // Dismiss the loading indicator
             Navigator.pop(context);

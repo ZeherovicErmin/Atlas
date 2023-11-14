@@ -12,7 +12,7 @@ AppBar myAppBar(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
       leading: const Icon(
         null,
-        ),
+      ),
       automaticallyImplyLeading: false,
       backgroundColor: Color.fromARGB(255, 0, 136, 204),
       title: Text(
@@ -39,7 +39,7 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
   return AppBar(
     leading: const Icon(
       null,
-      ),
+    ),
     automaticallyImplyLeading: false,
     backgroundColor: Color.fromARGB(255, 0, 136, 204),
     title: Text(
@@ -66,15 +66,16 @@ AppBar myAppBar2(BuildContext context, WidgetRef ref, String title) {
 
 AppBar myAppBar3(BuildContext context, String title) {
   return AppBar(
-      leading: const Icon(
-        null,
-        ),
-      automaticallyImplyLeading: false,
-      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-      title: Text(
-        title,
-        style: const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-      ),
+    leading: const Icon(
+      null,
+    ),
+    automaticallyImplyLeading: false,
+    backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+    title: Text(
+      title,
+      style:
+          const TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+    ),
   );
 }
 
@@ -216,10 +217,10 @@ final Map<String, IconData> exerciseTypeIcons = {
 // Creating a map of colors to apply to each type of muscle
 const Map<String, Color> muscleColors = {
   "abdominals": Color.fromARGB(255, 40, 84, 206),
-  "abductors": Color.fromARGB(255, 255, 107, 76),
-  "adductors": Color.fromARGB(255, 255, 107, 76),
+  "abductors": Color.fromARGB(255, 25, 156, 127),
+  "adductors": Color.fromARGB(255, 25, 156, 127),
   "biceps": Color.fromARGB(255, 63, 199, 202),
-  "calves": Color.fromARGB(255, 255, 107, 76),
+  "calves": Color.fromARGB(255, 25, 156, 127),
   "chest": Color.fromARGB(255, 131, 217, 131),
   "forearms": Color.fromARGB(255, 63, 199, 202),
   "glutes": Color.fromARGB(255, 112, 128, 144),
@@ -228,7 +229,7 @@ const Map<String, Color> muscleColors = {
   "lower_back": Color.fromARGB(255, 147, 112, 219),
   "middle_back": Color.fromARGB(255, 147, 112, 219),
   "neck": Color.fromARGB(255, 147, 112, 219),
-  "quadriceps": Color.fromARGB(255, 255, 107, 76),
+  "quadriceps": Color.fromARGB(255, 25, 156, 127),
   "traps": Color.fromARGB(255, 147, 112, 219),
   "triceps": Color.fromARGB(255, 63, 199, 202),
 };

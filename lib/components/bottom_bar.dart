@@ -31,6 +31,7 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       //fixes NavBar transparency
       extendBody: true,
 

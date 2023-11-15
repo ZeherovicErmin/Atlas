@@ -127,8 +127,7 @@ class Feed extends ConsumerWidget {
           await showCupertinoImageSourceDialog(context: context);
       if (source != null) {
         // Use the ImagePicker plugin to open the device's gallery to pick an image.
-        final pickedFile =
-            await ImagePicker().pickImage(source: source);
+        final pickedFile = await ImagePicker().pickImage(source: source);
         //Image.file(pickedFile as File,width: 400,height: 300,);
         // Check if an image was picked.
         if (pickedFile != null) {

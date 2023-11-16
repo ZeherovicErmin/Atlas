@@ -184,6 +184,7 @@ class Feed extends ConsumerWidget {
     */
 
     return Scaffold(
+      //resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(
           255, 232, 229, 229), //Home page for when a user logs in
       appBar: AppBar(

@@ -1,4 +1,5 @@
 import 'package:atlas/pages/habit_card.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +26,8 @@ class _HabitToggleState extends State<HabitToggle> {
     HabitInfo(title: 'Pushups',       image: 'lib/images/push-up.png',      backgroundColor: const Color.fromARGB(255, 175, 142, 76)),
     HabitInfo(title: 'Situps',        image: 'lib/images/sit-up.png',       backgroundColor: const Color.fromARGB(255, 209, 116, 238)),
     HabitInfo(title: 'Sodium',        image: 'lib/images/sodium.png',       backgroundColor: const Color.fromARGB(255, 238, 116, 177)),
+    HabitInfo(title: 'Fats',          image: 'lib/images/fat.png',       backgroundColor: const Color.fromARGB(255, 116, 230, 238)),
+    HabitInfo(title: 'Cholesterol',   image: 'lib/images/colesterol.png',       backgroundColor: const Color.fromARGB(255, 248, 202, 17)),
   ];
 
   @override
@@ -137,9 +140,9 @@ class _HabitToggleState extends State<HabitToggle> {
     //Updates the value in firebase
     if (uid != null) {
       FirebaseFirestore.instance
-          .collection('SelectedHabits')
-          .doc(uid)
-          .set({'selectedHabits': selectedHabits}, SetOptions(merge: true));
+        .collection('SelectedHabits')
+        .doc(uid)
+        .set({'selectedHabits': selectedHabits}, SetOptions(merge: true));
     }
   }
 
@@ -202,13 +205,15 @@ class _HabitToggleState extends State<HabitToggle> {
                               height: 46,
                             ),
                             const SizedBox(height: 10),
-                            Text(
+                            AutoSizeText(
                               habit.title,
                               style: const TextStyle(
-                                fontSize: 17,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
+                              maxLines: 1,
+                              minFontSize: 12,
                             ),
                           ],
                         ),

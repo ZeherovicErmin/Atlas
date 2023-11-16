@@ -5,6 +5,7 @@ import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -55,10 +56,7 @@ class CustomRecipes extends ConsumerWidget {
     ]));
   }
 
-  addRecipeDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+ addRecipeDialog(BuildContext context, WidgetRef ref) {
     int instructionCount = ref.watch(instructionCountProvider);
     int ingredientCount = ref.watch(ingredientCountProvider);
 
@@ -99,33 +97,83 @@ class CustomRecipes extends ConsumerWidget {
                                   ),
                                   //Recipe Cuisine Form Input
                                   FormBuilderTextField(
-                                    name: 'cuisine',
-                                    decoration:
-                                        InputDecoration(labelText: 'Cuisine'),
-                                    validator: FormBuilderValidators.required(),
-                                  ),
+                                      name: 'cuisine',
+                                      decoration:
+                                          InputDecoration(labelText: 'Cuisine'),
+                                      validator:
+                                          FormBuilderValidators.required()),
                                   //Recipe Calories Form Input
                                   FormBuilderTextField(
                                     name: 'calories',
                                     decoration:
                                         InputDecoration(labelText: 'Calories'),
-                                    keyboardType: TextInputType.number,
+                                    validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.min(0)
+                                    ]),
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            signed: true, decimal: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                   //Recipe Ready Time Form Input
                                   FormBuilderTextField(
-                                    name: 'readyTime',
-                                    decoration: InputDecoration(
-                                        labelText: 'Ready Time (in minutes)'),
-                                    keyboardType: TextInputType.number,
-                                  ),
-
-                                  FormBuilderCheckbox(
-                                    name: 'isVegan',
-                                    title: Text('Is it Vegan?'),
-                                  ),
-                                  FormBuilderCheckbox(
-                                    name: 'isVegetarian',
-                                    title: Text('Is it Vegetarian?'),
+                                      name: 'readyTime',
+                                      decoration: InputDecoration(
+                                          labelText: 'Ready Time (in minutes)'),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              signed: true, decimal: true),
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      validator: FormBuilderValidators.compose([
+                                      FormBuilderValidators.required(),
+                                      FormBuilderValidators.min(0)
+                                    ])),
+                                  //Dietary Restrictions
+                                  FormBuilderFilterChip(
+                                    name: "diets",
+                                    options: const [
+                                      FormBuilderChipOption(
+                                          value: 'vegan', child: Text("Vegan")),
+                                      FormBuilderChipOption(
+                                          value: 'vegetarian',
+                                          child: Text("Vegetarian")),
+                                      FormBuilderChipOption(
+                                          value: 'pescetarian',
+                                          child: Text("Pescetarian")),
+                                      FormBuilderChipOption(
+                                          value: 'glutenFree',
+                                          child: Text("Gluten Free")),
+                                      FormBuilderChipOption(
+                                          value: 'dairyFree',
+                                          child: Text("Dairy Free")),
+                                      FormBuilderChipOption(
+                                          value: 'peanutFree',
+                                          child: Text("Peanut Free"))
+                                    ],
+                                    decoration: const InputDecoration(
+                                        labelText: "Dietary Restrictions"),
+                                    selectedColor: Colors.orange,
+                                    checkmarkColor: Colors.white,
+                                    autovalidateMode: AutovalidateMode.always,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return null;
+                                      }
+                                      if (value!.contains("vegan") &&
+                                          value!.contains("pescetarian")) {
+                                        return 'Recipe cannot be vegan and pesecatarian';
+                                      } else if (value!
+                                              .contains("vegetarian") &&
+                                          value!.contains("pescetarian")) {
+                                        return 'Recipe cannot be vegetarian and pesecatarian';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   const Divider(
                                     height: 100,
@@ -134,7 +182,7 @@ class CustomRecipes extends ConsumerWidget {
                                   ),
                                   Container(
                                       alignment: Alignment.center,
-                                      child: Text(
+                                      child: const Text(
                                         "Instructions",
                                         style: TextStyle(
                                             fontSize: 25,
@@ -149,21 +197,40 @@ class CustomRecipes extends ConsumerWidget {
                                       //Used to build instruction list tiles
                                       itemBuilder: (context, index) {
                                         return FormBuilderTextField(
-                                          name: 'instruction${index + 1}',
-                                          decoration: InputDecoration(
-                                              labelText:
-                                                  'Instruction ${index + 1}'),
-                                          maxLines: 5,
-                                        );
+                                            name: 'instruction${index + 1}',
+                                            decoration: InputDecoration(
+                                                labelText:
+                                                    'Instruction ${index + 1}'),
+                                            maxLines: 5,
+                                            validator: FormBuilderValidators
+                                                .required());
                                       }),
-                                  IconButton(
-                                      onPressed: () => {
-                                            ref
-                                                .read(instructionCountProvider
-                                                    .notifier)
-                                                .state = ++instructionCount
-                                          },
-                                      icon: Icon(Icons.add_circle_outlined)),
+                                  Row(children: [
+                                    //Add Ingredients Button
+                                    Expanded(
+                                        child: IconButton(
+                                            onPressed: () => {
+                                                  ref
+                                                      .read(
+                                                          instructionCountProvider
+                                                              .notifier)
+                                                      .state = ++instructionCount
+                                                },
+                                            icon: Icon(
+                                                Icons.add_circle_outlined))),
+                                    //Remove Ingredients Button
+                                    Expanded(
+                                        child: IconButton(
+                                            onPressed: () => {
+                                                  ref
+                                                      .read(
+                                                          instructionCountProvider
+                                                              .notifier)
+                                                      .state = --instructionCount
+                                                },
+                                            icon: Icon(
+                                                Icons.remove_circle_outlined)))
+                                  ]),
                                   const Divider(
                                     height: 100,
                                     color: Colors.orange,
@@ -171,7 +238,7 @@ class CustomRecipes extends ConsumerWidget {
                                   ),
                                   Container(
                                       alignment: Alignment.center,
-                                      child: Text(
+                                      child: const Text(
                                         "Ingredients",
                                         style: TextStyle(
                                             fontSize: 25,
@@ -187,49 +254,84 @@ class CustomRecipes extends ConsumerWidget {
                                       //Used to build instruction list tiles
                                       itemBuilder: (context, index) {
                                         return Column(children: [
-                                          Padding(
+                                          const Padding(
                                               padding:
                                                   EdgeInsets.only(top: 30)),
                                           Container(
                                               alignment: Alignment.topLeft,
                                               child: Text(
                                                 "Ingredient ${index + 1}",
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               )),
                                           FormBuilderTextField(
-                                            name: 'ingredientName${index + 1}',
-                                            decoration: InputDecoration(
-                                                labelText: 'Name'),
-                                          ),
+                                              name:
+                                                  'ingredientName${index + 1}',
+                                              decoration: const InputDecoration(
+                                                  labelText: 'Name'),
+                                              validator: FormBuilderValidators
+                                                  .required()),
                                           Row(children: [
                                             Expanded(
                                                 child: FormBuilderTextField(
                                               name:
                                                   'ingredientAmount${index + 1}',
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                   labelText: 'Amount'),
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                                  signed: true, decimal: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              validator: FormBuilderValidators
+                                                  .compose([
+                                                FormBuilderValidators
+                                                    .required(),
+                                                FormBuilderValidators.min(0)
+                                              ]),
                                             )),
                                             Expanded(
                                                 child: FormBuilderTextField(
-                                              name:
-                                                  'ingredientUnit${index + 1}',
-                                              decoration: InputDecoration(
-                                                  labelText: 'Unit'),
-                                            )),
+                                                    name:
+                                                        'ingredientUnit${index + 1}',
+                                                    decoration: InputDecoration(
+                                                        labelText: 'Unit'),
+                                                    validator:
+                                                        FormBuilderValidators
+                                                            .required())),
                                           ]),
                                         ]);
                                       }),
-                                  IconButton(
-                                      onPressed: () => {
-                                            ref
-                                                .read(ingredientCountProvider
-                                                    .notifier)
-                                                .state = ++ingredientCount
-                                          },
-                                      icon: Icon(Icons.add_circle_outlined)),
+                                  Row(children: [
+                                    //Add Ingredients Button
+                                    Expanded(
+                                        child: IconButton(
+                                            onPressed: () => {
+                                                  ref
+                                                      .read(
+                                                          ingredientCountProvider
+                                                              .notifier)
+                                                      .state = ++ingredientCount
+                                                },
+                                            icon: Icon(
+                                                Icons.add_circle_outlined))),
+                                    //Remove Ingredients Button
+                                    Expanded(
+                                        child: IconButton(
+                                            onPressed: () => {
+                                                  ref
+                                                      .read(
+                                                          ingredientCountProvider
+                                                              .notifier)
+                                                      .state = --ingredientCount
+                                                },
+                                            icon: Icon(
+                                                Icons.remove_circle_outline)))
+                                  ]),
                                   const Divider(
                                     height: 100,
                                     color: Colors.orange,
@@ -243,7 +345,8 @@ class CustomRecipes extends ConsumerWidget {
                                         // Handle form data submission
                                         final formData =
                                             _formKey.currentState!.value;
-                                        onAdd(formData, ref);
+                                        onAdd(formData,ref,context);
+                                        Navigator.pop(context);
                                       }
                                     },
                                     child: Text('Submit'),
@@ -252,7 +355,6 @@ class CustomRecipes extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          //Close dialog
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -332,7 +434,8 @@ class CustomRecipes extends ConsumerWidget {
                                       child: Text(
                                         "View Details",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
                                       )),
                                   Container(
                                         padding: EdgeInsets.all(0),
@@ -388,7 +491,7 @@ class CustomRecipes extends ConsumerWidget {
         });
   }
 
-  onAdd(Map<String, dynamic> formData, WidgetRef ref) async {
+  onAdd(Map<String, dynamic> formData, WidgetRef ref, BuildContext context) async {
     Nutrient nutrient = Nutrient(
         name: "Calories",
         amount: double.parse(formData["calories"]),
@@ -469,6 +572,8 @@ class CustomRecipes extends ConsumerWidget {
     //Reset ingredient and instruction counts to 1
     ref.read(instructionCountProvider.notifier).state = 1;
     ref.read(ingredientCountProvider.notifier).state = 1;
+
+    Navigator.pop(context);
   }
 
   //Remove Button Handler - Remove Custom Recipe

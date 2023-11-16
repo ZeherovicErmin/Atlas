@@ -80,19 +80,19 @@ class RecipeDetails extends ConsumerWidget {
                 child: Text("Calories: $calories",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold, 
                       fontSize: 15))),
               //Recipe Servings
               Container(
                 margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.only(left: 7, right: 7),
+                padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
                   borderRadius: BorderRadius.all(Radius.circular(25))),
                 child:  Text("Servings: ",
                   textAlign: TextAlign.center,
-                  style: const TextStyle( color: Colors.white,
+                  style: const TextStyle( color: Colors.black,
                       fontWeight: FontWeight.bold, fontSize: 15, height: 2.0))),
               SizedBox(
                   width: 30,
@@ -114,8 +114,8 @@ class RecipeDetails extends ConsumerWidget {
                           double.parse(value)
                     },
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: true, decimal: true)
                   )),
               //Recipe Ready Time
               Container(
@@ -126,7 +126,7 @@ class RecipeDetails extends ConsumerWidget {
                   child: Text("Ready Time: ${recipe.readyInMinutes} min",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 15))),
             ]),

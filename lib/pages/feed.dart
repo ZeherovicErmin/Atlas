@@ -103,8 +103,8 @@ class Feed extends ConsumerWidget {
           'Likes': [],
           'recipe': {},
           'barcodeData': {},
-          
-                    'ExerciseName': '',
+
+          'ExerciseName': '',
           'ExerciseType': '',
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
@@ -122,19 +122,23 @@ class Feed extends ConsumerWidget {
     }
 
     void selectImage() async {
-      // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      //Image.file(pickedFile as File,width: 400,height: 300,);
-      // Check if an image was picked.
-      if (pickedFile != null) {
-        // Read the image file as bytes.
-        final imageBytes = await pickedFile.readAsBytes();
+      //Dialog box to select image
+      final ImageSource? source =
+          await showCupertinoImageSourceDialog(context: context);
+      if (source != null) {
+        // Use the ImagePicker plugin to open the device's gallery to pick an image.
+        final pickedFile = await ImagePicker().pickImage(source: source);
+        //Image.file(pickedFile as File,width: 400,height: 300,);
+        // Check if an image was picked.
+        if (pickedFile != null) {
+          // Read the image file as bytes.
+          final imageBytes = await pickedFile.readAsBytes();
 
-        // Update the profilePictureProvider state with the selected image as Uint8List.
-        ref.read(pictureProvider.notifier).state =
-            Uint8List.fromList(imageBytes);
-        addPicture(Uint8List.fromList(imageBytes));
+          // Update the profilePictureProvider state with the selected image as Uint8List.
+          ref.read(pictureProvider.notifier).state =
+              Uint8List.fromList(imageBytes);
+          addPicture(Uint8List.fromList(imageBytes));
+        }
       }
     }
 
@@ -190,13 +194,13 @@ class Feed extends ConsumerWidget {
       appBar: AppBar(
         leading: const Icon(
           null,
-          ),
+        ),
         centerTitle: true,
         title: const Text(
-            "Feed",
-            style:
-                TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-          ),
+          "Feed",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       ),
 
@@ -216,23 +220,26 @@ class Feed extends ConsumerWidget {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           // Get the message
-final post = snapshot.data!.docs[index];
+                          final post = snapshot.data!.docs[index];
 
 // Handle barcodeData with type checking
-final barcodeDataDynamic = post['barcodeData'];
-Map<String, dynamic> barcodeDataMap = {};
+                          final barcodeDataDynamic = post['barcodeData'];
+                          Map<String, dynamic> barcodeDataMap = {};
 
-if (barcodeDataDynamic is Map<String, dynamic>) {
-  barcodeDataMap = barcodeDataDynamic;
-} else {
-  print('Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
-}
+                          if (barcodeDataDynamic is Map<String, dynamic>) {
+                            barcodeDataMap = barcodeDataDynamic;
+                          } else {
+                            print(
+                                'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+                          }
 
                           //Check if doc has recipe data. If so, get the recipe data
-                          final recipe = post.data().toString().contains('recipe')
-                              ? post.get('recipe')
-                              : '';
-                          Map<String, dynamic> emptyMap = Map<String, dynamic>();
+                          final recipe =
+                              post.data().toString().contains('recipe')
+                                  ? post.get('recipe')
+                                  : '';
+                          Map<String, dynamic> emptyMap =
+                              Map<String, dynamic>();
                           return StreamBuilder<String>(
                             stream: fetchUsername(email: post['UserEmail']),
                             builder: (context, usernameSnapshot) {
@@ -247,14 +254,15 @@ if (barcodeDataDynamic is Map<String, dynamic>) {
                                     time: formatDate(post['TimeStamp']),
                                     email: post['UserEmail'],
                                     exerciseName: post['ExerciseName'] ?? '',
-                                  exerciseType: post['ExerciseType'] ?? '',
-                                  muscle: post['ExerciseMuscle'] ?? '',
-                                  equipment: post['ExerciseEquipment'] ?? '',
-                                  difficulty: post['ExerciseDifficulty'] ?? '',
-                                  instructions:
-                                      post['ExerciseInstructions'] ?? '',
-                                  imageUrl: post['postImage'],
-                                    recipe: recipe == '' ?  emptyMap : recipe);
+                                    exerciseType: post['ExerciseType'] ?? '',
+                                    muscle: post['ExerciseMuscle'] ?? '',
+                                    equipment: post['ExerciseEquipment'] ?? '',
+                                    difficulty:
+                                        post['ExerciseDifficulty'] ?? '',
+                                    instructions:
+                                        post['ExerciseInstructions'] ?? '',
+                                    imageUrl: post['postImage'],
+                                    recipe: recipe == '' ? emptyMap : recipe);
                               } else if (snapshot.hasError) {
                                 return Center(
                                   child: Text('Error:${snapshot.error}'),
@@ -340,4 +348,29 @@ if (barcodeDataDynamic is Map<String, dynamic>) {
       ),
     );
   }
+}
+
+Future<ImageSource?> showCupertinoImageSourceDialog(
+    {required BuildContext context}) async {
+  return await showCupertinoModalPopup<ImageSource>(
+    context: context,
+    builder: (BuildContext context) => CupertinoActionSheet(
+      title: const Text('Select Image Source'),
+      actions: <CupertinoActionSheetAction>[
+        CupertinoActionSheetAction(
+          child: const Text('Camera'),
+          onPressed: () => Navigator.pop(context, ImageSource.camera),
+        ),
+        CupertinoActionSheetAction(
+          child: const Text('Gallery'),
+          onPressed: () => Navigator.pop(context, ImageSource.gallery),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        child: const Text('Cancel'),
+        isDefaultAction: true,
+        onPressed: () => Navigator.pop(context, null),
+      ),
+    ),
+  );
 }

@@ -25,7 +25,7 @@ class BottomNav extends ConsumerWidget {
     final currentIndex = ref.watch(indexProvider);
 
     final List<Widget> pages = [
-      FitCenter2(),
+      FitCenter(),
       Recipes(),
       HomePage(),
       BarcodeLookupComb(),
@@ -35,7 +35,7 @@ class BottomNav extends ConsumerWidget {
     return Scaffold(
       //To avoid overflow error when keyboard opens
       resizeToAvoidBottomInset: false,
-      
+
       //fixes NavBar transparency
       extendBody: true,
 

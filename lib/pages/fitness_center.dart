@@ -300,6 +300,7 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
         'equipment': exercise['equipment'],
         'difficulty': exercise['difficulty'],
         'instructions': exercise['instructions'],
+        'gif': 'lib/gifs/${exercise['name']}.gif',
       };
 
       return Container(
@@ -324,7 +325,7 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
             ),
             child: SizedBox(
               width: double.infinity,
-              height: 150.0,
+              height: 170.0,
               child: Stack(
                 children: [
                   Column(
@@ -469,6 +470,15 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                       ),
                     ),
                   ),
+                  // Adding an icon to show a card is flippable to users
+                  Positioned(
+                    top: 9.0,
+                    right: 150,
+                    child: Icon(
+                      CupertinoIcons.arrow_2_circlepath,
+                      size: 30,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -480,6 +490,12 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Displaying a gif to show for the exercise
+                    Image.asset(exerciseData['gif'],
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.fitHeight),
+
                     // Returning a numbered list for the instructions of the workout
                     ListView.builder(
                       shrinkWrap: true,
@@ -528,7 +544,7 @@ String getDayName(int day) {
 }
 
 //save exercise
-void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
+void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
     BuildContext context, int selectedDay) async {
   try {
     // Create an instance of FirebaseAuth
@@ -554,7 +570,7 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
     // Check if the exercise with the same name is already saved by the user
     final existingExerciseQuery = await exerciseCollection
         .where("uid", isEqualTo: userID)
-        .where("exercise.name", isEqualTo: exercisesData["name"])
+        .where("exercise.name", isEqualTo: exerciseData["name"])
         .limit(1)
         .get();
 
@@ -574,7 +590,7 @@ void saveExerciseToFirestore(Map<String, dynamic> exercisesData,
       await exerciseCollection.add(
         {
           "uid": userID,
-          "exercise": exercisesData,
+          "exercise": exerciseData,
           "saveDate": DateTime.now(),
           "selectedDay": getDayName(selectedDay),
         },

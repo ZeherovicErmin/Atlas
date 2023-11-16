@@ -32,7 +32,9 @@ class BottomNav extends ConsumerWidget {
     ];
 
     return Scaffold(
+      //To avoid overflow error when keyboard opens
       resizeToAvoidBottomInset: false,
+      
       //fixes NavBar transparency
       extendBody: true,
 

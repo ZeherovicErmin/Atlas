@@ -93,7 +93,8 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: Text(
                                           "View Details",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                                  fontSize: 15),
                                         )),
                                     Container(
                                         padding: EdgeInsets.all(0),
@@ -168,25 +169,25 @@ onShare(Result recipe, BuildContext context) {
               //Post button
               TextButton(
                 onPressed: () {
-              FirebaseFirestore.instance.collection("User Posts").add({
-              'UserEmail': FirebaseAuth.instance.currentUser!.email,
-              'Message': "Check out this recipe: ${recipe.title}",
-              'TimeStamp': Timestamp.now(),
-              'Likes': [],
-              'barcodeData': {},
-              'postImage': '',
-              'ExerciseName': '',
-              'ExerciseType': '',
-              'ExerciseMuscle': '',
-              'ExerciseEquipment': '',
-              'ExerciseDifficulty': '',
-              'ExerciseInstructions': '',
-              'recipe': recipe.toMap() ,
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Recipe \"${recipe.title}\" was shared')));
-            },
+                  FirebaseFirestore.instance.collection("User Posts").add({
+                  'UserEmail': FirebaseAuth.instance.currentUser!.email,
+                  'Message': "Check out this recipe: ${recipe.title}",
+                  'TimeStamp': Timestamp.now(),
+                  'Likes': [],
+                  'barcodeData': {},
+                  'postImage': '',
+                  'ExerciseName': '',
+                  'ExerciseType': '',
+                  'ExerciseMuscle': '',
+                  'ExerciseEquipment': '',
+                  'ExerciseDifficulty': '',
+                  'ExerciseInstructions': '',
+                  'recipe': recipe.toMap() ,
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Recipe \"${recipe.title}\" was shared')));
+              },
             child: const Text('Post'),
           ),
           //Close button

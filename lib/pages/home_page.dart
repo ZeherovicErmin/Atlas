@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
     selectedDate = formatDate(currentDate);
     formattedDate = formatDateTime(currentDate);
     usernameStream = fetchUsername();
-    fetchProfileImage();
+    //fetchProfileImage();
     super.initState();
   }
 
@@ -274,6 +274,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   //Gets the user's profile picture from firebase for the appbar
+  /*
   void fetchProfileImage() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.email != null) {
@@ -293,6 +294,7 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
+  */
 
   //Grabs selected habits from firebase
   Stream<Map<String, bool>> fetchSelectedHabits() {
@@ -309,11 +311,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   //Changes the date to the next day in real time
-  void addDate() => changeDate(currentDate.add(const Duration(days: 1)));
-
+  void addDate() {
+    changeDate(currentDate.add(const Duration(days: 1)));
+  }
   //Changes the date to the previous day in real time
-  void deleteDate() => changeDate(currentDate.subtract(const Duration(days: 1)));
-
+  void deleteDate() {
+    changeDate(currentDate.subtract(const Duration(days: 1)));
+  }
   //Changes the date to the next or previous date
   void changeDate(DateTime newDate) {
     setState(() {
@@ -325,7 +329,7 @@ class _HomePageState extends State<HomePage> {
 
   //Function for choosing a date
   Future<void> chooseDate(BuildContext context) async {
-    DateTime currentDate = DateTime.now();
+    //DateTime currentDate = DateTime.now();
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
@@ -337,6 +341,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         var month = picked.month.toString().padLeft(2, '0');
         var day = picked.day.toString().padLeft(2, '0');
+        currentDate = picked;
         formattedDate = "${picked.year}-$month-$day";
         selectedDate = "$month/$day";
       });
@@ -417,6 +422,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
+          /*
           if (profileImage != null)
           IconButton(
             icon: CircleAvatar(
@@ -429,6 +435,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+          */
           if (profileImage == null)
           IconButton(
             icon: const Icon(CupertinoIcons.profile_circled),

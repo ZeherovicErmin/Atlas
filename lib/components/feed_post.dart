@@ -3,6 +3,7 @@ import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/editPostButton.dart';
+import 'package:atlas/components/get_profile.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/time_stamp.dart';
@@ -101,7 +102,7 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   Widget build(BuildContext context) {
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -109,9 +110,7 @@ class _FeedPostState extends State<FeedPost> {
       ),
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
-     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -119,7 +118,8 @@ class _FeedPostState extends State<FeedPost> {
               child: Row(
                 children: [
                   FutureBuilder<String?>(
-                    future: fetchProfilePicture(widget.email), // email of the post's author
+                    future: fetchProfilePicture(
+                        widget.email), // email of the post's author
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircleAvatar(
@@ -137,7 +137,8 @@ class _FeedPostState extends State<FeedPost> {
                       return CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.grey.shade300,
-                        child: const Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                        child: const Icon(Icons.account_circle,
+                            size: 40, color: Colors.grey),
                       );
                     },
                   ),
@@ -145,12 +146,26 @@ class _FeedPostState extends State<FeedPost> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.user.trim(),
-                        style: const TextStyle(
-                            color: Colors.black,
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to the user's profile when the username is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GetProfile(username: widget.user.trim()),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          widget.user.trim(),
+                          style: const TextStyle(
+                            color: Colors
+                                .black, 
                             fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                       //Timestamp
                       Text(
@@ -196,10 +211,9 @@ class _FeedPostState extends State<FeedPost> {
                       color: Colors.transparent, // Transparent background
                       child: Center(
                         child: PhotoView(
-
-                          imageProvider: CachedNetworkImageProvider(widget.imageUrl),
+                          imageProvider:
+                              CachedNetworkImageProvider(widget.imageUrl),
                           backgroundDecoration: const BoxDecoration(
-
                             color: Colors.transparent,
                           ),
                           minScale: PhotoViewComputedScale.contained,
@@ -282,27 +296,29 @@ class _FeedPostState extends State<FeedPost> {
                       ),
                     ),
                     Stack(
-                      children:[ const Image(
-                          height: 120,
-                          width: 100,
-                          image:
-                              AssetImage('assets/icons/flameiconnameplate.png'),
-                          fit: BoxFit.contain),
-                          Positioned(
-                                  top: 100,
-                                  left: 0,
-                                  right: 0,
-                                  child: Center(
-                                    child: Text(
-                                      '${widget.barcodeData!['productCalories']}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                )
-                   ], ),
+                      children: [
+                        const Image(
+                            height: 120,
+                            width: 100,
+                            image: AssetImage(
+                                'assets/icons/flameiconnameplate.png'),
+                            fit: BoxFit.contain),
+                        Positioned(
+                          top: 100,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Text(
+                              '${widget.barcodeData!['productCalories']}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -313,13 +329,16 @@ class _FeedPostState extends State<FeedPost> {
         //Show if there is recipe data
         Visibility(
           visible: widget.recipe != null && widget.recipe!.isNotEmpty,
-          child: Padding(padding: EdgeInsets.only(left: 110, top: 30), 
-          child: ElevatedButton(
-            onPressed: () => navigateToRecipeDetails(context,
-                Result.fromJson(widget.recipe as Map<String, dynamic>)),
-            style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
-            child: const Text("View Recipe", style: TextStyle(fontSize: 15)),
-          )),
+          child: Padding(
+              padding: const EdgeInsets.only(left: 110, top: 30),
+              child: ElevatedButton(
+                onPressed: () => navigateToRecipeDetails(context,
+                    Result.fromJson(widget.recipe as Map<String, dynamic>)),
+                style: const ButtonStyle(
+                    padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
+                child:
+                    const Text("View Recipe", style: TextStyle(fontSize: 15)),
+              )),
         ),
 
         const SizedBox(height: 5),
@@ -525,26 +544,26 @@ class _FeedPostState extends State<FeedPost> {
                     Icons.comment,
                     color: Colors.grey,
                   )),
-                  StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("User Posts")
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      //Calculate the comment count
-                      final commentCount = snapshot.data?.docs.length;
-                      return Text(
-                        commentCount.toString(),
-                        style: const TextStyle(color: Colors.grey),
-                      );
-                    } else {
-                      // show a loading indicator while fetching data
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                )
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("User Posts")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    //Calculate the comment count
+                    final commentCount = snapshot.data?.docs.length;
+                    return Text(
+                      commentCount.toString(),
+                      style: const TextStyle(color: Colors.grey),
+                    );
+                  } else {
+                    // show a loading indicator while fetching data
+                    return const CircularProgressIndicator();
+                  }
+                },
+              )
             ])
           ],
         )
@@ -812,7 +831,7 @@ class _FeedPostState extends State<FeedPost> {
         backgroundColor: Colors.white,
         title: const Text(
           "Edit Message",
-          style:  TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.black),
         ),
         content: TextField(
           controller: post,
@@ -821,7 +840,7 @@ class _FeedPostState extends State<FeedPost> {
               color: Colors.black), // Change text color to white
           decoration: const InputDecoration(
             hintText: "Enter new Message",
-            hintStyle:  TextStyle(color: Colors.black),
+            hintStyle: TextStyle(color: Colors.black),
           ),
         ),
         actions: [
@@ -912,7 +931,7 @@ class _FeedPostState extends State<FeedPost> {
                 ),
               ),
             ),
-             NutritionRow(
+            NutritionRow(
               title: "Calories",
               value: '${barcodeData?['productCalories']}',
               fontSize: 24,
@@ -954,13 +973,16 @@ class _FeedPostState extends State<FeedPost> {
 
             //protein per serving
             NutritionRow(
-                title: "Protein", value: '${barcodeData['proteinPerServing'].toInt()}'),
+                title: "Protein",
+                value: '${barcodeData['proteinPerServing'].toInt()}'),
 
             //sodium
             NutritionRow(
-                title: "Sodium", value: "${barcodeData['sodiumPerServing'].toInt()}"),
+                title: "Sodium",
+                value: "${barcodeData['sodiumPerServing'].toInt()}"),
             NutritionRow(
-                title: "Sodium", value: "${barcodeData['sodiumPerServing'].toInt()}"),
+                title: "Sodium",
+                value: "${barcodeData['sodiumPerServing'].toInt()}"),
 
             NutritionRow(
                 title: "Cholesterol",
@@ -997,8 +1019,8 @@ void _showCommentsModal(BuildContext context, String postId) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Comments',
                   style: TextStyle(
@@ -1018,13 +1040,13 @@ void _showCommentsModal(BuildContext context, String postId) {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     return ListView(
                       children: snapshot.data!.docs.map((doc) {
                         var commentData = doc.data() as Map<String, dynamic>;
                         return ListTile(
-                          leading: Icon(Icons.account_circle),
+                          leading: const Icon(Icons.account_circle),
                           title: Text(commentData['CommentedBy']),
                           subtitle: Text(commentData['CommentText']),
                         );
@@ -1033,23 +1055,24 @@ void _showCommentsModal(BuildContext context, String postId) {
                   },
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom:32.0),
+                        padding: const EdgeInsets.only(bottom: 32.0),
                         child: TextField(
                           controller: commentController,
-                          decoration: InputDecoration(hintText: "  Write a comment..."),
+                          decoration: const InputDecoration(
+                              hintText: "  Write a comment..."),
                         ),
                       ),
-                      
                     ),
                     IconButton(
-                      icon: Icon(Icons.send, color: Color.fromARGB(255, 0, 136, 204)),
+                      icon: const Icon(Icons.send,
+                          color: Color.fromARGB(255, 0, 136, 204)),
                       onPressed: () {
                         if (commentController.text.isNotEmpty) {
                           FirebaseFirestore.instance
@@ -1057,10 +1080,12 @@ void _showCommentsModal(BuildContext context, String postId) {
                               .doc(postId)
                               .collection('Comments')
                               .add({
-                                "CommentText": commentController.text,
-                                "CommentedBy": FirebaseAuth.instance.currentUser?.email ?? "Anonymous",
-                                "CommentTime": Timestamp.now(),
-                              });
+                            "CommentText": commentController.text,
+                            "CommentedBy":
+                                FirebaseAuth.instance.currentUser?.email ??
+                                    "Anonymous",
+                            "CommentTime": Timestamp.now(),
+                          });
                           commentController.clear();
                         }
                         FocusScope.of(context).unfocus();
@@ -1076,10 +1101,6 @@ void _showCommentsModal(BuildContext context, String postId) {
     },
   );
 }
-
-
-
-
 
 void postComment(String postId, String commentText) {
   FirebaseFirestore.instance
@@ -1105,6 +1126,7 @@ Future<List<Map<String, dynamic>>> fetchComments(postId) async {
       .map((doc) => doc.data() as Map<String, dynamic>)
       .toList();
 }
+
 Future<String?> fetchProfilePicture(String userEmail) async {
   try {
     final DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -1121,7 +1143,6 @@ Future<String?> fetchProfilePicture(String userEmail) async {
   return null; // Return null if there is no picture or in case of an error
 }
 
-  
 //Need to pass in widget and currentUser variables
 void _showPostOptions(
     BuildContext context, widget, currentUser, _FeedPostState state) {
@@ -1156,33 +1177,33 @@ void _showPostOptions(
                 leading: const Icon(Icons.edit),
                 title: const Text('Edit Post'),
                 onTap: () async {
-                    // Check if there are comments
-                    bool hasComments = await state.checkForComments();
+                  // Check if there are comments
+                  bool hasComments = await state.checkForComments();
 
-                    BuildContext dialogContext = context;
+                  BuildContext dialogContext = context;
 
-                    if (hasComments) {
-                      // Show a message or take any other action
-                      // ignore: use_build_context_synchronously
-                      showDialog(
-                        context: dialogContext,
-                        builder: (context) => AlertDialog(
-                          title: const Text("Cannot Edit"),
-                          content: const Text(
-                              "There are comments on this post. You cannot edit it."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Allow editing if there are no comments
-                      state.editPost();
-                    }
-                  },
+                  if (hasComments) {
+                    // Show a message or take any other action
+                    // ignore: use_build_context_synchronously
+                    showDialog(
+                      context: dialogContext,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Cannot Edit"),
+                        content: const Text(
+                            "There are comments on this post. You cannot edit it."),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    // Allow editing if there are no comments
+                    state.editPost();
+                  }
+                },
               ),
             ),
             //Delete Post if user owns the post (Need to add this functionality)

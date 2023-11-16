@@ -36,7 +36,7 @@ final profilePictureUrlProvider = FutureProvider<String?>((ref) async {
 });
 
 class UserProfile extends ConsumerWidget {
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfile({Key? key}) : super(key: key);  
 
   Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
@@ -55,7 +55,7 @@ class UserProfile extends ConsumerWidget {
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
     final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -150,7 +150,8 @@ class UserProfile extends ConsumerWidget {
     }
 
     //App bar for the user profile page
-    PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
+    PreferredSize userProfileAppBar(
+        BuildContext context, WidgetRef ref, String title) {
       return PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
@@ -250,21 +251,22 @@ class UserProfile extends ConsumerWidget {
       backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, ref, 'Profile'),
       body: StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("Users")
-          .doc(currentUser.email)
-          .snapshots(),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Return a widget for loading state
-        }
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Return a widget for loading state
+          }
 
-        if (!snapshot.hasData || snapshot.data == null) {
-          return Text('User data not found.'); // Return a widget when no data is found
-        }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Text(
+                'User data not found.'); // Return a widget when no data is found
+          }
 
-        final userData = snapshot.data!.data() as Map<String, dynamic>?;
-        if (userData != null) {
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+          if (userData != null) {
             //starts the user profile page
             return LiquidPullToRefresh(
               onRefresh: _handleRefresh,
@@ -277,37 +279,50 @@ class UserProfile extends ConsumerWidget {
                   const SizedBox(height: 50),
 
                   //Profile Picture
-                 Stack(
-  children: [
-    Align(
-      alignment: Alignment.center,
-      child: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('Users').doc(currentUser.email).snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Icon(color: themeColor, CupertinoIcons.profile_circled, size: 72);
-          }
-          final userData = snapshot.data!.data() as Map<String, dynamic>?;
-          final profilePicUrl = userData?['profilePicture'] as String?;
-          return CircleAvatar(
-            radius: 64,
-            backgroundImage: profilePicUrl != null ? NetworkImage(profilePicUrl) : null,
-            child: profilePicUrl == null ? Icon(CupertinoIcons.profile_circled, size: 72) : null,
-          );
-        },
-      ),
-    ),
-    Positioned(
-      bottom: -10,
-      left: 240,
-      child: IconButton(
-        color: themeColor,
-        onPressed: selectImage,
-        icon: const Icon(Icons.add_a_photo),
-      ),
-    ),
-  ],
-),
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(currentUser.email)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return Icon(
+                                  color: themeColor,
+                                  CupertinoIcons.profile_circled,
+                                  size: 72);
+                            }
+                            final userData =
+                                snapshot.data!.data() as Map<String, dynamic>?;
+                            final profilePicUrl =
+                                userData?['profilePicture'] as String?;
+                            return CircleAvatar(
+                              radius: 64,
+                              backgroundImage: profilePicUrl != null
+                                  ? NetworkImage(profilePicUrl)
+                                  : null,
+                              child: profilePicUrl == null
+                                  ? const Icon(CupertinoIcons.profile_circled,
+                                      size: 72)
+                                  : null,
+                            );
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -10,
+                        left: 240,
+                        child: IconButton(
+                          color: themeColor,
+                          onPressed: selectImage,
+                          icon: const Icon(Icons.add_a_photo),
+                        ),
+                      ),
+                    ],
+                  ),
 
                   const SizedBox(height: 10),
 
@@ -483,6 +498,7 @@ class UserProfile extends ConsumerWidget {
     );
   }
 }
+
 Future<String?> fetchProfilePicture(String userEmail) async {
   try {
     final DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -501,4 +517,3 @@ Future<String?> fetchProfilePicture(String userEmail) async {
   }
   return null; // Return null if there's an error or if the data is not a string
 }
-

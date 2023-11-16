@@ -458,49 +458,49 @@ class _FeedPostState extends State<FeedPost> {
         // const SizedBox(height: 20),
 
         // //comments under the post
-        // Column(
-        //   children: [
-        //     ExpansionTile(
-        //       backgroundColor: Colors.grey[200],
-        //       title: Text('View Comments',
-        //           style: TextStyle(color: Colors.grey[500])),
-        //       children: [
-        //         StreamBuilder<QuerySnapshot>(
-        //           stream: FirebaseFirestore.instance
-        //               .collection("User Posts")
-        //               .doc(widget.postId)
-        //               .collection("Comments")
-        //               .orderBy("CommentTime", descending: true)
-        //               .snapshots(),
-        //           builder: (context, snapshot) {
-        //             //show loading circle if theres no data
-        //             if (!snapshot.hasData) {
-        //               return const Center(
-        //                 child: CircularProgressIndicator(),
-        //               );
-        //             }
+        Column(
+          children: [
+            ExpansionTile(
+              backgroundColor: Colors.grey[200],
+              title: Text('View Comments',
+                  style: TextStyle(color: Colors.grey[500])),
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("User Posts")
+                      .doc(widget.postId)
+                      .collection("Comments")
+                      .orderBy("CommentTime", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    //show loading circle if theres no data
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-        //             return ListView(
-        //               shrinkWrap: true,
-        //               physics: const NeverScrollableScrollPhysics(),
-        //               children: snapshot.data!.docs.map((doc) {
-        //                 //get the comment
-        //                 final commentData = doc.data() as Map<String, dynamic>;
+                    return ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: snapshot.data!.docs.map((doc) {
+                        //get the comment
+                        final commentData = doc.data() as Map<String, dynamic>;
 
-        //                 //return the comment
-        //                 return Comment(
-        //                   text: commentData["CommentText"],
-        //                   userId: commentData["CommentedBy"],
-        //                   time: formatDate(commentData["CommentTime"]),
-        //                 );
-        //               }).toList(),
-        //             );
-        //           },
-        //         )
-        //       ],
-        //     ),
-        //   ],
-        // ),
+                        //return the comment
+                        return Comment(
+                          text: commentData["CommentText"],
+                          userId: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -992,9 +992,53 @@ class _FeedPostState extends State<FeedPost> {
   }
 }
 
-void _showCommentsModal(BuildContext context, String postId) {
+void _showCommentsModal(
+  BuildContext context,
+  String postId,
+) {
   TextEditingController commentController = TextEditingController();
+  Column(
+    children: [
+      ExpansionTile(
+        backgroundColor: Colors.grey[200],
+        title: Text('View Comments', style: TextStyle(color: Colors.grey[500])),
+        children: [
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("User Posts")
+                .doc(postId)
+                .collection("Comments")
+                .orderBy("CommentTime", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              //show loading circle if theres no data
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
+              return ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: snapshot.data!.docs.map((doc) {
+                  //get the comment
+                  final commentData = doc.data() as Map<String, dynamic>;
+
+                  //return the comment
+                  return Comment(
+                    text: commentData["CommentText"],
+                    userId: commentData["CommentedBy"],
+                    time: formatDate(commentData["CommentTime"]),
+                  );
+                }).toList(),
+              );
+            },
+          )
+        ],
+      ),
+    ],
+  );
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1032,10 +1076,10 @@ void _showCommentsModal(BuildContext context, String postId) {
                     return ListView(
                       children: snapshot.data!.docs.map((doc) {
                         var commentData = doc.data() as Map<String, dynamic>;
-                        return ListTile(
-                          leading: Icon(Icons.account_circle),
-                          title: Text(commentData['CommentedBy']),
-                          subtitle: Text(commentData['CommentText']),
+                        return Comment(
+                          text: commentData["CommentText"],
+                          userId: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
                         );
                       }).toList(),
                     );

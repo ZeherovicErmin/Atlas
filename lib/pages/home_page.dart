@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
   void addDate() {
     changeDate(currentDate.add(const Duration(days: 1)));
   }
-  
+
   //Changes the date to the previous day in real time
   void deleteDate() {
     changeDate(currentDate.subtract(const Duration(days: 1)));
@@ -174,11 +174,21 @@ class _HomePageState extends State<HomePage> {
             }
             if (snapshot.hasData && snapshot.data!.exists) {
               var userData = snapshot.data!.data() as Map<String, dynamic>;
-              var profileImageUrl = userData['profilePicture'] ?? '';
+              var profileImageUrl = userData['profilePicture'];
+              if (profileImageUrl is String && profileImageUrl.isNotEmpty) {
+                return IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UserProfile()),
+                  );
+                },
+                icon: CircleAvatar(backgroundImage: NetworkImage(profileImageUrl),
+                  ),
+                );
+              }
               return IconButton(
-                icon: CircleAvatar(
-                  backgroundImage: NetworkImage(profileImageUrl),
-                ),
+                icon: const Icon(CupertinoIcons.profile_circled),
                 onPressed: () {
                   Navigator.push(
                     context,

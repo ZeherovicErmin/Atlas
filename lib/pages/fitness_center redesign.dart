@@ -220,8 +220,8 @@ class FitCenter2 extends ConsumerWidget {
                 builder: (context) => Scaffold(
                   backgroundColor: const Color(0xFFFAF9F6),
                   appBar: AppBar(
+                    centerTitle: true,
                     backgroundColor:
-
                         //Workouts for each muscle group
                         const Color.fromARGB(255, 0, 136, 204),
                     title: Text(

@@ -21,10 +21,9 @@ class RecipeDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Padding(
-            padding: EdgeInsets.only(left: 35),
-            child: Text("Recipes Details",
-                style: TextStyle(fontWeight: FontWeight.bold))),
+        centerTitle: true,
+        title: const Text("Recipe Details",
+          style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
       body: Column(children: [

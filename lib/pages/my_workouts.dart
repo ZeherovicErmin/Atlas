@@ -181,6 +181,7 @@ class MondaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Monday Workout"),
       ),
@@ -195,6 +196,7 @@ class TuesdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Tuesday Workout"),
       ),
@@ -209,6 +211,7 @@ class WednesdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Wednesday Workout"),
       ),
@@ -222,6 +225,7 @@ class ThursdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Thursday Workout"),
       ),
@@ -235,6 +239,7 @@ class FridaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Friday Workout"),
       ),
@@ -248,6 +253,7 @@ class SaturdaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Saturday Workout"),
       ),
@@ -261,6 +267,7 @@ class SundaySavedExercises extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
         title: Text("Sunday Workout"),
       ),

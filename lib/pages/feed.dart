@@ -103,7 +103,6 @@ class Feed extends ConsumerWidget {
           'Likes': [],
           'recipe': {},
           'barcodeData': {},
-
           'ExerciseName': '',
           'ExerciseType': '',
           'ExerciseMuscle': '',

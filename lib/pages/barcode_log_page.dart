@@ -63,7 +63,7 @@ class BarcodeLogPage extends ConsumerWidget {
     // Round to one decimal place and format as a string
     return value.toStringAsFixed(1);
   }
-
+//AC
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final FirebaseAuth auth = FirebaseAuth.instance;

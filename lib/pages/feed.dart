@@ -103,7 +103,6 @@ class Feed extends ConsumerWidget {
           'Likes': [],
           'recipe': {},
           'barcodeData': {},
-
           'ExerciseName': '',
           'ExerciseType': '',
           'ExerciseMuscle': '',
@@ -123,19 +122,23 @@ class Feed extends ConsumerWidget {
     }
 
     void selectImage() async {
-      // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      //Image.file(pickedFile as File,width: 400,height: 300,);
-      // Check if an image was picked.
-      if (pickedFile != null) {
-        // Read the image file as bytes.
-        final imageBytes = await pickedFile.readAsBytes();
+      //Dialog box to select image
+      final ImageSource? source =
+          await showCupertinoImageSourceDialog(context: context);
+      if (source != null) {
+        // Use the ImagePicker plugin to open the device's gallery to pick an image.
+        final pickedFile = await ImagePicker().pickImage(source: source);
+        //Image.file(pickedFile as File,width: 400,height: 300,);
+        // Check if an image was picked.
+        if (pickedFile != null) {
+          // Read the image file as bytes.
+          final imageBytes = await pickedFile.readAsBytes();
 
-        // Update the profilePictureProvider state with the selected image as Uint8List.
-        ref.read(pictureProvider.notifier).state =
-            Uint8List.fromList(imageBytes);
-        addPicture(Uint8List.fromList(imageBytes));
+          // Update the profilePictureProvider state with the selected image as Uint8List.
+          ref.read(pictureProvider.notifier).state =
+              Uint8List.fromList(imageBytes);
+          addPicture(Uint8List.fromList(imageBytes));
+        }
       }
     }
 
@@ -347,4 +350,29 @@ class Feed extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<ImageSource?> showCupertinoImageSourceDialog(
+    {required BuildContext context}) async {
+  return await showCupertinoModalPopup<ImageSource>(
+    context: context,
+    builder: (BuildContext context) => CupertinoActionSheet(
+      title: const Text('Select Image Source'),
+      actions: <CupertinoActionSheetAction>[
+        CupertinoActionSheetAction(
+          child: const Text('Camera'),
+          onPressed: () => Navigator.pop(context, ImageSource.camera),
+        ),
+        CupertinoActionSheetAction(
+          child: const Text('Gallery'),
+          onPressed: () => Navigator.pop(context, ImageSource.gallery),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        child: const Text('Cancel'),
+        isDefaultAction: true,
+        onPressed: () => Navigator.pop(context, null),
+      ),
+    ),
+  );
 }

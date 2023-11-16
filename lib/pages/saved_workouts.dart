@@ -184,6 +184,15 @@ class _SavedExercisesState extends State<SavedExercises> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+
+                            // Showing a gif for the exercise
+                            Image.asset(
+
+                      exerciseData['exercise']['gif'] ?? '',
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.fitHeight
+                      ),
                             // Returning a numbered list for the instructions of the workout
                             ListView.builder(
                               shrinkWrap: true,

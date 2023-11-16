@@ -210,6 +210,11 @@ final Map<String, Widget> muscleIcons = {
     width: 60,
   ),
 };
+
+// Creating a map for gifs for each specific exercise
+final Map<String, String> muscleGifs = {
+  'Hammer Curls': 'lib/gifs/Hammer Curls.gif',
+};
 // Creating A map of icons for the exercise type i.e strength or cardio
 final Map<String, IconData> exerciseTypeIcons = {
   "strength": Icons.fitness_center,

@@ -116,15 +116,14 @@ class GetProfile extends StatelessWidget {
     return Scaffold(
       //backgroundColor: themeColor2,
       appBar: userProfileAppBar(context, 'User Profile: $username'),
-      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
             .collection("Users")
-            .where("username", isEqualTo: username)
+            .doc(username)
             .snapshots(),
-        builder: (context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Return a widget for loading state
+            return const CircularProgressIndicator(); // Return a widget for loading
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
@@ -132,7 +131,7 @@ class GetProfile extends StatelessWidget {
                 'User data not found for username: $username.'); // Return a widget when no data is found
           }
 
-          final userData = snapshot.data!.docs.first.data();
+          final userData = snapshot.data!.data();
           // ignore: unnecessary_null_comparison
           if (userData != null) {
             //starts the user profile page
@@ -244,38 +243,23 @@ class GetProfile extends StatelessWidget {
                           collapsedIconColor: Colors.blue,
                           iconColor: Colors.white,
                           children: [
-                            FutureBuilder<DocumentSnapshot>(
-                              future: FirebaseFirestore.instance
+                            StreamBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              stream: FirebaseFirestore.instance
                                   .collection("Users")
-                                  .where('username', isEqualTo: username)
-                                  .limit(1)
-                                  .get()
-                                  .then((snapshot) {
-                                if (snapshot.docs.isNotEmpty) {
-                                  return snapshot.docs.first;
-                                } else {
-                                  throw Exception('User not found');
-                                }
-                              }),
+                                  .doc(username)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-
-                                if (snapshot.hasError) {
-                                  return Center(
-                                    child: Text('Error: ${snapshot.error}'),
-                                  );
+                                  return const CircularProgressIndicator(); // Return a widget for loading
                                 }
 
                                 if (!snapshot.hasData ||
                                     snapshot.data == null) {
-                                  return const Center(
-                                    child: Text('User not found.'),
-                                  );
+                                  return Text(
+                                      'User data not found for username: $username.'); // Return a widget when no data is found
                                 }
-
                                 final userDoc = snapshot.data!;
                                 final userEmail = userDoc['UserEmail'];
 

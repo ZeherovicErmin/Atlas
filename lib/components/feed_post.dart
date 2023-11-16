@@ -18,8 +18,6 @@ import 'package:photo_view/photo_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'comment.dart';
 
-
-
 class FeedPost extends StatefulWidget {
   final String message;
   final String user;
@@ -102,7 +100,6 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -153,15 +150,14 @@ class _FeedPostState extends State<FeedPost> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  GetProfile(username: widget.user.trim()),
+                                  GetProfile(username: widget.email),
                             ),
                           );
                         },
                         child: Text(
                           widget.user.trim(),
                           style: const TextStyle(
-                            color: Colors
-                                .black, 
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),

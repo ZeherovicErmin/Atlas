@@ -25,7 +25,7 @@ class BottomNav extends ConsumerWidget {
     final currentIndex = ref.watch(indexProvider);
 
     final List<Widget> pages = [
-      FitCenter(),
+      FitCenter2(),
       Recipes(),
       HomePage(),
       BarcodeLookupComb(),

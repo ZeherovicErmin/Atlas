@@ -3,6 +3,7 @@ import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/my_workouts.dart';
 import 'package:atlas/pages/notes.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -285,239 +286,99 @@ class FitCenter2 extends ConsumerWidget {
   }
 }
 
-// The function that returns the list view of exercises based on the muscle that the user classes
-ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
-  return ListView.builder(
-    itemCount: exercisesData.length,
-    itemBuilder: (context, index) {
-      final exercise = exercisesData[index];
+// The function that returns the carousel view of exercises based on the muscle that the user clicks
+Widget exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
+  return Center(
+    child: CarouselSlider(
+      options: CarouselOptions(
+        height: 650,
+        aspectRatio: 16 / 9,
+        enlargeCenterPage: true,
+        scrollDirection: Axis.horizontal,
+        autoPlay: false,
+      ),
+      items: exercisesData.map((exercise) {
+        // Map of exercises to use
+        final exerciseData = {
+          'name': exercise['name'],
+          'type': exercise['type'],
+          'muscle': exercise['muscle'],
+          'equipment': exercise['equipment'],
+          'difficulty': exercise['difficulty'],
+          'instructions': exercise['instructions'],
+          'gif': 'lib/gifs/${exercise['name']}.gif',
+        };
+        return ExerciseCard(
+          exercise: exerciseData,
+          ref: ref,
+        );
+      }).toList(),
+    ),
+  );
+}
 
-      // Map of exercises to be saved in firestore
-      final exerciseData = {
-        'name': exercise['name'],
-        'type': exercise['type'],
-        'muscle': exercise['muscle'],
-        'equipment': exercise['equipment'],
-        'difficulty': exercise['difficulty'],
-        'instructions': exercise['instructions'],
-        'gif': 'lib/gifs/${exercise['name']}.gif',
-      };
+Future<dynamic> showing(
+    context, WidgetRef ref, Map<String, dynamic> exerciseData) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+          title:
+              const Text('What day would you like to save this exercise to?'),
+          content: Consumer(
+            builder: (context, ref, child) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(7, (day) {
+                  // watching for the state of the provider to see if the specific day of the week is selected
+                  final isSelected = ref.watch(selectedDaysProvider)[day];
+                  return CheckboxListTile(
+                    title: Text(getDayName(day)),
+                    value: isSelected,
 
-      return Container(
-        margin: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0), // Add a border radius
-          border: Border.all(
-            width: .5,
-            style: BorderStyle.solid,
-            color: Colors.transparent,
-            // Set the border color and width
+                    // Updating the state of whether or not its selected by modifying the state of the provider notifier
+                    onChanged: (bool? value) {
+                      ref.read(selectedDaysProvider.notifier).update((state) {
+                        final newState = List<bool>.from(state);
+                        newState[day] = value!;
+                        return newState;
+                      });
+                    },
+                  );
+                }),
+              );
+            },
           ),
-        ),
-        child: FlipCard(
-          fill: Fill.fillBack,
-          direction: FlipDirection.VERTICAL,
-          speed: 400,
-          front: Card(
-            elevation: 4.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+          // Adding the buttons to save / cancel
+          actions: [
+            // Adding a button to cancel
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                // Clearing the checklist
+                ref.read(selectedDaysProvider.notifier).state =
+                    List.generate(7, (index) => false);
+                Navigator.of(context).pop();
+              },
             ),
-            child: SizedBox(
-              width: double.infinity,
-              height: 170.0,
-              child: Stack(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AutoSizeText(
-                        exercise['name'],
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 32,
-                        ),
-                        maxLines: 1,
-                        minFontSize: 20,
-                        overflow: TextOverflow.clip,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // Type of workout seems unneccesary bloat
-                          /*Text(
-                            exercise['type'],
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                            ),
-                          ),*/
-                          Text(
-                            exercise['difficulty'],
-                            style: const TextStyle(
-                              color: Colors.purple,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            exercise['muscle'],
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            exercise['equipment'],
-                            style: const TextStyle(
-                              color: Colors.green,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  //Plus icon that saves to database
-                  Positioned(
-                    top: 0.0,
-                    right: 0.0,
-                    child: //Save To FireStore button
-                        IconButton(
-                      onPressed: () {
-                        // Display a pop up to see what days the user would like to save the exercise too
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () {
+                final selectedDays = ref.read(selectedDaysProvider);
+                // Iterating through each selected day to save it to the particular collection
+                for (int i = 0; i < selectedDays.length; i++) {
+                  if (selectedDays[i]) {
+                    saveExerciseToFirestore(exerciseData, context, i);
+                  }
+                }
 
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                                title: const Text(
-                                    'What day would you like to save this exercise to?'),
-                                content: Consumer(
-                                  builder: (context, ref, child) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(7, (day) {
-                                        // watching for the state of the provider to see if the specific day of the week is selected
-                                        final isSelected = ref
-                                            .watch(selectedDaysProvider)[day];
-                                        return CheckboxListTile(
-                                          title: Text(getDayName(day)),
-                                          value: isSelected,
-
-                                          // Updating the state of whether or not its selected by modifying the state of the provider notifier
-                                          onChanged: (bool? value) {
-                                            ref
-                                                .read(selectedDaysProvider
-                                                    .notifier)
-                                                .update((state) {
-                                              final newState =
-                                                  List<bool>.from(state);
-                                              newState[day] = value!;
-                                              return newState;
-                                            });
-                                          },
-                                        );
-                                      }),
-                                    );
-                                  },
-                                ),
-                                // Adding the buttons to save / cancel
-                                actions: [
-                                  // Adding a button to cancel
-                                  TextButton(
-                                    child: const Text('Cancel'),
-                                    onPressed: () {
-                                      // Clearing the checklist
-                                      ref
-                                              .read(selectedDaysProvider.notifier)
-                                              .state =
-                                          List.generate(7, (index) => false);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: const Text('Save'),
-                                    onPressed: () {
-                                      final selectedDays =
-                                          ref.read(selectedDaysProvider);
-                                      // Iterating through each selected day to save it to the particular collection
-                                      for (int i = 0;
-                                          i < selectedDays.length;
-                                          i++) {
-                                        if (selectedDays[i]) {
-                                          saveExerciseToFirestore(
-                                              exerciseData, context, i);
-                                        }
-                                      }
-
-                                      // Resetting the checklist after saving
-                                      ref
-                                              .read(selectedDaysProvider.notifier)
-                                              .state =
-                                          List.generate(7, (index) => false);
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ]);
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.add_circled,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                  // Icon to show a card is flippable to users
-                  Positioned(
-                    top: 9.0,
-                    right: 150,
-                    child: Icon(
-                      CupertinoIcons.arrow_2_circlepath,
-                      size: 30,
-                    ),
-                  )
-                ],
-              ),
+                // Resetting the checklist after saving
+                ref.read(selectedDaysProvider.notifier).state =
+                    List.generate(7, (index) => false);
+                Navigator.of(context).pop();
+              },
             ),
-          ),
-          back: Card(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Displaying a gif to show for the exercise
-                    Image.asset(exerciseData['gif'],
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.fitHeight),
-
-                    // Returning a numbered list for the instructions of the workout
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: exercise['instructions'].split('.').length - 1,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Text(
-                            '${index + 1}. ${exercise['instructions'].split('.')[index]}',
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
+          ]);
     },
   );
 }
@@ -610,5 +471,177 @@ void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
         content: Text('Error adding exercise to Firestore.'),
       ),
     );
+  }
+}
+
+// Exercise Card class that will be utilized to provide a more modern carousel slider view for exercises utilizing the carousel slider flutter package
+
+class ExerciseCard extends StatelessWidget {
+  final dynamic exercise;
+  final WidgetRef ref;
+
+  const ExerciseCard({Key? key, required this.exercise, required this.ref})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Wrapping with a container to add flavor to the carousel
+    return Container(
+      // Set a fixed height and width or use MediaQuery to make it responsive
+      height: 360,
+      width: MediaQuery.of(context).size.width * 0.87,
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        // Adding a colored gradient border radius to the container of the carousel
+        gradient: const LinearGradient(
+          colors: [
+            Colors.blue,
+            Colors.red,
+            Colors.green,
+            Colors.purple
+          ], // Adding colors for a rainbow border
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      // Adding a container to the actual carousel card so that a gradient can be added to the border
+      child: Container(
+        height: 350,
+        margin: const EdgeInsets.all(
+            1), // This creates an illusion of a border by overlaying the containers
+        decoration: BoxDecoration(
+          color: Colors.white, // White background for the actual card
+          borderRadius: BorderRadius.circular(
+              15), // Smaller radius than the styling container
+        ),
+        child: Column(
+          children: [
+            // Wrapping with gesture detector to allow for clicking the card to display exercise instructions
+            GestureDetector(
+              onTap: () => _showInstructionsModal(context, exercise),
+              child: Container(
+                margin: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    // Displaying the exercise name at the very top
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: AutoSizeText(
+                              exercise['name'],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    IconButton(
+                      icon: const Icon(
+                        CupertinoIcons.add,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      // Converting the original implemntation of day selection from the flippable card to carousel
+                      onPressed: () => _showSavingDialog(context, exercise),
+                    ),
+
+                    const SizedBox(height: 60),
+
+                    // Displaying the gif as the main focus
+                    Image.asset(
+                      exercise['gif'],
+                      height: 275,
+                      fit: BoxFit.fitHeight,
+                    ),
+
+                    const SizedBox(height: 50),
+
+                    // Displaying the exercise diff, muscle, and equip
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(exercise['difficulty'],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.purple,
+                            )),
+                        Text(exercise['muscle'],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.blue,
+                            )),
+                        Text(exercise['equipment'],
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.green,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Building a modal sheet similar to barcode implementation
+  void _showInstructionsModal(BuildContext context, dynamic exercise) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(10),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              // Implemnting splitting the instructions by periods into new lines and utilizing the previous logic used for numbering the steps
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  // Max length - 1 to avoid another entry for the very last period
+                  itemCount: exercise['instructions'].split('.').length - 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      // Iterating through the instruction string and splitting at each period
+                      child: Text(
+                        '${index + 1}. ${exercise['instructions'].split('.')[index]}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to allow saving on the new carousel view
+  void _showSavingDialog(BuildContext context, dynamic exerciseData) {
+    showing(context, ref, exerciseData);
   }
 }

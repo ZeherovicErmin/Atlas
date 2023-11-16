@@ -108,6 +108,7 @@ class Feed extends ConsumerWidget {
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
           'ExerciseDifficulty': '',
+          'ExerciseGif': '',
           'ExerciseInstructions': '',
           'postImage':
               downloadURL, // Add the download URL to your Firestore document
@@ -153,6 +154,7 @@ class Feed extends ConsumerWidget {
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
           'ExerciseDifficulty': '',
+          'ExerciseGif': '',
           'ExerciseInstructions': '',
           'Likes': [],
           'barcodeData': {},
@@ -258,6 +260,7 @@ class Feed extends ConsumerWidget {
                                     equipment: post['ExerciseEquipment'] ?? '',
                                     difficulty:
                                         post['ExerciseDifficulty'] ?? '',
+                                    gif: post['ExerciseGif'] ?? '',
                                     instructions:
                                         post['ExerciseInstructions'] ?? '',
                                     imageUrl: post['postImage'],

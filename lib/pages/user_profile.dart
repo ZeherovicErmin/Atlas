@@ -453,6 +453,7 @@ class UserProfile extends ConsumerWidget {
                                               difficulty:
                                                   post['ExerciseDifficulty'] ??
                                                       '',
+                                              gif: post['ExerciseGif'] ?? '',
                                               instructions: post[
                                                       'ExerciseInstructions'] ??
                                                   '',

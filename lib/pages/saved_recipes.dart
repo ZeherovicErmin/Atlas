@@ -108,9 +108,9 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
                                                 child: IconButton(
-                                                  onPressed: onShare(recipe, context),
-                                                  icon: const Icon(
-                                                      Icons.share),
+                                                  onPressed:
+                                                      onShare(recipe, context),
+                                                  icon: const Icon(Icons.share),
                                                   tooltip: "Share Recipe",
                                                   color: Colors.white,
                                                 )))),
@@ -181,6 +181,7 @@ onShare(Result recipe, BuildContext context) {
                   'ExerciseMuscle': '',
                   'ExerciseEquipment': '',
                   'ExerciseDifficulty': '',
+                  'ExerciseGif': '',
                   'ExerciseInstructions': '',
                   'recipe': recipe.toMap() ,
                   });

@@ -78,6 +78,7 @@ dependencies:
   photo_view: ^0.14.0
   flutter_animate: ^4.2.0+1
   cached_network_image: ^3.3.0
+  carousel_slider:
 
   flutter_quill: 8.1.1
 
@@ -113,6 +114,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/images/
+    - lib/gifs/
     - lib/icons/
     - assets/icons/burger-menu.svg
     - assets/spoonacularResult.json

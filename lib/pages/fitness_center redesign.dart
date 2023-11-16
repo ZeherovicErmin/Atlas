@@ -470,6 +470,13 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                       ),
                     ),
                   ),
+                  // Icon to show a card is flippable to users
+                  Positioned(
+                    top:9.0,
+                    right: 150,
+                    child: Icon(CupertinoIcons.arrow_2_circlepath, size: 30,),
+
+                  )
                 ],
               ),
             ),

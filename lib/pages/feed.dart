@@ -103,12 +103,13 @@ class Feed extends ConsumerWidget {
           'Likes': [],
           'recipe': {},
           'barcodeData': {},
-          
-                    'ExerciseName': '',
+
+          'ExerciseName': '',
           'ExerciseType': '',
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
           'ExerciseDifficulty': '',
+          'ExerciseGif': '',
           'ExerciseInstructions': '',
           'postImage':
               downloadURL, // Add the download URL to your Firestore document
@@ -150,6 +151,7 @@ class Feed extends ConsumerWidget {
           'ExerciseMuscle': '',
           'ExerciseEquipment': '',
           'ExerciseDifficulty': '',
+          'ExerciseGif': '',
           'ExerciseInstructions': '',
           'Likes': [],
           'barcodeData': {},
@@ -190,13 +192,13 @@ class Feed extends ConsumerWidget {
       appBar: AppBar(
         leading: const Icon(
           null,
-          ),
+        ),
         centerTitle: true,
         title: const Text(
-            "Feed",
-            style:
-                TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
-          ),
+          "Feed",
+          style:
+              TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
       ),
 
@@ -216,23 +218,26 @@ class Feed extends ConsumerWidget {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           // Get the message
-final post = snapshot.data!.docs[index];
+                          final post = snapshot.data!.docs[index];
 
 // Handle barcodeData with type checking
-final barcodeDataDynamic = post['barcodeData'];
-Map<String, dynamic> barcodeDataMap = {};
+                          final barcodeDataDynamic = post['barcodeData'];
+                          Map<String, dynamic> barcodeDataMap = {};
 
-if (barcodeDataDynamic is Map<String, dynamic>) {
-  barcodeDataMap = barcodeDataDynamic;
-} else {
-  print('Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
-}
+                          if (barcodeDataDynamic is Map<String, dynamic>) {
+                            barcodeDataMap = barcodeDataDynamic;
+                          } else {
+                            print(
+                                'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
+                          }
 
                           //Check if doc has recipe data. If so, get the recipe data
-                          final recipe = post.data().toString().contains('recipe')
-                              ? post.get('recipe')
-                              : '';
-                          Map<String, dynamic> emptyMap = Map<String, dynamic>();
+                          final recipe =
+                              post.data().toString().contains('recipe')
+                                  ? post.get('recipe')
+                                  : '';
+                          Map<String, dynamic> emptyMap =
+                              Map<String, dynamic>();
                           return StreamBuilder<String>(
                             stream: fetchUsername(email: post['UserEmail']),
                             builder: (context, usernameSnapshot) {
@@ -247,14 +252,16 @@ if (barcodeDataDynamic is Map<String, dynamic>) {
                                     time: formatDate(post['TimeStamp']),
                                     email: post['UserEmail'],
                                     exerciseName: post['ExerciseName'] ?? '',
-                                  exerciseType: post['ExerciseType'] ?? '',
-                                  muscle: post['ExerciseMuscle'] ?? '',
-                                  equipment: post['ExerciseEquipment'] ?? '',
-                                  difficulty: post['ExerciseDifficulty'] ?? '',
-                                  instructions:
-                                      post['ExerciseInstructions'] ?? '',
-                                  imageUrl: post['postImage'],
-                                    recipe: recipe == '' ?  emptyMap : recipe);
+                                    exerciseType: post['ExerciseType'] ?? '',
+                                    muscle: post['ExerciseMuscle'] ?? '',
+                                    equipment: post['ExerciseEquipment'] ?? '',
+                                    difficulty:
+                                        post['ExerciseDifficulty'] ?? '',
+                                    gif: post['ExerciseGif'] ?? '',
+                                    instructions:
+                                        post['ExerciseInstructions'] ?? '',
+                                    imageUrl: post['postImage'],
+                                    recipe: recipe == '' ? emptyMap : recipe);
                               } else if (snapshot.hasError) {
                                 return Center(
                                   child: Text('Error:${snapshot.error}'),

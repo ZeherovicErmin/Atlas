@@ -325,7 +325,7 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
             ),
             child: SizedBox(
               width: double.infinity,
-              height: 150.0,
+              height: 170.0,
               child: Stack(
                 children: [
                   Column(
@@ -472,10 +472,12 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                   ),
                   // Icon to show a card is flippable to users
                   Positioned(
-                    top:9.0,
+                    top: 9.0,
                     right: 150,
-                    child: Icon(CupertinoIcons.arrow_2_circlepath, size: 30,),
-
+                    child: Icon(
+                      CupertinoIcons.arrow_2_circlepath,
+                      size: 30,
+                    ),
                   )
                 ],
               ),
@@ -488,13 +490,11 @@ ListView exercisesList(List<dynamic> exercisesData, WidgetRef ref) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     // Displaying a gif to show for the exercise
-                    Image.asset(
-                      exerciseData['gif'],
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.fitHeight),
+                    Image.asset(exerciseData['gif'],
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.fitHeight),
 
                     // Returning a numbered list for the instructions of the workout
                     ListView.builder(
@@ -593,7 +593,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
           "exercise": exerciseData,
           "saveDate": DateTime.now(),
           "selectedDay": getDayName(selectedDay),
-          
         },
       );
 

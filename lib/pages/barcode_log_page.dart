@@ -322,19 +322,21 @@ class BarcodeLogPage extends ConsumerWidget {
         //final sugarsPerServing = '0';
         //print('Sugars: $sugarsPerServi');
         return Animate(
-          
           effects: [
             //Fades a barcode in
-            FadeEffect(begin: 0.0,end: 5.0, curve: Curves.easeInOut),
+            FadeEffect(begin: 0.0, end: 5.0, curve: Curves.easeInOut),
             //Slide effect
-            SlideEffect(begin: Offset(-1, 0), end: Offset.zero, curve: Curves.easeOut,delay: Duration(milliseconds: 300)),
-            ],
-            
+            SlideEffect(
+                begin: Offset(-1, 0),
+                end: Offset.zero,
+                curve: Curves.easeOut,
+                delay: Duration(milliseconds: 300)),
+          ],
           child: Slidable(
             // Allows logs to be deleted, Wraps entire list widget
-        
+
             key: ValueKey(logs[index].id),
-        
+
             startActionPane: ActionPane(
               motion: const ScrollMotion(),
               extentRatio: .25,
@@ -356,7 +358,7 @@ class BarcodeLogPage extends ConsumerWidget {
               children: [
                 SlidableAction(
                   autoClose: true,
-                  onPressed: (context) => shareBarcodeToFeed(data,context),
+                  onPressed: (context) => shareBarcodeToFeed(data, context),
                   backgroundColor: const Color.fromARGB(2, 140, 215, 85),
                   foregroundColor: Color.fromARGB(255, 0, 78, 12),
                   icon: Icons.share,
@@ -388,7 +390,7 @@ class BarcodeLogPage extends ConsumerWidget {
                       cholesterolPerServing,
                       amtServings,
                       sugarsPerServi);
-        
+
                   showModalBottomSheet(
                     context: context,
                     builder: (context) => modalContent,
@@ -442,8 +444,8 @@ class BarcodeLogPage extends ConsumerWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 16.0),
-                                child:
-                                    Text('Fats Per Serving: ${fatsPerServing}g'),
+                                child: Text(
+                                    'Fats Per Serving: ${fatsPerServing}g'),
                               ),
                               const Divider(
                                 thickness: 1,
@@ -497,7 +499,7 @@ class BarcodeLogPage extends ConsumerWidget {
                                 )
                               ],
                             ),
-        
+
                             //crossAxisAlignment: CrossAxisAlignment.start, de
                             // children: [
                             //   Text('Calories'),
@@ -542,7 +544,7 @@ class BarcodeLogPage extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               //Drag Handle
-              
+
               //NutriGridView(selectedFilters: selectedFilters, result: result, productName: productName, productCalories: productCalories, carbsPserving: carbsPserving, proteinPserving: proteinPserving, fatsPserving: fatsPserving,secondController: ScrollController()),
               //Nutritional Facts Column Sheet
               const Column(
@@ -612,7 +614,9 @@ class BarcodeLogPage extends ConsumerWidget {
                   title: "Total Carbohydrates", value: '${carbsPerServing}'),
               //Sugars
               NutritionRow(
-                  title: "Total Sugars", isSubcategory: true, value: '$amtServings'),
+                  title: "Total Sugars",
+                  isSubcategory: true,
+                  value: '$amtServings'),
               //end Protein
 
               //protein per serving
@@ -630,7 +634,7 @@ class BarcodeLogPage extends ConsumerWidget {
       );
 
   //sharing posts
-  void shareBarcodeToFeed(Map<String, dynamic> data,BuildContext context) {
+  void shareBarcodeToFeed(Map<String, dynamic> data, BuildContext context) {
     FirebaseFirestore.instance.collection('User Posts').add({
       'Message': 'Just scanned this barcode! Check it out!',
       'UserEmail': currentUser.email,
@@ -641,70 +645,70 @@ class BarcodeLogPage extends ConsumerWidget {
       'ExerciseMuscle': '',
       'ExerciseEquipment': '',
       'ExerciseDifficulty': '',
+      'ExerciseGif': '',
       'ExerciseInstructions': '',
       'Likes': [],
       'postImage': '',
     });
-      // Show the SnackBar
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Shared!'),
-      duration: Duration(seconds: 2),
-    ),
-  );
-}
-  }
-
-  void deleteLog(BuildContext context, Map<String, dynamic> data) async {
-    //Confirmation dialog
-    bool confirmDelete = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Delete"),
-          content: const Text("Are you sure you want to delete this log?"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                // Cancels dialog box if cancel is pressed
-                Navigator.of(context).pop(false);
-              },
-            ),
-            TextButton(
-              child: const Text('Delete'),
-              onPressed: () {
-                // True if confirmed
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
-      },
+    // Show the SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Shared!'),
+        duration: Duration(seconds: 2),
+      ),
     );
+  }
+}
 
-    //Deletes the barcode log
-    if (confirmDelete == true) {
-      try {
-        //stores documentID into variable
-        String? docId = data['docId'];
-
-        if (docId != null) {
-          await FirebaseFirestore.instance
-              .collection('Barcode_Lookup')
-              .doc(docId)
-              .delete();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Barcode log deleted successfully')),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error deleting barcode log: $e'),
+void deleteLog(BuildContext context, Map<String, dynamic> data) async {
+  //Confirmation dialog
+  bool confirmDelete = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Confirm Delete"),
+        content: const Text("Are you sure you want to delete this log?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () {
+              // Cancels dialog box if cancel is pressed
+              Navigator.of(context).pop(false);
+            },
           ),
+          TextButton(
+            child: const Text('Delete'),
+            onPressed: () {
+              // True if confirmed
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+
+  //Deletes the barcode log
+  if (confirmDelete == true) {
+    try {
+      //stores documentID into variable
+      String? docId = data['docId'];
+
+      if (docId != null) {
+        await FirebaseFirestore.instance
+            .collection('Barcode_Lookup')
+            .doc(docId)
+            .delete();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Barcode log deleted successfully')),
         );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting barcode log: $e'),
+        ),
+      );
     }
   }
-
+}

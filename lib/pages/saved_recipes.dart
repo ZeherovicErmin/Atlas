@@ -107,9 +107,9 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
                                                 child: IconButton(
-                                                  onPressed: onShare(recipe, context),
-                                                  icon: const Icon(
-                                                      Icons.share),
+                                                  onPressed:
+                                                      onShare(recipe, context),
+                                                  icon: const Icon(Icons.share),
                                                   tooltip: "Share Recipe",
                                                   color: Colors.white,
                                                 )))),
@@ -160,46 +160,49 @@ onShare(Result recipe, BuildContext context) {
       builder: (BuildContext context) {
         return Consumer(builder: (context, ref, _) {
           return Dialog(
-            insetPadding: EdgeInsets.symmetric(vertical: 300),
-            child: Column(children: [
-              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10)),
-              //Recipe title
-              Text("Post the recipe \"${recipe.title}\"?"),
-              //Post button
-              TextButton(
-                onPressed: () {
-              FirebaseFirestore.instance.collection("User Posts").add({
-              'UserEmail': FirebaseAuth.instance.currentUser!.email,
-              'Message': "Check out this recipe: ${recipe.title}",
-              'TimeStamp': Timestamp.now(),
-              'Likes': [],
-              'barcodeData': {},
-              'postImage': '',
-              'ExerciseName': '',
-              'ExerciseType': '',
-              'ExerciseMuscle': '',
-              'ExerciseEquipment': '',
-              'ExerciseDifficulty': '',
-              'ExerciseInstructions': '',
-              'recipe': recipe.toMap() ,
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Recipe \"${recipe.title}\" was shared')));
-            },
-            child: const Text('Post'),
-          ),
-          //Close button
-              TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Close'),
-          )
-            ],) 
-            );
-        }
-        );
+              insetPadding: EdgeInsets.symmetric(vertical: 300),
+              child: Column(
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(top: 45, left: 10, right: 10)),
+                  //Recipe title
+                  Text("Post the recipe \"${recipe.title}\"?"),
+                  //Post button
+                  TextButton(
+                    onPressed: () {
+                      FirebaseFirestore.instance.collection("User Posts").add({
+                        'UserEmail': FirebaseAuth.instance.currentUser!.email,
+                        'Message': "Check out this recipe: ${recipe.title}",
+                        'TimeStamp': Timestamp.now(),
+                        'Likes': [],
+                        'barcodeData': {},
+                        'postImage': '',
+                        'ExerciseName': '',
+                        'ExerciseType': '',
+                        'ExerciseMuscle': '',
+                        'ExerciseEquipment': '',
+                        'ExerciseDifficulty': '',
+                        'ExerciseGif': '',
+                        'ExerciseInstructions': '',
+                        'recipe': recipe.toMap(),
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('Recipe \"${recipe.title}\" was shared')));
+                    },
+                    child: const Text('Post'),
+                  ),
+                  //Close button
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Close'),
+                  )
+                ],
+              ));
+        });
       });
 }
 

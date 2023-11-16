@@ -184,15 +184,11 @@ class _SavedExercisesState extends State<SavedExercises> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
                             // Showing a gif for the exercise
-                            Image.asset(
-
-                      exerciseData['exercise']['gif'] ?? '',
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.fitHeight
-                      ),
+                            Image.asset(exerciseData['exercise']['gif'] ?? '',
+                                height: 150,
+                                width: double.infinity,
+                                fit: BoxFit.fitHeight),
                             // Returning a numbered list for the instructions of the workout
                             ListView.builder(
                               shrinkWrap: true,
@@ -254,6 +250,7 @@ class _SavedExercisesState extends State<SavedExercises> {
     String muscle = exerciseData['exercise']['muscle'] ?? '';
     String equipment = exerciseData['exercise']['equipment'] ?? '';
     String difficulty = exerciseData['exercise']['difficulty'] ?? '';
+    String gif = exerciseData['exercise']['gif'] ?? '';
     String instructions = exerciseData['exercise']['instructions'] ?? '';
 
     // Creating a post in the feed collection with exercise details
@@ -266,6 +263,7 @@ class _SavedExercisesState extends State<SavedExercises> {
       'ExerciseMuscle': muscle,
       'ExerciseEquipment': equipment,
       'ExerciseDifficulty': difficulty,
+      'ExerciseGif': gif,
       'ExerciseInstructions': instructions,
       'postImage': '',
       'barcodeData': {},

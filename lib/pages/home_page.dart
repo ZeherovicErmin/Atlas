@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> {
     selectedDate = formatDate(currentDate);
     formattedDate = formatDateTime(currentDate);
     usernameStream = fetchUsername();
-    //fetchProfileImage();
     super.initState();
   }
 
@@ -39,29 +38,6 @@ class _HomePageState extends State<HomePage> {
     scroll.dispose();
     super.dispose();
   }
-
-  //Gets the user's profile picture from firebase for the appbar
-  /*
-  void fetchProfileImage() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null && currentUser.email != null) {
-      try {
-        final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(currentUser.email)
-          .get();
-        final userPicture = userDoc.data() as Map<String, dynamic>?;
-        if (userPicture != null && userPicture.containsKey('profilePicture')) {
-          setState(() {
-            profileImage = userPicture['profilePicture'];
-          });
-        }
-      } catch (e) {
-        print('Error fetching your profile picture.');
-      }
-    }
-  }
-  */
 
   //Grabs selected habits from firebase
   Stream<Map<String, bool>> fetchSelectedHabits() {
@@ -81,6 +57,7 @@ class _HomePageState extends State<HomePage> {
   void addDate() {
     changeDate(currentDate.add(const Duration(days: 1)));
   }
+  
   //Changes the date to the previous day in real time
   void deleteDate() {
     changeDate(currentDate.subtract(const Duration(days: 1)));
@@ -189,33 +166,41 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          /*
-          if (profileImage != null)
-          IconButton(
-            icon: CircleAvatar(
-            backgroundImage: NetworkImage(profileImage!),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const UserProfile()),
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance.collection('Users').doc(user?.email).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasData && snapshot.data!.exists) {
+              var userData = snapshot.data!.data() as Map<String, dynamic>;
+              var profileImageUrl = userData['profilePicture'] ?? '';
+              return IconButton(
+                icon: CircleAvatar(
+                  backgroundImage: NetworkImage(profileImageUrl),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UserProfile()),
+                  );
+                },
               );
-            },
-          ),
-          */
-          if (profileImage == null)
-          IconButton(
-            icon: const Icon(CupertinoIcons.profile_circled),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const UserProfile()),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+            }
+            return IconButton(
+              icon: const Icon(CupertinoIcons.profile_circled),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserProfile())
+                );
+              }
+            );
+          }
+        )
+      ],
+    ),
+  );
   }
 
   //Function to save habit data in Firebase
@@ -281,187 +266,187 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: StreamBuilder<Map<String, bool>> (
-                  stream: fetchSelectedHabits(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (!snapshot.hasData) {
-                      return const Text("No habit cards found");
-                    }
-                    var selectedHabits = snapshot.data!;
-                      return GridView.count(
-                      key: const PageStorageKey<String>(''),
-                      controller: scroll,
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 20,
-                      children: [
-                        if (selectedHabits['Calories'] ?? true)
-                        HabitCard(
-                          title: 'Calories',
-                          image: 'lib/images/burger.png',
-                          backgroundColor: Colors.red,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'calories', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(kcal)',
-                        ),
-                        if (selectedHabits['Sleep'] ?? true)
-                        HabitCard(
-                          title: 'Sleep',
-                          image: 'lib/images/bed.png',
-                          backgroundColor: Colors.purple,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'sleep', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Hours)'
-                        ),
-                        if (selectedHabits['Water'] ?? true)
-                        HabitCard(
-                          title: 'Water',
-                          image: 'lib/images/water.png',
-                          backgroundColor: Colors.lightBlue,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'water', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Fluid Ounces)',
-                        ),
-                        if (selectedHabits['Protein'] ?? true)
-                        HabitCard(
-                          title: 'Protein',
-                          image: 'lib/images/protein.png',
-                          backgroundColor: Colors.brown,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'protein', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Grams)'
-                        ),
-                        if (selectedHabits['Weight'] ?? true)
-                        HabitCard(
-                          title: 'Weight',
-                          image: 'lib/images/weigh-scales.png',
-                          backgroundColor: Colors.grey[700] ?? Colors.grey,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'weight', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Pounds)'
-                        ),
-                        if (selectedHabits['Carbohydrates'] ?? true)
-                        HabitCard(
-                          title: 'Carbohydrates',
-                          image: 'lib/images/bread.png',
-                          backgroundColor: Colors.cyan,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'carbohydrates', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Grams)'
-                        ),
-                        if (selectedHabits['Sugar'] ?? true)
-                        HabitCard(
-                          title: 'Sugar',
-                          image: 'lib/images/sugar.png',
-                          backgroundColor: const Color.fromARGB(255, 255, 116, 163),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'sugar', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Grams)'
-                        ),
-                        if (selectedHabits['Running'] ?? true)
-                        HabitCard(
-                          title: 'Running',
-                          image: 'lib/images/jogging.png',
-                          backgroundColor: Colors.green,
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'running', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Miles)'
-                        ),
-                        if (selectedHabits['Pushups'] ?? true)
-                        HabitCard(
-                          title: 'Pushups',
-                          image: 'lib/images/push-up.png',
-                          backgroundColor: const Color.fromARGB(255, 175, 142, 76),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'pushups', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Count)'
-                        ),
-                        if (selectedHabits['Pullups'] ?? true)
-                        HabitCard(
-                          title: 'Pullups',
-                          image: 'lib/images/pull-up-bar.png',
-                          backgroundColor: const Color.fromARGB(255, 76, 165, 175),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'pullups', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Count)'
-                        ),
-                        if (selectedHabits['Situps'] ?? true)
-                        HabitCard(
-                          title: 'Situps',
-                          image: 'lib/images/sit-up.png',
-                          backgroundColor: const Color.fromARGB(255, 209, 116, 238),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'situps', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Count)'
-                        ),
-                        if (selectedHabits['Sodium'] ?? true)
-                        HabitCard(
-                          title: 'Sodium',
-                          image: 'lib/images/sodium.png',
-                          backgroundColor: const Color.fromARGB(255, 238, 116, 177),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'sodium', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Miligrams)'
-                        ),
-                        if (selectedHabits['Fats'] ?? true)
-                        HabitCard(
-                          title: 'Fats',
-                          image: 'lib/images/fat.png',
-                          backgroundColor: const Color.fromARGB(255, 116, 238, 124),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'fats', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Grams)'
-                        ),
-                        if (selectedHabits['Cholesterol'] ?? true)
-                        HabitCard(
-                          title: 'Cholesterol',
-                          image: 'lib/images/colesterol.png',
-                          backgroundColor: const Color.fromARGB(255, 248, 202, 17),
-                          onTap: (value) {
-                            saveHabitData(uid2, formattedDate, 'cholesterol', value);
-                          },
-                          selectedDate: formattedDate,
-                          unit: '(Miligrams)'
-                        ),
-                      ],
-                    );
+            const SizedBox(height: 20),
+            Expanded(
+              child: StreamBuilder<Map<String, bool>> (
+                stream: fetchSelectedHabits(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
                   }
-                ),
+                  if (!snapshot.hasData) {
+                    return const Text("No habit cards found");
+                  }
+                  var selectedHabits = snapshot.data!;
+                    return GridView.count(
+                    key: const PageStorageKey<String>(''),
+                    controller: scroll,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
+                    children: [
+                      if (selectedHabits['Calories'] ?? true)
+                      HabitCard(
+                        title: 'Calories',
+                        image: 'lib/images/burger.png',
+                        backgroundColor: Colors.red,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'calories', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(kcal)',
+                      ),
+                      if (selectedHabits['Sleep'] ?? true)
+                      HabitCard(
+                        title: 'Sleep',
+                        image: 'lib/images/bed.png',
+                        backgroundColor: Colors.purple,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'sleep', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Hours)'
+                      ),
+                      if (selectedHabits['Water'] ?? true)
+                      HabitCard(
+                        title: 'Water',
+                        image: 'lib/images/water.png',
+                        backgroundColor: Colors.lightBlue,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'water', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Fluid Ounces)',
+                      ),
+                      if (selectedHabits['Protein'] ?? true)
+                      HabitCard(
+                        title: 'Protein',
+                        image: 'lib/images/protein.png',
+                        backgroundColor: Colors.brown,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'protein', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Weight'] ?? true)
+                      HabitCard(
+                        title: 'Weight',
+                        image: 'lib/images/weigh-scales.png',
+                        backgroundColor: Colors.grey[700] ?? Colors.grey,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'weight', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Pounds)'
+                      ),
+                      if (selectedHabits['Carbohydrates'] ?? true)
+                      HabitCard(
+                        title: 'Carbohydrates',
+                        image: 'lib/images/bread.png',
+                        backgroundColor: Colors.cyan,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'carbohydrates', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Sugar'] ?? true)
+                      HabitCard(
+                        title: 'Sugar',
+                        image: 'lib/images/sugar.png',
+                        backgroundColor: const Color.fromARGB(255, 255, 116, 163),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'sugar', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Running'] ?? true)
+                      HabitCard(
+                        title: 'Running',
+                        image: 'lib/images/jogging.png',
+                        backgroundColor: Colors.green,
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'running', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Miles)'
+                      ),
+                      if (selectedHabits['Pushups'] ?? true)
+                      HabitCard(
+                        title: 'Pushups',
+                        image: 'lib/images/push-up.png',
+                        backgroundColor: const Color.fromARGB(255, 175, 142, 76),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'pushups', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Pullups'] ?? true)
+                      HabitCard(
+                        title: 'Pullups',
+                        image: 'lib/images/pull-up-bar.png',
+                        backgroundColor: const Color.fromARGB(255, 76, 165, 175),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'pullups', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Situps'] ?? true)
+                      HabitCard(
+                        title: 'Situps',
+                        image: 'lib/images/sit-up.png',
+                        backgroundColor: const Color.fromARGB(255, 209, 116, 238),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'situps', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Count)'
+                      ),
+                      if (selectedHabits['Sodium'] ?? true)
+                      HabitCard(
+                        title: 'Sodium',
+                        image: 'lib/images/sodium.png',
+                        backgroundColor: const Color.fromARGB(255, 238, 116, 177),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'sodium', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Miligrams)'
+                      ),
+                      if (selectedHabits['Fats'] ?? true)
+                      HabitCard(
+                        title: 'Fats',
+                        image: 'lib/images/fat.png',
+                        backgroundColor: const Color.fromARGB(255, 116, 238, 124),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'fats', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Grams)'
+                      ),
+                      if (selectedHabits['Cholesterol'] ?? true)
+                      HabitCard(
+                        title: 'Cholesterol',
+                        image: 'lib/images/colesterol.png',
+                        backgroundColor: const Color.fromARGB(255, 248, 202, 17),
+                        onTap: (value) {
+                          saveHabitData(uid2, formattedDate, 'cholesterol', value);
+                        },
+                        selectedDate: formattedDate,
+                        unit: '(Miligrams)'
+                      ),
+                    ],
+                  );
+                }
               ),
-            ],
-          ),
-    ),
+            ),
+          ],
+        ),
+      ),
     /*
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 80.0),

@@ -27,13 +27,16 @@ final calorieRangesProvider = StateProvider<RangeValues>((ref) {
 });
 
 //global key used for recipe form-handling
-final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
+//final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
 //Recipe Class that handles and displays the recipes is
 //child of class Consumer Widget
 class Recipes extends ConsumerWidget {
+  final GlobalKey<FormBuilderState> formKey;
+
   //Constructors
-  Recipes({Key? key}) : super(key: key);
+  //Recipes({Key? key, required this.formKey}) : super(key: key);
+  Recipes({Key? key}) : formKey = GlobalKey<FormBuilderState>(), super(key: key);
 
   get themeColor => null;
 
@@ -111,7 +114,7 @@ class Recipes extends ConsumerWidget {
             ],
           ),
           child: FormBuilder(
-            key: _formKey,
+            key: formKey,
             child: Column(children: [
               searchBar(context, ref),
               ExpansionTile(
@@ -330,11 +333,11 @@ class Recipes extends ConsumerWidget {
 
   //Form Submission Handler - Submits recipe search to API
   void onSubmit(BuildContext context, WidgetRef ref) async {
-    if (_formKey.currentState!.saveAndValidate()) {
+    if (formKey.currentState!.saveAndValidate()) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Searching for Recipes')));
 
-      Map<String, dynamic> formData = _formKey.currentState!.value;
+      Map<String, dynamic> formData = formKey.currentState!.value;
       print(formData);
 
       //Parameter: Query - User-Inputted Search Query
@@ -421,10 +424,10 @@ class Recipes extends ConsumerWidget {
   //spoonacularResult.json
   void onSubmitTEST(BuildContext context, WidgetRef ref) async {
     print("Submit testing");
-    if (_formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Searching for Recipes')));
-      String value = _formKey.currentState!.value["query"];
+      String value = formKey.currentState!.value["query"];
       final String response =
           await rootBundle.loadString('assets/spoonacularResult.json');
       final data = await json.decode(response);

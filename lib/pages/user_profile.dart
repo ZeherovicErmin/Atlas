@@ -93,21 +93,19 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
-// Awaits user input to select an Image
     void selectImage() async {
-      // Use the ImagePicker plugin to open the device's gallery to pick an image.
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      //Image.file(pickedFile as File,width: 400,height: 300,);
-      // Check if an image was picked.
-      if (pickedFile != null) {
-        // Read the image file as bytes.
-        final imageBytes = await pickedFile.readAsBytes();
+      final ImageSource? source =
+          await showCupertinoImageSourceDialog(context: context);
 
-        // Update the profilePictureProvider state with the selected image as Uint8List.
-        ref.read(profilePictureProvider.notifier).state =
-            Uint8List.fromList(imageBytes);
-        saveProfile(Uint8List.fromList(imageBytes));
+      if (source != null) {
+        final pickedFile = await ImagePicker().pickImage(source: source);
+
+        if (pickedFile != null) {
+          final imageBytes = await pickedFile.readAsBytes();
+          ref.read(profilePictureProvider.notifier).state =
+              Uint8List.fromList(imageBytes);
+          saveProfile(Uint8List.fromList(imageBytes));
+        }
       }
     }
 
@@ -150,7 +148,8 @@ class UserProfile extends ConsumerWidget {
     }
 
     //App bar for the user profile page
-    PreferredSize userProfileAppBar(BuildContext context, WidgetRef ref, String title) {
+    PreferredSize userProfileAppBar(
+        BuildContext context, WidgetRef ref, String title) {
       return PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
@@ -256,17 +255,15 @@ class UserProfile extends ConsumerWidget {
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator(); // Return a widget for loading state
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(
-              child: Text('User data not found.'),
-            );
+            return Text(
+                'User data not found.'); // Return a widget when no data is found
           }
 
           final userData = snapshot.data!.data() as Map<String, dynamic>?;
-
           if (userData != null) {
             //starts the user profile page
             return LiquidPullToRefresh(
@@ -284,31 +281,31 @@ class UserProfile extends ConsumerWidget {
                     children: [
                       Align(
                         alignment: Alignment.center,
-                        child: profilePictureUrl.when(
-                          data: (url) {
-                            if (url != null && url.isNotEmpty) {
+                        // Use FutureBuilder instead of StreamBuilder
+                        child: FutureBuilder<String?>(
+                          // Call fetchProfilePicture function
+                          future: fetchProfilePicture(
+                              FirebaseAuth.instance.currentUser!.email),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // Show loading indicator while the future is being resolved
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError ||
+                                !snapshot.hasData ||
+                                snapshot.data == null) {
+                              // Show default icon if there's an error or no data
+                              return Icon(CupertinoIcons.profile_circled,
+                                  size: 72, color: themeColor);
+                            } else {
+                              // Display the profile picture
                               return CircleAvatar(
                                 radius: 64,
-                                backgroundImage: NetworkImage(url),
+                                backgroundImage: NetworkImage(snapshot.data!),
                               );
                             }
-                            return image.state != null
-                                ? CircleAvatar(
-                                    radius: 64,
-                                    backgroundImage: image.state != null
-                                        ? MemoryImage(image.state!)
-                                        : null,
-                                  )
-                                : Icon(
-                                    color: themeColor,
-                                    CupertinoIcons.profile_circled,
-                                    size: 72,
-                                  );
                           },
-                          loading: () => const CircularProgressIndicator(),
-                          error: (e, stack) => const Icon(
-                              CupertinoIcons.profile_circled,
-                              size: 72),
                         ),
                       ),
                       Positioned(
@@ -316,11 +313,10 @@ class UserProfile extends ConsumerWidget {
                         left: 240,
                         child: IconButton(
                           color: themeColor,
-                          // onPressed, opens Image Picker
                           onPressed: selectImage,
                           icon: const Icon(Icons.add_a_photo),
                         ),
-                      )
+                      ),
                     ],
                   ),
 
@@ -496,5 +492,53 @@ class UserProfile extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  Future<ImageSource?> showCupertinoImageSourceDialog(
+      {required BuildContext context}) async {
+    return await showCupertinoModalPopup<ImageSource>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Select Image Source'),
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            child: const Text('Camera'),
+            onPressed: () => Navigator.pop(context, ImageSource.camera),
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Gallery'),
+            onPressed: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('Cancel'),
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, null),
+        ),
+      ),
+    );
+  }
+
+  Future<String?> fetchProfilePicture(String? userEmail) async {
+    try {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userEmail)
+          .get();
+      final userData = userDoc.data() as Map<String, dynamic>?;
+      if (userData != null && userData.containsKey('profilePicture')) {
+        final profilePicData = userData['profilePicture'];
+        if (profilePicData is String) {
+          return profilePicData;
+        } else if (profilePicData is List &&
+            profilePicData.isNotEmpty &&
+            profilePicData.first is String) {
+          return profilePicData.first as String;
+        }
+      }
+    } catch (e) {
+      print('Error fetching profile picture: $e');
+    }
+    return null; // Return null if the data doesn't match expected types
   }
 }

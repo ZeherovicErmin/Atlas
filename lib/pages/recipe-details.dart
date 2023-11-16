@@ -114,8 +114,8 @@ class RecipeDetails extends ConsumerWidget {
                           double.parse(value)
                     },
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: true, decimal: true)
                   )),
               //Recipe Ready Time
               Container(

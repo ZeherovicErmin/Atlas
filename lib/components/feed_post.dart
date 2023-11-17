@@ -31,6 +31,7 @@ class FeedPost extends StatefulWidget {
   final String? muscle;
   final String? equipment;
   final String? difficulty;
+  final String? gif;
   final String? instructions;
   final String imageUrl;
   final Map<String, dynamic>? recipe;
@@ -48,6 +49,7 @@ class FeedPost extends StatefulWidget {
       required this.muscle,
       required this.equipment,
       required this.difficulty,
+      required this.gif,
       required this.instructions,
       this.barcodeData,
       required this.imageUrl,
@@ -636,6 +638,9 @@ class _FeedPostState extends State<FeedPost> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Showing a gif for the exercise
+                Image.asset(widget.gif ?? '',
+                    height: 150, width: double.infinity, fit: BoxFit.fitHeight),
                 // Returning a numbered list for the instructions of the workout
                 ListView.builder(
                   shrinkWrap: true,
@@ -1001,7 +1006,10 @@ class _FeedPostState extends State<FeedPost> {
   }
 }
 
-void _showCommentsModal(BuildContext context, String postId) {
+void _showCommentsModal(
+  BuildContext context,
+  String postId,
+) {
   TextEditingController commentController = TextEditingController();
 
   showModalBottomSheet(
@@ -1041,10 +1049,10 @@ void _showCommentsModal(BuildContext context, String postId) {
                     return ListView(
                       children: snapshot.data!.docs.map((doc) {
                         var commentData = doc.data() as Map<String, dynamic>;
-                        return ListTile(
-                          leading: const Icon(Icons.account_circle),
-                          title: Text(commentData['CommentedBy']),
-                          subtitle: Text(commentData['CommentText']),
+                        return Comment(
+                          text: commentData["CommentText"],
+                          userId: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
                         );
                       }).toList(),
                     );

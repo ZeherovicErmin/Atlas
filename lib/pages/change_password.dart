@@ -51,19 +51,18 @@ Widget build(BuildContext context, WidgetRef ref) {
   }
 
   //Change password functionality
-    void changePassword() async {
-      if (newPasswordController.text == confirmPasswordController.text && newPasswordController.text.length >= 6) {
-        try {
-          await FirebaseAuth.instance.currentUser?.updatePassword(newPasswordController.text);
-          showSuccessMessage('Your password has been changed');
-          Navigator.pop(context);
-        } on FirebaseAuthException catch (e) {
-          showErrorMessage('Password is too weak');
-        }
-      } else {
-        showErrorMessage('Passwords do not match');
+  void changePassword() async {
+    if (newPasswordController.text == confirmPasswordController.text && newPasswordController.text.isNotEmpty) {
+      try {
+        await FirebaseAuth.instance.currentUser?.updatePassword(newPasswordController.text);
+        showSuccessMessage('Your password has been changed');
+      } on FirebaseAuthException catch (e) {
+        showErrorMessage(e.message ?? 'An error occurred');
       }
+    } else {
+      showErrorMessage('Passwords do not match or are too short');
     }
+  }
 
   return Scaffold(
     appBar: myAppBar4(context, ref, 'Change Password'),

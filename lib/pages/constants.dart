@@ -210,6 +210,7 @@ final Map<String, Widget> muscleIcons = {
     width: 60,
   ),
 };
+
 // Creating A map of icons for the exercise type i.e strength or cardio
 final Map<String, IconData> exerciseTypeIcons = {
   "strength": Icons.fitness_center,

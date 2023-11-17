@@ -271,12 +271,16 @@ class BarcodeLookupComb extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
-          "B a r c o d e  L o o k u p",
+          "Barcode Lookup",
           style:
               TextStyle(fontFamily: 'Open Sans', fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+        leading: const Icon(
+          null,
+        ),
       ),
       backgroundColor: Colors.white,
       body: Stack(

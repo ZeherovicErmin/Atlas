@@ -55,7 +55,7 @@ class RegisterPage extends ConsumerWidget {
     //Makes the collection for storing user habits
     void makeHabitCollection() async {
       var currentDate = DateTime.now();
-      var formattedDate = "${currentDate.month}/${currentDate.day}";
+      var formattedDate = "${currentDate.month}-${currentDate.day}";
       final FirebaseAuth auth = FirebaseAuth.instance;
       final User? user = auth.currentUser;
       final uid = user?.uid;

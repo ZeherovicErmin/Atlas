@@ -317,6 +317,22 @@ class UserProfile extends ConsumerWidget {
                           icon: const Icon(Icons.add_a_photo),
                         ),
                       ),
+                    //If the user is verified, a checkmark will appear on their profile
+                    if (user?.emailVerified == true)
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 150.0),
+                          child: Icon(
+                            Icons.check_circle,
+                            color: Colors.blue,
+                            size: 24,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
 

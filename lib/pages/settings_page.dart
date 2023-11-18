@@ -1,4 +1,6 @@
 import 'package:atlas/pages/change_password.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:atlas/main.dart';
@@ -219,10 +221,27 @@ class SettingsPage extends ConsumerWidget {
                           
                         ),
                         
-                      ])
-                ],
-              ),
-            ),
+                      ],),
+                SettingsSection(
+                    title: Text(
+                      'Account',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: themeColor,
+                      ),
+                    ),
+                    tiles: [
+                      SettingsTile(
+                        title: Text(
+                          'Delete Account',
+                          style: TextStyle(fontSize: 16, color: themeColor),
+                        ),
+                        leading: Icon(Icons.delete_forever,color: themeColor,),
+                        onPressed: (BuildContext context) {
+                          deleteUserAccount(context);
+                        }),
+                    ],),],),),
             Padding(
                 padding: const EdgeInsets.all(6),
                 child: SignoutButton(
@@ -361,5 +380,30 @@ class _DatePickerTxtState extends State<DatePickerTxt> {
         style: TextStyle(color: Colors.blue),
       ),
     );
+  }
+}
+Future<void> deleteUserAccount(BuildContext context) async{
+  //get auth details
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  // get currentUser
+  final User? user = auth.currentUser;
+
+  if (user != null)
+  {
+    try{
+      
+      FirebaseFirestore.instance.collection('Users').doc(user.uid).delete();
+      //delete account
+      await user.delete();
+      Navigator.of(context).pushReplacementNamed('/login');
+    }on FirebaseAuthException catch (e){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
+    }catch (e){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e}")));
+    
+  }
+  //User not found
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User not found")));
   }
 }

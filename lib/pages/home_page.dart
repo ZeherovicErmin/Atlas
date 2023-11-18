@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                     width: 256,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.orange,
+                      color: Colors.grey[800],
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Center(

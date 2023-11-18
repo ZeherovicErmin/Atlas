@@ -2,6 +2,7 @@
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/my_workouts.dart';
 import 'package:atlas/pages/notes.dart';
+import 'package:atlas/pages/user_profile.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,6 +78,11 @@ class FitCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //Variables
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+
     return DefaultTabController(
       initialIndex: 0,
       length: 3,
@@ -84,6 +90,50 @@ class FitCenter extends ConsumerWidget {
         backgroundColor: const Color(0xFFFAF9F6),
         //Home page for when a user logs in
         appBar: AppBar(
+            actions: [
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance.collection('Users').doc(user?.email).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  if (snapshot.hasData && snapshot.data!.exists) {
+                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    var profileImageUrl = userData['profilePicture'];
+                    if (profileImageUrl is String && profileImageUrl.isNotEmpty) {
+                      return IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const UserProfile()),
+                        );
+                      },
+                      icon: CircleAvatar(backgroundImage: NetworkImage(profileImageUrl),
+                        ),
+                      );
+                    }
+                    return IconButton(
+                      icon: const Icon(CupertinoIcons.profile_circled),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const UserProfile()),
+                        );
+                      },
+                    );
+                  }
+                  return IconButton(
+                    icon: const Icon(CupertinoIcons.profile_circled),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const UserProfile())
+                      );
+                    }
+                  );
+                }
+              )
+            ],
             centerTitle: true,
             title: const Text(
               "Fitness Center",
@@ -163,10 +213,10 @@ class FitCenter extends ConsumerWidget {
                 Tab(text: "My Workouts"),
                 Tab(
                   text: "Notes",
-                )
-              ],
-            ),
-            actions: const []),
+            )
+          ],
+        ),
+      ),
 
         body: TabBarView(
           children: [

@@ -113,7 +113,6 @@ class _HomePageState extends State<HomePage> {
     //Variables
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
-    final uid = user?.uid;
 
     //Returns App bar
     return PreferredSize(
@@ -457,20 +456,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    /*
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80.0),
-        child: FloatingActionButton(
-          onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HabitToggle()),
-              );
-            },
-            ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      */
     );
   }
 }

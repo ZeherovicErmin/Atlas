@@ -1,4 +1,3 @@
-import 'package:atlas/components/square_tile.dart';
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/main.dart';
@@ -13,10 +12,8 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // watching the provider in main.dart for user changes
-    final user = ref.watch(userProvider);
     final emailController = ref.watch(emailControllerProvider);
     final passwordController = ref.watch(passwordControllerProvider);
-    final auth = FirebaseAuth.instance;
 
     //Saves the state of dark mode being on or off
     final lightDarkTheme = ref.watch(themeProvider);

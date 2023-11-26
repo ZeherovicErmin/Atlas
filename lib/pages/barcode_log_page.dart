@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:atlas/components/feed_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

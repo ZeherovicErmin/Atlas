@@ -12,7 +12,7 @@ class ChangePassword extends ConsumerWidget {
 Widget build(BuildContext context, WidgetRef ref) {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
-  //final TextEditingController currentPasswordController = TextEditingController();
+  final TextEditingController currentPasswordController = TextEditingController();
 
   //Success Message popup
   void showErrorMessage(String message) {
@@ -50,8 +50,27 @@ Widget build(BuildContext context, WidgetRef ref) {
     );
   }
 
+  //Checks the user's current password
+  Future<bool> getCurrentPassword(String password) async {
+    var user = FirebaseAuth.instance.currentUser;
+    var authLogin = EmailAuthProvider.credential(
+      email: user!.email!,
+      password: password
+    );
+    try {
+      var firebasePassword = await user.reauthenticateWithCredential(authLogin);
+      return firebasePassword.user != null;
+    } catch (e) {
+      return false;
+    }
+  }
+
   //Change password functionality
   void changePassword() async {
+    if (!await getCurrentPassword(currentPasswordController.text)) {
+      showErrorMessage('Current password is incorrect');
+      return;
+    }
     if (newPasswordController.text == confirmPasswordController.text && newPasswordController.text.isNotEmpty) {
       try {
         await FirebaseAuth.instance.currentUser?.updatePassword(newPasswordController.text);
@@ -59,8 +78,9 @@ Widget build(BuildContext context, WidgetRef ref) {
       } on FirebaseAuthException catch (e) {
         showErrorMessage(e.message ?? 'An error occurred');
       }
-    } else {
-      showErrorMessage('Passwords do not match or are too short');
+    }
+    else {
+      showErrorMessage('Passwords do not match');
     }
   }
 
@@ -72,13 +92,11 @@ Widget build(BuildContext context, WidgetRef ref) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             //Current Password Textfield
-            /*
             MyTextField(
               controller: currentPasswordController,
               hintText: 'Enter your current password',
               obscureText: true,
             ),
-            */
 
             const SizedBox(height: 10),
 

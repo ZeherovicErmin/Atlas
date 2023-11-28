@@ -5,17 +5,21 @@ import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final servingsProvider = StateProvider<double>((ref) {
-  return 1.0;
+StateProvider<double> servingsProvider = StateProvider<double>((ref) {
+  return 1;
 });
 
 class RecipeDetails extends ConsumerWidget {
-  RecipeDetails({Key? key, required this.recipe}) : super(key: key);
+  RecipeDetails({Key? key, required this.recipe}) : super(key: key) {
+    servingsProvider = StateProvider<double>((ref) {
+      return recipe.servings + 0.0;
+    });
+    servingsController = TextEditingController(text: '${recipe.servings}');
+  }
   final Result recipe; //recipe object
 
   //Text controller used to store value from recipe search bar
-  final TextEditingController servingsController =
-      TextEditingController(text: '1');
+  TextEditingController servingsController = TextEditingController(text: "1");
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +46,6 @@ class RecipeDetails extends ConsumerWidget {
       backgroundColor: Color.fromARGB(255, 255, 253, 251),
     );
   }
-
 
   Widget recipeInformation(WidgetRef ref) {
     //Recipe calories
@@ -71,51 +74,54 @@ class RecipeDetails extends ConsumerWidget {
             children: [
               //Recipe Calories
               Container(
-                margin: EdgeInsets.only(right: 3),
-                padding: EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(25))),
-                child: Text("Calories: $calories",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 15))),
+                  margin: EdgeInsets.only(right: 3),
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Text("Calories: $calories",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15))),
               //Recipe Servings
               Container(
-                margin: EdgeInsets.only(right: 10),
-                padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(25))),
-                child:  Text("Servings: ",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle( color: Colors.black,
-                      fontWeight: FontWeight.bold, fontSize: 15, height: 2.0))),
+                  margin: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
+                  decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Text("Servings: ",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          height: 2.0))),
               SizedBox(
                   width: 30,
                   child: TextFormField(
-                    //Controller stores value entered by user
-                    controller: servingsController,
-                    //Checks if value is valid, if not: show error message
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          int.parse(value) <= 0) {
-                        return 'Please Enter A Valid Number';
-                      }
-                      return null;
-                    },
-                    onFieldSubmitted: (value) => {
-                      //convert user input from string to number and save it
-                      ref.read(servingsProvider.notifier).state =
-                          double.parse(value)
-                    },
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    keyboardType: const TextInputType.numberWithOptions(
-                        signed: true, decimal: true)
-                  )),
+                      //Controller stores value entered by user
+                      controller: servingsController,
+                      //Checks if value is valid, if not: show error message
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            int.parse(value) <= 0) {
+                          return 'Please Enter A Valid Number';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (value) => {
+                            //convert user input from string to number and save it
+                            ref.read(servingsProvider.notifier).state =
+                                double.parse(value)
+                          },
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: true, decimal: true)
+                          )),
               //Recipe Ready Time
               Container(
                   padding: EdgeInsets.all(7),

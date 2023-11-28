@@ -161,11 +161,11 @@ onShare(Result recipe, BuildContext context) {
       builder: (BuildContext context) {
         return Consumer(builder: (context, ref, _) {
           return Dialog(
-            insetPadding: EdgeInsets.symmetric(vertical: 300),
+            insetPadding: EdgeInsets.only(top: 250, bottom: 325, left: 50, right: 50),
             child: Column(children: [
-              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10)),
+              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10), child:
               //Recipe title
-              Text("Post the recipe \"${recipe.title}\"?"),
+              Text("Post the recipe \"${recipe.title}\"?", style: TextStyle(fontSize: 15))),
               //Post button
               TextButton(
                 onPressed: () {

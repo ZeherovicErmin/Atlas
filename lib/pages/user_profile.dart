@@ -15,10 +15,6 @@ import 'package:atlas/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-//import 'image'
-
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
 
@@ -107,44 +103,6 @@ class UserProfile extends ConsumerWidget {
           saveProfile(Uint8List.fromList(imageBytes));
         }
       }
-    }
-
-    //Signs the user out when called
-    void signOut() {
-      FirebaseAuth.instance.signOut();
-      runApp(
-        ProviderScope(
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: LoginPage(),
-            routes: {'/home': (context) => LoginPage()},
-          ),
-        ),
-      );
-    }
-
-    //Shows the settings page when called
-    void showSettings(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Settings'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: () async {
-                    await ref.read(signOutProvider);
-                    Navigator.of(context).pushReplacementNamed('/settings');
-                  },
-                  child: const Text("Sign out Button"),
-                ),
-              ],
-            ),
-          );
-        },
-      );
     }
 
     //App bar for the user profile page
@@ -315,6 +273,22 @@ class UserProfile extends ConsumerWidget {
                           color: themeColor,
                           onPressed: selectImage,
                           icon: const Icon(Icons.add_a_photo),
+                        ),
+                      ),
+                    //If the user is verified, a checkmark will appear on their profile
+                    if (user?.emailVerified == true)
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 150.0),
+                          child: Icon(
+                            Icons.check_circle,
+                            color: Colors.blue,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ],

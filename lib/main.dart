@@ -1,4 +1,10 @@
 //Atlas Fitness App CSC 4996
+//Authors:
+//Matthew McGowan
+//Ermin Zeherovic
+//Hussein Daher
+//Ali Chowdhury
+//Ayesha Helal
 import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/home_page.dart';

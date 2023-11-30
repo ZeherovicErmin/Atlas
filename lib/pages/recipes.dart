@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/pages/custom-recipes.dart';
 import 'package:atlas/pages/saved_recipes.dart';
+import 'package:atlas/pages/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -44,6 +46,10 @@ class Recipes extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //Variables
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
     //recipe provider state getter
     final recipes = ref.watch(resultProvider).results;
     return DefaultTabController(
@@ -53,6 +59,50 @@ class Recipes extends ConsumerWidget {
           resizeToAvoidBottomInset: false,
           backgroundColor: const Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
+            actions: [
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance.collection('Users').doc(user?.email).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  if (snapshot.hasData && snapshot.data!.exists) {
+                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    var profileImageUrl = userData['profilePicture'];
+                    if (profileImageUrl is String && profileImageUrl.isNotEmpty) {
+                      return IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const UserProfile()),
+                        );
+                      },
+                      icon: CircleAvatar(backgroundImage: NetworkImage(profileImageUrl),
+                        ),
+                      );
+                    }
+                    return IconButton(
+                      icon: const Icon(CupertinoIcons.profile_circled),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const UserProfile()),
+                        );
+                      },
+                    );
+                  }
+                  return IconButton(
+                    icon: const Icon(CupertinoIcons.profile_circled),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const UserProfile())
+                      );
+                    }
+                  );
+                }
+              )
+            ],
               leading: const Icon(
                 null,
               ),

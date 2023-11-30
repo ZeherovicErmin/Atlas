@@ -186,7 +186,7 @@ class GetProfile extends StatelessWidget {
 
                   //Username
                   StreamBuilder<String>(
-                    stream: fetchUsername(email: currentUser.email),
+                    stream: fetchUsername(email: username),
                     builder: (context, usernameSnapshot) {
                       if (usernameSnapshot.hasData) {
                         return Text(
@@ -227,6 +227,8 @@ class GetProfile extends StatelessWidget {
                         text: userData['bio']?.toString() ?? '',
                         sectionName: 'Bio',
                       ),
+
+                      const SizedBox(height: 10),
                     ],
                   ),
 
@@ -297,6 +299,7 @@ class GetProfile extends StatelessWidget {
                                         itemCount: postsDocs.length,
                                         itemBuilder: (context, index) {
                                           final post = postsDocs[index];
+
                                           final barcodeDataDynamic =
                                               post['barcodeData'];
                                           Map<String, dynamic> barcodeDataMap =
@@ -308,10 +311,18 @@ class GetProfile extends StatelessWidget {
                                             print(
                                                 'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
                                           }
+
+                                          final recipe = post
+                                                  .data()
+                                                  .toString()
+                                                  .contains('recipe')
+                                              ? post.get('recipe')
+                                              : '';
+                                          Map<String, dynamic> emptyMap =
+                                              Map<String, dynamic>();
                                           return StreamBuilder<String>(
                                             stream: fetchUsername(
-                                              email: post['UserEmail'],
-                                            ),
+                                                email: post['UserEmail']),
                                             builder:
                                                 (context, usernameSnapshot) {
                                               if (usernameSnapshot.hasData) {
@@ -340,10 +351,15 @@ class GetProfile extends StatelessWidget {
                                                   difficulty: post[
                                                           'ExerciseDifficulty'] ??
                                                       '',
+                                                  gif:
+                                                      post['ExerciseGif'] ?? '',
                                                   instructions: post[
                                                           'ExerciseInstructions'] ??
                                                       '',
                                                   imageUrl: post['postImage'],
+                                                  recipe: recipe == ''
+                                                      ? emptyMap
+                                                      : recipe,
                                                 );
                                               } else if (snapshot.hasError) {
                                                 return Center(

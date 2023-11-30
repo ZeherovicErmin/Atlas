@@ -41,11 +41,11 @@ class NotificationService {
       requestSoundPermission: true,
       onDidReceiveLocalNotification: (id, title, body, payload) async {},
     );
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) async {});
+    // var initializationSettings = InitializationSettings(
+    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    // await notificationsPlugin.initialize(initializationSettings,
+    //     onDidReceiveNotificationResponse:
+    //         (NotificationResponse notificationResponse) async {});
 
   void scheduleDailyNoonNotification(NotificationService notificationService) async {
   DateTime now = DateTime.now();

@@ -3,10 +3,17 @@
 </div>
 
 <h1>Description</h1>
+Atlas Fitness is a fitness application built with the Flutter framework. This application tailors users needs in their fitness journey. Designed with personalization and ease of use in mind, Atlas delivers a variety of tools and features to help users track their habits, search for recipes, scan nutritional food products, plan workouts, and achieve their health goals.
 
-A new Flutter project.
+## Features
+<p><b>Workout Planning</b>: Discover, save, and plan workouts</p>
+<p><b>Barcode Scanner</b>: Scan nutritional barcodes</p>
+<p><b>Recipes</b>: Search and create recipes</p>
+<p><b>Habit Tracker</b>: Track habits pertaining to user's goals</p>
+<p><b>Feed</b>: Share and post content related to progress, recipes, workouts</p>
 
 ## Getting Started
+<h3><b>Prerequisites</b></h3>
 
 This project is a starting point for a Flutter application.
 

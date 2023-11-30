@@ -76,6 +76,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
       body: Container (
       decoration: const BoxDecoration (
       ),

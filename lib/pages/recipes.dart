@@ -196,13 +196,13 @@ class Recipes extends ConsumerWidget {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.only(top: 15),
           prefixIcon: Icon(Icons.search),
-          prefixIconColor: Colors.orangeAccent,
+          prefixIconColor: Colors.blueAccent,
           suffixIcon: IconButton(
               icon: Icon(Icons.send),
               //Use onSubmit to activate search, onSubmitTEST to deactivate search
               //and use test data
               onPressed: () => onSubmit(context, ref)),
-          suffixIconColor: Colors.orangeAccent,
+          suffixIconColor: Colors.blueAccent,
           filled: true,
           fillColor: Color(0xFFFAF9F6),
           //Placeholder message in search bar directing user
@@ -220,8 +220,8 @@ class Recipes extends ConsumerWidget {
           max: 5000,
           initialValue: const RangeValues(0, 0),
           divisions: 50,
-          activeColor: Colors.orange,
-          inactiveColor: const Color.fromARGB(155, 255, 153, 0),
+          activeColor: Colors.blue,
+          inactiveColor: Color.fromARGB(155, 0, 8, 255),
           labels: RangeLabels(calorieRange.start.round().toString(),
               calorieRange.end.round().toString()),
           decoration: const InputDecoration(labelText: "Calorie Range"),
@@ -242,7 +242,7 @@ class Recipes extends ConsumerWidget {
           FormBuilderChipOption(value: 'peanutFree', child: Text("Peanut Free"))
         ],
         decoration: const InputDecoration(labelText: "Dietary Restrictions"),
-        selectedColor: Colors.orange,
+        selectedColor: Colors.blue,
         checkmarkColor: Colors.white,
         autovalidateMode: AutovalidateMode.always,
         validator: (value) {
@@ -325,7 +325,7 @@ class Recipes extends ConsumerWidget {
                                 style: ButtonStyle(
                                     backgroundColor:
                                         MaterialStateProperty.all<Color>(
-                                            Color.fromARGB(255, 255, 162, 23))),
+                                            Colors.blueAccent)),
                                 onPressed: () =>
                                     navigateToRecipeDetails(context, recipe),
                                 child: const Text(
@@ -340,7 +340,7 @@ class Recipes extends ConsumerWidget {
                                 child: CircleAvatar(
                                     radius: 20,
                                     backgroundColor:
-                                        const Color.fromARGB(255, 255, 176, 58),
+                                        Color.fromARGB(255, 58, 127, 255),
                                     child: Material(
                                         color: const Color.fromARGB(
                                             0, 255, 255, 255),
@@ -356,7 +356,7 @@ class Recipes extends ConsumerWidget {
                                 child: CircleAvatar(
                                     radius: 20,
                                     backgroundColor:
-                                        const Color.fromARGB(255, 255, 176, 58),
+                                        Color.fromARGB(255, 58, 127, 255),
                                     child: IconButton(
                                       onPressed: onPressedFunction,
                                       icon: const Icon(
@@ -609,7 +609,7 @@ class Recipes extends ConsumerWidget {
                           child: ElevatedButton(
                               style: ButtonStyle(
                                   backgroundColor:
-                                      MaterialStatePropertyAll(Colors.orange)),
+                                      MaterialStatePropertyAll(Colors.blue)),
                               child: Text(ingredient,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(

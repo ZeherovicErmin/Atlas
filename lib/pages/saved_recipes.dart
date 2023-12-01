@@ -85,8 +85,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty
-                                                    .all<Color>(Color.fromARGB(
-                                                        255, 255, 162, 23))),
+                                                    .all<Color>(const Color.fromARGB(255, 0, 136, 204))),
                                         onPressed: () =>
                                             navigateToRecipeDetails(
                                                 context, recipe),
@@ -102,8 +101,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
+                                                const Color.fromARGB(255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -120,8 +118,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
+                                                const Color.fromARGB(255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),

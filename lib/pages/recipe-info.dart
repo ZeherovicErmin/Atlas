@@ -16,17 +16,17 @@ class RecipeInfo extends ConsumerWidget {
             child: Scaffold(
                 body: Column(children: [
               Container(
-                  color: Colors.orange,
-                  child: TabBar(
+                  color: Colors.blue,
+                  child: const TabBar(
                       labelColor: Colors.black,
                       indicatorColor: Colors.white,
-                      tabs: const [
+                      tabs: [
                         Tab(text: "Ingredients"),
                         Tab(text: "Instructions")
                       ])),
               Expanded(
                   child: Container(
-                      color: Color.fromARGB(115, 255, 153, 0),
+                      color: Color.fromARGB(115, 0, 38, 255),
                       child: TabBarView(children: [
                         recipeIngredients(recipe, ref),
                         recipeInstructions(recipe)
@@ -59,7 +59,7 @@ class RecipeInfo extends ConsumerWidget {
               return ListTile(
                   title: Text(ingredientFormatted,
                       textAlign: TextAlign.left,
-                      style: const TextStyle(fontWeight: FontWeight.bold)));
+                      style: const TextStyle(fontWeight: FontWeight.bold,)));
             });
   }
 

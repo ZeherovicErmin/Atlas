@@ -1,3 +1,4 @@
+//Author: Matthew McGowan
 import 'package:flutter/material.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';

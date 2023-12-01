@@ -1,3 +1,4 @@
+//Author: Matthew McGowan
 import 'package:flutter/material.dart';
 import 'package:atlas/pages/register_page.dart';
 

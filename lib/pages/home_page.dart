@@ -1,3 +1,4 @@
+//Author: Matthew McGowan
 import 'package:atlas/pages/habit_card_build.dart';
 import 'package:atlas/pages/habit_toggle.dart';
 import 'package:atlas/pages/user_profile.dart';

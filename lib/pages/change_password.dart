@@ -1,3 +1,4 @@
+//Author: Matthew McGowan
 import 'package:atlas/components/my_button2.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:atlas/pages/constants.dart';

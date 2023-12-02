@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //Atlas Fitness App CSC 4996
 // Author : Ermin Zeherovic
@@ -150,7 +151,8 @@ class _SavedExercisesState extends State<SavedExercises> {
                                 // Creating a button to share exercises to the feed
                                 IconButton(
                                   onPressed: () {
-                                    onShare(exerciseData, currentUser);
+                                    _showMessageInputDialog(
+                                        context, exerciseData, currentUser);
                                   },
                                   // Delete from firebase and my workouts
                                   icon: const Icon(
@@ -244,8 +246,52 @@ class _SavedExercisesState extends State<SavedExercises> {
     }
   }
 
+// A function to enable adding a message when sharing workouts
+  Future<void> _showMessageInputDialog(BuildContext context,
+      Map<String, dynamic> exerciseData, User currentUser) async {
+    // Initalizing an empty string
+    String message = '';
+
+    // Showing a dialog message
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add a Message'),
+
+          // Appending the message to the value we set it to
+          content: TextField(
+            onChanged: (value) {
+              message = value;
+            },
+
+            // Adding hint text to the text box
+            decoration: InputDecoration(hintText: 'Enter your message here'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Using the onShare function previously created to share the exercise with the message we have created
+                onShare(exerciseData, currentUser, message);
+                Navigator.of(context).pop();
+              },
+              child: Text('Share'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Creating a function to share workouts to the feed page
-  void onShare(Map<String, dynamic> exerciseData, User currentUser) {
+  void onShare(Map<String, dynamic> exerciseData, User currentUser,
+      String message) async {
     // Gathering the exercise details to share
     String name = exerciseData['exercise']['name'] ?? '';
     String type = exerciseData['exercise']['type'] ?? '';
@@ -256,20 +302,36 @@ class _SavedExercisesState extends State<SavedExercises> {
     String instructions = exerciseData['exercise']['instructions'] ?? '';
 
     // Creating a post in the feed collection with exercise details
-    FirebaseFirestore.instance.collection("User Posts").add({
-      'Message': "Here's a cool workout!",
-      'UserEmail': currentUser.email,
-      'TimeStamp': Timestamp.now(),
-      'ExerciseName': name,
-      'ExerciseType': type,
-      'ExerciseMuscle': muscle,
-      'ExerciseEquipment': equipment,
-      'ExerciseDifficulty': difficulty,
-      'ExerciseGif': gif,
-      'ExerciseInstructions': instructions,
-      'postImage': '',
-      'barcodeData': {},
-      'Likes': [],
-    });
+    try {
+      await FirebaseFirestore.instance.collection("User Posts").add({
+        'Message': message,
+        'UserEmail': currentUser.email,
+        'TimeStamp': Timestamp.now(),
+        'ExerciseName': name,
+        'ExerciseType': type,
+        'ExerciseMuscle': muscle,
+        'ExerciseEquipment': equipment,
+        'ExerciseDifficulty': difficulty,
+        'ExerciseGif': gif,
+        'ExerciseInstructions': instructions,
+        'postImage': '',
+        'barcodeData': {},
+        'Likes': [],
+      });
+
+      // Adding a snackbar to notify the user an exercise has been succesfully shared
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Exercise Shared to Feed: $name'),
+        ),
+      );
+    } catch (e) {
+      print('Error sharing exercise: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error sharing exercise'),
+        ),
+      );
+    }
   }
 }

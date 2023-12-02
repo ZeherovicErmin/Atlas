@@ -8,6 +8,8 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+//Atlas Fitness App CSC 4996
+// Author : Ermin Zeherovic
 class SavedExercises extends StatefulWidget {
   // Creating a variable to pass a collection name as a parameter
   final String collectionName;

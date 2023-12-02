@@ -1,4 +1,5 @@
 // The page that will allow users to edit the notes they create
+// Author: Ermin Zeherovic
 import 'package:atlas/pages/notes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

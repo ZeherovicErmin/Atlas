@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'saved_workouts.dart';
 
+//Atlas Fitness App CSC 4996
+// Author : Ermin Zeherovic
+
 // The My Workouts tab which will hold users saved exercises in a digestible workout format
 
 class DiscoverPage extends ConsumerWidget {

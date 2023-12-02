@@ -61,6 +61,7 @@ class BarcodeLogPage extends ConsumerWidget {
     // Round to one decimal place and format as a string
     return value.toStringAsFixed(1);
   }
+
 //AC
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -630,11 +631,57 @@ class BarcodeLogPage extends ConsumerWidget {
           ),
         ),
       );
+// Creating a function to share barcodes with messages like sharing exercises
+
+  Future<void> shareBarcodeToFeed(
+      Map<String, dynamic> data, BuildContext context) async {
+    // Creating an empty string
+    String message = '';
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add a Message'),
+
+          // Appending the message to the value we set it to
+          content: TextField(
+            onChanged: (value) {
+              message = value;
+            },
+
+            // Adding hint text to the text box
+            decoration: InputDecoration(hintText: 'Enter your message here'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Using the onShare function previously created to share the barcode with the message we have creat
+                Navigator.of(context).pop();
+                shareBarcodeToFeedwithMessage(data, context, message);
+              },
+              child: Text('Share'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   //sharing posts
-  void shareBarcodeToFeed(Map<String, dynamic> data, BuildContext context) {
+  void shareBarcodeToFeedwithMessage(
+      Map<String, dynamic> data, BuildContext context, String message) async {
+    // Adding the message to a firestore document
+    data['Message'] = message;
+
     FirebaseFirestore.instance.collection('User Posts').add({
-      'Message': 'Just scanned this barcode! Check it out!',
+      'Message': message,
       'UserEmail': currentUser.email,
       'TimeStamp': Timestamp.now(),
       'barcodeData': data,

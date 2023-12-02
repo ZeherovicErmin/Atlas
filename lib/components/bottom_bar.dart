@@ -4,7 +4,6 @@ import 'package:atlas/pages/feed.dart';
 import 'package:atlas/pages/fitness_center%20redesign.dart';
 
 import 'package:atlas/pages/home_page.dart';
-import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/newFeed.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/user_profile.dart';

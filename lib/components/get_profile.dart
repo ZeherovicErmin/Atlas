@@ -49,89 +49,46 @@ class GetProfile extends StatelessWidget {
       );
     }
 
-    Future<void> editField(String field) async {
-      TextEditingController username = TextEditingController();
-
-      String? newValue = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Colors.black,
-          title: Text(
-            "Edit $field",
-            style: const TextStyle(color: Colors.white),
-          ),
-          content: TextField(
-            controller: username,
-            autofocus: true,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: "Enter new $field",
-              hintStyle: const TextStyle(color: Colors.white),
-            ),
-          ),
-          actions: [
-            // Cancel button
-            TextButton(
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-
-            // Save button
-            TextButton(
-              child: const Text(
-                'Save',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () => Navigator.of(context).pop(username.text),
-            ),
-          ],
-        ),
-      );
-
-      // Update in Firestore
-      if (newValue != null && newValue.trim().isNotEmpty) {
-        // Only update if there is something in the text field
-        await usersCollection.doc(currentUser.email).update({field: newValue});
-      }
-    }
-
     Stream<String> fetchUsername({String? email}) {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
+      if (email != null && email.isNotEmpty) {
         return FirebaseFirestore.instance
             .collection("Users")
             .doc(email)
             .snapshots()
             .map((snapshot) {
-          final userData = snapshot.data() as Map<String, dynamic>;
-          return userData['username']?.toString() ?? '';
+          final userData = snapshot.data() as Map<String, dynamic>?;
+          return userData?['username']?.toString() ?? 'Unknown Username';
         });
       }
-      return Stream.value('');
+      return Stream.value('Unknown Username');
     }
 
     return Scaffold(
       //backgroundColor: themeColor2,
-      appBar: userProfileAppBar(context, 'User Profile: $username'),
-      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      appBar: userProfileAppBar(context, ''),
+      body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")
             .doc(username)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Return a widget for loading
+            return const CircularProgressIndicator(); // Loading state
           }
 
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Text(
-                'User data not found for username: $username.'); // Return a widget when no data is found
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}'); // Error handling
           }
 
-          final userData = snapshot.data!.data();
+          // if (!snapshot.hasData || snapshot.data?.data() == null) {
+          //   return const Text('User data not found for username: $username');
+          // }
+
+          final userData = snapshot.data!.data() as Map<String, dynamic>?;
+          if (userData == null) {
+            return const Center(child: Text('User data is null.'));
+          }
+
           // ignore: unnecessary_null_comparison
           if (userData != null) {
             //starts the user profile page
@@ -188,7 +145,8 @@ class GetProfile extends StatelessWidget {
                   StreamBuilder<String>(
                     stream: fetchUsername(email: username),
                     builder: (context, usernameSnapshot) {
-                      if (usernameSnapshot.hasData) {
+                      if (usernameSnapshot.hasData &&
+                          usernameSnapshot.data!.isNotEmpty) {
                         return Text(
                           usernameSnapshot.data.toString().trim(),
                           textAlign: TextAlign.center,
@@ -206,16 +164,23 @@ class GetProfile extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // User details
-                  ExpansionTile(
-                    title: const Text(
-                      'My Details',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    collapsedIconColor: Colors.blue,
-                    iconColor: Colors.white,
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.only(
+                            left: 26.0), // Adjust the padding as needed
+                        child: Text(
+                          'My Details',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight:
+                                  FontWeight.bold, // Makes the text bold
+                              fontSize: 18),
+                        ),
+                      ),
+
                       // Username
                       MyTextBox2(
                         text: userData['username']?.toString() ?? '',
@@ -230,161 +195,6 @@ class GetProfile extends StatelessWidget {
 
                       const SizedBox(height: 10),
                     ],
-                  ),
-
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ExpansionTile(
-                          title: const Text(
-                            'My Posts',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                          collapsedIconColor: Colors.blue,
-                          iconColor: Colors.white,
-                          children: [
-                            StreamBuilder<
-                                DocumentSnapshot<Map<String, dynamic>>>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("Users")
-                                  .doc(username)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator(); // Return a widget for loading
-                                }
-
-                                if (!snapshot.hasData ||
-                                    snapshot.data == null) {
-                                  return Text(
-                                      'User data not found for username: $username.'); // Return a widget when no data is found
-                                }
-                                final userDoc = snapshot.data!;
-                                final userEmail = userDoc['UserEmail'];
-
-                                return FutureBuilder<QuerySnapshot>(
-                                  future: FirebaseFirestore.instance
-                                      .collection("User Posts")
-                                      .where('UserEmail', isEqualTo: userEmail)
-                                      .get(),
-                                  builder: (context, postsSnapshot) {
-                                    if (postsSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-
-                                    if (postsSnapshot.hasError) {
-                                      return Center(
-                                        child: Text(
-                                            'Error: ${postsSnapshot.error}'),
-                                      );
-                                    }
-
-                                    final postsDocs = postsSnapshot.data!.docs;
-
-                                    if (postsDocs.isEmpty) {
-                                      return const Center(
-                                        child: Text('No posts found.'),
-                                      );
-                                    }
-
-                                    return SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.6,
-                                      child: ListView.builder(
-                                        itemCount: postsDocs.length,
-                                        itemBuilder: (context, index) {
-                                          final post = postsDocs[index];
-
-                                          final barcodeDataDynamic =
-                                              post['barcodeData'];
-                                          Map<String, dynamic> barcodeDataMap =
-                                              barcodeDataDynamic
-                                                  as Map<String, dynamic>;
-                                          if (barcodeDataMap.isNotEmpty) {
-                                            barcodeDataMap = barcodeDataDynamic;
-                                          } else {
-                                            print(
-                                                'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
-                                          }
-
-                                          final recipe = post
-                                                  .data()
-                                                  .toString()
-                                                  .contains('recipe')
-                                              ? post.get('recipe')
-                                              : '';
-                                          Map<String, dynamic> emptyMap =
-                                              Map<String, dynamic>();
-                                          return StreamBuilder<String>(
-                                            stream: fetchUsername(
-                                                email: post['UserEmail']),
-                                            builder:
-                                                (context, usernameSnapshot) {
-                                              if (usernameSnapshot.hasData) {
-                                                return FeedPost(
-                                                  message: post['Message'],
-                                                  user: usernameSnapshot.data!,
-                                                  postId: post.id,
-                                                  barcodeData: barcodeDataMap,
-                                                  likes: List<String>.from(
-                                                      post['Likes'] ?? []),
-                                                  time: formatDate(
-                                                      post['TimeStamp']),
-                                                  email: post['UserEmail'],
-                                                  exerciseName:
-                                                      post['ExerciseName'] ??
-                                                          '',
-                                                  exerciseType:
-                                                      post['ExerciseType'] ??
-                                                          '',
-                                                  muscle:
-                                                      post['ExerciseMuscle'] ??
-                                                          '',
-                                                  equipment: post[
-                                                          'ExerciseEquipment'] ??
-                                                      '',
-                                                  difficulty: post[
-                                                          'ExerciseDifficulty'] ??
-                                                      '',
-                                                  gif:
-                                                      post['ExerciseGif'] ?? '',
-                                                  instructions: post[
-                                                          'ExerciseInstructions'] ??
-                                                      '',
-                                                  imageUrl: post['postImage'],
-                                                  recipe: recipe == ''
-                                                      ? emptyMap
-                                                      : recipe,
-                                                );
-                                              } else if (snapshot.hasError) {
-                                                return Center(
-                                                  child: Text(
-                                                      'Error:${snapshot.error}'),
-                                                );
-                                              }
-
-                                              return const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),

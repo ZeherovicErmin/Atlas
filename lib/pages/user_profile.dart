@@ -15,6 +15,7 @@ import 'package:atlas/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:atlas/pages/settings_page.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+
 // Riverpod Provider
 final profilePictureProvider = StateProvider<Uint8List?>((ref) => null);
 
@@ -51,7 +52,7 @@ class UserProfile extends ConsumerWidget {
     //Holds the opposite theme color for the text
     final themeColor = lightDarkTheme ? Colors.white : Colors.black;
     final themeColor2 =
-        lightDarkTheme ? Color.fromARGB(255, 18, 18, 18) : Colors.white;
+        lightDarkTheme ? const Color.fromARGB(255, 18, 18, 18) : Colors.white;
 
     void saveProfile(Uint8List imageBytes) async {
       //holds the Uint8List of pfp provider
@@ -213,11 +214,11 @@ class UserProfile extends ConsumerWidget {
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Return a widget for loading state
+            return const CircularProgressIndicator(); // Return a widget for loading state
           }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            return Text(
+            return const Text(
                 'User data not found.'); // Return a widget when no data is found
           }
 
@@ -249,7 +250,7 @@ class UserProfile extends ConsumerWidget {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               // Show loading indicator while the future is being resolved
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             } else if (snapshot.hasError ||
                                 !snapshot.hasData ||
                                 snapshot.data == null) {
@@ -275,22 +276,22 @@ class UserProfile extends ConsumerWidget {
                           icon: const Icon(Icons.add_a_photo),
                         ),
                       ),
-                    //If the user is verified, a checkmark will appear on their profile
-                    if (user?.emailVerified == true)
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 150.0),
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.blue,
-                            size: 24,
+                      //If the user is verified, a checkmark will appear on their profile
+                      if (user?.emailVerified == true)
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.only(left: 150.0),
+                            child: Icon(
+                              Icons.check_circle,
+                              color: Colors.blue,
+                              size: 24,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
 
@@ -341,6 +342,8 @@ class UserProfile extends ConsumerWidget {
                         sectionName: 'Bio',
                         onPressed: () => editField('bio'),
                       ),
+
+                      const SizedBox(height: 10),
                     ],
                   ),
 
@@ -400,6 +403,15 @@ class UserProfile extends ConsumerWidget {
                                         print(
                                             'Unexpected type for barcodeData: ${barcodeDataDynamic.runtimeType}');
                                       }
+
+                                      final recipe = post
+                                              .data()
+                                              .toString()
+                                              .contains('recipe')
+                                          ? post.get('recipe')
+                                          : '';
+                                      Map<String, dynamic> emptyMap =
+                                          Map<String, dynamic>();
                                       return StreamBuilder<String>(
                                         stream: fetchUsername(
                                             email: post['UserEmail']),
@@ -432,6 +444,8 @@ class UserProfile extends ConsumerWidget {
                                                       'ExerciseInstructions'] ??
                                                   '',
                                               imageUrl: post['postImage'],
+                                              recipe: recipe == '' ? emptyMap : recipe,
+
                                             );
                                           } else if (snapshot.hasError) {
                                             return Center(
@@ -486,9 +500,9 @@ class UserProfile extends ConsumerWidget {
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: const Text('Cancel'),
           isDefaultAction: true,
           onPressed: () => Navigator.pop(context, null),
+          child: const Text('Cancel'),
         ),
       ),
     );

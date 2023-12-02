@@ -3,6 +3,7 @@ import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';
 import 'package:atlas/components/delete_button.dart';
 import 'package:atlas/components/editPostButton.dart';
+import 'package:atlas/components/get_profile.dart';
 import 'package:atlas/components/like_button.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/helper/time_stamp.dart';
@@ -123,7 +124,7 @@ class _FeedPostState extends State<FeedPost> {
                         return CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.grey.shade300,
-                          child: CircularProgressIndicator(),
+                          child: const CircularProgressIndicator(),
                         );
                       }
                       if (snapshot.hasData && snapshot.data != null) {
@@ -135,21 +136,34 @@ class _FeedPostState extends State<FeedPost> {
                       return CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.grey.shade300,
-                        child: Icon(Icons.account_circle,
+                        child: const Icon(Icons.account_circle,
                             size: 40, color: Colors.grey),
                       );
                     },
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.user.trim(),
-                        style: const TextStyle(
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to the user's profile when the username is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GetProfile(username: widget.email),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          widget.user.trim(),
+                          style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                       //Timestamp
                       Text(
@@ -197,7 +211,7 @@ class _FeedPostState extends State<FeedPost> {
                         child: PhotoView(
                           imageProvider:
                               CachedNetworkImageProvider(widget.imageUrl),
-                          backgroundDecoration: BoxDecoration(
+                          backgroundDecoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
                           minScale: PhotoViewComputedScale.contained,
@@ -314,11 +328,11 @@ class _FeedPostState extends State<FeedPost> {
         Visibility(
           visible: widget.recipe != null && widget.recipe!.isNotEmpty,
           child: Padding(
-              padding: EdgeInsets.only(left: 110, top: 30),
+              padding: const EdgeInsets.only(left: 110, top: 30),
               child: ElevatedButton(
                 onPressed: () => navigateToRecipeDetails(context,
                     Result.fromJson(widget.recipe as Map<String, dynamic>)),
-                style: ButtonStyle(
+                style: const ButtonStyle(
                     padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
                 child:
                     const Text("View Recipe", style: TextStyle(fontSize: 15)),
@@ -346,161 +360,6 @@ class _FeedPostState extends State<FeedPost> {
                 child: fitdesign(),
               )),
 
-        //delete button
-        //  if (currentUser.email == widget.email)
-        //    DeleteButton(onTap: deletePost),
-
-        // Align(
-        //   alignment: Alignment.topRight,
-        //   child: currentUser.email == widget.email
-        //       ? DeleteButton(onTap: deletePost)
-        //       : const SizedBox(),
-        // ),
-
-        //edit post button
-        // Align(
-        //   alignment: Alignment.topRight,
-        //   child: currentUser.email == widget.email
-        //       ? editButton(
-        //           onTap: () async {
-        //             // Check if there are comments
-        //             bool hasComments = await checkForComments();
-
-        //             BuildContext dialogContext = context;
-
-        //             if (hasComments) {
-        //               // Show a message or take any other action
-        //               // ignore: use_build_context_synchronously
-        //               showDialog(
-        //                 context: dialogContext,
-        //                 builder: (context) => AlertDialog(
-        //                   title: const Text("Cannot Edit"),
-        //                   content: const Text(
-        //                       "There are comments on this post. You cannot edit it."),
-        //                   actions: [
-        //                     TextButton(
-        //                       onPressed: () => Navigator.pop(context),
-        //                       child: const Text("OK"),
-        //                     ),
-        //                   ],
-        //                 ),
-        //               );
-        //             } else {
-        //               // Allow editing if there are no comments
-        //               editPost();
-        //             }
-        //           },
-        //         )
-        //       : const SizedBox(),
-        // ),
-
-        const SizedBox(height: 20),
-
-        // buttons
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     //LIKE
-        //     Column(
-        //       children: [
-        //         //like button
-        //         LikeButton(
-        //           isLiked: isLiked,
-        //           onTap: toggleLike,
-        //         ),
-
-        //         const SizedBox(height: 5),
-
-        //         //like count
-        //         Text(
-        //           widget.likes.length.toString(),
-        //           style: const TextStyle(color: Colors.grey),
-        //         ),
-        //       ],
-        //     ),
-
-        //     const SizedBox(width: 15),
-
-        //     //COMMENT
-        //     Column(
-        //       children: [
-        //         //comment button
-        //         CommentButton(onTap: showCommentDialog),
-
-        //         const SizedBox(height: 5),
-
-        //         //comment count
-        //         StreamBuilder<QuerySnapshot>(
-        //           stream: FirebaseFirestore.instance
-        //               .collection("User Posts")
-        //               .doc(widget.postId)
-        //               .collection("Comments")
-        //               .snapshots(),
-        //           builder: (context, snapshot) {
-        //             if (snapshot.hasData) {
-        //               //Calculate the comment count
-        //               final commentCount = snapshot.data?.docs.length;
-        //               return Text(
-        //                 commentCount.toString(),
-        //                 style: const TextStyle(color: Colors.grey),
-        //               );
-        //             } else {
-        //               // show a loading indicator while fetching data
-        //               return const CircularProgressIndicator();
-        //             }
-        //           },
-        //         )
-        //       ],
-        //     ),
-        //   ],
-        // ),
-
-        // const SizedBox(height: 20),
-
-        // //comments under the post
-        // Column(
-        //   children: [
-        //     ExpansionTile(
-        //       backgroundColor: Colors.grey[200],
-        //       title: Text('View Comments',
-        //           style: TextStyle(color: Colors.grey[500])),
-        //       children: [
-        //         StreamBuilder<QuerySnapshot>(
-        //           stream: FirebaseFirestore.instance
-        //               .collection("User Posts")
-        //               .doc(widget.postId)
-        //               .collection("Comments")
-        //               .orderBy("CommentTime", descending: true)
-        //               .snapshots(),
-        //           builder: (context, snapshot) {
-        //             //show loading circle if theres no data
-        //             if (!snapshot.hasData) {
-        //               return const Center(
-        //                 child: CircularProgressIndicator(),
-        //               );
-        //             }
-
-        //             return ListView(
-        //               shrinkWrap: true,
-        //               physics: const NeverScrollableScrollPhysics(),
-        //               children: snapshot.data!.docs.map((doc) {
-        //                 //get the comment
-        //                 final commentData = doc.data() as Map<String, dynamic>;
-
-        //                 //return the comment
-        //                 return Comment(
-        //                   text: commentData["CommentText"],
-        //                   userId: commentData["CommentedBy"],
-        //                   time: formatDate(commentData["CommentTime"]),
-        //                 );
-        //               }).toList(),
-        //             );
-        //           },
-        //         )
-        //       ],
-        //     ),
-        //   ],
-        // ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -1009,8 +868,8 @@ void _showCommentsModal(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
+              const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Text(
                   'Comments',
                   style: TextStyle(
@@ -1030,7 +889,7 @@ void _showCommentsModal(
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     return ListView(
                       children: snapshot.data!.docs.map((doc) {
@@ -1045,7 +904,7 @@ void _showCommentsModal(
                   },
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
@@ -1055,13 +914,13 @@ void _showCommentsModal(
                         padding: const EdgeInsets.only(bottom: 32.0),
                         child: TextField(
                           controller: commentController,
-                          decoration:
-                              InputDecoration(hintText: "  Write a comment..."),
+                          decoration: const InputDecoration(
+                              hintText: "  Write a comment..."),
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.send,
+                      icon: const Icon(Icons.send,
                           color: Color.fromARGB(255, 0, 136, 204)),
                       onPressed: () {
                         if (commentController.text.isNotEmpty) {

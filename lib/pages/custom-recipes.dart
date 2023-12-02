@@ -50,7 +50,7 @@ class CustomRecipes extends ConsumerWidget {
               child: Text("Add New Recipe"),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 255, 162, 23)),
+                    const Color.fromARGB(255, 0, 136, 204)),
               ))),
       customRecipeList(ref, customRecipesCollection, userID)
     ]));
@@ -157,7 +157,7 @@ class CustomRecipes extends ConsumerWidget {
                                     ],
                                     decoration: const InputDecoration(
                                         labelText: "Dietary Restrictions"),
-                                    selectedColor: Colors.orange,
+                                    selectedColor: Colors.blue,
                                     checkmarkColor: Colors.white,
                                     autovalidateMode: AutovalidateMode.always,
                                     validator: (value) {
@@ -177,7 +177,7 @@ class CustomRecipes extends ConsumerWidget {
                                   ),
                                   const Divider(
                                     height: 100,
-                                    color: Colors.orange,
+                                    color: Colors.blue,
                                     thickness: 5,
                                   ),
                                   Container(
@@ -233,7 +233,7 @@ class CustomRecipes extends ConsumerWidget {
                                   ]),
                                   const Divider(
                                     height: 100,
-                                    color: Colors.orange,
+                                    color: Colors.blue,
                                     thickness: 5,
                                   ),
                                   Container(
@@ -334,7 +334,7 @@ class CustomRecipes extends ConsumerWidget {
                                   ]),
                                   const Divider(
                                     height: 100,
-                                    color: Colors.orange,
+                                    color: Colors.blue,
                                     thickness: 5,
                                   ),
                                   Padding(padding: EdgeInsets.only(top: 20)),
@@ -427,8 +427,7 @@ class CustomRecipes extends ConsumerWidget {
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all<Color>(
-                                                  Color.fromARGB(
-                                                      255, 255, 162, 23))),
+                                                  const Color.fromARGB(255, 0, 136, 204))),
                                       onPressed: () => navigateToRecipeDetails(
                                           context, recipe),
                                       child: Text(
@@ -443,8 +442,7 @@ class CustomRecipes extends ConsumerWidget {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
+                                                const Color.fromARGB(255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -460,8 +458,7 @@ class CustomRecipes extends ConsumerWidget {
                                       alignment: Alignment.bottomRight,
                                       child: CircleAvatar(
                                           radius: 20,
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 255, 176, 58),
+                                          backgroundColor: const Color.fromARGB(255, 0, 136, 204),
                                           child: Material(
                                               color: const Color.fromARGB(
                                                   0, 255, 255, 255),

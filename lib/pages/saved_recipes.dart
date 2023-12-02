@@ -83,8 +83,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         style: ButtonStyle(
                                             backgroundColor:
                                                 MaterialStateProperty
-                                                    .all<Color>(Color.fromARGB(
-                                                        255, 255, 162, 23))),
+                                                    .all<Color>(const Color.fromARGB(255, 0, 136, 204))),
                                         onPressed: () =>
                                             navigateToRecipeDetails(
                                                 context, recipe),
@@ -100,8 +99,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
+                                                const Color.fromARGB(255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -118,8 +116,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 176, 58),
+                                                const Color.fromARGB(255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -159,11 +156,11 @@ onShare(Result recipe, BuildContext context) {
       builder: (BuildContext context) {
         return Consumer(builder: (context, ref, _) {
           return Dialog(
-            insetPadding: EdgeInsets.symmetric(vertical: 300),
+            insetPadding: EdgeInsets.only(top: 250, bottom: 325, left: 50, right: 50),
             child: Column(children: [
-              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10)),
+              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10), child:
               //Recipe title
-              Text("Post the recipe \"${recipe.title}\"?"),
+              Text("Post the recipe \"${recipe.title}\"?", style: TextStyle(fontSize: 15))),
               //Post button
               TextButton(
                 onPressed: () {

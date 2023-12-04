@@ -1,4 +1,5 @@
 //Contributors: Hussein, Ali, Ermin, Ayesha, Matt 
+//Hussein: Did most of the logic for posting pics 
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';

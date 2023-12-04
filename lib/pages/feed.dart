@@ -1,3 +1,4 @@
+//Hussien: Primary funcitonality for posting text/pictures. Some frontend and all backend work 
 import 'dart:typed_data';
 import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/productHouser.dart';

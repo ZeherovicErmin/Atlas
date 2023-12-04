@@ -77,7 +77,7 @@ class RecipeDetails extends ConsumerWidget {
                   margin: EdgeInsets.only(right: 3),
                   padding: EdgeInsets.all(7),
                   decoration: BoxDecoration(
-                      color: Colors.blueAccent,
+                      color: const Color.fromARGB(255, 0, 136, 204),
                       borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Text("Calories: $calories",
                       textAlign: TextAlign.center,
@@ -90,7 +90,7 @@ class RecipeDetails extends ConsumerWidget {
                   margin: EdgeInsets.only(right: 10),
                   padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
                   decoration: BoxDecoration(
-                      color: Colors.blueAccent,
+                      color: const Color.fromARGB(255, 0, 136, 204),
                       borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Text("Servings: ",
                       textAlign: TextAlign.center,
@@ -126,7 +126,7 @@ class RecipeDetails extends ConsumerWidget {
               Container(
                   padding: EdgeInsets.all(7),
                   decoration: BoxDecoration(
-                      color: Colors.blueAccent,
+                      color: const Color.fromARGB(255, 0, 136, 204),
                       borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Text("Ready Time: ${recipe.readyInMinutes} min",
                       textAlign: TextAlign.center,

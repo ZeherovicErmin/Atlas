@@ -1,5 +1,6 @@
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/Models/recipe-model.dart' as RecipeModel show Step;
+import 'package:atlas/pages/edit-recipe.dart';
 import 'package:atlas/pages/recipe-details.dart';
 import 'package:atlas/pages/saved_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -90,7 +91,6 @@ class CustomRecipes extends ConsumerWidget {
                                     decoration: InputDecoration(
                                         labelText: 'Recipe Image'),
                                     validator: FormBuilderValidators.compose([
-                                      FormBuilderValidators.required(),
                                       FormBuilderValidators.match(
                                           '^(https?|ftp):\\/\\/[^\\s/\$.?#].[^\\s]*\$')
                                     ]),
@@ -347,6 +347,8 @@ class CustomRecipes extends ConsumerWidget {
                                             _formKey.currentState!.value;
                                         onAdd(formData,ref,context);
                                         Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Recipe Creation Successfull')));
                                       }
                                     },
                                     child: Text('Submit'),
@@ -436,6 +438,23 @@ class CustomRecipes extends ConsumerWidget {
                                             fontWeight: FontWeight.bold,
                                                   fontSize: 15),
                                       )),
+                                  Container(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.bottomRight,
+                                  child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+                                      child: Material(
+                                          color: const Color.fromARGB(
+                                              0, 255, 255, 255),
+                                          child: IconButton(
+                                            onPressed: () =>
+                                                navigateToEditRecipePage(
+                                                    context, recipe),
+                                            icon: const Icon(Icons.edit),
+                                            tooltip: "Edit Recipe",
+                                            color: Colors.white,
+                                          )))),
                                   Container(
                                         padding: EdgeInsets.all(0),
                                         alignment: Alignment.bottomRight,
@@ -593,6 +612,16 @@ class CustomRecipes extends ConsumerWidget {
       context,
       MaterialPageRoute(
         builder: (context) => RecipeDetails(recipe: recipe),
+      ),
+    );
+  }
+
+  // Function to navigate to recipe details page
+  void navigateToEditRecipePage(BuildContext context, Result recipe) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditRecipe(recipe: recipe),
       ),
     );
   }

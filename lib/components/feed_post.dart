@@ -1,5 +1,5 @@
 //Contributors: Hussein, Ali, Ermin, Ayesha, Matt 
-//Hussein: Did most of the logic for posting pics 
+//Hussein: Did most of the functionality for posting on the Feed and features of the Feed 
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';

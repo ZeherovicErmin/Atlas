@@ -1,3 +1,5 @@
+//Authors:
+//Matthew McGowan
 import 'package:atlas/components/my_button.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,10 @@
+//Authors:
+//Matthew McGowan
+//Ali Chowdhury
 import 'package:atlas/pages/change_password.dart';
+import 'package:atlas/pages/credits.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/constants.dart';
@@ -10,7 +13,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:atlas/components/signout_button.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter/cupertino.dart';
 //import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 
@@ -42,11 +45,11 @@ class NotificationService {
       requestSoundPermission: true,
       onDidReceiveLocalNotification: (id, title, body, payload) async {},
     );
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) async {});
+    // var initializationSettings = InitializationSettings(
+    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    // await notificationsPlugin.initialize(initializationSettings,
+    //     onDidReceiveNotificationResponse:
+    //         (NotificationResponse notificationResponse) async {});
 
   void scheduleDailyNoonNotification(NotificationService notificationService) async {
   DateTime now = DateTime.now();
@@ -101,7 +104,7 @@ Future<void> showNotification(int id, String title, String body) async {
       androidAllowWhileIdle: true,//To show notification even when the app is closed
     );
   }
-  
+
   void scheduleNotification(
 
     {required String title, 
@@ -141,38 +144,6 @@ class SettingsPage extends ConsumerWidget {
           Expanded (
             child: SettingsList(
               sections: [
-                SettingsSection(
-                  title: Text(
-                    'Account',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: themeColor,
-                      ),
-                    ),
-                    tiles: [
-                      SettingsTile(
-                        title: Text(
-                          'Change Password',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: themeColor,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.lock,
-                          color: themeColor,
-                        ),
-                        onPressed: (BuildContext context) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ChangePassword()),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
                   SettingsSection(
                     title: Text(
                       'Appearance',
@@ -213,18 +184,17 @@ class SettingsPage extends ConsumerWidget {
                       ),
                       tiles: [
                         SettingsTile(
-                          title: Text('Notification Timer'),
+                          title: const Text('Notification Timer'),
                           //Opens time picker sheet
                           onPressed: _openTimePickerAndSchedule,
                           leading: Icon(Icons.alarm_on,color: themeColor,
                           ),
-                          
                         ),
-                        
-                      ],),
+                      ],
+                    ),
                 SettingsSection(
-                    title: Text(
-                      'Account',
+                  title: Text(
+                    'Account',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -234,14 +204,73 @@ class SettingsPage extends ConsumerWidget {
                     tiles: [
                       SettingsTile(
                         title: Text(
+                          'Change Password',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: themeColor,
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.lock,
+                          color: themeColor,
+                        ),
+                        onPressed: (BuildContext context) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ChangePassword()
+                            ),
+                          );
+                        },
+                      ),
+                      SettingsTile(
+                        title: Text(
                           'Delete Account',
                           style: TextStyle(fontSize: 16, color: themeColor),
                         ),
                         leading: Icon(Icons.delete_forever,color: themeColor,),
                         onPressed: (BuildContext context) {
                           confirmDeleteUserAccount(context);
-                        }),
-                    ],),],),),
+                        }
+                      ),
+                    ],
+                  ),
+                SettingsSection(
+                  title: Text(
+                    'Information',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: themeColor,
+                      ),
+                    ),
+                    tiles: [
+                      SettingsTile(
+                        title: Text(
+                          'Credits',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: themeColor,
+                          ),
+                        ),
+                        leading: Icon(
+                          CupertinoIcons.book_circle_fill,
+                          color: themeColor,
+                        ),
+                        onPressed: (BuildContext context) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Credits()
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             Padding(
                 padding: const EdgeInsets.all(6),
                 child: SignoutButton(
@@ -254,9 +283,7 @@ class SettingsPage extends ConsumerWidget {
           ],
         ),
       ),
-      
     );
-    
   }
 
 

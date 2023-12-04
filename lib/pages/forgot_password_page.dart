@@ -1,3 +1,4 @@
+//Author: Matthew McGowan
 import 'package:flutter/material.dart';
 import 'package:atlas/components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,6 +77,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
+      backgroundColor: Color.fromARGB(255, 232, 229, 229),
       body: Container (
       decoration: const BoxDecoration (
       ),

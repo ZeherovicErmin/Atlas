@@ -1,4 +1,5 @@
 //Atlas Fitness App CSC 4996
+// Author : Ermin Zeherovic
 import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/my_workouts.dart';
 import 'package:atlas/pages/notes.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flip_card/flip_card.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -91,25 +91,32 @@ class FitCenter2 extends ConsumerWidget {
         backgroundColor: const Color(0xFFFAF9F6),
         //Home page for when a user logs in
         appBar: AppBar(
-            actions: [
-              StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance.collection('Users').doc(user?.email).snapshots(),
+          actions: [
+            StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(user?.email)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   }
                   if (snapshot.hasData && snapshot.data!.exists) {
-                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    var userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
                     var profileImageUrl = userData['profilePicture'];
-                    if (profileImageUrl is String && profileImageUrl.isNotEmpty) {
+                    if (profileImageUrl is String &&
+                        profileImageUrl.isNotEmpty) {
                       return IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const UserProfile()),
-                        );
-                      },
-                      icon: CircleAvatar(backgroundImage: NetworkImage(profileImageUrl),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserProfile()),
+                          );
+                        },
+                        icon: CircleAvatar(
+                          backgroundImage: NetworkImage(profileImageUrl),
                         ),
                       );
                     }
@@ -118,106 +125,105 @@ class FitCenter2 extends ConsumerWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const UserProfile()),
+                          MaterialPageRoute(
+                              builder: (context) => const UserProfile()),
                         );
                       },
                     );
                   }
                   return IconButton(
-                    icon: const Icon(CupertinoIcons.profile_circled),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const UserProfile())
-                      );
-                    }
-                  );
-                }
-              )
-            ],
-            centerTitle: true,
-            title: const Text(
-              "Fitness Center",
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            backgroundColor: const Color.fromARGB(255, 0, 136, 204),
-            leading: IconButton(
-                icon: const Icon(CupertinoIcons.info_circle_fill),
-                onPressed: () {
-                  final isInfoDialogOpen = ref.read(infoDialogProvider);
-
-                  if (!isInfoDialogOpen) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Center(
-                            child: Text(
-                              'Fitness Center Guide',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          content: const SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text(
-                                  "Discover Page",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "Find targeted exercises for each muscle, muscles are seperated into color categories. Tap on a muscle icon to view related exercises.",
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  "My Workouts",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                    "View the workout plans you've customized. Clicking each day will bring up your plan of exercises for that day!",
-                                    style: TextStyle(fontSize: 14)),
-                                SizedBox(height: 10),
-                                Text(
-                                  "Notes",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                    "Jot down anything that comes to mind in the notes page!",
-                                    style: TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                          ),
-                          // adding space between the entries
-
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('Close'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                }),
-            bottom: const TabBar(
-              indicatorColor: Color.fromARGB(255, 90, 86, 86),
-              tabs: [
-                Tab(
-                  text: "Discover",
-                ),
-                Tab(text: "My Workouts"),
-                Tab(
-                  text: "Notes",
-                )
-              ],
+                      icon: const Icon(CupertinoIcons.profile_circled),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserProfile()));
+                      });
+                })
+          ],
+          centerTitle: true,
+          title: const Text(
+            "Fitness Center",
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontWeight: FontWeight.bold,
             ),
           ),
+          backgroundColor: const Color.fromARGB(255, 0, 136, 204),
+          leading: IconButton(
+              icon: const Icon(CupertinoIcons.info_circle_fill),
+              onPressed: () {
+                final isInfoDialogOpen = ref.read(infoDialogProvider);
+
+                if (!isInfoDialogOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Center(
+                          child: Text(
+                            'Fitness Center Guide',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        content: const SingleChildScrollView(
+                          child: ListBody(
+                            children: <Widget>[
+                              Text(
+                                "Discover Page",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "Find targeted exercises for each muscle, muscles are seperated into color categories. Tap on a muscle icon to view related exercises.",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "My Workouts",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                  "View the workout plans you've customized. Clicking each day will bring up your plan of exercises for that day!",
+                                  style: TextStyle(fontSize: 14)),
+                              SizedBox(height: 10),
+                              Text(
+                                "Notes",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                  "Jot down anything that comes to mind in the notes page!",
+                                  style: TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                        ),
+                        // adding space between the entries
+
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Close'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              }),
+          bottom: const TabBar(
+            indicatorColor: Color.fromARGB(255, 90, 86, 86),
+            tabs: [
+              Tab(
+                text: "Discover",
+              ),
+              Tab(text: "My Workouts"),
+              Tab(
+                text: "Notes",
+              )
+            ],
+          ),
+        ),
 
         body: TabBarView(
           children: [
@@ -485,11 +491,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
         .limit(1)
         .get();
 
-    // Checking if context is still valid
-    if (!Navigator.of(context).mounted) {
-      return;
-    }
-
     if (existingExerciseQuery.docs.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -497,6 +498,12 @@ void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
         ),
       );
     } else {
+      // Save workout to FireStore
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Exercise saved to Firestore.'),
+        ),
+      );
       // If the exercise is not already saved, add it to the Exercises collection
       await exerciseCollection.add(
         {
@@ -505,13 +512,6 @@ void saveExerciseToFirestore(Map<String, dynamic> exerciseData,
           "saveDate": DateTime.now(),
           "selectedDay": getDayName(selectedDay),
         },
-      );
-
-      // Save workout to FireStore
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Exercise saved to Firestore.'),
-        ),
       );
     }
   } catch (e) {

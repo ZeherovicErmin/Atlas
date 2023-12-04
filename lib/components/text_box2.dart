@@ -1,16 +1,14 @@
-//Hussein
+//Hussein 
 import "package:flutter/material.dart";
 
-class MyTextBox extends StatelessWidget {
+class MyTextBox2 extends StatelessWidget {
   final String text;
   final String sectionName;
-  final void Function()? onPressed;
 
-  const MyTextBox({
+  const MyTextBox2({
     super.key,
     required this.text,
     required this.sectionName,
-    required this.onPressed,
   });
 
   @override
@@ -35,17 +33,10 @@ class MyTextBox extends StatelessWidget {
                   color: Colors.grey[700],
                 ),
               ),
-
-              //edit button
-              IconButton(
-                onPressed: onPressed,
-                icon: const Icon(
-                  Icons.edit,
-                  color: Color.fromARGB(255, 0, 136, 204),
-                ),
-              ),
             ],
           ),
+
+          const SizedBox(height: 10),
 
           //text
           Text(text),

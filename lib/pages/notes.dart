@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//Atlas Fitness App CSC 4996
+// Author : Ermin Zeherovic
 class Note {
   int id;
   String text;
@@ -53,6 +55,7 @@ class NotesPage extends ConsumerWidget {
           child: FloatingActionButton(
               onPressed: () {
                 // Creating a blank new note
+
                 final newNote =
                     Note(id: DateTime.now().millisecondsSinceEpoch, text: '');
 

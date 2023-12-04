@@ -1,5 +1,4 @@
 import 'package:atlas/Models/recipe-model.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/recipe-details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,7 +54,6 @@ class _SavedRecipesState extends State<SavedRecipes> {
                       //Used to build recipe list tiles
                       itemBuilder: (context, index) {
                         Result recipe = savedRecipes[index];
-                        String recipeName = recipe.title;
                         return Container(
                             alignment: Alignment.center,
                             child: TransparentImageCard(
@@ -195,7 +193,7 @@ onShare(Result recipe, BuildContext context) {
             },
             child: const Text('Close'),
           )
-            ],) 
+            ],)
             );
         }
         );

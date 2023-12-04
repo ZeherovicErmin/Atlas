@@ -1,8 +1,13 @@
 //Atlas Fitness App CSC 4996
+//Authors:
+//Matthew McGowan
+//Ermin Zeherovic
+//Hussein Daher
+//Ali Chowdhury
+//Ayesha Helal
 import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/components/productHouser.dart';
 import 'package:atlas/pages/home_page.dart';
-import 'package:atlas/pages/fitness_center.dart';
 import 'package:atlas/pages/login_page.dart';
 import 'package:atlas/pages/recipes.dart';
 import 'package:atlas/pages/register_page.dart';
@@ -16,6 +21,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest.dart' as tz;
+
+import 'pages/fitness_center redesign.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,7 +90,7 @@ class MyApp extends ConsumerWidget {
                 home: const AuthPage(),
                 routes: {
                   '/home': (context) => HomePage(),
-                  '/fitcenter': (context) => FitCenter(),
+                  '/fitcenter': (context) => FitCenter2(),
                   '/login': (context) => LoginPage(),
                   '/register': (context) => RegisterPage(),
                   '/recipes': (context) => Recipes(),

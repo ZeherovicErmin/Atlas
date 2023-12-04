@@ -1,5 +1,4 @@
 import 'package:atlas/Models/recipe-model.dart';
-import 'package:atlas/pages/constants.dart';
 import 'package:atlas/pages/recipe-details.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';

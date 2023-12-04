@@ -1,3 +1,4 @@
+//Hussien: Primary funcitonality for posting text/pictures. Some frontend and all backend work 
 import 'dart:typed_data';
 import 'package:atlas/components/feed_post.dart';
 import 'package:atlas/components/productHouser.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 final pictureProvider = StateProvider<Uint8List?>((ref) => null);
 

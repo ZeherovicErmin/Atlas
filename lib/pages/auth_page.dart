@@ -1,3 +1,6 @@
+//Authors:
+//Matthew McGowan
+//Ermin Zeherovic
 import 'package:atlas/components/bottom_bar.dart';
 import 'package:atlas/main.dart';
 import 'package:atlas/pages/login_page.dart';

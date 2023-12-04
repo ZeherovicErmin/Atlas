@@ -1,3 +1,4 @@
+//Hussein: Did most of the functionality for the user profille. Frontend and backend. 
 import 'dart:typed_data';
 
 import 'package:atlas/components/feed_post.dart';

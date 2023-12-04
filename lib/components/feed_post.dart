@@ -1,3 +1,4 @@
+//Contributors: Hussein, Ali, Ermin, Ayesha, Matt 
 import 'package:atlas/Models/recipe-model.dart';
 import 'package:atlas/components/comment.dart';
 import 'package:atlas/components/comment_button.dart';

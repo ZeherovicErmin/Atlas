@@ -15,8 +15,8 @@ Atlas Fitness is a fitness application built with the Flutter framework. This ap
 ## Getting Started
 <h3><b>Prerequisites</b></h3>
 
-- Flutter (latest version)
-- Dart SDK
+- Flutter (version 3.13)
+- Dart SDK (version 3.1.0)
 - Android Studio
 - Visual Studio Code
 - Git (for version control)

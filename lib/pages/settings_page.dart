@@ -16,7 +16,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/cupertino.dart';
 //import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-
 DateTime scheduleTime = DateTime.now();
 final themeProvider = StateNotifierProvider<ThemeNotifier, bool>((ref) {
   return ThemeNotifier();
@@ -51,23 +50,25 @@ class NotificationService {
     //     onDidReceiveNotificationResponse:
     //         (NotificationResponse notificationResponse) async {});
 
-  void scheduleDailyNoonNotification(NotificationService notificationService) async {
-  DateTime now = DateTime.now();
-  DateTime noon = DateTime(now.year, now.month, now.day, 12, 0); // Set to 12:00 PM
+    void scheduleDailyNoonNotification(
+        NotificationService notificationService) async {
+      DateTime now = DateTime.now();
+      DateTime noon =
+          DateTime(now.year, now.month, now.day, 12, 0); // Set to 12:00 PM
 
-  // If 12:00 PM today has already passed, schedule for the next day
-  if (noon.isBefore(now)) {
-    noon = noon.add(Duration(days: 1));
-  }
+      // If 12:00 PM today has already passed, schedule for the next day
+      if (noon.isBefore(now)) {
+        noon = noon.add(Duration(days: 1));
+      }
 
-  notificationService.scheduleNotification(
-    title: 'Log a habit',
-    body: 'Would you like to log your habits now?',
-    scheduledNotificationDateTime: noon,
-  );
+      notificationService.scheduleNotification(
+        title: 'Log a habit',
+        body: 'Would you like to log your habits now?',
+        scheduledNotificationDateTime: noon,
+      );
 
-  debugPrint('Notification scheduled for $noon');
-}
+      debugPrint('Notification scheduled for $noon');
+    }
   }
 
   notificationDetails() {
@@ -78,7 +79,7 @@ class NotificationService {
   }
 
   //show Notifcaiton button
-Future<void> showNotification(int id, String title, String body) async {
+  Future<void> showNotification(int id, String title, String body) async {
     await notificationsPlugin.zonedSchedule(
       id,
       title,
@@ -101,20 +102,25 @@ Future<void> showNotification(int id, String title, String body) async {
       // Type of time interpretation
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,//To show notification even when the app is closed
+      androidAllowWhileIdle:
+          true, //To show notification even when the app is closed
     );
   }
 
   void scheduleNotification(
-
-    {required String title, 
-    int id = 0,
-    required String body, 
-    required DateTime scheduledNotificationDateTime}) async {
-      return notificationsPlugin.zonedSchedule(id, title, body, 
-      tz.TZDateTime.from(scheduledNotificationDateTime, tz.local), 
-      await notificationDetails(), uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
-    }
+      {required String title,
+      int id = 0,
+      required String body,
+      required DateTime scheduledNotificationDateTime}) async {
+    return notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(scheduledNotificationDateTime, tz.local),
+        await notificationDetails(),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
+  }
 }
 
 class SettingsPage extends ConsumerWidget {
@@ -139,11 +145,11 @@ class SettingsPage extends ConsumerWidget {
       ),
       child: Scaffold(
         appBar: myAppBar4(context, ref, 'Settings'),
-        body: Column (
-        children: [
-          Expanded (
-            child: SettingsList(
-              sections: [
+        body: Column(
+          children: [
+            Expanded(
+              child: SettingsList(
+                sections: [
                   SettingsSection(
                     title: Text(
                       'Appearance',
@@ -174,27 +180,29 @@ class SettingsPage extends ConsumerWidget {
                     ],
                   ),
                   SettingsSection(
-                      title: Text(
-                        'Notifications',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                    title: Text(
+                      'Notifications',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: themeColor,
+                      ),
+                    ),
+                    tiles: [
+                      SettingsTile(
+                        title: const Text('Notification Timer'),
+                        //Opens time picker sheet
+                        onPressed: _openTimePickerAndSchedule,
+                        leading: Icon(
+                          Icons.alarm_on,
                           color: themeColor,
                         ),
                       ),
-                      tiles: [
-                        SettingsTile(
-                          title: const Text('Notification Timer'),
-                          //Opens time picker sheet
-                          onPressed: _openTimePickerAndSchedule,
-                          leading: Icon(Icons.alarm_on,color: themeColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                SettingsSection(
-                  title: Text(
-                    'Account',
+                    ],
+                  ),
+                  SettingsSection(
+                    title: Text(
+                      'Account',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -218,26 +226,27 @@ class SettingsPage extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ChangePassword()
-                            ),
+                                builder: (context) => const ChangePassword()),
                           );
                         },
                       ),
                       SettingsTile(
-                        title: Text(
-                          'Delete Account',
-                          style: TextStyle(fontSize: 16, color: themeColor),
-                        ),
-                        leading: Icon(Icons.delete_forever,color: themeColor,),
-                        onPressed: (BuildContext context) {
-                          confirmDeleteUserAccount(context);
-                        }
-                      ),
+                          title: Text(
+                            'Delete Account',
+                            style: TextStyle(fontSize: 16, color: themeColor),
+                          ),
+                          leading: Icon(
+                            Icons.delete_forever,
+                            color: themeColor,
+                          ),
+                          onPressed: (BuildContext context) {
+                            confirmDeleteUserAccount(context);
+                          }),
                     ],
                   ),
-                SettingsSection(
-                  title: Text(
-                    'Information',
+                  SettingsSection(
+                    title: Text(
+                      'Information',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -247,7 +256,7 @@ class SettingsPage extends ConsumerWidget {
                     tiles: [
                       SettingsTile(
                         title: Text(
-                          'Credits',
+                          'Credits and Disclaimer',
                           style: TextStyle(
                             fontSize: 16,
                             color: themeColor,
@@ -261,8 +270,7 @@ class SettingsPage extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Credits()
-                            ),
+                                builder: (context) => const Credits()),
                           );
                         },
                       ),
@@ -286,23 +294,21 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-
-
   // Function to open DatePicker and schedule notification
   void _openTimePickerAndSchedule(BuildContext context) async {
     final now = DateTime.now();
     final xMinutesFromNow = now.add(Duration(minutes: 3));
-    final initialTime = TimeOfDay(hour: xMinutesFromNow.hour, minute: xMinutesFromNow.minute);
+    final initialTime =
+        TimeOfDay(hour: xMinutesFromNow.hour, minute: xMinutesFromNow.minute);
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      
-
       initialTime: initialTime,
     );
 
     if (pickedTime != null) {
       DateTime now = DateTime.now();
-      DateTime scheduledDateTime = DateTime(now.year, now.month, now.day, pickedTime.hour, pickedTime.minute);
+      DateTime scheduledDateTime = DateTime(
+          now.year, now.month, now.day, pickedTime.hour, pickedTime.minute);
 
       // If the picked time has already passed today, schedule it for the next day
       if (scheduledDateTime.isBefore(now)) {
@@ -320,15 +326,14 @@ class SettingsPage extends ConsumerWidget {
       debugPrint('No valid time selected');
     }
   }
-  }
-
+}
 
 class ScheduleBtn extends StatelessWidget {
   const ScheduleBtn({
     Key? key,
   }) : super(key: key);
 
-@override
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       child: const Text('Schedule notifications'),
@@ -409,29 +414,30 @@ class _DatePickerTxtState extends State<DatePickerTxt> {
     );
   }
 }
-Future<void> deleteUserAccount(BuildContext context) async{
+
+Future<void> deleteUserAccount(BuildContext context) async {
   //get auth details
   final FirebaseAuth auth = FirebaseAuth.instance;
   // get currentUser
   final User? user = auth.currentUser;
 
-  if (user != null)
-  {
-    try{
-      
+  if (user != null) {
+    try {
       FirebaseFirestore.instance.collection('Users').doc(user.uid).delete();
       //delete account
       await user.delete();
       Navigator.of(context).pushReplacementNamed('/login');
-    }on FirebaseAuthException catch (e){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
-    }catch (e){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e}")));
-    
-  }
-  //User not found
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: ${e}")));
+    }
+    //User not found
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User not found")));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("User not found")));
   }
 }
 
@@ -439,24 +445,28 @@ Future<void> deleteUserAccount(BuildContext context) async{
 Future<void> confirmDeleteUserAccount(BuildContext context) async {
   // Show a confirmation dialog
   bool confirm = await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Delete Account'),
-        content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            child: Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(false), // Dismiss and return false
-          ),
-          TextButton(
-            child: Text('Delete'),
-            onPressed: () => Navigator.of(context).pop(true), // Dismiss and return true
-          ),
-        ],
-      );
-    },
-  ) ?? false; // If dialog is dismissed by tapping outside, it returns null. So, it returns false
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Delete Account'),
+            content: Text(
+                'Are you sure you want to delete your account? This action cannot be undone.'),
+            actions: [
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context)
+                    .pop(false), // Dismiss and return false
+              ),
+              TextButton(
+                child: Text('Delete'),
+                onPressed: () =>
+                    Navigator.of(context).pop(true), // Dismiss and return true
+              ),
+            ],
+          );
+        },
+      ) ??
+      false; // If dialog is dismissed by tapping outside, it returns null. So, it returns false
 
   // If the user confirmed, proceed with account deletion
   if (confirm) {

@@ -91,22 +91,6 @@ AppBar myAppBar4(BuildContext context, WidgetRef ref, String title) {
   );
 }
 
-// Function to Create containers
-Container myWidgCont(double width, double height, Color color,
-    IconData iconData, Color iconColor) {
-  return Container(
-      margin: const EdgeInsets.all(8),
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: color,
-      ),
-      child: Center(
-        child: Icon(iconData, size: 50, color: iconColor),
-      ));
-}
-
 // Creating a list of target muscles
 const List<String> list = <String>[
   "biceps",

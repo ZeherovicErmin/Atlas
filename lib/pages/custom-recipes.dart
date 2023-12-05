@@ -137,23 +137,20 @@ class CustomRecipes extends ConsumerWidget {
                                   FormBuilderFilterChip(
                                     name: "diets",
                                     options: const [
-                                      FormBuilderChipOption(
-                                          value: 'vegan', child: Text("Vegan")),
-                                      FormBuilderChipOption(
-                                          value: 'vegetarian',
-                                          child: Text("Vegetarian")),
-                                      FormBuilderChipOption(
-                                          value: 'pescetarian',
-                                          child: Text("Pescetarian")),
-                                      FormBuilderChipOption(
-                                          value: 'glutenFree',
-                                          child: Text("Gluten Free")),
-                                      FormBuilderChipOption(
-                                          value: 'dairyFree',
-                                          child: Text("Dairy Free")),
-                                      FormBuilderChipOption(
-                                          value: 'peanutFree',
-                                          child: Text("Peanut Free"))
+                                    FormBuilderChipOption(value: 'vegan', child: Text("Vegan")),
+                                    FormBuilderChipOption(value: 'vegetarian', child: Text("Vegetarian")),
+                                    FormBuilderChipOption(
+                                        value: 'pescetarian', child: Text("Pescatarian")),
+                                    FormBuilderChipOption(value: 'ketogenic', child: Text("Ketogenic")),
+                                    FormBuilderChipOption(
+                                        value: 'glutenFree', child: Text("Gluten Free")),
+                                    FormBuilderChipOption(value: 'dairyFree', child: Text("Dairy Free")),
+                                    FormBuilderChipOption(value: 'peanutFree', child: Text("Peanut Free")),
+                                    FormBuilderChipOption(
+                                        value: 'seafoodFree', child: Text("Seafood Free")),
+                                    FormBuilderChipOption(
+                                        value: 'shellfishFree', child: Text("Shellfish Free")),
+                                    FormBuilderChipOption(value: 'soyFree', child: Text("Soy Free"))
                                     ],
                                     decoration: const InputDecoration(
                                         labelText: "Dietary Restrictions"),
@@ -405,10 +402,10 @@ class CustomRecipes extends ConsumerWidget {
                           child: TransparentImageCard(
                             width: 300,
                             imageProvider:
-                                recipe.image != null || recipe.image != ""
+                                recipe.image != null && recipe.image != ""
                                     ? NetworkImage(recipe.image)
                                     : const AssetImage(
-                                            'assets/icons/recipe-notfound.svg')
+                                            'assets/images/recipe-notfound.png')
                                         as ImageProvider,
                             // tags: [
                             //   _tag('Product', () {}),
@@ -551,10 +548,51 @@ class CustomRecipes extends ConsumerWidget {
             percentCarbs: 0.0, percentFat: 0.0, percentProtein: 0.0),
         weightPerServing: WeightPerServing(amount: 0, unit: "unit"));
 
+
+    List<dynamic> dietList = [];
+    if (formData["diets"] != null) {
+      if (formData["diets"].contains("vegan")) {
+        dietList.add("vegan");
+      }
+      if (formData["diets"].contains("vegetarian")) {
+        dietList.add("vegetarian");
+      }
+      if (formData["diets"].contains("pescetarian")) {
+        dietList.add("pescetarian");
+      }
+      if (formData["diets"].contains("glutenFree")) {
+        dietList.add("glutenFree");
+      }
+      if (formData["diets"].contains("dairyFree")) {
+        dietList.add("dairyFree");
+      }
+      if (formData["diets"].contains("peanutFree")) {
+        dietList.add("peanutFree");
+      }
+      if (formData["diets"].contains("ketogenic")) {
+        dietList.add("ketogenic");
+      }
+      if (formData["diets"].contains("dairyFree")) {
+        dietList.add("dairy");
+      }
+      if (formData["diets"].contains("peanutFree")) {
+        dietList.add("peanut");
+      }
+      if (formData["diets"].contains("seafoodFree")) {
+        dietList.add("seafood");
+      }
+      if (formData["diets"].contains("shellfishFree")) {
+        dietList.add("shellfish");
+      }
+      if (formData["diets"].contains("soyFree")) {
+        dietList.add("soy");
+      }
+    }
+    
     //Build Result object with all of the data
     Result recipe = Result(
         title: formData["recipeTitle"],
-        image: formData["recipeImage"],
+        image: formData["recipeImage"] == null ? "" : formData["recipeImage"],
         cuisines: [formData["cuisine"]],
         readyInMinutes: int.parse(formData["readyTime"]),
         vegan: formData["isVegan"] == null ? false : true,
@@ -564,6 +602,7 @@ class CustomRecipes extends ConsumerWidget {
         nutrition: nutrition);
     recipe.nutrition = nutrition;
 
+    recipe.diets = dietList;
     print(recipe.toMap());
 
     // Create an instance of FirebaseAuth

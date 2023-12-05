@@ -367,7 +367,7 @@ class EditRecipe extends ConsumerWidget {
     //Build Result object with all of the data
     Result newRecipe = Result(
         title: formData["recipeTitle"],
-        image: formData["recipeImage"],
+        image: formData["recipeImage"] == null ? "" : formData["recipeImage"],
         cuisines: [formData["cuisine"]],
         readyInMinutes: int.parse(formData["readyTime"]),
         vegan: formData["isVegan"] == null ? false : true,
@@ -402,6 +402,24 @@ class EditRecipe extends ConsumerWidget {
       }
       if (formData["diets"].contains("peanutFree")) {
         dietList.add("peanutFree");
+      }
+      if (formData["diets"].contains("ketogenic")) {
+        dietList.add("ketogenic");
+      }
+      if (formData["diets"].contains("dairyFree")) {
+        dietList.add("dairy");
+      }
+      if (formData["diets"].contains("peanutFree")) {
+        dietList.add("peanut");
+      }
+      if (formData["diets"].contains("seafoodFree")) {
+        dietList.add("seafood");
+      }
+      if (formData["diets"].contains("shellfishFree")) {
+        dietList.add("shellfish");
+      }
+      if (formData["diets"].contains("soyFree")) {
+        dietList.add("soy");
       }
     }
     newRecipe.diets = dietList;

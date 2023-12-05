@@ -238,10 +238,16 @@ class Recipes extends ConsumerWidget {
           FormBuilderChipOption(value: 'vegetarian', child: Text("Vegetarian")),
           FormBuilderChipOption(
               value: 'pescetarian', child: Text("Pescatarian")),
+          FormBuilderChipOption(value: 'ketogenic', child: Text("Ketogenic")),
           FormBuilderChipOption(
               value: 'glutenFree', child: Text("Gluten Free")),
           FormBuilderChipOption(value: 'dairyFree', child: Text("Dairy Free")),
-          FormBuilderChipOption(value: 'peanutFree', child: Text("Peanut Free"))
+          FormBuilderChipOption(value: 'peanutFree', child: Text("Peanut Free")),
+          FormBuilderChipOption(
+              value: 'seafoodFree', child: Text("Seafood Free")),
+          FormBuilderChipOption(
+              value: 'shellfishFree', child: Text("Shellfish Free")),
+          FormBuilderChipOption(value: 'soyFree', child: Text("Soy Free"))
         ],
         decoration: const InputDecoration(labelText: "Dietary Restrictions"),
         selectedColor: Colors.blue,
@@ -307,7 +313,7 @@ class Recipes extends ConsumerWidget {
                       width: 300,
                       imageProvider: recipe.image != null || recipe.image != ""
                           ? NetworkImage(recipe.image)
-                          : const AssetImage('assets/icons/recipe-notfound.svg')
+                          : const AssetImage('assets/images/recipe-notfound.png')
                               as ImageProvider,
                       // tags: [
                       //   _tag('Product', () {}),
@@ -413,25 +419,38 @@ class Recipes extends ConsumerWidget {
       String diets = "";
       String intolerances = "";
 
+      
       if (formData["diets"] != null) {
-        if (formData["diets"].contains("vegan")) {
-          diets += "vegan";
-        }
-        if (formData["diets"].contains("vegetarian")) {
-          diets += ",vegetarian";
-        }
-        if (formData["diets"].contains("pescetarian")) {
-          diets += ",pescetarian";
-        }
-        if (formData["diets"].contains("glutenFree")) {
-          diets += ",gluten free";
-        }
-        if (formData["diets"].contains("dairyFree")) {
-          intolerances += ",dairy";
-        }
-        if (formData["diets"].contains("peanutFree")) {
-          intolerances += ",peanut";
-        }
+      if (formData["diets"].contains("vegan")) {
+        diets += ",vegan";
+      }
+      if (formData["diets"].contains("vegetarian")) {
+        diets += ",vegetarian";
+      }
+      if (formData["diets"].contains("pescetarian")) {
+        diets += ",pescetarian";
+      }
+      if (formData["diets"].contains("glutenFree")) {
+        diets += ",gluten free";
+      }
+      if (formData["diets"].contains("ketogenic")) {
+        diets += ",ketogenic";
+      }
+      if (formData["diets"].contains("dairyFree")) {
+        intolerances += ",dairy";
+      }
+      if (formData["diets"].contains("peanutFree")) {
+        intolerances += ",peanut";
+      }
+      if (formData["diets"].contains("seafoodFree")) {
+        intolerances += ",seafood";
+      }
+      if (formData["diets"].contains("shellfishFree")) {
+        intolerances += ",shellfish";
+      }
+      if (formData["diets"].contains("soyFree")) {
+        intolerances += ",soy";
+      }
 
         //Make sure diet string doesn't start/end with comma
         if (diets.startsWith(',')) {

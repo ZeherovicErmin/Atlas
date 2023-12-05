@@ -26,7 +26,7 @@ class RecipeDetails extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Recipe Details",
-          style: TextStyle(fontWeight: FontWeight.bold)),
+            style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color.fromARGB(255, 0, 136, 204),
       ),
       body: Column(children: [
@@ -67,73 +67,79 @@ class RecipeDetails extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         //Recipe Calories, Servings, and Ready Time
         Padding(padding: EdgeInsets.all(7)),
-        Row(
-            //Centers row content
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //Recipe Calories
-              Container(
-                  margin: EdgeInsets.only(right: 3),
-                  padding: EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(25))),
-                  child: Text("Calories: $calories",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15))),
-              //Recipe Servings
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  padding: EdgeInsets.only(left: 7, right: 7, bottom: 5),
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(25))),
-                  child: Text("Servings: ",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          height: 2.0))),
-              SizedBox(
-                  width: 30,
-                  child: TextFormField(
-                      //Controller stores value entered by user
-                      controller: servingsController,
-                      //Checks if value is valid, if not: show error message
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            int.parse(value) <= 0) {
-                          return 'Please Enter A Valid Number';
-                        }
-                        return null;
-                      },
-                      onFieldSubmitted: (value) => {
-                            //convert user input from string to number and save it
-                            ref.read(servingsProvider.notifier).state =
-                                double.parse(value)
-                          },
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      keyboardType: const TextInputType.numberWithOptions(
-                          signed: true, decimal: true)
-                          )),
-              //Recipe Ready Time
-              Container(
-                  padding: EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(25))),
-                  child: Text("Ready Time: ${recipe.readyInMinutes} min",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15))),
-            ]),
+        SizedBox(
+            height: 35,
+            child: Row(children: [
+              Expanded(
+                  child: ListView(scrollDirection: Axis.horizontal, children: [
+                //Recipe Calories
+                Container(
+                    margin: EdgeInsets.only(right: 3),
+                    padding: EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                    child: Text("Calories: $calories",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15))),
+                //Recipe Servings
+                Container(
+                    margin: EdgeInsets.only(right: 10),
+                    padding: EdgeInsets.only(left: 7, right: 7),
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                    child: Text("Servings: ",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            height: 1.75))),
+                SizedBox(
+                    width: 30,
+                    child: TextFormField(
+                        //Controller stores value entered by user
+                        controller: servingsController,
+                        //Checks if value is valid, if not: show error message
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              int.parse(value) <= 0) {
+                            return 'Please Enter A Valid Number';
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.fromLTRB(5,7.5, 5, 2)),
+                        onFieldSubmitted: (value) => {
+                              //convert user input from string to number and save it
+                              ref.read(servingsProvider.notifier).state =
+                                  double.parse(value)
+                            },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: const TextInputType.numberWithOptions(
+                            signed: true, decimal: true))),
+                //Recipe Ready Time
+                Container(
+                    padding: EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
+                    child: Text("Ready Time: ${recipe.readyInMinutes} min",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15))),
+              ]))
+            ])),
       ],
     );
   }
@@ -152,6 +158,9 @@ class RecipeDetails extends ConsumerWidget {
               recipe.image,
               height: 200,
               fit: BoxFit.fill,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset('assets/images/recipe-notfound.png', height: 200, fit: BoxFit.fill);
+              },
             )));
   }
 }

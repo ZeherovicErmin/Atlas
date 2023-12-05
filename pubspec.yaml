@@ -115,6 +115,7 @@ flutter:
   assets:
     - lib/images/
     - lib/gifs/
+    
     - lib/icons/
     - assets/icons/burger-menu.svg
     - assets/spoonacularResult.json
@@ -122,6 +123,21 @@ flutter:
     - assets/icons/chickenLeg.png
     - assets/icons/flameicon.png
     - assets/icons/flameiconnameplate.png
+
+  # Loading exercise gifs that wont naturally 
+    - lib/gifs/Kneeling Squat.gif
+    - lib/gifs/Standing dumbbell shrug.gif
+    - lib/gifs/Step-up with knee raise.gif
+    - lib/gifs/Leverage Shrug.gif
+    - lib/gifs/Kettlebell thruster.gif
+    - lib/gifs/Single-leg glute bridge.gif
+    - lib/gifs/Incline dumbbell row.gif
+    - lib/gifs/Single-Leg Press.gif
+    - lib/gifs/Seated finger curl.gif
+    - lib/gifs/Seated One-Arm Dumbbell Palms-Up Wrist Curl.gif
+  
+  
+    - lib/gifs/Single-leg cable hip extension.gif
 
 
   #   - images/a_dot_ham.jpeg

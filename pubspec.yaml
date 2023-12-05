@@ -122,6 +122,8 @@ flutter:
     - assets/icons/chickenLeg.png
     - assets/icons/flameicon.png
     - assets/icons/flameiconnameplate.png
+    - assets/icons/flameiconnameplate.png
+    - assets/images/recipe-notfound.png
 
 
   #   - images/a_dot_ham.jpeg

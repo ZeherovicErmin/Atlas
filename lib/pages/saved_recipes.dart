@@ -24,6 +24,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
     final userID = auth.currentUser?.uid;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: StreamBuilder<QuerySnapshot>(
         stream:
             savedRecipesCollection.where("uid", isEqualTo: userID).snapshots(),
@@ -82,8 +83,10 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                     ElevatedButton(
                                         style: ButtonStyle(
                                             backgroundColor:
-                                                MaterialStateProperty
-                                                    .all<Color>(const Color.fromARGB(255, 0, 136, 204))),
+                                                MaterialStateProperty.all<
+                                                        Color>(
+                                                    const Color.fromARGB(
+                                                        255, 0, 136, 204))),
                                         onPressed: () =>
                                             navigateToRecipeDetails(
                                                 context, recipe),
@@ -91,7 +94,7 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                           "View Details",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
+                                              fontSize: 15),
                                         )),
                                     Container(
                                         padding: EdgeInsets.all(0),
@@ -99,7 +102,8 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(255, 0, 136, 204),
+                                                const Color.fromARGB(
+                                                    255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -116,7 +120,8 @@ class _SavedRecipesState extends State<SavedRecipes> {
                                         child: CircleAvatar(
                                             radius: 20,
                                             backgroundColor:
-                                                const Color.fromARGB(255, 0, 136, 204),
+                                                const Color.fromARGB(
+                                                    255, 0, 136, 204),
                                             child: Material(
                                                 color: const Color.fromARGB(
                                                     0, 255, 255, 255),
@@ -151,52 +156,61 @@ class _SavedRecipesState extends State<SavedRecipes> {
 }
 
 onShare(Result recipe, BuildContext context) {
+  TextEditingController textController = TextEditingController();
+  textController.text = "Check out this recipe: ${recipe.title}";
+  
   return () => showDialog(
       context: context,
       builder: (BuildContext context) {
         return Consumer(builder: (context, ref, _) {
-          return Dialog(
-            insetPadding: EdgeInsets.only(top: 250, bottom: 325, left: 50, right: 50),
-            child: Column(children: [
-              Padding(padding: EdgeInsets.only(top: 45, left: 10, right: 10), child:
-              //Recipe title
-              Text("Post the recipe \"${recipe.title}\"?", style: TextStyle(fontSize: 15))),
-              //Post button
-              TextButton(
-                onPressed: () {
-                  FirebaseFirestore.instance.collection("User Posts").add({
-                  'UserEmail': FirebaseAuth.instance.currentUser!.email,
-                  'Message': "Check out this recipe: ${recipe.title}",
-                  'TimeStamp': Timestamp.now(),
-                  'Likes': [],
-                  'barcodeData': {},
-                  'postImage': '',
-                  'ExerciseName': '',
-                  'ExerciseType': '',
-                  'ExerciseMuscle': '',
-                  'ExerciseEquipment': '',
-                  'ExerciseDifficulty': '',
-                  'ExerciseGif': '',
-                  'ExerciseInstructions': '',
-                  'recipe': recipe.toMap() ,
-                  });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Recipe \"${recipe.title}\" was shared')));
-              },
-            child: const Text('Post'),
-          ),
-          //Close button
-              TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Close'),
-          )
-            ],)
-            );
-        }
-        );
+          return AlertDialog(
+              content:  SizedBox(height: 250, width: 300, child: Column(
+                children: [
+                  Expanded(child:ListView(children: [
+                  Padding(
+                      padding: EdgeInsets.only(top: 35, left: 10, right: 10),
+                      child:
+                          //Recipe title
+                          Text("Post the recipe \"${recipe.title}\"?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 17.5))),
+                  //Post button
+                  Padding(child: TextField(controller: textController, minLines: 2, maxLines: 10, style: TextStyle(fontSize: 15)), padding: EdgeInsets.all(10)),
+                  TextButton(
+                    onPressed: () {
+                      FirebaseFirestore.instance.collection("User Posts").add({
+                        'UserEmail': FirebaseAuth.instance.currentUser!.email,
+                        'Message': textController.text,
+                        'TimeStamp': Timestamp.now(),
+                        'Likes': [],
+                        'barcodeData': {},
+                        'postImage': '',
+                        'ExerciseName': '',
+                        'ExerciseType': '',
+                        'ExerciseMuscle': '',
+                        'ExerciseEquipment': '',
+                        'ExerciseDifficulty': '',
+                        'ExerciseGif': '',
+                        'ExerciseInstructions': '',
+                        'recipe': recipe.toMap(),
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('Recipe \"${recipe.title}\" was shared')));
+                    },
+                    child: const Text('Post'),
+                  ),
+                  //Close button
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Close'),
+                  )
+              ]))],
+              )));
+        });
       });
 }
 

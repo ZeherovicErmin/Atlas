@@ -25,7 +25,7 @@ class RecipeInfo extends ConsumerWidget {
                       ])),
               Expanded(
                   child: Container(
-                      color: Color.fromARGB(115, 0, 38, 255),
+                      color: Color.fromARGB(246, 126, 181, 226),
                       child: TabBarView(children: [
                         recipeIngredients(recipe, ref),
                         recipeInstructions(recipe)

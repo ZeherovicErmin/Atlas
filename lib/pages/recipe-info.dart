@@ -48,9 +48,10 @@ class RecipeInfo extends ConsumerWidget {
               //Amount of the ingredient
               double servings = ref.watch(servingsProvider);
               double ingredientAmount = ingredient.amount * servings;
+              ingredientAmount = ingredientAmount.ceilToDouble();
               //Format ingredient amount to 2 decimal places
               String ingredientAmountFixed =
-                  ingredientAmount.toStringAsFixed(2);
+                  ingredientAmount.toStringAsFixed(0);
               //Formatted ingredient string with amount and unit
               String ingredientFormatted =
                   "• ${ingredient.name} - $ingredientAmountFixed ${ingredient.unit}";
@@ -58,7 +59,9 @@ class RecipeInfo extends ConsumerWidget {
               return ListTile(
                   title: Text(ingredientFormatted,
                       textAlign: TextAlign.left,
-                      style: const TextStyle(fontWeight: FontWeight.bold,)));
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )));
             });
   }
 

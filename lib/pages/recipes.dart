@@ -132,7 +132,9 @@ class Recipes extends ConsumerWidget {
                   const Text("Ingredient Quick-Search",
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  ingredientsList(context, ref),
+                  ElevatedButton(
+                      onPressed: ingredientQuickSearchDialog(context, ref),
+                      child: Text("Quick Search"))
                 ],
               ),
               recipeList(recipes, context, ref)
@@ -574,53 +576,169 @@ class Recipes extends ConsumerWidget {
   }
 
   //list of quick-search ingredients
-  Widget ingredientsList(BuildContext context, WidgetRef ref) {
-    List<String> ingredients = [
-      "Apple",
-      "Orange",
-      "Banana",
-      "Blueberry",
-      "Lemon",
-      "Beef",
-      "Chicken",
-      "Cheese",
-      "Eggs",
-      "Fish",
-      "Milk",
-      "Potato"
-    ];
+ Widget ingredientsList(
+      BuildContext buildContext, WidgetRef ref, List<String> ingredients) {
     return Padding(
-        padding: EdgeInsets.all(15),
+        padding: EdgeInsets.only(top: 15, bottom: 15, left: 0, right: 0),
         child: SizedBox(
-            height: 75,
-
+            height: 80,
+            child: Column(
+              children: [
+                Expanded(
                     child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    //Used to ensure list is scrollable
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    //Number of ingredients
-                    itemCount: ingredients.length,
-                    //Used to output ingredient buttons
-                    itemBuilder: (context, index) {
-                      String ingredient = ingredients[index];
-                      return Container(
-                          width: 120,
-                          padding: EdgeInsets.all(5),
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.blue)),
-                              child: Text(ingredient,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      fontSize: 17)),
-                              //Function used to capture tap event for list items
-                              onPressed: () =>
-                                  searchIngredient(context, ref, ingredient)));
-                    })));
+                        scrollDirection: Axis.horizontal,
+                        //Used to ensure list is scrollable
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        //Number of recipes
+                        itemCount: ingredients.length,
+                        //Used to build recipe list tiles
+                        itemBuilder: (context, index) {
+                          String ingredient = ingredients[index];
+                          return Padding(
+                              padding: EdgeInsets.all(5),
+                              child: ElevatedButton(
+                                style: const ButtonStyle(
+                                    backgroundColor: MaterialStatePropertyAll(
+                                        Colors.blueAccent)),
+                                child: FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(ingredient,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                //Function used to capture tap event for list items
+                                onPressed: () =>
+                                {
+                                  
+                                    searchIngredient(context, ref, ingredient),
+                                    Navigator.of(buildContext).pop(),
+                                    ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(content: Text('Searching for Recipes with $ingredient')))
+                                }
+                              ));
+                        }))
+              ],
+            )));
+  }
 
+  //Dialog containing lists of ingredients from different food categories
+  ingredientQuickSearchDialog(BuildContext context, WidgetRef ref) {
+    List<String> meats = [
+      'Chicken',
+      'Beef',
+      'Fish',
+      'Lamb',
+      'Turkey',
+      'Shrimp',
+      'Crab',
+      'Lobster',
+      'Salmon'
+    ];
+
+    List<String> fruits = [
+      'Apple',
+      'Banana',
+      'Orange',
+      'Grapes',
+      'Strawberry',
+      'Mango',
+      'Pineapple',
+      'Watermelon',
+      'Cherry',
+      'Kiwi',
+    ];
+
+    List<String> vegetables = [
+      'Carrot',
+      'Broccoli',
+      'Spinach',
+      'Tomato',
+      'Cucumber',
+      'Bell Pepper',
+      'Zucchini',
+      'Onion',
+      'Lettuce',
+      'Potato',
+    ];
+
+    List<String> dairy = [
+      'Milk',
+      'Cheese',
+      'Yogurt',
+      'Butter',
+      'Cream',
+      'Cottage Cheese',
+      'Sour Cream',
+      'Cream Cheese',
+      'Ice Cream',
+      'Whipped Cream',
+    ];
+
+    List<String> carbs = [
+      'Bread',
+      'Rice',
+      'Pasta',
+      'Potatoes',
+      'Quinoa',
+      'Oats',
+      'Cereal',
+      'Beans',
+      'Corn',
+      'Sweet Potato',
+    ];
+
+    return () => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Consumer(builder: (dialogContext, dialogRef, _) {
+            return Dialog(
+                insetPadding: EdgeInsets.only(left: 10, right: 10),
+                child: Padding(
+                    padding: const EdgeInsets.only(top: 15, bottom: 0, left: 0, right: 0),
+                    child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(0),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            //mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Text(
+                                "Meats",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                              ingredientsList(dialogContext, ref, meats),
+                              const Text(
+                                "Fruits",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                              ingredientsList(dialogContext, ref, fruits),
+                              const Text(
+                                "Vegetables",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                              ingredientsList(dialogContext, ref, vegetables),
+                              const Text(
+                                "Dairy",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                              ingredientsList(dialogContext, ref, dairy),
+                              const Text(
+                                "Carbs",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                              ingredientsList(dialogContext, ref, carbs)
+                            ]))));
+          });
+        });
   }
 
   void searchIngredient(

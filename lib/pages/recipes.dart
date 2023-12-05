@@ -31,6 +31,7 @@ final calorieRangesProvider = StateProvider<RangeValues>((ref) {
 //global key used for recipe form-handling
 //final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
+
 //Recipe Class that handles and displays the recipes is
 //child of class Consumer Widget
 class Recipes extends ConsumerWidget {
@@ -38,7 +39,9 @@ class Recipes extends ConsumerWidget {
 
   //Constructors
   //Recipes({Key? key, required this.formKey}) : super(key: key);
-  Recipes({Key? key}) : formKey = GlobalKey<FormBuilderState>(), super(key: key);
+  Recipes({Key? key})
+      : formKey = GlobalKey<FormBuilderState>(),
+        super(key: key);
 
   get themeColor => null;
 
@@ -59,50 +62,56 @@ class Recipes extends ConsumerWidget {
           resizeToAvoidBottomInset: false,
           backgroundColor: const Color(0xFFFAF9F6), //- OFFWHITE
           appBar: AppBar(
-            actions: [
-              StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance.collection('Users').doc(user?.email).snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
-                  if (snapshot.hasData && snapshot.data!.exists) {
-                    var userData = snapshot.data!.data() as Map<String, dynamic>;
-                    var profileImageUrl = userData['profilePicture'];
-                    if (profileImageUrl is String && profileImageUrl.isNotEmpty) {
+              actions: [
+                StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(user?.email)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+                      if (snapshot.hasData && snapshot.data!.exists) {
+                        var userData =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        var profileImageUrl = userData['profilePicture'];
+                        if (profileImageUrl is String &&
+                            profileImageUrl.isNotEmpty) {
+                          return IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const UserProfile()),
+                              );
+                            },
+                            icon: CircleAvatar(
+                              backgroundImage: NetworkImage(profileImageUrl),
+                            ),
+                          );
+                        }
+                        return IconButton(
+                          icon: const Icon(CupertinoIcons.profile_circled),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const UserProfile()),
+                            );
+                          },
+                        );
+                      }
                       return IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const UserProfile()),
-                        );
-                      },
-                      icon: CircleAvatar(backgroundImage: NetworkImage(profileImageUrl),
-                        ),
-                      );
-                    }
-                    return IconButton(
-                      icon: const Icon(CupertinoIcons.profile_circled),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const UserProfile()),
-                        );
-                      },
-                    );
-                  }
-                  return IconButton(
-                    icon: const Icon(CupertinoIcons.profile_circled),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const UserProfile())
-                      );
-                    }
-                  );
-                }
-              )
-            ],
+                          icon: const Icon(CupertinoIcons.profile_circled),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const UserProfile()));
+                          });
+                    })
+              ],
               leading: const Icon(
                 null,
               ),
@@ -242,7 +251,8 @@ class Recipes extends ConsumerWidget {
           FormBuilderChipOption(
               value: 'glutenFree', child: Text("Gluten Free")),
           FormBuilderChipOption(value: 'dairyFree', child: Text("Dairy Free")),
-          FormBuilderChipOption(value: 'peanutFree', child: Text("Peanut Free")),
+          FormBuilderChipOption(
+              value: 'peanutFree', child: Text("Peanut Free")),
           FormBuilderChipOption(
               value: 'seafoodFree', child: Text("Seafood Free")),
           FormBuilderChipOption(
@@ -313,7 +323,8 @@ class Recipes extends ConsumerWidget {
                       width: 300,
                       imageProvider: recipe.image != null || recipe.image != ""
                           ? NetworkImage(recipe.image)
-                          : const AssetImage('assets/images/recipe-notfound.png')
+                          : const AssetImage(
+                                  'assets/images/recipe-notfound.png')
                               as ImageProvider,
                       // tags: [
                       //   _tag('Product', () {}),
@@ -419,38 +430,37 @@ class Recipes extends ConsumerWidget {
       String diets = "";
       String intolerances = "";
 
-      
       if (formData["diets"] != null) {
-      if (formData["diets"].contains("vegan")) {
-        diets += ",vegan";
-      }
-      if (formData["diets"].contains("vegetarian")) {
-        diets += ",vegetarian";
-      }
-      if (formData["diets"].contains("pescetarian")) {
-        diets += ",pescetarian";
-      }
-      if (formData["diets"].contains("glutenFree")) {
-        diets += ",gluten free";
-      }
-      if (formData["diets"].contains("ketogenic")) {
-        diets += ",ketogenic";
-      }
-      if (formData["diets"].contains("dairyFree")) {
-        intolerances += ",dairy";
-      }
-      if (formData["diets"].contains("peanutFree")) {
-        intolerances += ",peanut";
-      }
-      if (formData["diets"].contains("seafoodFree")) {
-        intolerances += ",seafood";
-      }
-      if (formData["diets"].contains("shellfishFree")) {
-        intolerances += ",shellfish";
-      }
-      if (formData["diets"].contains("soyFree")) {
-        intolerances += ",soy";
-      }
+        if (formData["diets"].contains("vegan")) {
+          diets += ",vegan";
+        }
+        if (formData["diets"].contains("vegetarian")) {
+          diets += ",vegetarian";
+        }
+        if (formData["diets"].contains("pescetarian")) {
+          diets += ",pescetarian";
+        }
+        if (formData["diets"].contains("glutenFree")) {
+          diets += ",gluten free";
+        }
+        if (formData["diets"].contains("ketogenic")) {
+          diets += ",ketogenic";
+        }
+        if (formData["diets"].contains("dairyFree")) {
+          intolerances += ",dairy";
+        }
+        if (formData["diets"].contains("peanutFree")) {
+          intolerances += ",peanut";
+        }
+        if (formData["diets"].contains("seafoodFree")) {
+          intolerances += ",seafood";
+        }
+        if (formData["diets"].contains("shellfishFree")) {
+          intolerances += ",shellfish";
+        }
+        if (formData["diets"].contains("soyFree")) {
+          intolerances += ",soy";
+        }
 
         //Make sure diet string doesn't start/end with comma
         if (diets.startsWith(',')) {
@@ -595,7 +605,7 @@ class Recipes extends ConsumerWidget {
   }
 
   //list of quick-search ingredients
- Widget ingredientsList(
+  Widget ingredientsList(
       BuildContext buildContext, WidgetRef ref, List<String> ingredients) {
     return Padding(
         padding: EdgeInsets.only(top: 15, bottom: 15, left: 0, right: 0),
@@ -616,25 +626,25 @@ class Recipes extends ConsumerWidget {
                           return Padding(
                               padding: EdgeInsets.all(5),
                               child: ElevatedButton(
-                                style: const ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(
-                                        Colors.blueAccent)),
-                                child: FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(ingredient,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold))),
-                                //Function used to capture tap event for list items
-                                onPressed: () =>
-                                {
-                                  
-                                    searchIngredient(context, ref, ingredient),
-                                    Navigator.of(buildContext).pop(),
-                                    ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(content: Text('Searching for Recipes with $ingredient')))
-                                }
-                              ));
+                                  style: const ButtonStyle(
+                                      backgroundColor: MaterialStatePropertyAll(
+                                          Colors.blueAccent)),
+                                  child: FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(ingredient,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                  //Function used to capture tap event for list items
+                                  onPressed: () => {
+                                        searchIngredient(
+                                            context, ref, ingredient),
+                                        Navigator.of(buildContext).pop(),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Searching for Recipes with $ingredient')))
+                                      }));
                         }))
               ],
             )));
@@ -713,7 +723,8 @@ class Recipes extends ConsumerWidget {
             return Dialog(
                 insetPadding: EdgeInsets.only(left: 10, right: 10),
                 child: Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 0, left: 0, right: 0),
+                    padding: const EdgeInsets.only(
+                        top: 15, bottom: 0, left: 0, right: 0),
                     child: SingleChildScrollView(
                         padding: const EdgeInsets.all(0),
                         child: Column(
